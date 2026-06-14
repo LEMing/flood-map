@@ -3,6 +3,7 @@ import type { ElevationSource } from '../config';
 import type { Heightmap, LatLon } from './heightmap';
 import { computeMinMax } from './heightmap';
 import { projectGrid } from './projection';
+import { ENDPOINTS } from './endpoints';
 
 // Reads Copernicus GLO-30 or FABDEM Cloud-Optimized GeoTIFFs (1°×1° tiles, both
 // EPSG:4326, ~30 m). geotiff.js issues HTTP range requests, so only the small
@@ -21,7 +22,7 @@ function tileUrl(source: ElevationSource, latI: number, lonI: number): string {
 
   if (source === 'glo30') {
     const name = `Copernicus_DSM_COG_10_${latS}_00_${lonS}_00_DEM`;
-    return `/api/cop30/${name}/${name}.tif`;
+    return `${ENDPOINTS.cop30}/${name}/${name}.tif`;
   }
 
   // FABDEM: 1° tiles grouped into 10°×10° folders named by their SW–NE corners.

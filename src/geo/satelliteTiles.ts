@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { LatLon } from './heightmap';
 import { chooseSatelliteZoom, lonLatToPixel, projectGrid } from './projection';
+import { ENDPOINTS } from './endpoints';
 
 const TILE = 256;
 const MAX_TILES = 100;
@@ -14,6 +15,7 @@ export interface SatelliteDrape {
 function loadImage(url: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image();
+    img.crossOrigin = 'anonymous'; // needed so the stitched canvas isn't tainted in prod
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = url;
@@ -71,7 +73,7 @@ export async function fetchSatellite(
   const jobs: Promise<void>[] = [];
   for (let ty = tyMin; ty <= tyMax; ty++) {
     for (let tx = txMin; tx <= txMax; tx++) {
-      const url = `/api/sat/${z}/${ty}/${tx}`;
+      const url = `${ENDPOINTS.sat}/${z}/${ty}/${tx}`;
       jobs.push(
         loadImage(url).then((img) => {
           if (img) {

@@ -1,6 +1,7 @@
 import type { Heightmap, LatLon } from './heightmap';
 import { computeMinMax } from './heightmap';
 import { chooseZoom, lonLatToPixel, projectGrid } from './projection';
+import { ENDPOINTS } from './endpoints';
 
 const TILE = 256;
 const MAX_TILES = 100; // safety cap on number of tiles to stitch
@@ -8,6 +9,7 @@ const MAX_TILES = 100; // safety cap on number of tiles to stitch
 function loadImage(url: string): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image();
+    img.crossOrigin = 'anonymous'; // needed so the decode canvas isn't tainted in prod
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null); // missing tile -> treated as sea level
     img.src = url;
@@ -72,7 +74,7 @@ export async function fetchElevation(
   let loaded = 0;
   for (let ty = tyMin; ty <= tyMax; ty++) {
     for (let tx = txMin; tx <= txMax; tx++) {
-      const url = `/api/tiles/terrarium/${z}/${tx}/${ty}.png`;
+      const url = `${ENDPOINTS.tiles}/terrarium/${z}/${tx}/${ty}.png`;
       jobs.push(
         loadImage(url).then((img) => {
           if (img) {

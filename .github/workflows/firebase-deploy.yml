@@ -1,0 +1,33 @@
+name: Deploy to Firebase Hosting
+
+# Push / merge to main  -> deploys to the live (production) site.
+# Push / merge to develop -> deploys to the "develop" staging channel (separate URL).
+on:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: firebase-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLOODMAP_KRD_LEMING }}
+          projectId: floodmap-krd-leming
+          channelId: ${{ github.ref_name == 'main' && 'live' || 'develop' }}

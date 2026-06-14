@@ -1,4 +1,5 @@
 import type { LatLon } from './heightmap';
+import { ENDPOINTS } from './endpoints';
 
 export interface GeocodeResult extends LatLon {
   displayName: string;
@@ -40,7 +41,7 @@ export async function geocode(address: string): Promise<GeocodeResult> {
     if (place.match(normalized)) return place.result;
   }
 
-  const url = `/api/geocode/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
+  const url = `${ENDPOINTS.geocode}/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
   const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) {
     throw new Error(`Geocoding failed (HTTP ${res.status}). Try again in a moment.`);

@@ -93,8 +93,13 @@ function burnHeights(hm: Heightmap, osm: OsmRasters, burnBuildings: boolean): vo
 export async function buildSurface(hm: Heightmap, params: Params): Promise<SurfaceResult | null> {
   let land: LandClass | null = null;
   let osm: OsmRasters | null = null;
+  // ESA WorldCover's S3 has no CORS, so it only works via the dev proxy; in a
+  // static production build we skip it and rely on OSM land use instead.
+  const landPromise = import.meta.env.PROD
+    ? Promise.resolve()
+    : fetchLandCover(hm.center, hm.sizeMeters, hm.N).then((l) => { land = l; }).catch(() => {});
   await Promise.all([
-    fetchLandCover(hm.center, hm.sizeMeters, hm.N).then((l) => { land = l; }).catch(() => {}),
+    landPromise,
     fetchOsm(hm.center, hm.sizeMeters, hm.N).then((o) => { osm = o; }).catch(() => {}),
   ]);
   if (!land && !osm) return null;

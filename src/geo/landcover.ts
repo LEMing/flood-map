@@ -1,6 +1,7 @@
 import { fromUrl } from 'geotiff';
 import type { LatLon } from './heightmap';
 import { projectGrid } from './projection';
+import { ENDPOINTS } from './endpoints';
 
 // ESA WorldCover 10 m (v200, 2021) land-cover classes, read from the public COG
 // tiles (3°×3°, named by SW corner in 3° steps). Used to build per-cell
@@ -18,7 +19,7 @@ const MAX_TILES = 4;
 function tileUrl(latSW: number, lonSW: number): string {
   const lat = `${latSW >= 0 ? 'N' : 'S'}${String(Math.abs(latSW)).padStart(2, '0')}`;
   const lon = `${lonSW >= 0 ? 'E' : 'W'}${String(Math.abs(lonSW)).padStart(3, '0')}`;
-  return `/api/worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_${lat}${lon}_Map.tif`;
+  return `${ENDPOINTS.worldcover}/v200/2021/map/ESA_WorldCover_10m_2021_v200_${lat}${lon}_Map.tif`;
 }
 
 interface Patch {

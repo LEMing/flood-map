@@ -2,9 +2,28 @@
 
 Type an address, get the real ~2×2 km terrain around it as a 3D surface, then
 pour heavy rain on it and watch — with real shallow-water physics — where the
-water flows, pools, and floods.
+water flows, pools, and floods. Tuned into an urban pluvial flood model for
+**Krasnodar** (FABDEM terrain + OSM buildings/roads + storm-drain & infiltration
+fields + design-storm rainfall).
 
 ![concept](https://img.shields.io/badge/three.js-GPU%20shallow--water-2f6feb)
+
+**Live:** https://floodmap-krd-leming.web.app
+
+## Deploy
+
+Hosted on Firebase Hosting, deployed automatically by GitHub Actions:
+
+- merge/push to **`main`** → live site (`floodmap-krd-leming.web.app`)
+- merge/push to **`develop`** → `develop` staging channel (separate URL)
+- every **PR** → a temporary preview URL posted as a PR comment
+
+Manual deploy: `npm run build && firebase deploy --only hosting`.
+
+> The dev server proxies some data sources (see `vite.config.ts`). In the static
+> production build those calls go direct (`src/geo/endpoints.ts`); the two
+> sources without CORS (Copernicus GLO-30, ESA WorldCover) fall back to terrarium
+> / OSM-only land use respectively.
 
 ## What it does
 
