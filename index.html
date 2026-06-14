@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flood Map — rain &amp; flood simulation</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --panel-bg: rgba(18, 22, 28, 0.82);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0e13; }
+      body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #e6edf3; }
+      #scene { position: fixed; inset: 0; display: block; }
+
+      #addressbar {
+        position: fixed; top: 12px; left: 12px; z-index: 10;
+        display: flex; gap: 6px; align-items: center;
+        background: var(--panel-bg); backdrop-filter: blur(6px);
+        padding: 8px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.4);
+        max-width: min(520px, calc(100vw - 24px));
+      }
+      #addressbar input {
+        width: 320px; max-width: 52vw; padding: 7px 10px; border-radius: 7px;
+        border: 1px solid #2a313b; background: #0e1318; color: #e6edf3; font-size: 14px;
+      }
+      #addressbar button {
+        padding: 7px 14px; border-radius: 7px; border: 1px solid #2f6feb;
+        background: #2f6feb; color: white; font-size: 14px; cursor: pointer;
+      }
+      #addressbar button:disabled { opacity: .5; cursor: default; }
+
+      .poi-label {
+        position: fixed; z-index: 8; pointer-events: none;
+        transform: translate(-50%, -130%);
+        background: rgba(229, 68, 58, 0.92); color: #fff;
+        font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px;
+        white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.5); display: none;
+      }
+
+      #toast {
+        position: fixed; top: 64px; left: 12px; z-index: 10;
+        background: var(--panel-bg); backdrop-filter: blur(6px);
+        padding: 8px 12px; border-radius: 8px; font-size: 13px;
+        max-width: min(520px, calc(100vw - 24px));
+        opacity: 0; transition: opacity .25s; pointer-events: none;
+        border-left: 3px solid #2f6feb;
+      }
+      #toast.show { opacity: 1; }
+      #toast.error { border-left-color: #e5534b; }
+
+      .tp-dfwv { z-index: 10 !important; }
+
+      #credit {
+        position: fixed; bottom: 6px; left: 8px; z-index: 9;
+        font-size: 11px; color: rgba(255,255,255,.7);
+        text-shadow: 0 1px 2px rgba(0,0,0,.8); pointer-events: none;
+        display: none;
+      }
+
+      #readout {
+        position: fixed; z-index: 11; pointer-events: none; display: none;
+        background: rgba(18, 22, 28, 0.85); color: #e6edf3;
+        padding: 5px 9px; border-radius: 6px; font-size: 12px;
+        font-variant-numeric: tabular-nums; white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(0,0,0,.4);
+      }
+
+      #legend {
+        position: fixed; bottom: 30px; left: 12px; z-index: 9; display: none;
+        background: rgba(18, 22, 28, 0.82); padding: 8px 10px; border-radius: 8px;
+        font-size: 11px; color: #e6edf3; box-shadow: 0 2px 10px rgba(0,0,0,.4);
+      }
+      #legend .title { margin-bottom: 5px; opacity: .85; }
+      #legend .bar {
+        width: 200px; height: 10px; border-radius: 3px;
+        background: linear-gradient(to right,
+          #07154d, #1f6fe5, #18c7c0, #3fdd54, #f2e020, #f58a1f, #d11414);
+      }
+      #legend .labels {
+        display: flex; justify-content: space-between; margin-top: 3px;
+        font-variant-numeric: tabular-nums;
+      }
+
+    </style>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="addressbar">
+      <input id="address-input" type="text" placeholder="Enter an address or place…" autocomplete="off" />
+      <button id="address-go">Load</button>
+    </div>
+    <div id="toast"></div>
+    <div id="credit">Imagery © Esri, Maxar, Earthstar Geographics &amp; the GIS User Community</div>
+    <div id="readout"></div>
+    <div id="legend">
+      <div class="title">Elevation</div>
+      <div class="bar"></div>
+      <div class="labels"><span id="legend-min">0 m</span><span id="legend-max">0 m</span></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

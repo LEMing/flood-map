@@ -1,0 +1,26 @@
+{
+  "name": "flood-map",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Address-based 3D terrain + physically-based GPU rain-flood simulation (three.js)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "geotiff": "^3.0.5",
+    "proj4": "^2.20.9",
+    "three": "^0.184.0",
+    "tweakpane": "^4.0.5"
+  },
+  "devDependencies": {
+    "@tweakpane/core": "^2.0.5",
+    "@types/proj4": "^2.5.6",
+    "@types/three": "^0.184.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
+  }
+}
