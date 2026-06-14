@@ -8,14 +8,15 @@ fields + design-storm rainfall).
 
 ![concept](https://img.shields.io/badge/three.js-GPU%20shallow--water-2f6feb)
 
-**Live:** https://floodmap-krd-leming.web.app
+**Live:** https://krd-flood.web.app
 
 ## Deploy
 
-Hosted on Firebase Hosting, deployed automatically by GitHub Actions:
+Hosted on Firebase Hosting (site `krd-flood`, project `floodmap-krd-leming`),
+deployed automatically by GitHub Actions:
 
-- merge/push to **`main`** → live site (`floodmap-krd-leming.web.app`)
-- merge/push to **`develop`** → `develop` staging channel (separate URL)
+- merge/push to **`main`** → live site (`krd-flood.web.app`)
+- merge/push to **`develop`** → `develop` staging channel (`krd-flood--develop-*.web.app`)
 - every **PR** → a temporary preview URL posted as a PR comment
 
 Manual deploy: `npm run build && firebase deploy --only hosting`.
