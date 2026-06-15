@@ -122,6 +122,8 @@ export const th: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ตำแหน่ง',
   'stats.simTime': 'เวลาจำลอง',
   'stats.rainIn': 'ปริมาณฝน',
@@ -137,6 +139,7 @@ export const th: Record<string, string> = {
   'toast.notFound': 'ไม่พบผลลัพธ์สำหรับ "{q}"',
   'toast.geocodeFail': 'การระบุพิกัดล้มเหลว ลองอีกครั้งในอีกสักครู่',
   'toast.enterAddress': 'กรุณาป้อนที่อยู่',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'กำลังตรวจหาตำแหน่งของคุณ…',
 
   // Misc

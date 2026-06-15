@@ -112,6 +112,8 @@ export const am: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ቦታ',
   'stats.simTime': 'የሲም ጊዜ',
   'stats.rainIn': 'የዘነበ ዝናብ',
@@ -126,6 +128,7 @@ export const am: Record<string, string> = {
   'toast.notFound': 'ለ “{q}” ምንም አልተገኘም።',
   'toast.geocodeFail': 'ጂኦኮዲንግ አልተሳካም። ከጥቂት ቆይታ በኋላ እንደገና ይሞክሩ።',
   'toast.enterAddress': 'እባክዎ አድራሻ ያስገቡ።',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'ቦታዎን በመለየት ላይ…',
 
   'legend.elevation': 'ከፍታ',

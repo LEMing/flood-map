@@ -112,6 +112,8 @@ export const cs: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'poloha',
   'stats.simTime': 'čas simulace',
   'stats.rainIn': 'spadlý déšť',
@@ -126,6 +128,7 @@ export const cs: Record<string, string> = {
   'toast.notFound': 'Pro „{q}“ nenalezena žádná shoda.',
   'toast.geocodeFail': 'Geokódování selhalo. Zkuste to za chvíli znovu.',
   'toast.enterAddress': 'Zadejte prosím adresu.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Zjišťuji vaši polohu…',
 
   'legend.elevation': 'Nadmořská výška',

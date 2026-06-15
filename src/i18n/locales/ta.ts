@@ -112,6 +112,8 @@ export const ta: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'இடம்',
   'stats.simTime': 'உரு நேரம்',
   'stats.rainIn': 'பெய்த மழை',
@@ -126,6 +128,7 @@ export const ta: Record<string, string> = {
   'toast.notFound': '“{q}” க்கு பொருத்தம் இல்லை.',
   'toast.geocodeFail': 'புவிக்குறியீடு தோல்வி. சிறிது நேரத்தில் மீண்டும் முயற்சிக்கவும்.',
   'toast.enterAddress': 'முகவரியை உள்ளிடவும்.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'உங்கள் இடத்தைக் கண்டறிகிறது…',
 
   'legend.elevation': 'உயரம்',

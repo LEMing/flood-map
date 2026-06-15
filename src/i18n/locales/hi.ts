@@ -122,6 +122,8 @@ export const hi: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'स्थान',
   'stats.simTime': 'सिम समय',
   'stats.rainIn': 'कुल वर्षा',
@@ -137,6 +139,7 @@ export const hi: Record<string, string> = {
   'toast.notFound': '"{q}" के लिए कोई मिलान नहीं मिला।',
   'toast.geocodeFail': 'जियोकोडिंग विफल। कुछ क्षण बाद पुनः प्रयास करें।',
   'toast.enterAddress': 'कृपया एक पता दर्ज करें।',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'आपका स्थान पता लगाया जा रहा है…',
 
   // Misc

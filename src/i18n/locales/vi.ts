@@ -122,6 +122,8 @@ export const vi: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'vị trí',
   'stats.simTime': 'thời gian mô phỏng',
   'stats.rainIn': 'lượng mưa',
@@ -137,6 +139,7 @@ export const vi: Record<string, string> = {
   'toast.notFound': 'Không tìm thấy kết quả cho "{q}".',
   'toast.geocodeFail': 'Mã hóa địa lý thất bại. Vui lòng thử lại sau giây lát.',
   'toast.enterAddress': 'Vui lòng nhập địa chỉ.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Đang xác định vị trí của bạn…',
 
   // Misc

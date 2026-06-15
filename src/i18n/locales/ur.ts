@@ -112,6 +112,8 @@ export const ur: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'مقام',
   'stats.simTime': 'سمولیشن وقت',
   'stats.rainIn': 'بارش ہوئی',
@@ -126,6 +128,7 @@ export const ur: Record<string, string> = {
   'toast.notFound': '«{q}» کے لیے کوئی نتیجہ نہیں ملا۔',
   'toast.geocodeFail': 'جیو کوڈنگ ناکام۔ ایک لمحے بعد دوبارہ کوشش کریں۔',
   'toast.enterAddress': 'براہ کرم پتہ درج کریں۔',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'آپ کا مقام معلوم کیا جا رہا ہے…',
 
   'legend.elevation': 'بلندی',

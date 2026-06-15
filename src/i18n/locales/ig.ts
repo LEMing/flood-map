@@ -112,6 +112,8 @@ export const ig: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ebe',
   'stats.simTime': 'oge ọṅọrọ',
   'stats.rainIn': 'mmiri zoro',
@@ -126,6 +128,7 @@ export const ig: Record<string, string> = {
   'toast.notFound': '᫏nweghị ihe dabara na “{q}”.',
   'toast.geocodeFail': 'Geocoding daara. Nwaa ọzọ obere oge.',
   'toast.enterAddress': 'Biko tinye adres.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Na-achọpụta ebe ị nọ…',
 
   'legend.elevation': '᫏dị elu',

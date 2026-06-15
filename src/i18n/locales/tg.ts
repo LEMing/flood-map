@@ -112,6 +112,8 @@ export const tg: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ҷойгиршавӣ',
   'stats.simTime': 'вақти симулятсия',
   'stats.rainIn': 'бориши борон',
@@ -126,6 +128,7 @@ export const tg: Record<string, string> = {
   'toast.notFound': 'Барои «{q}» чизе ёфт нашуд.',
   'toast.geocodeFail': 'Геокодкунӣ муваффақ нашуд. Дубора кӯшиш кунед.',
   'toast.enterAddress': 'Суроғаро ворид кунед.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Ҷойгиршавии шумо муайян мешавад…',
 
   'legend.elevation': 'Баландӣ',

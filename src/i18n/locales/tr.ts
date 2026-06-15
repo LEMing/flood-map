@@ -122,6 +122,8 @@ export const tr: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'konum',
   'stats.simTime': 'sim süresi',
   'stats.rainIn': 'yağan yağmur',
@@ -137,6 +139,7 @@ export const tr: Record<string, string> = {
   'toast.notFound': '“{q}” için eşleşme bulunamadı.',
   'toast.geocodeFail': 'Coğrafi kodlama başarısız oldu. Birazdan tekrar deneyin.',
   'toast.enterAddress': 'Lütfen bir adres girin.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Konumunuz belirleniyor…',
 
   // Misc

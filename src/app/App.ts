@@ -87,6 +87,8 @@ export class App {
   private rainedVolume = 0;
   private observedMaxDepth = 1;
   private sinceReadback = 0;
+  private readbackPending = false;
+  private lowFpsTime = 0;
   private fpsEma = 60;
   private lastTime = 0;
   private loading = false;
@@ -563,6 +565,22 @@ export class App {
     this.computeStatsFromReadback(this.simTimeSec);
   }
 
+  /** Non-blocking stats: poll a finished async readback, then kick the next one.
+   * Avoids the ~26ms gl.readPixels stall (at 1024) every refresh interval. */
+  private pumpStatsReadback(dt: number): void {
+    if (!this.sim || !this.readback) return;
+    if (this.readbackPending && this.sim.pollReadback(this.readback)) {
+      this.readbackPending = false;
+      this.computeStatsFromReadback(this.simTimeSec);
+    }
+    this.sinceReadback += dt;
+    if (!this.readbackPending && this.sinceReadback >= READBACK_INTERVAL) {
+      this.sinceReadback = 0;
+      if (this.sim.requestReadback()) this.readbackPending = true;
+      else this.updateStats(); // no WebGL2 fence support → sync fallback
+    }
+  }
+
   private computeStatsFromReadback(simTime: number): void {
     if (!this.sim || !this.readback) return;
     const N = this.sim.N;
@@ -598,10 +616,9 @@ export class App {
 
     if (this.sim) {
       if (this.timelineMode === 'computing') {
-        this.tickPrecompute();
+        this.tickPrecompute(); // fills this.readback synchronously + captures
+        this.computeStatsFromReadback(this.simTimeSec);
         this.syncTextures();
-        this.sinceReadback += dt;
-        if (this.sinceReadback >= READBACK_INTERVAL) { this.sinceReadback = 0; this.updateStats(); }
       } else if (this.timelineMode === 'scrub') {
         if (this.params.timelinePlaying) {
           this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
@@ -618,8 +635,7 @@ export class App {
           this.advanceSim(dt);
         }
         this.syncTextures();
-        this.sinceReadback += dt;
-        if (this.sinceReadback >= READBACK_INTERVAL) { this.sinceReadback = 0; this.updateStats(); }
+        this.pumpStatsReadback(dt);
       }
     }
 
@@ -629,9 +645,30 @@ export class App {
     this.updateReadout(dt);
     this.updateDrainArrows();
     this.updateMarkers();
+    if (this.timelineMode === 'live') this.autoQualityCheck(dt);
     this.scene.render(this.water);
     requestAnimationFrame(this.loop);
   };
+
+  /** One-way quality degradation when FPS stays low, so weak GPUs stay usable. */
+  private autoQualityCheck(dt: number): void {
+    if (!this.params.autoQuality) return;
+    this.lowFpsTime = this.fpsEma < 30 ? this.lowFpsTime + dt : Math.max(0, this.lowFpsTime - dt * 2);
+    if (this.lowFpsTime < 2.5) return;
+    this.lowFpsTime = 0;
+    const p = this.params;
+    let changed = true;
+    if (p.renderScale > 0.75) p.renderScale = 0.7;
+    else if (p.ssao) p.ssao = false;
+    else if (p.waterRefraction && p.waterQuality !== 'low') p.waterRefraction = false;
+    else if (p.bloom > 0.01) p.bloom = 0;
+    else changed = false;
+    if (changed) {
+      this.applyParams();
+      this.panel.refresh();
+      showToast(t('toast.autoQuality'), false);
+    }
+  }
 
   private updateWaterLook(_dt: number): void {
     // wet-look is gated per-cell by proximity to water in the terrain shader, so

@@ -112,6 +112,8 @@ export const sw: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'mahali',
   'stats.simTime': 'muda wa uigaji',
   'stats.rainIn': 'mvua iliyoingia',
@@ -126,6 +128,7 @@ export const sw: Record<string, string> = {
   'toast.notFound': 'Hakuna kinacholingana na “{q}”.',
   'toast.geocodeFail': 'Ujiografia umeshindwa. Jaribu tena baada ya muda.',
   'toast.enterAddress': 'Tafadhali weka anwani.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Inatambua mahali ulipo…',
 
   'legend.elevation': 'Mwinuko',

@@ -129,6 +129,8 @@ export const en: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.renderScale': 'render scale',
+  'atmo.autoQuality': 'auto quality',
 
   // Stats
   'stats.location': 'location',
@@ -146,6 +148,7 @@ export const en: Record<string, string> = {
   'toast.notFound': 'No match found for “{q}”.',
   'toast.geocodeFail': 'Geocoding failed. Try again in a moment.',
   'toast.enterAddress': 'Please enter an address.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Detecting your location…',
 
   // Misc

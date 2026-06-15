@@ -122,6 +122,8 @@ export const uk: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'розташування',
   'stats.simTime': 'час симуляції',
   'stats.rainIn': 'дощу випало',
@@ -137,6 +139,7 @@ export const uk: Record<string, string> = {
   'toast.notFound': 'Не знайдено збігів для «{q}».',
   'toast.geocodeFail': 'Геокодування не вдалося. Спробуйте за мить.',
   'toast.enterAddress': 'Будь ласка, введіть адресу.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Визначаємо ваше місцезнаходження…',
 
   // Misc

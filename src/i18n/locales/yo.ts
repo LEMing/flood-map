@@ -112,6 +112,8 @@ export const yo: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ipò',
   'stats.simTime': 'àkókò sim',
   'stats.rainIn': 'òjò tó rọ̀',
@@ -126,6 +128,7 @@ export const yo: Record<string, string> = {
   'toast.notFound': 'Kò sí ohun tó bá “{q}” mu.',
   'toast.geocodeFail': 'Geocoding kùnà. Tún gbìyànjú láìpẹ́.',
   'toast.enterAddress': 'Jọ̀wọ́ tẹ àdírẹ́sì sí i.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Ń wá ipò rẹ…',
 
   'legend.elevation': 'Gíga',

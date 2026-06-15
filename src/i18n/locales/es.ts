@@ -122,6 +122,8 @@ export const es: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ubicación',
   'stats.simTime': 'tiempo de sim',
   'stats.rainIn': 'lluvia en',
@@ -137,6 +139,7 @@ export const es: Record<string, string> = {
   'toast.notFound': 'No se encontró ninguna coincidencia para «{q}».',
   'toast.geocodeFail': 'La geocodificación falló. Inténtalo de nuevo en un momento.',
   'toast.enterAddress': 'Por favor, introduce una dirección.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Detectando tu ubicación…',
 
   // Misc

@@ -112,6 +112,8 @@ export const tk: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ýerleşiş',
   'stats.simTime': 'sim wagty',
   'stats.rainIn': 'düşen ýagyş',
@@ -126,6 +128,7 @@ export const tk: Record<string, string> = {
   'toast.notFound': '“{q}” üçin gabat gelýän tapylmady.',
   'toast.geocodeFail': 'Geokodlama şowsuz boldy. Birsalymdan gaýtadan synanyşyň.',
   'toast.enterAddress': 'Haýyş, salgy giriziň.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Ýerleşişiňiz kesgitlenýär…',
 
   'legend.elevation': 'Beýiklik',

@@ -112,6 +112,8 @@ export const bn: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'অবস্থান',
   'stats.simTime': 'সিম সময়',
   'stats.rainIn': 'বৃষ্টিপাত',
@@ -126,6 +128,7 @@ export const bn: Record<string, string> = {
   'toast.notFound': '“{q}”-এর জন্য কোনো মিল পাওয়া যায়নি।',
   'toast.geocodeFail': 'জিওকোডিং ব্যর্থ হয়েছে। একটু পরে আবার চেষ্টা করুন।',
   'toast.enterAddress': 'অনুগ্রহ করে একটি ঠিকানা লিখুন।',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'আপনার অবস্থান শনাক্ত করা হচ্ছে…',
 
   'legend.elevation': 'উচ্চতা',

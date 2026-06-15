@@ -112,6 +112,8 @@ export const fa: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'موقعیت',
   'stats.simTime': 'زمان شبیه‌سازی',
   'stats.rainIn': 'باران باریده',
@@ -126,6 +128,7 @@ export const fa: Record<string, string> = {
   'toast.notFound': 'هیچ نتیجه‌ای برای «{q}» یافت نشد.',
   'toast.geocodeFail': 'کدگذاری جغرافیایی ناموفق بود. کمی بعد دوباره تلاش کنید.',
   'toast.enterAddress': 'لطفاً یک نشانی وارد کنید.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'در حال تشخیص موقعیت شما…',
 
   'legend.elevation': 'ارتفاع',

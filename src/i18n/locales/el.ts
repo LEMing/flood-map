@@ -112,6 +112,8 @@ export const el: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'τοποθεσία',
   'stats.simTime': 'χρόνος προσομοίωσης',
   'stats.rainIn': 'βροχή που έπεσε',
@@ -126,6 +128,7 @@ export const el: Record<string, string> = {
   'toast.notFound': 'Δεν βρέθηκε αποτέλεσμα για “{q}”.',
   'toast.geocodeFail': 'Η γεωκωδικοποίηση απέτυχε. Δοκιμάστε ξανά σε λίγο.',
   'toast.enterAddress': 'Εισαγάγετε μια διεύθυνση.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Εντοπισμός της τοποθεσίας σας…',
 
   'legend.elevation': 'Υψόμετρο',

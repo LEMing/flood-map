@@ -27,6 +27,9 @@ export class FloodSimulation {
   private pendingInject = 0;
   private pendingFill = -1e9;
   private pendingFillSet = false;
+  private pbo: WebGLBuffer | null = null;
+  private fence: WebGLSync | null = null;
+  private readbackInFlight = false;
 
   constructor(
     renderer: THREE.WebGLRenderer,
@@ -146,7 +149,8 @@ export class FloodSimulation {
     return this.gpu.getCurrentRenderTarget(this.water).texture;
   }
 
-  /** Read current water state into `out` (length N*N*4). */
+  /** Synchronous read of the water state into `out` (length N*N*4). Stalls the
+   * pipeline — used only where the result is needed immediately (precompute). */
   readWater(out: Float32Array): void {
     this.renderer.readRenderTargetPixels(
       this.gpu.getCurrentRenderTarget(this.water),
@@ -154,9 +158,53 @@ export class FloodSimulation {
     );
   }
 
+  /**
+   * Kick off an ASYNC readback into a pixel-pack buffer (no CPU stall). Poll it
+   * with {@link pollReadback}. Returns false if one is already in flight or the
+   * context isn't WebGL2 (caller should fall back to {@link readWater}).
+   */
+  requestReadback(): boolean {
+    if (this.readbackInFlight) return false;
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    if (typeof gl.fenceSync !== 'function') return false;
+    this.renderer.setRenderTarget(this.gpu.getCurrentRenderTarget(this.water));
+    if (!this.pbo) {
+      this.pbo = gl.createBuffer();
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pbo);
+      gl.bufferData(gl.PIXEL_PACK_BUFFER, this.N * this.N * 4 * 4, gl.STREAM_READ);
+    } else {
+      gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pbo);
+    }
+    gl.readPixels(0, 0, this.N, this.N, gl.RGBA, gl.FLOAT, 0); // into the bound PBO
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    this.fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    this.renderer.setRenderTarget(null);
+    gl.flush();
+    this.readbackInFlight = !!this.fence;
+    return this.readbackInFlight;
+  }
+
+  /** If the async readback has completed, copy it into `out` and return true. */
+  pollReadback(out: Float32Array): boolean {
+    if (!this.readbackInFlight || !this.fence) return false;
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    const status = gl.clientWaitSync(this.fence, 0, 0);
+    if (status === gl.TIMEOUT_EXPIRED || status === gl.WAIT_FAILED) return false;
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pbo);
+    gl.getBufferSubData(gl.PIXEL_PACK_BUFFER, 0, out);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    gl.deleteSync(this.fence);
+    this.fence = null;
+    this.readbackInFlight = false;
+    return true;
+  }
+
   dispose(): void {
     this.gpu.dispose();
     this.water0.dispose();
     this.dummySurface.dispose();
+    const gl = this.renderer.getContext() as WebGL2RenderingContext;
+    if (this.fence) gl.deleteSync(this.fence);
+    if (this.pbo) gl.deleteBuffer(this.pbo);
   }
 }

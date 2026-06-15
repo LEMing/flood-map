@@ -112,6 +112,8 @@ export const nl: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'locatie',
   'stats.simTime': 'sim-tijd',
   'stats.rainIn': 'regen gevallen',
@@ -126,6 +128,7 @@ export const nl: Record<string, string> = {
   'toast.notFound': 'Geen resultaat voor “{q}”.',
   'toast.geocodeFail': 'Geocodering mislukt. Probeer het zo opnieuw.',
   'toast.enterAddress': 'Voer een adres in.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Je locatie wordt bepaald…',
 
   'legend.elevation': 'Hoogte',

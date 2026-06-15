@@ -122,6 +122,8 @@ export const ja: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': '位置',
   'stats.simTime': 'シミュ時間',
   'stats.rainIn': '降水量',
@@ -137,6 +139,7 @@ export const ja: Record<string, string> = {
   'toast.notFound': '「{q}」に一致する結果がありません。',
   'toast.geocodeFail': 'ジオコーディングに失敗しました。しばらくして再試行してください。',
   'toast.enterAddress': '住所を入力してください。',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': '現在地を検出しています…',
 
   // Misc

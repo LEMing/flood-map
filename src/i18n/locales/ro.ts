@@ -112,6 +112,8 @@ export const ro: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'locație',
   'stats.simTime': 'timp simulare',
   'stats.rainIn': 'ploaie căzută',
@@ -126,6 +128,7 @@ export const ro: Record<string, string> = {
   'toast.notFound': 'Niciun rezultat pentru „{q}”.',
   'toast.geocodeFail': 'Geocodarea a eșuat. Încearcă din nou în scurt timp.',
   'toast.enterAddress': 'Introdu o adresă.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Se detectează locația ta…',
 
   'legend.elevation': 'Altitudine',

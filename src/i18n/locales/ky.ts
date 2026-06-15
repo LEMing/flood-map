@@ -112,6 +112,8 @@ export const ky: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'жайгашкан жери',
   'stats.simTime': 'симуляция убактысы',
   'stats.rainIn': 'жааган жамгыр',
@@ -126,6 +128,7 @@ export const ky: Record<string, string> = {
   'toast.notFound': '«{q}» боюнча эч нерсе табылган жок.',
   'toast.geocodeFail': 'Геокоддоо ишке ашкан жок. Кайра аракет кылыңыз.',
   'toast.enterAddress': 'Дарек киргизиңиз.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Жайгашкан жериңиз аныкталууда…',
 
   'legend.elevation': 'Бийиктик',

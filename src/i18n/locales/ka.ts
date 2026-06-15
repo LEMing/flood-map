@@ -112,6 +112,8 @@ export const ka: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'ლოკაცია',
   'stats.simTime': 'სიმულაციის დრო',
   'stats.rainIn': 'მოსული წვიმა',
@@ -126,6 +128,7 @@ export const ka: Record<string, string> = {
   'toast.notFound': '„{q}“ ვერ მოიძებნა.',
   'toast.geocodeFail': 'გეოკოდირება ვერ შესრულდა. სცადეთ ხელახლა.',
   'toast.enterAddress': 'შეიყვანეთ მისამართი.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'თქვენი ლოკაცია ისაზღვრება…',
 
   'legend.elevation': 'სიმაღლე',

@@ -112,6 +112,8 @@ export const ar: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'الموقع',
   'stats.simTime': 'زمن المحاكاة',
   'stats.rainIn': 'المطر الساقط',
@@ -126,6 +128,7 @@ export const ar: Record<string, string> = {
   'toast.notFound': 'لا توجد نتائج لـ “{q}”.',
   'toast.geocodeFail': 'فشل الترميز الجغرافي. حاول مرة أخرى بعد قليل.',
   'toast.enterAddress': 'الرجاء إدخال عنوان.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'جارٍ تحديد موقعك…',
 
   'legend.elevation': 'الارتفاع',

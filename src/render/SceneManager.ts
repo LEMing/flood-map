@@ -77,6 +77,8 @@ export class SceneManager {
   private gtaoPass?: GTAOPass;
   private postEnabled = true;
   private godRayScale = 0.4;
+  private renderScale = 1;
+  private readonly dprCap = Math.min(window.devicePixelRatio, 2);
   private refractionExcludes: THREE.Object3D[] = [];
   private readonly tmpVec = new THREE.Vector3();
   private readonly tmpSun = new THREE.Vector3();
@@ -187,6 +189,7 @@ export class SceneManager {
     this.vignettePass.enabled = p.vignette > 0.001;
     this.godRayScale = p.godRays;
     this.godRayPass.enabled = p.godRays > 0.001;
+    this.setRenderScale(p.renderScale);
     this.weather.uCloudShadow.value = p.cloudShadows;
     this.haze.visible = this.stormEnabled && p.groundHaze > 0.001;
     (this.haze.material as THREE.ShaderMaterial).uniforms.uHaze.value = p.groundHaze;
@@ -357,14 +360,28 @@ export class SceneManager {
     else this.renderer.render(this.scene, this.camera);
   }
 
-  private onResize = (): void => {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
+  /** Scale the 3D render resolution (backing store) without touching the HTML UI. */
+  setRenderScale(scale: number): void {
+    const s = THREE.MathUtils.clamp(scale, 0.4, 1);
+    if (Math.abs(s - this.renderScale) < 1e-3) return;
+    this.renderScale = s;
+    this.applyResolution();
+  }
+
+  private applyResolution(): void {
+    this.renderer.setPixelRatio(this.dprCap * this.renderScale);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     const ds = this.renderer.getDrawingBufferSize(new THREE.Vector2());
     this.sceneRT.setSize(ds.x, ds.y);
+    this.composer.setPixelRatio(this.dprCap * this.renderScale);
     this.composer.setSize(window.innerWidth, window.innerHeight);
-    this.gtaoPass?.setSize(ds.x, ds.y); // resize even when not in the chain
+    this.gtaoPass?.setSize(ds.x, ds.y);
+  }
+
+  private onResize = (): void => {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.applyResolution();
   };
 
   dispose(): void {

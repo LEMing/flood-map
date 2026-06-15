@@ -112,6 +112,8 @@ export const ha: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'wuri',
   'stats.simTime': 'lokacin sim',
   'stats.rainIn': 'ruwan da ya sauka',
@@ -126,6 +128,7 @@ export const ha: Record<string, string> = {
   'toast.notFound': 'Babu wanda ya dace da “{q}”.',
   'toast.geocodeFail': 'Geocoding ya gaza. Sake gwadawa nan da ɗan lokaci.',
   'toast.enterAddress': 'Don Allah shigar da adireshi.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Ana gano wurin ku…',
 
   'legend.elevation': 'Tsayi',

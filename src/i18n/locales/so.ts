@@ -112,6 +112,8 @@ export const so: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'goob',
   'stats.simTime': 'waqtiga jilitaanka',
   'stats.rainIn': 'roob soo galay',
@@ -126,6 +128,7 @@ export const so: Record<string, string> = {
   'toast.notFound': 'Wax u dhigma “{q}” lama helin.',
   'toast.geocodeFail': 'Geocoding-ku wuu fashilmay. Isku day mar kale.',
   'toast.enterAddress': 'Fadlan geli cinwaan.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Waxaa la ogaanayaa goobtaada…',
 
   'legend.elevation': 'Sare u kac',

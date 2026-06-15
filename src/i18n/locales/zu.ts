@@ -112,6 +112,8 @@ export const zu: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'indawo',
   'stats.simTime': 'isikhathi sesilinganiso',
   'stats.rainIn': 'imvula engenile',
@@ -126,6 +128,7 @@ export const zu: Record<string, string> = {
   'toast.notFound': 'Akukho okutholakele “{q}”.',
   'toast.geocodeFail': 'I-geocoding ihlulekile. Zama futhi ngomzuzwana.',
   'toast.enterAddress': 'Sicela ufake ikheli.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Ithola indawo yakho…',
 
   'legend.elevation': 'Ukuphakama',

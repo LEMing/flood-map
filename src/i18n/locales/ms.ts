@@ -112,6 +112,8 @@ export const ms: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'lokasi',
   'stats.simTime': 'masa sim',
   'stats.rainIn': 'hujan masuk',
@@ -126,6 +128,7 @@ export const ms: Record<string, string> = {
   'toast.notFound': 'Tiada padanan untuk “{q}”.',
   'toast.geocodeFail': 'Geokod gagal. Cuba lagi sebentar.',
   'toast.enterAddress': 'Sila masukkan alamat.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Mengesan lokasi anda…',
 
   'legend.elevation': 'Ketinggian',

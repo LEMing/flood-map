@@ -112,6 +112,8 @@ export const he: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'מיקום',
   'stats.simTime': 'זמן סימולציה',
   'stats.rainIn': 'גשם שירד',
@@ -126,6 +128,7 @@ export const he: Record<string, string> = {
   'toast.notFound': 'לא נמצאה התאמה ל-“{q}”.',
   'toast.geocodeFail': 'הגאוקודינג נכשל. נסה שוב בעוד רגע.',
   'toast.enterAddress': 'אנא הזן כתובת.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'מזהה את מיקומך…',
 
   'legend.elevation': 'גובה',

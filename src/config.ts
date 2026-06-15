@@ -107,6 +107,8 @@ export interface Params {
   godRays: number; // 0..1 light-shaft strength (storm only)
   groundHaze: number; // 0..1 low ground haze (storm)
   rainSplashes: boolean; // splash rings on the water when raining
+  renderScale: number; // 0.5..1 render-resolution scale (fill-rate vs sharpness)
+  autoQuality: boolean; // drop effects automatically on sustained low FPS
 }
 
 export const DEFAULT_PARAMS: Params = {
@@ -180,6 +182,8 @@ export const DEFAULT_PARAMS: Params = {
   godRays: 0.4,
   groundHaze: 0.12,
   rainSplashes: true,
+  renderScale: 1,
+  autoQuality: true,
 };
 
 export const GRID_RESOLUTIONS = [128, 256, 512, 1024, 2048] as const;

@@ -112,6 +112,8 @@ export const hy: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'գտնվելու վայր',
   'stats.simTime': 'սիմուլյացիայի ժամանակ',
   'stats.rainIn': 'տեղացած անձրև',
@@ -126,6 +128,7 @@ export const hy: Record<string, string> = {
   'toast.notFound': '«{q}»-ի համար ոչինչ չի գտնվել։',
   'toast.geocodeFail': 'Գեոկոդավորումը ձախողվեց։ Փորձեք մի փոքր անց։',
   'toast.enterAddress': 'Մուտքագրեք հասցեն։',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Որոշվում է ձեր գտնվելու վայրը…',
 
   'legend.elevation': 'Բարձրություն',

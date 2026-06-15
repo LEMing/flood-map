@@ -112,6 +112,8 @@ export const ru: Record<string, string> = {
   'atmo.godRays': 'лучи света (гроза)',
   'atmo.haze': 'дымка у земли',
   'atmo.splashes': 'брызги дождя',
+  'atmo.autoQuality': 'авто-качество',
+  'atmo.renderScale': 'масштаб рендера',
   'stats.location': 'локация',
   'stats.simTime': 'время симуляции',
   'stats.rainIn': 'выпало дождя',
@@ -126,6 +128,7 @@ export const ru: Record<string, string> = {
   'toast.notFound': 'Ничего не найдено по запросу «{q}».',
   'toast.geocodeFail': 'Геокодирование не удалось. Попробуйте ещё раз.',
   'toast.enterAddress': 'Введите адрес.',
+  'toast.autoQuality': 'Снизил качество графики ради плавности.',
   'toast.detecting': 'Определяем вашу локацию…',
 
   'legend.elevation': 'Высота',

@@ -112,6 +112,8 @@ export const be: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'месцазнаходжанне',
   'stats.simTime': 'час сімуляцыі',
   'stats.rainIn': 'выпала дажджу',
@@ -126,6 +128,7 @@ export const be: Record<string, string> = {
   'toast.notFound': 'Нічога не знойдзена па запыце «{q}».',
   'toast.geocodeFail': 'Геакадаванне не ўдалося. Паспрабуйце яшчэ раз.',
   'toast.enterAddress': 'Увядзіце адрас.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Вызначаем ваша месцазнаходжанне…',
 
   'legend.elevation': 'Вышыня',

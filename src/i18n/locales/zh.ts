@@ -122,6 +122,8 @@ export const zh: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': '位置',
   'stats.simTime': '模拟时间',
   'stats.rainIn': '降雨量',
@@ -137,6 +139,7 @@ export const zh: Record<string, string> = {
   'toast.notFound': '未找到"{q}"的匹配结果。',
   'toast.geocodeFail': '地理编码失败。请稍后重试。',
   'toast.enterAddress': '请输入地址。',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': '正在检测您的位置…',
 
   // Misc

@@ -165,6 +165,8 @@ export class ControlsPanel {
     atmo.addBinding(params, 'godRays', { min: 0, max: 1, step: 0.01, label: t('atmo.godRays') }).on('change', change);
     atmo.addBinding(params, 'groundHaze', { min: 0, max: 1, step: 0.01, label: t('atmo.haze') }).on('change', change);
     atmo.addBinding(params, 'rainSplashes', { label: t('atmo.splashes') }).on('change', change);
+    atmo.addBinding(params, 'renderScale', { min: 0.5, max: 1, step: 0.05, label: t('atmo.renderScale') }).on('change', change);
+    atmo.addBinding(params, 'autoQuality', { label: t('atmo.autoQuality') }).on('change', change);
 
     // --- Stats (read-only) ---
     const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });

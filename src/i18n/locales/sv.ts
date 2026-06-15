@@ -112,6 +112,8 @@ export const sv: Record<string, string> = {
   'atmo.godRays': 'light shafts (storm)',
   'atmo.haze': 'ground haze',
   'atmo.splashes': 'rain splashes',
+  'atmo.autoQuality': 'auto quality',
+  'atmo.renderScale': 'render scale',
   'stats.location': 'plats',
   'stats.simTime': 'simtid',
   'stats.rainIn': 'regn in',
@@ -126,6 +128,7 @@ export const sv: Record<string, string> = {
   'toast.notFound': 'Ingen träff hittades för ”{q}”.',
   'toast.geocodeFail': 'Geokodning misslyckades. Försök igen om en stund.',
   'toast.enterAddress': 'Ange en adress.',
+  'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Söker din plats…',
 
   'legend.elevation': 'Höjd',
