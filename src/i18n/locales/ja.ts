@@ -92,6 +92,7 @@ export const ja: Record<string, string> = {
   'viz.qHigh': 'High (pretty)',
   'viz.reflections': 'sky reflection',
   'viz.refraction': 'refraction',
+  'viz.clarity': 'water clarity',
   'viz.ripples': 'ripple strength',
   'viz.flowSpeed': 'flow speed',
   'viz.foam': 'foam',

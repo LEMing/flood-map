@@ -81,6 +81,7 @@ export interface Params {
   waterQuality: WaterQuality; // master gate: low=flat, medium=+refraction/foam, high=+3-octave/AO-friendly
   waterReflections: boolean; // sky + cloud reflection with fresnel
   waterRefraction: boolean; // screen-space refraction of the submerged bottom
+  waterClarity: number; // 0 realistic/transparent .. 1 clear depth-map colouring (overlay-like)
   rippleStrength: number; // 0..1 normal perturbation amount
   flowSpeed: number; // how fast velX/velY advects the ripples
   foamAmount: number; // 0..1 shoreline + turbulence foam
@@ -150,6 +151,7 @@ export const DEFAULT_PARAMS: Params = {
   waterQuality: 'medium',
   waterReflections: true,
   waterRefraction: true,
+  waterClarity: 0.6,
   rippleStrength: 0.5,
   flowSpeed: 0.6,
   foamAmount: 0.6,

@@ -103,6 +103,7 @@ export class ControlsPanel {
     }).on('change', change);
     viz.addBinding(params, 'waterReflections', { label: t('viz.reflections') }).on('change', change);
     viz.addBinding(params, 'waterRefraction', { label: t('viz.refraction') }).on('change', change);
+    viz.addBinding(params, 'waterClarity', { min: 0, max: 1, step: 0.01, label: t('viz.clarity') }).on('change', change);
     viz.addBinding(params, 'rippleStrength', { min: 0, max: 1, step: 0.01, label: t('viz.ripples') }).on('change', change);
     viz.addBinding(params, 'flowSpeed', { min: 0, max: 3, step: 0.05, label: t('viz.flowSpeed') }).on('change', change);
     viz.addBinding(params, 'foamAmount', { min: 0, max: 1, step: 0.01, label: t('viz.foam') }).on('change', change);

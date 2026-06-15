@@ -82,6 +82,7 @@ export const ru: Record<string, string> = {
   'viz.qHigh': 'Высокое (красиво)',
   'viz.reflections': 'отражение неба',
   'viz.refraction': 'преломление',
+  'viz.clarity': 'прозрачность воды',
   'viz.ripples': 'сила ряби',
   'viz.flowSpeed': 'скорость потока',
   'viz.foam': 'пена',

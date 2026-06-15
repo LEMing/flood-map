@@ -56,7 +56,7 @@ const fragmentShader = /* glsl */ `
   uniform vec3  uSkyTop, uSkyHorizon, uCloudColor;
   uniform float uCloudReflect;
   uniform vec3  uSunDir, uSunColor;
-  uniform float uRefract, uReflect, uRefractAmount;
+  uniform float uRefract, uReflect, uRefractAmount, uClarity;
   uniform float uRippleStrength, uFlowScale, uShoreFade;
   uniform float uFoam, uFoamVel, uGlint, uShininess;
   // weather / splashes (shared with SceneManager.weatherUniforms where noted)
@@ -166,6 +166,16 @@ const fragmentShader = /* glsl */ `
     vec3 transmit = exp(-vDepth * uAbsorb);
     vec3 throughWater = mix(uDeepColor, bottomColor * uTint, transmit);
 
+    // blend in a clear flood-map depth ramp (white shallow -> cyan -> blue deep)
+    // so flooded cells stay legible like the overlay, while refraction still shows
+    // through and ripples/foam/glint sit on top for realism.
+    float dt = clamp(vDepth / uDepthColorMax, 0.0, 1.0);
+    vec3 fShallow = vec3(0.78, 0.92, 0.99);
+    vec3 fMid = vec3(0.18, 0.68, 0.92);
+    vec3 fDeep = vec3(0.04, 0.26, 0.68);
+    vec3 floodTint = dt < 0.5 ? mix(fShallow, fMid, dt * 2.0) : mix(fMid, fDeep, (dt - 0.5) * 2.0);
+    throughWater = mix(throughWater, floodTint, uClarity * (1.0 - 0.4 * vSkirtT));
+
     // --- sky + cloud reflection with fresnel ---
     vec3 reflDir = reflect(-viewDir, surfN);
     float up = clamp(reflDir.y, 0.0, 1.0);
@@ -205,14 +215,13 @@ const fragmentShader = /* glsl */ `
     float shadow = smoothstep(0.45, 0.85, clouds) * uCloudShadow * uStorm;
     color *= (1.0 - shadow * 0.6);
 
-    // keep flooded cells readable even under dark storm lighting (a faint water body tint)
-    float wmask = smoothstep(0.02, max(0.1, uShoreFade), vDepth);
-    color = mix(color, vec3(0.10, 0.34, 0.46), 0.16 * wmask * (1.0 - vSkirtT));
-
-    // --- soft shoreline alpha (no hard discard); flooded cells stay visibly marked ---
-    float shoreAlpha = smoothstep(0.0, uShoreFade, vDepth);
-    float baseAlpha = uOpacity * (0.55 + 0.45 * clamp(vDepth / uDepthColorMax, 0.0, 1.0));
-    float alpha = clamp(baseAlpha * shoreAlpha + fres * 0.2 + foam * 0.5, 0.0, 1.0);
+    // --- alpha: realistic soft shoreline blended toward a fast overlay-like fade by
+    // clarity, so flooded cells become visible within a few cm when clarity is up ---
+    float wetSoft = smoothstep(0.0, uShoreFade, vDepth);
+    float wetFast = smoothstep(0.0, 0.05, vDepth);
+    float wet = mix(wetSoft, wetFast, uClarity);
+    float baseAlpha = uOpacity * (0.45 + 0.55 * dt);
+    float alpha = clamp(baseAlpha * wet + fres * 0.2 + foam * 0.5, 0.0, 1.0);
     #ifdef SKIRT
       alpha = clamp(uOpacity * 0.9 + fres * 0.2, 0.0, 1.0);
     #endif
@@ -274,6 +283,7 @@ export class WaterMesh {
       uRefract: { value: 1 },
       uReflect: { value: 1 },
       uRefractAmount: { value: 0.04 },
+      uClarity: { value: params.waterClarity },
       uRippleStrength: { value: params.rippleStrength },
       uFlowScale: { value: params.flowSpeed },
       uShoreFade: { value: Math.max(0.05, params.shorelineSoftness) },
@@ -373,6 +383,7 @@ export class WaterMesh {
     u.uGlint.value = params.sunGlint;
     u.uRefract.value = params.waterRefraction && params.waterQuality !== 'low' ? 1 : 0;
     u.uReflect.value = params.waterReflections ? 1 : 0;
+    u.uClarity.value = params.waterClarity;
     u.uRainAmount.value = params.rainSplashes ? u.uRainAmount.value : 0;
     this.skirt.visible = params.skirtEnabled;
     if (!params.rainSplashes) this.uniforms.uRainAmount.value = 0;
