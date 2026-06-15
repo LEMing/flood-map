@@ -1,7 +1,8 @@
-import { fromUrl } from 'geotiff';
+import { fromArrayBuffer } from 'geotiff';
 import type { LatLon } from './heightmap';
 import { projectGrid } from './projection';
 import { ENDPOINTS } from './endpoints';
+import { cachedArrayBuffer } from './cache';
 
 // ESA WorldCover 10 m (v200, 2021) land-cover classes, read from the public COG
 // tiles (3°×3°, named by SW corner in 3° steps). Used to build per-cell
@@ -69,7 +70,8 @@ export async function fetchLandCover(
     const w = Math.min(2048, Math.max(8, Math.ceil((bbox[2] - bbox[0]) / NATIVE_DEG) + 2));
     const h = Math.min(2048, Math.max(8, Math.ceil((bbox[3] - bbox[1]) / NATIVE_DEG) + 2));
     try {
-      const tiff = await fromUrl(tileUrl(la, lo));
+      const buf = await cachedArrayBuffer(tileUrl(la, lo));
+      const tiff = await fromArrayBuffer(buf);
       const raster = await tiff.readRasters({ bbox, width: w, height: h, resampleMethod: 'nearest', interleave: false });
       patches.push({ minLon: bbox[0], maxLon: bbox[2], minLat: bbox[1], maxLat: bbox[3], w, h, data: raster[0] as ArrayLike<number> });
     } catch {

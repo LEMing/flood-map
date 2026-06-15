@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import type { LatLon } from './heightmap';
 import { chooseSatelliteZoom, lonLatToPixel, projectGrid } from './projection';
 import { ENDPOINTS } from './endpoints';
+import { cachedImage } from './cache';
 
 const TILE = 256;
 const MAX_TILES = 100;
@@ -12,14 +13,10 @@ export interface SatelliteDrape {
   uvSat: Float32Array;
 }
 
+// cachedImage loads from a same-origin blob: URL, so the stitched canvas stays
+// untainted without crossOrigin.
 function loadImage(url: string): Promise<HTMLImageElement | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous'; // needed so the stitched canvas isn't tainted in prod
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
+  return cachedImage(url).catch(() => null);
 }
 
 /**

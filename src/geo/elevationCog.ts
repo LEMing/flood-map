@@ -4,6 +4,7 @@ import type { Heightmap, LatLon } from './heightmap';
 import { computeMinMax } from './heightmap';
 import { projectGrid } from './projection';
 import { ENDPOINTS } from './endpoints';
+import { peekArrayBuffer, putArrayBuffer } from './cache';
 
 // Reads Copernicus GLO-30 or FABDEM Cloud-Optimized GeoTIFFs (1°×1° tiles, both
 // EPSG:4326, ~30 m). geotiff.js issues HTTP range requests, so only the small
@@ -41,12 +42,16 @@ function tileUrl(source: ElevationSource, latI: number, lonI: number): string {
 // breaks geotiff's range requests, so we download the (~13 MB) tile whole.
 async function openTiff(source: ElevationSource, url: string): Promise<GeoTIFF> {
   if (source === 'fabdem') {
+    const cached = await peekArrayBuffer(url);
+    if (cached) return fromArrayBuffer(cached);
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const buf = await resp.arrayBuffer();
     // The HF/Xet signed-redirect backend occasionally serves a tiny error body
-    // or a truncated file; a real land tile is several MB.
+    // or a truncated file; a real land tile is several MB. Only cache a body
+    // that passes this size check so a bad read is never persisted.
     if (buf.byteLength < 30_000) throw new Error(`FABDEM body too small (${buf.byteLength} B)`);
+    putArrayBuffer(url, buf);
     return fromArrayBuffer(buf);
   }
   return fromUrl(url);

@@ -2,18 +2,15 @@ import type { Heightmap, LatLon } from './heightmap';
 import { computeMinMax } from './heightmap';
 import { chooseZoom, lonLatToPixel, projectGrid } from './projection';
 import { ENDPOINTS } from './endpoints';
+import { cachedImage } from './cache';
 
 const TILE = 256;
 const MAX_TILES = 100; // safety cap on number of tiles to stitch
 
+// cachedImage loads from a same-origin blob: URL, so the decode canvas stays
+// untainted without crossOrigin. A missing tile -> null, treated as sea level.
 function loadImage(url: string): Promise<HTMLImageElement | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous'; // needed so the decode canvas isn't tainted in prod
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null); // missing tile -> treated as sea level
-    img.src = url;
-  });
+  return cachedImage(url).catch(() => null);
 }
 
 // Terrarium PNG decoding: height = (R*256 + G + B/256) - 32768 (metres).

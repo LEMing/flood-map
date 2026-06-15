@@ -1,5 +1,6 @@
 import type { LatLon } from './heightmap';
 import { localMetersToLonLat, lonLatToLocalMeters } from './projection';
+import { cachedJson } from './cache';
 
 // OpenStreetMap features (via Overpass `out geom`) rasterized to the grid:
 //  - building : no-flow obstacles that route water into the streets
@@ -29,13 +30,17 @@ const OVERPASS_MIRRORS = [
   'https://overpass.kumi.systems/api/interpreter',
 ];
 
-async function overpassFetch(query: string): Promise<{ elements: OsmWay[] }> {
+type OverpassResponse = { elements: OsmWay[] };
+
+// Cache keyed by the query (not the mirror URL) so a re-query hits cache
+// regardless of which mirror served the original response.
+async function overpassFetch(query: string): Promise<OverpassResponse> {
+  const cacheKey = `overpass:${query}`;
   let lastError: unknown;
   for (const mirror of OVERPASS_MIRRORS) {
+    const url = `${mirror}?data=${encodeURIComponent(query)}`;
     try {
-      const res = await fetch(`${mirror}?data=${encodeURIComponent(query)}`);
-      if (!res.ok) { lastError = new Error(`HTTP ${res.status}`); continue; }
-      return (await res.json()) as { elements: OsmWay[] };
+      return await cachedJson<OverpassResponse>(url, { key: cacheKey });
     } catch (e) {
       lastError = e;
     }
