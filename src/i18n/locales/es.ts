@@ -37,6 +37,14 @@ export const es: Record<string, string> = {
   'rain.footprint': 'cobertura',
   'rain.footprintUniform': 'Uniforme',
   'rain.footprintSpot': 'Célula de tormenta',
+  'rain.cellX': 'celda x',
+  'rain.cellY': 'celda y',
+  'rain.cellRadius': 'radio de celda',
+  'storm.constant': 'Constante (manual mm/h)',
+  'storm.cloudburst': 'Aguacero (~50 mm / 2 h)',
+  'storm.design25yr': 'Tormenta de diseño P≈25 años',
+  'storm.may2026': 'Observado 18 may 2026 (41 mm/2 h)',
+  'storm.jun2026': 'Observado 12 jun 2026 (90 mm/día)',
 
   // Urban model
   'urban.surface': 'modelo de superficie',

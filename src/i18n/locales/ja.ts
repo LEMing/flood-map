@@ -37,6 +37,14 @@ export const ja: Record<string, string> = {
   'rain.footprint': '降雨範囲',
   'rain.footprintUniform': '均一',
   'rain.footprintSpot': '雷雨セル',
+  'rain.cellX': 'セル x',
+  'rain.cellY': 'セル y',
+  'rain.cellRadius': 'セル半径',
+  'storm.constant': '一定（手動 mm/時）',
+  'storm.cloudburst': '集中豪雨（~50 mm / 2時間）',
+  'storm.design25yr': '計画降雨 P≈25年',
+  'storm.may2026': '実測 2026年5月18日（41 mm/2時間）',
+  'storm.jun2026': '実測 2026年6月12日（90 mm/日）',
 
   // Urban model
   'urban.surface': '地表モデル',

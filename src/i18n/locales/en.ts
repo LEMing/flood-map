@@ -40,6 +40,16 @@ export const en: Record<string, string> = {
   'rain.footprint': 'footprint',
   'rain.footprintUniform': 'Uniform',
   'rain.footprintSpot': 'Storm cell',
+  'rain.cellX': 'cell x',
+  'rain.cellY': 'cell y',
+  'rain.cellRadius': 'cell radius',
+
+  // Storm hyetograph presets
+  'storm.constant': 'Constant (manual mm/hr)',
+  'storm.cloudburst': 'Cloudburst (~50 mm / 2 h)',
+  'storm.design25yr': 'Design storm P≈25 yr',
+  'storm.may2026': 'Observed 18 May 2026 (41 mm/2 h)',
+  'storm.jun2026': 'Observed 12 Jun 2026 (90 mm/day)',
 
   // Urban model
   'urban.surface': 'surface model',

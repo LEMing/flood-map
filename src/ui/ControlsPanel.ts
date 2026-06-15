@@ -1,11 +1,13 @@
 import { Pane } from 'tweakpane';
-import { STORM_LABELS, type Params } from '../config';
+import { STORM_LABELS, type Params, type StormType } from '../config';
 import { t } from '../i18n';
 import type { StatsData } from './stats';
 
-const STORM_OPTIONS = Object.fromEntries(
-  Object.entries(STORM_LABELS).map(([value, label]) => [label, value]),
-);
+const STORM_TYPES = Object.keys(STORM_LABELS) as StormType[];
+
+function stormOptions(): Record<string, StormType> {
+  return Object.fromEntries(STORM_TYPES.map((value) => [t(`storm.${value}`), value]));
+}
 
 export interface ControlCallbacks {
   onParamChange(): void; // live params (rain, physics, viz)
@@ -45,13 +47,13 @@ export class ControlsPanel {
     // --- Rain ---
     const rain = this.pane.addFolder({ title: t('rain.title'), expanded: true });
     rain.addBinding(params, 'raining', { label: t('rain.raining') }).on('change', change);
-    rain.addBinding(params, 'stormType', { label: t('rain.stormEvent'), options: STORM_OPTIONS }).on('change', () => { change(); cb.onReset(); });
+    rain.addBinding(params, 'stormType', { label: t('rain.stormEvent'), options: stormOptions() }).on('change', () => { change(); cb.onReset(); });
     rain.addBinding(params, 'storm', { label: t('rain.clouds') }).on('change', change);
     rain.addBinding(params, 'intensityMmPerHr', { min: 0, max: 400, step: 1, label: t('rain.constant') }).on('change', change);
     rain.addBinding(params, 'rainFootprint', { label: t('rain.footprint'), options: { [t('rain.footprintUniform')]: 'uniform', [t('rain.footprintSpot')]: 'spot' } }).on('change', change);
-    rain.addBinding(params, 'spotX', { min: 0, max: 1, step: 0.01, label: 'cell x' }).on('change', change);
-    rain.addBinding(params, 'spotY', { min: 0, max: 1, step: 0.01, label: 'cell y' }).on('change', change);
-    rain.addBinding(params, 'spotRadius', { min: 0.02, max: 0.6, step: 0.01, label: 'cell radius' }).on('change', change);
+    rain.addBinding(params, 'spotX', { min: 0, max: 1, step: 0.01, label: t('rain.cellX') }).on('change', change);
+    rain.addBinding(params, 'spotY', { min: 0, max: 1, step: 0.01, label: t('rain.cellY') }).on('change', change);
+    rain.addBinding(params, 'spotRadius', { min: 0.02, max: 0.6, step: 0.01, label: t('rain.cellRadius') }).on('change', change);
 
     // --- Urban surface model (land cover + OSM) ---
     const urban = this.pane.addFolder({ title: t('urban.title'), expanded: true });

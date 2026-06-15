@@ -37,6 +37,14 @@ export const hi: Record<string, string> = {
   'rain.footprint': 'प्रभाव क्षेत्र',
   'rain.footprintUniform': 'एकसमान',
   'rain.footprintSpot': 'तूफान कोशिका',
+  'rain.cellX': 'सेल x',
+  'rain.cellY': 'सेल y',
+  'rain.cellRadius': 'सेल त्रिज्या',
+  'storm.constant': 'स्थिर (मैन्युअल mm/घंटा)',
+  'storm.cloudburst': 'मूसलाधार वर्षा (~50 mm / 2 घंटा)',
+  'storm.design25yr': 'डिज़ाइन तूफान P≈25 वर्ष',
+  'storm.may2026': 'प्रेक्षित 18 मई 2026 (41 mm/2 घंटा)',
+  'storm.jun2026': 'प्रेक्षित 12 जून 2026 (90 mm/दिन)',
 
   // Urban model
   'urban.surface': 'सतह मॉडल',

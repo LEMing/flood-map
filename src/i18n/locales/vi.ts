@@ -37,6 +37,14 @@ export const vi: Record<string, string> = {
   'rain.footprint': 'phạm vi mưa',
   'rain.footprintUniform': 'Đồng đều',
   'rain.footprintSpot': 'Ô bão',
+  'rain.cellX': 'ô x',
+  'rain.cellY': 'ô y',
+  'rain.cellRadius': 'bán kính ô',
+  'storm.constant': 'Cố định (thủ công mm/giờ)',
+  'storm.cloudburst': 'Mưa lớn (~50 mm / 2 giờ)',
+  'storm.design25yr': 'Bão thiết kế P≈25 năm',
+  'storm.may2026': 'Quan trắc 18 Th5 2026 (41 mm/2 giờ)',
+  'storm.jun2026': 'Quan trắc 12 Th6 2026 (90 mm/ngày)',
 
   // Urban model
   'urban.surface': 'mô hình bề mặt',

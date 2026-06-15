@@ -37,6 +37,14 @@ export const ko: Record<string, string> = {
   'rain.footprint': '강우 범위',
   'rain.footprintUniform': '균일',
   'rain.footprintSpot': '뇌우 셀',
+  'rain.cellX': '셀 x',
+  'rain.cellY': '셀 y',
+  'rain.cellRadius': '셀 반경',
+  'storm.constant': '일정 (수동 mm/시)',
+  'storm.cloudburst': '집중호우 (~50 mm / 2시간)',
+  'storm.design25yr': '설계 강우 P≈25년',
+  'storm.may2026': '관측 2026년 5월 18일 (41 mm/2시간)',
+  'storm.jun2026': '관측 2026년 6월 12일 (90 mm/일)',
 
   // Urban model
   'urban.surface': '지표 모델',

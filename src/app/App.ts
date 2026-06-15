@@ -91,7 +91,8 @@ export class App {
       onSelect: (lat, lon, label) => this.loadCenter({ lat, lon, displayName: label }),
       onLanguage: (lang) => this.setLang(lang),
     });
-    this.addressBar.setValue(this.params.address);
+    // The input is filled only once we know what we're loading (after IP detect
+    // / geocode), so a default place never flashes for out-of-region visitors.
 
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
 

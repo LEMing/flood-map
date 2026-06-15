@@ -37,6 +37,14 @@ export const de: Record<string, string> = {
   'rain.footprint': 'Ausdehnung',
   'rain.footprintUniform': 'Gleichmäßig',
   'rain.footprintSpot': 'Gewitterzelle',
+  'rain.cellX': 'Zelle x',
+  'rain.cellY': 'Zelle y',
+  'rain.cellRadius': 'Zellenradius',
+  'storm.constant': 'Konstant (manuell mm/h)',
+  'storm.cloudburst': 'Wolkenbruch (~50 mm / 2 h)',
+  'storm.design25yr': 'Bemessungsregen P≈25 J.',
+  'storm.may2026': 'Beobachtet 18. Mai 2026 (41 mm/2 h)',
+  'storm.jun2026': 'Beobachtet 12. Juni 2026 (90 mm/Tag)',
 
   // Urban model
   'urban.surface': 'Oberflächenmodell',

@@ -37,6 +37,14 @@ export const th: Record<string, string> = {
   'rain.footprint': 'ขอบเขตฝน',
   'rain.footprintUniform': 'สม่ำเสมอ',
   'rain.footprintSpot': 'เซลล์พายุ',
+  'rain.cellX': 'เซลล์ x',
+  'rain.cellY': 'เซลล์ y',
+  'rain.cellRadius': 'รัศมีเซลล์',
+  'storm.constant': 'คงที่ (กำหนดเอง มม./ชม.)',
+  'storm.cloudburst': 'ฝนถล่ม (~50 มม. / 2 ชม.)',
+  'storm.design25yr': 'พายุออกแบบ P≈25 ปี',
+  'storm.may2026': 'ตรวจวัด 18 พ.ค. 2026 (41 มม./2 ชม.)',
+  'storm.jun2026': 'ตรวจวัด 12 มิ.ย. 2026 (90 มม./วัน)',
 
   // Urban model
   'urban.surface': 'แบบจำลองพื้นผิว',

@@ -37,6 +37,14 @@ export const tr: Record<string, string> = {
   'rain.footprint': 'kapsama alanı',
   'rain.footprintUniform': 'Düzgün',
   'rain.footprintSpot': 'Fırtına hücresi',
+  'rain.cellX': 'hücre x',
+  'rain.cellY': 'hücre y',
+  'rain.cellRadius': 'hücre yarıçapı',
+  'storm.constant': 'Sabit (elle mm/sa)',
+  'storm.cloudburst': 'Sağanak (~50 mm / 2 sa)',
+  'storm.design25yr': 'Tasarım fırtınası P≈25 yıl',
+  'storm.may2026': 'Gözlem 18 May 2026 (41 mm/2 sa)',
+  'storm.jun2026': 'Gözlem 12 Haz 2026 (90 mm/gün)',
 
   // Urban model
   'urban.surface': 'yüzey modeli',

@@ -37,6 +37,14 @@ export const zh: Record<string, string> = {
   'rain.footprint': '覆盖范围',
   'rain.footprintUniform': '均匀',
   'rain.footprintSpot': '风暴单体',
+  'rain.cellX': '单元 x',
+  'rain.cellY': '单元 y',
+  'rain.cellRadius': '单元半径',
+  'storm.constant': '恒定（手动 mm/小时）',
+  'storm.cloudburst': '暴雨（~50 mm / 2 小时）',
+  'storm.design25yr': '设计暴雨 P≈25 年',
+  'storm.may2026': '实测 2026年5月18日（41 mm/2小时）',
+  'storm.jun2026': '实测 2026年6月12日（90 mm/天）',
 
   // Urban model
   'urban.surface': '地表模型',

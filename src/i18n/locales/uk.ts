@@ -37,6 +37,14 @@ export const uk: Record<string, string> = {
   'rain.footprint': 'охоплення',
   'rain.footprintUniform': 'Рівномірно',
   'rain.footprintSpot': 'Грозовий осередок',
+  'rain.cellX': 'комірка x',
+  'rain.cellY': 'комірка y',
+  'rain.cellRadius': 'радіус комірки',
+  'storm.constant': 'Постійний (вручну мм/год)',
+  'storm.cloudburst': 'Залпова злива (~50 мм / 2 год)',
+  'storm.design25yr': 'Розрахункова злива P≈25 р.',
+  'storm.may2026': 'Факт 18 трав 2026 (41 мм/2 год)',
+  'storm.jun2026': 'Факт 12 черв 2026 (90 мм/добу)',
 
   // Urban model
   'urban.surface': 'модель поверхні',

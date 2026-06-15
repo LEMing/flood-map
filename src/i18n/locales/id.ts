@@ -37,6 +37,14 @@ export const id: Record<string, string> = {
   'rain.footprint': 'jangkauan',
   'rain.footprintUniform': 'Seragam',
   'rain.footprintSpot': 'Sel badai',
+  'rain.cellX': 'sel x',
+  'rain.cellY': 'sel y',
+  'rain.cellRadius': 'radius sel',
+  'storm.constant': 'Konstan (manual mm/jam)',
+  'storm.cloudburst': 'Hujan deras (~50 mm / 2 jam)',
+  'storm.design25yr': 'Badai desain P≈25 thn',
+  'storm.may2026': 'Teramati 18 Mei 2026 (41 mm/2 jam)',
+  'storm.jun2026': 'Teramati 12 Jun 2026 (90 mm/hari)',
 
   // Urban model
   'urban.surface': 'model permukaan',
