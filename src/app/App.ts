@@ -6,6 +6,7 @@ import { fetchSatellite } from '../geo/satelliteTiles';
 import { localMetersToLonLat, lonLatToLocalMeters } from '../geo/projection';
 import { POINTS_OF_INTEREST } from '../geo/places';
 import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/surface';
+import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Rain } from '../render/Rain';
@@ -153,6 +154,7 @@ export class App {
         warning ?? `Loaded ${place} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`,
         !!warning,
       );
+      trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.params.mapSizeKm });
     } catch (err) {
       showToast((err as Error).message, true);
     } finally {
