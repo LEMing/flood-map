@@ -205,10 +205,14 @@ const fragmentShader = /* glsl */ `
     float shadow = smoothstep(0.45, 0.85, clouds) * uCloudShadow * uStorm;
     color *= (1.0 - shadow * 0.6);
 
-    // --- soft shoreline alpha (no hard discard) ---
+    // keep flooded cells readable even under dark storm lighting (a faint water body tint)
+    float wmask = smoothstep(0.02, max(0.1, uShoreFade), vDepth);
+    color = mix(color, vec3(0.10, 0.34, 0.46), 0.16 * wmask * (1.0 - vSkirtT));
+
+    // --- soft shoreline alpha (no hard discard); flooded cells stay visibly marked ---
     float shoreAlpha = smoothstep(0.0, uShoreFade, vDepth);
-    float baseAlpha = uOpacity * (0.35 + 0.65 * clamp(vDepth / uDepthColorMax, 0.0, 1.0));
-    float alpha = clamp(baseAlpha * shoreAlpha + fres * 0.25 + foam * 0.5, 0.0, 1.0);
+    float baseAlpha = uOpacity * (0.55 + 0.45 * clamp(vDepth / uDepthColorMax, 0.0, 1.0));
+    float alpha = clamp(baseAlpha * shoreAlpha + fres * 0.2 + foam * 0.5, 0.0, 1.0);
     #ifdef SKIRT
       alpha = clamp(uOpacity * 0.9 + fres * 0.2, 0.0, 1.0);
     #endif
@@ -259,8 +263,8 @@ export class WaterMesh {
       uOpacity: { value: params.waterOpacity },
       uDepthColorMax: { value: params.depthColorMax },
       uAbsorb: { value: new THREE.Vector3() },
-      uDeepColor: { value: new THREE.Color(0.02, 0.16, 0.22) },
-      uTint: { value: new THREE.Color(0.85, 0.95, 1.0) },
+      uDeepColor: { value: new THREE.Color(0.03, 0.22, 0.30) },
+      uTint: { value: new THREE.Color(0.55, 0.75, 0.92) },
       uSkyTop: { value: new THREE.Color(0.42, 0.62, 0.82) },
       uSkyHorizon: { value: new THREE.Color(0.85, 0.92, 0.97) },
       uCloudColor: { value: new THREE.Color(0.34, 0.36, 0.42) },

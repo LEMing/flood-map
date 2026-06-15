@@ -15,7 +15,9 @@ export class Rain {
 
   constructor(hm: Heightmap) {
     this.size = hm.sizeMeters;
-    const topY = hm.max + 150; // metres of rain column above the highest ground
+    // Tall column reaching up toward the cloud ceiling so rain reads as falling
+    // from the clouds, not spawning in a low band of mid-air.
+    const topY = hm.max + Math.max(300, hm.sizeMeters * 0.45);
     const fallRange = topY - (hm.min - 10);
 
     const position = new Float32Array(MAX_DROPS * 2 * 3);
@@ -58,11 +60,13 @@ export class Rain {
         uniform int uFootprintSpot;
         uniform vec2 uSpotCenter, uWind;
         varying float vSeg;
+        varying float vFade;
         void main() {
           vec3 p = position;
           if (uFootprintSpot == 1 && distance(p.xz, uSpotCenter) > uSpotRadius) {
             gl_Position = vec4(2.0, 2.0, 2.0, 1.0); // clip offscreen
             vSeg = 0.0;
+            vFade = 0.0;
             return;
           }
           float t = uTime * uSpeed + aPhase * uFallRange;
@@ -71,13 +75,17 @@ export class Rain {
           p.y = uTopY - fallen - aSeg * uStreak;
           p.xz -= uWind * aSeg * uStreak;    // slant the streak along the wind
           vSeg = aSeg;
+          // fade in over the first 12% of the fall so drops emerge from the cloud
+          // ceiling instead of popping into existence at a hard line.
+          vFade = smoothstep(0.0, 0.12 * uFallRange, fallen);
           gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
         }
       `,
       fragmentShader: /* glsl */ `
         varying float vSeg;
+        varying float vFade;
         void main() {
-          gl_FragColor = vec4(0.72, 0.82, 0.96, mix(0.5, 0.04, vSeg));
+          gl_FragColor = vec4(0.72, 0.82, 0.96, mix(0.5, 0.04, vSeg) * vFade);
         }
       `,
       transparent: true,

@@ -236,7 +236,7 @@ export class SceneManager {
     this.sun.position.set(-1, 1.4, -0.8).multiplyScalar(sizeMeters).add(target);
     this.sun.target.position.copy(target);
 
-    this.cloudY = centerHeight + sizeMeters * 0.75 + 300;
+    this.cloudY = centerHeight + sizeMeters * 0.45 + 250;
     this.cloud.position.set(0, this.cloudY, 0);
     this.cloud.scale.set(sizeMeters * 12, 1, sizeMeters * 12);
     this.haze.position.set(0, centerHeight - sizeMeters * 0.02 + 12, 0);
@@ -258,12 +258,12 @@ export class SceneManager {
     this.scene.background = on ? this.stormSky : this.clearSky;
     this.cloud.visible = on;
     this.haze.visible = on && (this.haze.material as THREE.ShaderMaterial).uniforms.uHaze.value > 0.001;
-    this.hemi.intensity = on ? 0.5 : 1.0;
+    this.hemi.intensity = on ? 0.72 : 1.0;
     this.hemi.color.set(on ? 0x9fb0c4 : 0xcfe3ff);
-    this.sun.intensity = on ? 0.45 : 2.2;
+    this.sun.intensity = on ? 0.7 : 2.2;
     this.scene.fog = on
-      ? new THREE.Fog(0x4a5562, s * 0.6, s * 3.0)
-      : new THREE.Fog(0xacc7e0, s * 1.2, s * 5);
+      ? new THREE.Fog(0x5a6678, s * 1.0, s * 4.2)
+      : new THREE.Fog(0xacc7e0, s * 1.4, s * 6);
     if (!on) {
       this.flash = 0;
       this.lightningLight.intensity = 0;
@@ -291,7 +291,7 @@ export class SceneManager {
     this.flashTimer -= dt;
     if (this.flashTimer <= 0) this.triggerFlash();
     this.boltTime -= dt;
-    this.hemi.intensity = 0.5 + this.flash * 2.4;
+    this.hemi.intensity = 0.72 + this.flash * 2.4;
     this.lightningLight.intensity = this.flash * 2.6;
     this.cloudMat.uniforms.uFlash.value = this.flash * 1.4;
     this.bolt.visible = this.boltTime > 0;
@@ -410,7 +410,8 @@ function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
       void main() {
         vec2 p = vP * 0.002 + uCloudDrift * uTime * 0.3;
         float n = wFbm(p + wFbm(p * 0.6));
-        float a = smoothstep(0.3, 0.8, n) * 0.20 * uStorm * uHaze;
+        float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
+        float a = smoothstep(0.3, 0.8, n) * 0.20 * uStorm * uHaze * edge;
         gl_FragColor = vec4(vec3(0.62, 0.67, 0.73), a);
       }
     `,
@@ -459,7 +460,8 @@ function makeCloudMaterial(): THREE.ShaderMaterial {
         vec3 mid = vec3(0.34, 0.36, 0.42);
         vec3 col = mix(dark, mid, n);
         col += uFlash * vec3(0.85, 0.9, 1.0) * (0.4 + density);
-        gl_FragColor = vec4(col, density * 0.95);
+        float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
+        gl_FragColor = vec4(col, density * 0.95 * edge);
       }
     `,
   });

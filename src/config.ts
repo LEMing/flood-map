@@ -152,7 +152,7 @@ export const DEFAULT_PARAMS: Params = {
   flowSpeed: 0.6,
   foamAmount: 0.6,
   sunGlint: 1.0,
-  shorelineSoftness: 1.5,
+  shorelineSoftness: 0.25,
   skirtEnabled: true,
 
   postProcessing: true,
@@ -161,9 +161,9 @@ export const DEFAULT_PARAMS: Params = {
   ssao: false,
   vignette: 0.35,
   wetness: 0.7,
-  cloudShadows: 0.4,
+  cloudShadows: 0.35,
   godRays: 0.4,
-  groundHaze: 0.35,
+  groundHaze: 0.12,
   rainSplashes: true,
 };
 
