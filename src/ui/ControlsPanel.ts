@@ -109,6 +109,8 @@ export class ControlsPanel {
     viz.addBinding(params, 'sunGlint', { min: 0, max: 2, step: 0.05, label: t('viz.glint') }).on('change', change);
     viz.addBinding(params, 'shorelineSoftness', { min: 0, max: 5, step: 0.1, label: t('viz.shoreline') }).on('change', change);
     viz.addBinding(params, 'skirtEnabled', { label: t('viz.skirt') }).on('change', change);
+    viz.addBinding(params, 'floodOverlay', { label: t('viz.floodOverlay') }).on('change', change);
+    viz.addBinding(params, 'floodGrid', { label: t('viz.floodGrid') }).on('change', change);
 
     // --- Atmosphere / post-processing ---
     const atmo = this.pane.addFolder({ title: t('atmo.title'), expanded: false });

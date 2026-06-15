@@ -101,6 +101,8 @@ export const en: Record<string, string> = {
   'viz.glint': 'sun glint',
   'viz.shoreline': 'shoreline softness (m)',
   'viz.skirt': 'edge skirt walls',
+  'viz.floodOverlay': 'flood map overlay',
+  'viz.floodGrid': 'flood grid',
 
   // Atmosphere / post-processing
   'atmo.title': 'Atmosphere',

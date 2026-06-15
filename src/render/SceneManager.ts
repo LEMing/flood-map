@@ -236,7 +236,7 @@ export class SceneManager {
     this.sun.position.set(-1, 1.4, -0.8).multiplyScalar(sizeMeters).add(target);
     this.sun.target.position.copy(target);
 
-    this.cloudY = centerHeight + sizeMeters * 0.45 + 250;
+    this.cloudY = centerHeight + sizeMeters * 0.8 + 300;
     this.cloud.position.set(0, this.cloudY, 0);
     this.cloud.scale.set(sizeMeters * 12, 1, sizeMeters * 12);
     this.haze.position.set(0, centerHeight - sizeMeters * 0.02 + 12, 0);
@@ -276,6 +276,11 @@ export class SceneManager {
   updateStorm(dt: number): void {
     this.weather.uTime.value += dt;
     this.cloudMat.uniforms.uTime.value = this.weather.uTime.value;
+    // fade clouds out as the camera rises toward/above the ceiling so they never
+    // block the view from a high or top-down vantage.
+    this.cloudMat.uniforms.uCamFade.value = THREE.MathUtils.clamp(
+      (this.cloudY - this.camera.position.y) / (this.sceneSize * 0.15), 0, 1,
+    );
     const target = this.stormEnabled ? 1 : 0;
     this.weather.uStorm.value += (target - this.weather.uStorm.value) * Math.min(1, dt * 0.6);
 
@@ -426,7 +431,7 @@ function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
 
 function makeCloudMaterial(): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uFlash: { value: 0 } },
+    uniforms: { uTime: { value: 0 }, uFlash: { value: 0 }, uCamFade: { value: 1 } },
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
@@ -438,7 +443,7 @@ function makeCloudMaterial(): THREE.ShaderMaterial {
       }
     `,
     fragmentShader: /* glsl */ `
-      uniform float uTime, uFlash;
+      uniform float uTime, uFlash, uCamFade;
       varying vec2 vP;
       float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float noise(vec2 p){
@@ -461,7 +466,7 @@ function makeCloudMaterial(): THREE.ShaderMaterial {
         vec3 col = mix(dark, mid, n);
         col += uFlash * vec3(0.85, 0.9, 1.0) * (0.4 + density);
         float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
-        gl_FragColor = vec4(col, density * 0.95 * edge);
+        gl_FragColor = vec4(col, density * 0.95 * edge * uCamFade);
       }
     `,
   });

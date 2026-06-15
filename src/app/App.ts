@@ -21,6 +21,7 @@ import { SceneManager } from '../render/SceneManager';
 import { TerrainMesh } from '../render/TerrainMesh';
 import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
+import { FloodOverlay } from '../render/FloodOverlay';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
@@ -42,6 +43,7 @@ export class App {
 
   private terrain?: TerrainMesh;
   private water?: WaterMesh;
+  private floodOverlay?: FloodOverlay;
   private maxFlood?: MaxFloodOverlay;
   private velocity?: VelocityField;
   private rain?: Rain;
@@ -299,18 +301,19 @@ export class App {
       this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
     );
     this.water.setWeatherUniforms(this.scene.weather);
+    this.floodOverlay = new FloodOverlay(this.terrain.geometry, this.terrain.heightTexture, heightmap.sizeMeters, this.params);
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
     this.readback = new Float32Array(N * N * 4);
 
     this.group.add(
-      this.terrain.mesh, this.water.mesh, this.water.skirt,
+      this.terrain.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
       this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
     );
     // Keep above-water overlays out of the refraction source so they don't get
     // baked under the water surface.
-    this.scene.setRefractionExcludes([this.maxFlood.mesh, this.velocity.mesh, this.rain.object]);
+    this.scene.setRefractionExcludes([this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object]);
     this.buildMarkers(heightmap);
 
     this.simTimeSec = 0;
@@ -346,6 +349,7 @@ export class App {
     this.sim?.updateParams(this.params);
     this.refreshSurface();
     this.water?.update(this.params);
+    this.floodOverlay?.update(this.params);
     this.terrain?.setWireframe(this.params.wireframe);
     this.terrain?.applyStyle(this.params.terrainStyle);
     // When the water shader owns depth colour (medium/high), don't double-darken the
@@ -440,6 +444,7 @@ export class App {
     const depthTex = this.sim.waterTexture;
     this.water?.setDepthTexture(depthTex);
     this.terrain?.setDepthTexture(depthTex);
+    this.floodOverlay?.setDepthTexture(depthTex);
     this.maxFlood?.setDepthTexture(depthTex);
     this.velocity?.setTextures(depthTex, depthTex);
   }
@@ -675,11 +680,13 @@ export class App {
     this.clearMarkers();
     if (this.terrain) this.group.remove(this.terrain.mesh);
     if (this.water) this.group.remove(this.water.mesh, this.water.skirt);
+    if (this.floodOverlay) this.group.remove(this.floodOverlay.mesh);
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
     this.sim?.dispose();
     this.water?.dispose();
+    this.floodOverlay?.dispose();
     this.maxFlood?.dispose();
     this.velocity?.dispose();
     this.rain?.dispose();
@@ -687,6 +694,7 @@ export class App {
     this.surfaceTexture?.dispose();
     this.sim = undefined;
     this.water = undefined;
+    this.floodOverlay = undefined;
     this.maxFlood = undefined;
     this.velocity = undefined;
     this.rain = undefined;

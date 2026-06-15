@@ -98,6 +98,8 @@ export const zh: Record<string, string> = {
   'viz.glint': 'sun glint',
   'viz.shoreline': 'shoreline softness (m)',
   'viz.skirt': 'edge skirt walls',
+  'viz.floodOverlay': 'flood map overlay',
+  'viz.floodGrid': 'flood grid',
   'atmo.title': 'Atmosphere',
   'atmo.post': 'post-processing',
   'atmo.exposure': 'exposure',

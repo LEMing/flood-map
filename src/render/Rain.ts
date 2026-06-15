@@ -17,7 +17,7 @@ export class Rain {
     this.size = hm.sizeMeters;
     // Tall column reaching up toward the cloud ceiling so rain reads as falling
     // from the clouds, not spawning in a low band of mid-air.
-    const topY = hm.max + Math.max(300, hm.sizeMeters * 0.45);
+    const topY = hm.max + Math.max(300, hm.sizeMeters * 0.8);
     const fallRange = topY - (hm.min - 10);
 
     const position = new Float32Array(MAX_DROPS * 2 * 3);

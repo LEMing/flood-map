@@ -88,6 +88,8 @@ export const ru: Record<string, string> = {
   'viz.glint': 'блик солнца',
   'viz.shoreline': 'мягкость берега (м)',
   'viz.skirt': 'стенки по краям',
+  'viz.floodOverlay': 'карта затопления',
+  'viz.floodGrid': 'сетка затопления',
   'atmo.title': 'Атмосфера',
   'atmo.post': 'пост-обработка',
   'atmo.exposure': 'экспозиция',

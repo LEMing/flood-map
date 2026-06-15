@@ -87,6 +87,8 @@ export interface Params {
   sunGlint: number; // 0..2 specular highlight strength
   shorelineSoftness: number; // metres of soft alpha fade at the water edge
   skirtEnabled: boolean; // perimeter wall so deep edge water doesn't show holes
+  floodOverlay: boolean; // bold flood-extent map layer (clear "where is water")
+  floodGrid: boolean; // relief grid lines on the flood overlay
 
   // Atmosphere / post-processing (Tier 2)
   postProcessing: boolean; // master switch for the EffectComposer stack
@@ -154,6 +156,8 @@ export const DEFAULT_PARAMS: Params = {
   sunGlint: 1.0,
   shorelineSoftness: 0.25,
   skirtEnabled: true,
+  floodOverlay: false,
+  floodGrid: true,
 
   postProcessing: true,
   exposure: 1.15,
