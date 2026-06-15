@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DEFAULT_PARAMS, SOURCE_LABELS, type Params } from '../config';
+import { DEFAULT_PARAMS, GRID_RESOLUTIONS, SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import { loadTerrainAt } from '../geo/load';
 import { geocode, type GeocodeResult } from '../geo/geocode';
@@ -15,6 +15,7 @@ import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/s
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
 import { FloodSimulation } from '../sim/FloodSimulation';
+import { Timeline } from '../sim/Timeline';
 import { Rain } from '../render/Rain';
 import { createPin } from '../render/PlaceMarker';
 import { SceneManager } from '../render/SceneManager';
@@ -30,6 +31,9 @@ import { showToast } from '../ui/toast';
 
 const MAX_STEPS_PER_FRAME = 48;
 const READBACK_INTERVAL = 0.4; // seconds (wall clock)
+const DEMO_SIM_SECONDS = 2.5 * 3600; // storm length precomputed for the demo timeline
+const MAX_PRECOMPUTE_STEPS = 600; // sim substeps per captured frame
+const TIMELINE_PLAY_SECONDS = 12; // real seconds to play the whole precomputed timeline
 
 export class App {
   private readonly params: Params = { ...DEFAULT_PARAMS };
@@ -48,6 +52,10 @@ export class App {
   private velocity?: VelocityField;
   private rain?: Rain;
   private sim?: FloodSimulation;
+  private timeline?: Timeline;
+  private timelineMode: 'live' | 'computing' | 'scrub' = 'live';
+  private precomputeTargetFrames = 0;
+  private precomputeFrameSec = 0;
   private heightmap?: Heightmap;
   private surfaceTexture?: THREE.DataTexture;
   private surfaceRaw?: Pick<SurfaceResult, 'land' | 'osm'>;
@@ -91,6 +99,10 @@ export class App {
 
     const url = readUrlState();
     if (url.km) this.params.mapSizeKm = url.km;
+    if (url.grid && (GRID_RESOLUTIONS as readonly number[]).includes(url.grid)) {
+      this.params.gridResolution = url.grid;
+    }
+    if (url.demo) this.params.demoMode = true;
 
     this.addressBar = new AddressBar({
       onSubmit: (text) => this.loadAddress(text),
@@ -180,7 +192,39 @@ export class App {
         this.applyParams();
         this.panel.refresh();
       },
+      onPrecompute: () => this.startPrecompute(),
+      onScrub: () => {
+        if (!this.timeline?.ready) return;
+        this.timelineMode = 'scrub';
+        this.params.timelinePlaying = false;
+        this.showTimelineFrame();
+      },
+      onTimelinePlay: () => {
+        if (this.timeline?.ready) this.timelineMode = 'scrub';
+      },
+      onLive: () => {
+        this.timelineMode = 'live';
+        this.params.timelinePlaying = false;
+        this.resetSim();
+        this.applyParams();
+        this.panel.refresh();
+      },
+      onDemoToggle: () => this.setDemoMode(this.params.demoMode),
     };
+  }
+
+  private setDemoMode(on: boolean): void {
+    this.params.demoMode = on;
+    writeUrlState({ demo: on });
+    this.timelineMode = 'live';
+    this.params.timelinePlaying = false;
+    this.rebuildPanel();
+    this.applyParams();
+  }
+
+  private rebuildPanel(): void {
+    this.panel.dispose();
+    this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
   }
 
   private setLang(lang: Lang): void {
@@ -198,8 +242,7 @@ export class App {
     this.addressBar.retranslate();
     this.languagePicker.retranslate();
     document.documentElement.lang = getLanguage();
-    this.panel.dispose();
-    this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
+    this.rebuildPanel();
     this.applyParams(); // re-translate legend labels etc.
   }
 
@@ -249,7 +292,10 @@ export class App {
 
       this.build(heightmap, surface);
       this.stats.location = location.displayName.split(',').slice(0, 3).join(',');
-      writeUrlState({ lat: location.lat, lon: location.lon, km: this.params.mapSizeKm });
+      writeUrlState({
+        lat: location.lat, lon: location.lon,
+        km: this.params.mapSizeKm, grid: this.params.gridResolution,
+      });
       this.addressBar.setValue(this.displayLabel(location));
       this.panel.refresh();
       const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
@@ -305,6 +351,8 @@ export class App {
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
     this.readback = new Float32Array(N * N * 4);
+    this.timeline = new Timeline(N);
+    this.timelineMode = 'live';
 
     this.group.add(
       this.terrain.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
@@ -405,6 +453,11 @@ export class App {
   }
 
   private advanceSim(dtReal: number): void {
+    this.stepSimSeconds(dtReal * this.params.timeScale, MAX_STEPS_PER_FRAME);
+  }
+
+  /** Advance the sim by a fixed number of simulated seconds (CFL-substepped). */
+  private stepSimSeconds(simSeconds: number, maxSteps: number): void {
     if (!this.sim) return;
     // Drive rain from the storm hyetograph (peaked залповый ливень) over sim time.
     const intensityMmHr = this.params.raining
@@ -417,11 +470,10 @@ export class App {
     const refDepth = Math.max(1, this.observedMaxDepth);
     const cflMax = (0.45 * cellSize) / Math.sqrt(g * refDepth);
 
-    const simSeconds = dtReal * this.params.timeScale;
     const stepDt = Math.min(simSeconds / this.params.substeps, cflMax);
     let remaining = simSeconds;
     let steps = 0;
-    while (remaining > 1e-6 && steps < MAX_STEPS_PER_FRAME && stepDt > 0) {
+    while (remaining > 1e-6 && steps < maxSteps && stepDt > 0) {
       const dt = Math.min(stepDt, remaining);
       this.sim.step(dt);
       remaining -= dt;
@@ -430,6 +482,60 @@ export class App {
     const simulated = simSeconds - remaining;
     this.simTimeSec += simulated;
     this.rainedVolume += (intensityMmHr / 1000 / 3600) * this.rainArea() * simulated;
+  }
+
+  // --- demo timeline: precompute the storm into scrubbable frames ---
+  private startPrecompute(): void {
+    if (!this.sim || !this.timeline) return;
+    this.resetSim();
+    this.params.raining = true;
+    this.params.floodLevelLive = false;
+    this.params.timelinePlaying = false;
+    this.params.timelinePos = 0;
+    this.timeline.begin();
+    this.timelineMode = 'computing';
+    const N = this.sim.N;
+    this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
+    this.precomputeFrameSec = DEMO_SIM_SECONDS / this.precomputeTargetFrames;
+    this.applyParams();
+    this.panel.refresh();
+  }
+
+  private tickPrecompute(): void {
+    if (!this.sim || !this.timeline || !this.readback) return;
+    this.stepSimSeconds(this.precomputeFrameSec, MAX_PRECOMPUTE_STEPS);
+    this.sim.readWater(this.readback);
+    let maxEver = 1;
+    for (let i = 1; i < this.readback.length; i += 4) {
+      if (this.readback[i] > maxEver) maxEver = this.readback[i];
+    }
+    this.observedMaxDepth = maxEver;
+    this.timeline.capture(this.readback, this.simTimeSec);
+    this.timeline.progress = this.timeline.count / this.precomputeTargetFrames;
+    if (this.timeline.count >= this.precomputeTargetFrames) {
+      this.timeline.finish();
+      this.timelineMode = 'scrub';
+      this.params.timelinePos = 0;
+      this.params.timelinePlaying = true; // auto-play the finished scene once
+      this.showTimelineFrame();
+      this.panel.refresh();
+    }
+  }
+
+  private showTimelineFrame(): void {
+    if (!this.timeline || !this.readback) return;
+    const f = this.timeline.showAt(this.params.timelinePos);
+    if (!f) return;
+    this.readback.set(f.rgba);
+    this.computeStatsFromReadback(f.time);
+  }
+
+  private timelineStatus(): string {
+    if (this.timelineMode === 'computing' && this.timeline) {
+      return t('demo.stComputing', { pct: Math.round(this.timeline.progress * 100) });
+    }
+    if (this.timelineMode === 'scrub') return t('demo.stReady');
+    return t('demo.stLive');
   }
 
   private rainArea(): number {
@@ -441,7 +547,9 @@ export class App {
 
   private syncTextures(): void {
     if (!this.sim) return;
-    const depthTex = this.sim.waterTexture;
+    const depthTex = this.timelineMode === 'scrub' && this.timeline
+      ? this.timeline.tex
+      : this.sim.waterTexture;
     this.water?.setDepthTexture(depthTex);
     this.terrain?.setDepthTexture(depthTex);
     this.floodOverlay?.setDepthTexture(depthTex);
@@ -452,6 +560,11 @@ export class App {
   private updateStats(): void {
     if (!this.sim || !this.readback || !this.heightmap) return;
     this.sim.readWater(this.readback);
+    this.computeStatsFromReadback(this.simTimeSec);
+  }
+
+  private computeStatsFromReadback(simTime: number): void {
+    if (!this.sim || !this.readback) return;
     const N = this.sim.N;
     const cellArea = this.sim.cellSize * this.sim.cellSize;
     let stored = 0;
@@ -466,14 +579,15 @@ export class App {
       if (d > maxNow) maxNow = d;
       if (m > maxEver) maxEver = m;
     }
-    this.observedMaxDepth = Math.max(1, maxEver);
+    if (this.timelineMode !== 'scrub') this.observedMaxDepth = Math.max(1, maxEver);
     this.waterStored = stored * cellArea;
-    this.stats.simTime = formatDuration(this.simTimeSec);
+    this.stats.simTime = formatDuration(simTime);
     this.stats.rained = formatVolume(this.rainedVolume);
     this.stats.stored = formatVolume(stored * cellArea);
     this.stats.floodedArea = `${((flooded / (N * N)) * 100).toFixed(1)} %`;
     this.stats.maxDepth = `${maxNow.toFixed(2)} m (max ${maxEver.toFixed(2)})`;
     this.stats.fps = this.fpsEma.toFixed(0);
+    this.stats.timelineStatus = this.timelineStatus();
     this.panel.refresh();
   }
 
@@ -483,17 +597,29 @@ export class App {
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
     if (this.sim) {
-      if (this.params.floodLevelLive && this.heightmap) {
-        this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
-        this.sim.step(0); // set water exactly to the level, no dynamics
-      } else if (this.params.running) {
-        this.advanceSim(dt);
-      }
-      this.syncTextures();
-      this.sinceReadback += dt;
-      if (this.sinceReadback >= READBACK_INTERVAL) {
-        this.sinceReadback = 0;
-        this.updateStats();
+      if (this.timelineMode === 'computing') {
+        this.tickPrecompute();
+        this.syncTextures();
+        this.sinceReadback += dt;
+        if (this.sinceReadback >= READBACK_INTERVAL) { this.sinceReadback = 0; this.updateStats(); }
+      } else if (this.timelineMode === 'scrub') {
+        if (this.params.timelinePlaying) {
+          this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
+          if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
+          this.panel.refresh();
+        }
+        this.showTimelineFrame();
+        this.syncTextures();
+      } else {
+        if (this.params.floodLevelLive && this.heightmap) {
+          this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
+          this.sim.step(0); // set water exactly to the level, no dynamics
+        } else if (this.params.running) {
+          this.advanceSim(dt);
+        }
+        this.syncTextures();
+        this.sinceReadback += dt;
+        if (this.sinceReadback >= READBACK_INTERVAL) { this.sinceReadback = 0; this.updateStats(); }
       }
     }
 
@@ -683,6 +809,8 @@ export class App {
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
     this.sim?.dispose();
+    this.timeline?.dispose();
+    this.timeline = undefined;
     this.water?.dispose();
     this.floodOverlay?.dispose();
     this.maxFlood?.dispose();

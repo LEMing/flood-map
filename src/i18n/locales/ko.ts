@@ -69,6 +69,16 @@ export const ko: Record<string, string> = {
   'map.size': '크기 (km)',
   'map.grid': '격자',
   'map.apply': '크기 / 격자 적용 ⟲',
+  'map.demoMode': 'demo mode',
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': '지형',

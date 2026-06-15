@@ -74,6 +74,18 @@ export const en: Record<string, string> = {
   'map.size': 'size (km)',
   'map.grid': 'grid',
   'map.apply': 'Apply size / grid ⟲',
+  'map.demoMode': 'demo mode',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': 'terrain',

@@ -69,6 +69,16 @@ export const th: Record<string, string> = {
   'map.size': 'ขนาด (km)',
   'map.grid': 'กริด',
   'map.apply': 'ใช้ขนาด / กริด ⟲',
+  'map.demoMode': 'demo mode',
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': 'ภูมิประเทศ',

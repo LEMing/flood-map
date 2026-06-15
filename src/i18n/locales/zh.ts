@@ -69,6 +69,16 @@ export const zh: Record<string, string> = {
   'map.size': '尺寸 (km)',
   'map.grid': '网格',
   'map.apply': '应用尺寸 / 网格 ⟲',
+  'map.demoMode': 'demo mode',
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': '地形',

@@ -6,6 +6,7 @@ export interface StatsData {
   floodedArea: string;
   maxDepth: string;
   fps: string;
+  timelineStatus: string;
 }
 
 export const INITIAL_STATS: StatsData = {
@@ -16,6 +17,7 @@ export const INITIAL_STATS: StatsData = {
   floodedArea: '0 %',
   maxDepth: '0.00 m',
   fps: '0',
+  timelineStatus: 'live',
 };
 
 export function formatDuration(seconds: number): string {

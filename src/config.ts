@@ -68,6 +68,11 @@ export interface Params {
   // Simulation control
   running: boolean;
 
+  // Demo mode: a simplified panel + a precomputed, scrubbable storm timeline
+  demoMode: boolean;
+  timelinePos: number; // 0..1 scrub position through the precomputed timeline
+  timelinePlaying: boolean; // auto-advance the timeline
+
   // Visualization
   terrainStyle: TerrainStyle;
   imageryDarkening: number; // how much deep water darkens the terrain beneath
@@ -139,6 +144,10 @@ export const DEFAULT_PARAMS: Params = {
   fillLevelM: 5,
   floodLevelLive: false,
   running: true,
+
+  demoMode: false,
+  timelinePos: 0,
+  timelinePlaying: false,
 
   terrainStyle: 'satellite',
   imageryDarkening: 0.8,

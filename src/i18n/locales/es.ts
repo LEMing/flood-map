@@ -69,6 +69,16 @@ export const es: Record<string, string> = {
   'map.size': 'tamaño (km)',
   'map.grid': 'malla',
   'map.apply': 'Aplicar tamaño / malla ⟲',
+  'map.demoMode': 'demo mode',
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': 'terreno',

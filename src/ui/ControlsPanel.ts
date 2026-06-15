@@ -17,14 +17,53 @@ export interface ControlCallbacks {
   onTogglePlay(): void;
   onDump(): void; // pour a one-shot batch of water
   onFill(): void; // flood ground up to a chosen level
+  onPrecompute(): void; // demo: precompute the storm into a scrubbable timeline
+  onScrub(): void; // demo: timeline slider moved
+  onTimelinePlay(): void; // demo: timeline play toggled
+  onLive(): void; // demo: return to the live simulation
+  onDemoToggle(): void; // switch the simple/full panel
 }
 
 export class ControlsPanel {
   private readonly pane: Pane;
-  private readonly playButton: { title: string };
+  private playButton?: { title: string };
 
   constructor(params: Params, stats: StatsData, cb: ControlCallbacks) {
     this.pane = new Pane({ title: t('panel.title') });
+    if (params.demoMode) this.buildDemo(params, stats, cb);
+    else this.buildFull(params, stats, cb);
+  }
+
+  private buildDemo(params: Params, stats: StatsData, cb: ControlCallbacks): void {
+    const change = () => cb.onParamChange();
+
+    const storm = this.pane.addFolder({ title: t('demo.title'), expanded: true });
+    storm.addBinding(params, 'stormType', { label: t('rain.stormEvent'), options: stormOptions() }).on('change', change);
+    storm.addButton({ title: t('demo.precompute') }).on('click', () => cb.onPrecompute());
+    storm.addBinding(stats, 'timelineStatus', { readonly: true, label: t('demo.statusLabel') });
+    storm.addBinding(params, 'timelinePos', { min: 0, max: 1, step: 0.001, label: t('demo.timeline') }).on('change', () => cb.onScrub());
+    storm.addBinding(params, 'timelinePlaying', { label: t('demo.play') }).on('change', () => cb.onTimelinePlay());
+    storm.addButton({ title: t('demo.live') }).on('click', () => cb.onLive());
+
+    const view = this.pane.addFolder({ title: t('viz.title'), expanded: true });
+    view.addBinding(params, 'floodOverlay', { label: t('viz.floodOverlay') }).on('change', change);
+    view.addBinding(params, 'waterClarity', { min: 0, max: 1, step: 0.01, label: t('viz.clarity') }).on('change', change);
+    view.addBinding(params, 'storm', { label: t('rain.clouds') }).on('change', change);
+
+    const map = this.pane.addFolder({ title: t('map.title'), expanded: false });
+    map.addBinding(params, 'mapSizeKm', { min: 0.5, max: 20, step: 0.5, label: t('map.size') });
+    map.addBinding(params, 'gridResolution', { label: t('map.grid'), options: { '128': 128, '256': 256, '512': 512, '1024': 1024, '2048': 2048 } });
+    map.addButton({ title: t('map.apply') }).on('click', () => cb.onRebuild());
+    map.addBinding(params, 'demoMode', { label: t('map.demoMode') }).on('change', () => cb.onDemoToggle());
+
+    const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });
+    s.addBinding(stats, 'location', { readonly: true, label: t('stats.location') });
+    s.addBinding(stats, 'simTime', { readonly: true, label: t('stats.simTime') });
+    s.addBinding(stats, 'floodedArea', { readonly: true, label: t('stats.flooded') });
+    s.addBinding(stats, 'maxDepth', { readonly: true, label: t('stats.maxDepth') });
+  }
+
+  private buildFull(params: Params, stats: StatsData, cb: ControlCallbacks): void {
     const change = () => cb.onParamChange();
 
     // --- Simulation controls ---
@@ -83,6 +122,7 @@ export class ControlsPanel {
     map.addBinding(params, 'mapSizeKm', { min: 0.5, max: 20, step: 0.5, label: t('map.size') });
     map.addBinding(params, 'gridResolution', { label: t('map.grid'), options: { '128': 128, '256': 256, '512': 512, '1024': 1024, '2048': 2048 } });
     map.addButton({ title: t('map.apply') }).on('click', () => cb.onRebuild());
+    map.addBinding(params, 'demoMode', { label: t('map.demoMode') }).on('change', () => cb.onDemoToggle());
 
     // --- Visualization ---
     const viz = this.pane.addFolder({ title: t('viz.title'), expanded: false });
@@ -138,7 +178,7 @@ export class ControlsPanel {
   }
 
   private refreshPlay(params: Params): void {
-    this.playButton.title = params.running ? t('sim.pause') : t('sim.play');
+    if (this.playButton) this.playButton.title = params.running ? t('sim.pause') : t('sim.play');
     this.pane.refresh();
   }
 

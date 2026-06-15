@@ -69,6 +69,16 @@ export const hi: Record<string, string> = {
   'map.size': 'आकार (km)',
   'map.grid': 'ग्रिड',
   'map.apply': 'आकार / ग्रिड लागू करें ⟲',
+  'map.demoMode': 'demo mode',
+  'demo.title': 'Demo',
+  'demo.precompute': 'Precompute storm ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'timeline',
+  'demo.play': 'play timeline ▶',
+  'demo.live': 'Live sim ⟳',
+  'demo.stComputing': 'computing… {pct}%',
+  'demo.stReady': 'scene ready — scrub time',
+  'demo.stLive': 'live',
 
   // Visualization
   'viz.terrain': 'भूभाग',

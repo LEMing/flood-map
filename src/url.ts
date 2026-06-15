@@ -1,11 +1,13 @@
-// Shareable URL state: ?lat=..&lon=..&km=..&lang=.. — kept in sync with the
-// loaded location so a URL can be copied/pasted to reopen the exact view.
+// Shareable URL state: ?lat=..&lon=..&km=..&grid=..&lang=..&demo=.. — kept in
+// sync with the loaded view so a URL can be copied/pasted to reopen it exactly.
 
 export interface UrlState {
   lat?: number;
   lon?: number;
   km?: number;
+  grid?: number;
   lang?: string;
+  demo?: boolean;
 }
 
 export function readUrlState(): UrlState {
@@ -16,7 +18,12 @@ export function readUrlState(): UrlState {
     const n = parseFloat(v);
     return isFinite(n) ? n : undefined;
   };
-  return { lat: num('lat'), lon: num('lon'), km: num('km'), lang: p.get('lang') ?? undefined };
+  const demoRaw = p.get('demo');
+  return {
+    lat: num('lat'), lon: num('lon'), km: num('km'), grid: num('grid'),
+    lang: p.get('lang') ?? undefined,
+    demo: demoRaw === null ? undefined : demoRaw === '1' || demoRaw === 'true',
+  };
 }
 
 /** Merge the given fields into the URL query without reloading the page. */
@@ -29,7 +36,9 @@ export function writeUrlState(patch: UrlState): void {
   if ('lat' in patch) set('lat', patch.lat?.toFixed(5));
   if ('lon' in patch) set('lon', patch.lon?.toFixed(5));
   if ('km' in patch) set('km', patch.km);
+  if ('grid' in patch) set('grid', patch.grid);
   if ('lang' in patch) set('lang', patch.lang);
+  if ('demo' in patch) set('demo', patch.demo ? '1' : undefined);
   const qs = p.toString();
   window.history.replaceState(null, '', qs ? `?${qs}` : window.location.pathname);
 }
