@@ -1,0 +1,101 @@
+export const ja: Record<string, string> = {
+  // Address bar
+  'input.placeholder': '住所、地名、または「緯度, 経度」…',
+  'btn.load': '読み込み',
+  'btn.loading': '読み込み中…',
+  'autocomplete.useCoords': '座標 {coords} を使用',
+
+  // Panel + folders
+  'panel.title': '洪水マップ',
+  'sim.title': 'シミュレーション',
+  'rain.title': '降雨',
+  'urban.title': '都市モデル',
+  'soil.title': '土壌・蒸発',
+  'physics.title': '物理',
+  'map.title': 'マップ（再読み込み）',
+  'viz.title': '表示',
+  'stats.title': '統計',
+
+  // Simulation
+  'sim.play': '再生 ▶',
+  'sim.pause': '一時停止 ⏸',
+  'sim.step': 'ステップ ⏭',
+  'sim.reset': 'リセット ⟳',
+  'sim.dump': '放水 💧（鉄砲水）',
+  'sim.fill': 'レベルまで充填 🌊（一括）',
+  'sim.dumpDepth': '放水深さ (m)',
+  'sim.floodLevel': '洪水レベル (+m)',
+  'sim.liveFlood': 'リアルタイム洪水レベル',
+  'sim.timescale': '時間 ×（シミュ秒/秒）',
+  'sim.substeps': 'サブステップ',
+
+  // Rain
+  'rain.raining': '降雨中',
+  'rain.stormEvent': '暴風雨イベント',
+  'rain.clouds': '雲 ⛈ + 雷',
+  'rain.constant': '一定 mm/hr',
+  'rain.footprint': '降雨範囲',
+  'rain.footprintUniform': '均一',
+  'rain.footprintSpot': '雷雨セル',
+
+  // Urban model
+  'urban.surface': '地表モデル',
+  'urban.buildings': '建物を壁として扱う',
+  'urban.sewer': '雨水下水道 (mm/hr)',
+  'urban.groundwater': '高い地下水位',
+
+  // Soil
+  'soil.infiltration': '土壌浸透 (mm/hr)',
+  'soil.evaporation': '蒸発 (/hr)',
+
+  // Physics
+  'physics.gravity': '重力 (m/s²)',
+  'physics.flow': '流量係数',
+  'physics.friction': '摩擦',
+  'physics.edges': '境界',
+  'physics.edgesOpen': '開放（排水）',
+  'physics.edgesClosed': '閉鎖（壁）',
+
+  // Map
+  'map.elevation': '標高',
+  'map.size': 'サイズ (km)',
+  'map.grid': 'グリッド',
+  'map.apply': 'サイズ／グリッド適用 ⟲',
+
+  // Visualization
+  'viz.terrain': '地形',
+  'viz.terrainSatellite': '衛星画像',
+  'viz.terrainHypso': '標高色分け',
+  'viz.terrainHeatmap': '高さヒートマップ',
+  'viz.terrainSurface': '地表（洪水リスク）',
+  'viz.darkening': '深度による暗化',
+  'viz.vertical': '垂直 ×',
+  'viz.opacity': '水の不透明度',
+  'viz.depthMax': '深度カラー最大 (m)',
+  'viz.maxFlood': '最大浸水範囲',
+  'viz.arrows': '流向矢印',
+  'viz.wireframe': 'ワイヤーフレーム地形',
+  'viz.language': '言語',
+
+  // Stats
+  'stats.location': '位置',
+  'stats.simTime': 'シミュ時間',
+  'stats.rainIn': '降水量',
+  'stats.stored': '貯留水量',
+  'stats.flooded': '浸水面積',
+  'stats.maxDepth': '最大深度',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '「{q}」を読み込み中…',
+  'toast.loadingSurface': '地表モデルを読み込み中（土地被覆 + OSM）…',
+  'toast.loaded': '{place} を読み込みました',
+  'toast.notFound': '「{q}」に一致する結果がありません。',
+  'toast.geocodeFail': 'ジオコーディングに失敗しました。しばらくして再試行してください。',
+  'toast.enterAddress': '住所を入力してください。',
+
+  // Misc
+  'legend.elevation': '標高',
+  'readout.elev': '標高',
+  'readout.water': '水位',
+};

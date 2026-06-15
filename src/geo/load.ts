@@ -36,7 +36,16 @@ export async function loadTerrain(
   N: number,
   source: ElevationSource,
 ): Promise<TerrainLoad> {
-  const location = await geocode(address);
+  return loadTerrainAt(await geocode(address), mapSizeKm, N, source);
+}
+
+/** Fetch the DEM for an already-resolved location (e.g. typed coordinates). */
+export async function loadTerrainAt(
+  location: GeocodeResult,
+  mapSizeKm: number,
+  N: number,
+  source: ElevationSource,
+): Promise<TerrainLoad> {
   const sizeMeters = mapSizeKm * 1000;
 
   const order: ElevationSource[] = source === 'terrarium' ? ['terrarium'] : [source, 'terrarium'];

@@ -1,8 +1,11 @@
 import * as THREE from 'three';
 import { DEFAULT_PARAMS, SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { loadTerrain } from '../geo/load';
+import { loadTerrainAt } from '../geo/load';
+import { geocode, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
+import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
+import { t, setLanguage, type Lang } from '../i18n';
 import { localMetersToLonLat, lonLatToLocalMeters } from '../geo/projection';
 import { POINTS_OF_INTEREST } from '../geo/places';
 import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/surface';
@@ -16,7 +19,7 @@ import { TerrainMesh } from '../render/TerrainMesh';
 import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { AddressBar } from '../ui/AddressBar';
-import { ControlsPanel } from '../ui/ControlsPanel';
+import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, formatDuration, formatVolume, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
 
@@ -29,7 +32,8 @@ export class App {
   private readonly scene: SceneManager;
   private readonly group = new THREE.Group();
   private readonly addressBar: AddressBar;
-  private readonly panel: ControlsPanel;
+  private panel: ControlsPanel;
+  private currentLocation?: GeocodeResult;
 
   private terrain?: TerrainMesh;
   private water?: WaterMesh;
@@ -76,33 +80,17 @@ export class App {
     this.scene = new SceneManager(canvas);
     this.scene.scene.add(this.group);
 
-    this.addressBar = new AddressBar((addr) => this.loadAddress(addr));
+    const url = readUrlState();
+    if (url.km) this.params.mapSizeKm = url.km;
+
+    this.addressBar = new AddressBar({
+      onSubmit: (text) => this.loadAddress(text),
+      onSelect: (lat, lon, label) => this.loadCenter({ lat, lon, displayName: label }),
+      onLanguage: (lang) => this.setLang(lang),
+    });
     this.addressBar.setValue(this.params.address);
 
-    this.panel = new ControlsPanel(this.params, this.stats, {
-      onParamChange: () => this.applyParams(),
-      onRebuild: () => this.loadAddress(this.params.address),
-      onReset: () => this.resetSim(),
-      onStep: () => this.stepOnce(),
-      onTogglePlay: () => {
-        this.params.running = !this.params.running;
-      },
-      onDump: () => {
-        this.sim?.requestInject(this.params.releaseDepthM);
-        this.params.raining = false; // watch it flow & drain, not rain
-        this.params.running = true;
-        this.applyParams();
-        this.panel.refresh();
-      },
-      onFill: () => {
-        if (!this.sim || !this.heightmap) return;
-        this.sim.requestFill(this.heightmap.min + this.params.fillLevelM);
-        this.params.raining = false;
-        this.params.running = true;
-        this.applyParams();
-        this.panel.refresh();
-      },
-    });
+    this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
 
     const dom = this.scene.renderer.domElement;
     dom.addEventListener('pointermove', (e) => {
@@ -123,44 +111,117 @@ export class App {
 
   start(): void {
     this.lastTime = performance.now();
-    this.loadAddress(this.params.address);
+    const url = readUrlState();
+    if (url.lat !== undefined && url.lon !== undefined) {
+      this.loadCenter({ lat: url.lat, lon: url.lon, displayName: formatCoords(url.lat, url.lon) });
+    } else {
+      this.loadAddress(this.params.address);
+    }
     requestAnimationFrame(this.loop);
   }
 
-  private async loadAddress(address: string): Promise<void> {
+  private panelCallbacks(): ControlCallbacks {
+    return {
+      onParamChange: () => this.applyParams(),
+      onRebuild: () => this.reloadCurrent(),
+      onReset: () => this.resetSim(),
+      onStep: () => this.stepOnce(),
+      onTogglePlay: () => {
+        this.params.running = !this.params.running;
+      },
+      onDump: () => {
+        this.sim?.requestInject(this.params.releaseDepthM);
+        this.params.raining = false; // watch it flow & drain, not rain
+        this.params.running = true;
+        this.applyParams();
+        this.panel.refresh();
+      },
+      onFill: () => {
+        if (!this.sim || !this.heightmap) return;
+        this.sim.requestFill(this.heightmap.min + this.params.fillLevelM);
+        this.params.raining = false;
+        this.params.running = true;
+        this.applyParams();
+        this.panel.refresh();
+      },
+    };
+  }
+
+  private setLang(lang: Lang): void {
+    setLanguage(lang);
+    writeUrlState({ lang });
+    this.addressBar.retranslate();
+    this.panel.dispose();
+    this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
+    this.applyParams(); // re-translate legend labels etc.
+  }
+
+  private reloadCurrent(): void {
+    if (this.currentLocation) this.loadCenter(this.currentLocation);
+  }
+
+  private async loadAddress(text: string): Promise<void> {
+    if (this.loading) return;
+    const coords = parseCoords(text);
+    if (coords) {
+      await this.loadCenter({ lat: coords.lat, lon: coords.lon, displayName: formatCoords(coords.lat, coords.lon) });
+      return;
+    }
+    this.loading = true;
+    this.addressBar.setBusy(true);
+    let location: GeocodeResult | null = null;
+    try {
+      location = await geocode(text);
+    } catch (err) {
+      showToast((err as Error).message, true);
+    }
+    this.loading = false;
+    this.addressBar.setBusy(false);
+    if (location) await this.loadCenter(location);
+  }
+
+  /** Build the terrain + surface + sim for an already-resolved center. */
+  private async loadCenter(location: GeocodeResult): Promise<void> {
     if (this.loading) return;
     this.loading = true;
-    this.params.address = address;
+    this.currentLocation = location;
     this.addressBar.setBusy(true);
-    showToast(`Loading “${address}”…`, false, 0);
+    const place = location.displayName.split(',')[0];
+    showToast(t('toast.loadingPlace', { q: place }), false, 0);
     try {
       const N = this.params.gridResolution;
-      const { location, heightmap, warning, sourceUsed } = await loadTerrain(
-        address, this.params.mapSizeKm, N, this.params.elevationSource,
+      const { heightmap, warning, sourceUsed } = await loadTerrainAt(
+        location, this.params.mapSizeKm, N, this.params.elevationSource,
       );
 
       let surface: SurfaceResult | null = null;
       if (this.params.useSurface) {
-        showToast('Loading surface model (land cover + OSM buildings/roads)…', false, 0);
+        showToast(t('toast.loadingSurface'), false, 0);
         surface = await buildSurface(heightmap, this.params); // burns buildings/roads into the DEM
       }
 
       this.build(heightmap, surface);
       this.stats.location = location.displayName.split(',').slice(0, 3).join(',');
+      writeUrlState({ lat: location.lat, lon: location.lon, km: this.params.mapSizeKm });
+      this.addressBar.setValue(this.displayLabel(location));
       this.panel.refresh();
-      const place = location.displayName.split(',')[0];
       const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
       showToast(
-        warning ?? `Loaded ${place} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`,
+        warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`,
         !!warning,
       );
       trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.params.mapSizeKm });
     } catch (err) {
       showToast((err as Error).message, true);
     } finally {
-      this.addressBar.setBusy(false);
       this.loading = false;
+      this.addressBar.setBusy(false);
     }
+  }
+
+  private displayLabel(location: GeocodeResult): string {
+    if (parseCoords(location.displayName)) return location.displayName;
+    return location.displayName.split(',').slice(0, 2).join(', ');
   }
 
   private build(heightmap: Heightmap, surface: SurfaceResult | null): void {
@@ -245,6 +306,8 @@ export class App {
       const heat = this.params.terrainStyle === 'heatmap' && !!this.heightmap;
       this.legend.style.display = heat ? 'block' : 'none';
       if (heat && this.heightmap) {
+        const title = this.legend.querySelector('.title');
+        if (title) title.textContent = t('legend.elevation');
         if (this.legendMin) this.legendMin.textContent = `${this.heightmap.min.toFixed(0)} m`;
         if (this.legendMax) this.legendMax.textContent = `${this.heightmap.max.toFixed(0)} m`;
       }
@@ -488,8 +551,8 @@ export class App {
     const depth = this.sampleDepth(u, v);
     const [lon, lat] = localMetersToLonLat(this.heightmap.center, hit.point.x, -hit.point.z);
 
-    const water = depth > 0.01 ? `  ·  water ${depth.toFixed(2)} m` : '';
-    this.readout.textContent = `elev ${elev.toFixed(1)} m${water}  ·  ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    const water = depth > 0.01 ? `  ·  ${t('readout.water')} ${depth.toFixed(2)} m` : '';
+    this.readout.textContent = `${t('readout.elev')} ${elev.toFixed(1)} m${water}  ·  ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
     this.readout.style.display = 'block';
     this.readout.style.left = `${this.pointerClientX + 14}px`;
     this.readout.style.top = `${this.pointerClientY + 14}px`;

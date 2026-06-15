@@ -1,5 +1,6 @@
 import type { LatLon } from './heightmap';
 import { ENDPOINTS } from './endpoints';
+import { t } from '../i18n';
 
 export interface GeocodeResult extends LatLon {
   displayName: string;
@@ -34,7 +35,7 @@ const KNOWN_PLACES: Array<{ match: (q: string) => boolean; result: GeocodeResult
  */
 export async function geocode(address: string): Promise<GeocodeResult> {
   const query = address.trim();
-  if (!query) throw new Error('Please enter an address.');
+  if (!query) throw new Error(t('toast.enterAddress'));
 
   const normalized = query.toLowerCase();
   for (const place of KNOWN_PLACES) {
@@ -44,12 +45,12 @@ export async function geocode(address: string): Promise<GeocodeResult> {
   const url = `${ENDPOINTS.geocode}/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
   const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) {
-    throw new Error(`Geocoding failed (HTTP ${res.status}). Try again in a moment.`);
+    throw new Error(t('toast.geocodeFail'));
   }
 
   const entries = (await res.json()) as NominatimEntry[];
   if (!entries.length) {
-    throw new Error(`No match found for “${query}”.`);
+    throw new Error(t('toast.notFound', { q: query }));
   }
 
   const top = entries[0];

@@ -1,0 +1,101 @@
+export const ko: Record<string, string> = {
+  // Address bar
+  'input.placeholder': '주소, 장소 또는 "위도, 경도"…',
+  'btn.load': '불러오기',
+  'btn.loading': '불러오는 중…',
+  'autocomplete.useCoords': '좌표 {coords} 사용',
+
+  // Panel + folders
+  'panel.title': '침수 지도',
+  'sim.title': '시뮬레이션',
+  'rain.title': '강우',
+  'urban.title': '도시 모델',
+  'soil.title': '토양 및 증발',
+  'physics.title': '물리',
+  'map.title': '지도 (새로고침)',
+  'viz.title': '시각화',
+  'stats.title': '통계',
+
+  // Simulation
+  'sim.play': '재생 ▶',
+  'sim.pause': '일시정지 ⏸',
+  'sim.step': '단계 ⏭',
+  'sim.reset': '초기화 ⟳',
+  'sim.dump': '방류 💧 (돌발 홍수)',
+  'sim.fill': '수위까지 채우기 🌊 (일괄)',
+  'sim.dumpDepth': '방류 깊이 (m)',
+  'sim.floodLevel': '침수 수위 (+m)',
+  'sim.liveFlood': '실시간 침수 수위',
+  'sim.timescale': '시간 × (시뮬 초/초)',
+  'sim.substeps': '하위 단계',
+
+  // Rain
+  'rain.raining': '강우 중',
+  'rain.stormEvent': '폭풍 이벤트',
+  'rain.clouds': '구름 ⛈ + 번개',
+  'rain.constant': '일정 mm/hr',
+  'rain.footprint': '강우 범위',
+  'rain.footprintUniform': '균일',
+  'rain.footprintSpot': '뇌우 셀',
+
+  // Urban model
+  'urban.surface': '지표 모델',
+  'urban.buildings': '건물을 벽으로',
+  'urban.sewer': '우수 하수도 (mm/hr)',
+  'urban.groundwater': '높은 지하수위',
+
+  // Soil
+  'soil.infiltration': '토양 침투 (mm/hr)',
+  'soil.evaporation': '증발 (/hr)',
+
+  // Physics
+  'physics.gravity': '중력 (m/s²)',
+  'physics.flow': '유량 계수',
+  'physics.friction': '마찰',
+  'physics.edges': '경계',
+  'physics.edgesOpen': '개방 (배수)',
+  'physics.edgesClosed': '폐쇄 (벽)',
+
+  // Map
+  'map.elevation': '고도',
+  'map.size': '크기 (km)',
+  'map.grid': '격자',
+  'map.apply': '크기 / 격자 적용 ⟲',
+
+  // Visualization
+  'viz.terrain': '지형',
+  'viz.terrainSatellite': '위성',
+  'viz.terrainHypso': '고도 색조',
+  'viz.terrainHeatmap': '높이 히트맵',
+  'viz.terrainSurface': '지표 (침수 위험)',
+  'viz.darkening': '깊이 어둡게',
+  'viz.vertical': '수직 ×',
+  'viz.opacity': '물 불투명도',
+  'viz.depthMax': '깊이 색상 최대 (m)',
+  'viz.maxFlood': '최대 침수 범위',
+  'viz.arrows': '흐름 화살표',
+  'viz.wireframe': '와이어프레임 지형',
+  'viz.language': '언어',
+
+  // Stats
+  'stats.location': '위치',
+  'stats.simTime': '시뮬 시간',
+  'stats.rainIn': '강우량',
+  'stats.stored': '저장된 물',
+  'stats.flooded': '침수 면적',
+  'stats.maxDepth': '최대 깊이',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '"{q}" 불러오는 중…',
+  'toast.loadingSurface': '지표 모델 불러오는 중 (토지 피복 + OSM)…',
+  'toast.loaded': '{place} 불러옴',
+  'toast.notFound': '"{q}"에 대한 결과가 없습니다.',
+  'toast.geocodeFail': '지오코딩에 실패했습니다. 잠시 후 다시 시도하세요.',
+  'toast.enterAddress': '주소를 입력하세요.',
+
+  // Misc
+  'legend.elevation': '고도',
+  'readout.elev': '고도',
+  'readout.water': '수위',
+};

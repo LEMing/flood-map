@@ -1,0 +1,101 @@
+export const zh: Record<string, string> = {
+  // Address bar
+  'input.placeholder': '地址、地点或"纬度, 经度"…',
+  'btn.load': '加载',
+  'btn.loading': '加载中…',
+  'autocomplete.useCoords': '使用坐标 {coords}',
+
+  // Panel + folders
+  'panel.title': '洪水地图',
+  'sim.title': '模拟',
+  'rain.title': '降雨',
+  'urban.title': '城市模型',
+  'soil.title': '土壤与蒸发',
+  'physics.title': '物理',
+  'map.title': '地图（重新加载）',
+  'viz.title': '可视化',
+  'stats.title': '统计',
+
+  // Simulation
+  'sim.play': '播放 ▶',
+  'sim.pause': '暂停 ⏸',
+  'sim.step': '步进 ⏭',
+  'sim.reset': '重置 ⟳',
+  'sim.dump': '倾泻水量 💧（暴洪）',
+  'sim.fill': '注水至水位 🌊（一次性）',
+  'sim.dumpDepth': '倾泻深度 (m)',
+  'sim.floodLevel': '洪水位 (+m)',
+  'sim.liveFlood': '实时洪水位',
+  'sim.timescale': '时间 ×（模拟 s/s）',
+  'sim.substeps': '子步数',
+
+  // Rain
+  'rain.raining': '正在下雨',
+  'rain.stormEvent': '暴风雨事件',
+  'rain.clouds': '云 ⛈ + 闪电',
+  'rain.constant': '恒定 mm/hr',
+  'rain.footprint': '覆盖范围',
+  'rain.footprintUniform': '均匀',
+  'rain.footprintSpot': '风暴单体',
+
+  // Urban model
+  'urban.surface': '地表模型',
+  'urban.buildings': '建筑作为墙体',
+  'urban.sewer': '雨水排水 (mm/hr)',
+  'urban.groundwater': '高地下水位',
+
+  // Soil
+  'soil.infiltration': '土壤入渗 (mm/hr)',
+  'soil.evaporation': '蒸发 (/hr)',
+
+  // Physics
+  'physics.gravity': '重力 (m/s²)',
+  'physics.flow': '流量系数',
+  'physics.friction': '摩擦',
+  'physics.edges': '边界',
+  'physics.edgesOpen': '开放（排水）',
+  'physics.edgesClosed': '封闭（墙体）',
+
+  // Map
+  'map.elevation': '高程',
+  'map.size': '尺寸 (km)',
+  'map.grid': '网格',
+  'map.apply': '应用尺寸 / 网格 ⟲',
+
+  // Visualization
+  'viz.terrain': '地形',
+  'viz.terrainSatellite': '卫星',
+  'viz.terrainHypso': '高程着色',
+  'viz.terrainHeatmap': '高度热力图',
+  'viz.terrainSurface': '地表（洪水风险）',
+  'viz.darkening': '深度变暗',
+  'viz.vertical': '垂直 ×',
+  'viz.opacity': '水体不透明度',
+  'viz.depthMax': '深度颜色上限 (m)',
+  'viz.maxFlood': '最大洪水范围',
+  'viz.arrows': '流向箭头',
+  'viz.wireframe': '线框地形',
+  'viz.language': '语言',
+
+  // Stats
+  'stats.location': '位置',
+  'stats.simTime': '模拟时间',
+  'stats.rainIn': '降雨量',
+  'stats.stored': '蓄水量',
+  'stats.flooded': '淹没面积',
+  'stats.maxDepth': '最大深度',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '正在加载"{q}"…',
+  'toast.loadingSurface': '正在加载地表模型（土地覆盖 + OSM）…',
+  'toast.loaded': '已加载 {place}',
+  'toast.notFound': '未找到"{q}"的匹配结果。',
+  'toast.geocodeFail': '地理编码失败。请稍后重试。',
+  'toast.enterAddress': '请输入地址。',
+
+  // Misc
+  'legend.elevation': '高程',
+  'readout.elev': '高程',
+  'readout.water': '水',
+};

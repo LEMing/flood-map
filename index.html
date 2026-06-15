@@ -21,6 +21,7 @@
         padding: 8px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.4);
         max-width: min(520px, calc(100vw - 24px));
       }
+      #ac-wrap { position: relative; }
       #addressbar input {
         width: 320px; max-width: 52vw; padding: 7px 10px; border-radius: 7px;
         border: 1px solid #2a313b; background: #0e1318; color: #e6edf3; font-size: 14px;
@@ -30,6 +31,22 @@
         background: #2f6feb; color: white; font-size: 14px; cursor: pointer;
       }
       #addressbar button:disabled { opacity: .5; cursor: default; }
+      #lang-select {
+        padding: 7px 6px; border-radius: 7px; border: 1px solid #2a313b;
+        background: #0e1318; color: #cdd6e0; font-size: 13px; cursor: pointer;
+      }
+      #ac-list {
+        position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
+        background: rgba(14, 19, 24, 0.98); border: 1px solid #2a313b; border-radius: 8px;
+        overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.5); display: none;
+      }
+      .ac-item {
+        padding: 8px 10px; font-size: 13px; color: #cdd6e0; cursor: pointer;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        border-bottom: 1px solid #1b222c;
+      }
+      .ac-item:last-child { border-bottom: none; }
+      .ac-item.active, .ac-item:hover { background: #1f6feb; color: #fff; }
 
       .poi-label {
         position: fixed; z-index: 8; pointer-events: none;
@@ -88,8 +105,12 @@
   <body>
     <canvas id="scene"></canvas>
     <div id="addressbar">
-      <input id="address-input" type="text" placeholder="Enter an address or place…" autocomplete="off" />
+      <div id="ac-wrap">
+        <input id="address-input" type="text" placeholder="Enter an address or place…" autocomplete="off" spellcheck="false" />
+        <div id="ac-list"></div>
+      </div>
       <button id="address-go">Load</button>
+      <select id="lang-select" title="Language"></select>
     </div>
     <div id="toast"></div>
     <div id="credit">Imagery © Esri, Maxar, Earthstar Geographics &amp; the GIS User Community</div>
