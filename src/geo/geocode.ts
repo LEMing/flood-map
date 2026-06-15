@@ -19,8 +19,8 @@ const KNOWN_PLACES: Array<{ match: (q: string) => boolean; result: GeocodeResult
   {
     match: (q) => q.includes('музыкальн') && (q.includes('краснодар') || q.includes('микрорайон')),
     result: {
-      lat: 45.0762,
-      lon: 38.9988,
+      lat: 45.0803,
+      lon: 39.0092,
       displayName: 'Музыкальный микрорайон, Прикубанский округ, Краснодар',
     },
   },

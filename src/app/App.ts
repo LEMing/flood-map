@@ -66,7 +66,7 @@ export class App {
   private readonly spotBuf = new THREE.Vector2();
   private markers: Array<{
     object: THREE.Group | null;
-    head: THREE.Mesh | null;
+    head: THREE.Object3D | null;
     label: HTMLDivElement;
     name: string;
     worldFallback: THREE.Vector3;
@@ -675,9 +675,16 @@ export class App {
       if (Math.hypot(mx, my) > 25000) continue; // only mark places near this area
 
       let object: THREE.Group | null = null;
-      let head: THREE.Mesh | null = null;
+      let head: THREE.Object3D | null = null;
+      let fallback = new THREE.Vector3(mx, midElev, -my);
       const inBounds = Math.abs(mx) <= half && Math.abs(my) <= half;
-      if (inBounds) {
+      if (poi.polygon && inBounds) {
+        const poly = this.buildDistrictPolygon(hm, poi.polygon);
+        this.group.add(poly.group);
+        object = poly.group;
+        head = poly.anchor;
+        fallback = poly.anchor.position.clone();
+      } else if (inBounds) {
         const u = mx / hm.sizeMeters + 0.5;
         const v = my / hm.sizeMeters + 0.5;
         const pin = createPin(hm.sizeMeters);
@@ -690,11 +697,59 @@ export class App {
       const label = document.createElement('div');
       label.className = 'poi-label';
       document.body.appendChild(label);
-      this.markers.push({
-        object, head, label, name: poi.label,
-        worldFallback: new THREE.Vector3(mx, midElev, -my),
-      });
+      this.markers.push({ object, head, label, name: poi.label, worldFallback: fallback });
     }
+  }
+
+  /** A boundary outline + faint fill draped on the terrain for a district POI. */
+  private buildDistrictPolygon(hm: Heightmap, polygon: Array<[number, number]>):
+    { group: THREE.Group; anchor: THREE.Object3D } {
+    const size = hm.sizeMeters;
+    const lift = size * 0.002;
+    const pts: THREE.Vector3[] = [];
+    let cx = 0;
+    let cz = 0;
+    let cy = 0;
+    for (const [lat, lon] of polygon) {
+      const [mx, my] = lonLatToLocalMeters(hm.center, lon, lat);
+      const u = THREE.MathUtils.clamp(mx / size + 0.5, 0, 1);
+      const v = THREE.MathUtils.clamp(my / size + 0.5, 0, 1);
+      const y = this.sampleElevation(u, v) + lift;
+      pts.push(new THREE.Vector3(mx, y, -my));
+      cx += mx; cz += -my; cy += y;
+    }
+    const n = polygon.length;
+    cx /= n; cz /= n; cy /= n;
+
+    const color = 0xe5443a;
+    const group = new THREE.Group();
+    group.frustumCulled = false;
+
+    const fillVerts: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = pts[i];
+      const b = pts[(i + 1) % n];
+      fillVerts.push(cx, cy, cz, a.x, a.y, a.z, b.x, b.y, b.z);
+    }
+    const fillGeo = new THREE.BufferGeometry();
+    fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(fillVerts, 3));
+    const fill = new THREE.Mesh(
+      fillGeo,
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
+    );
+    fill.renderOrder = 5;
+
+    const outline = new THREE.LineLoop(
+      new THREE.BufferGeometry().setFromPoints(pts),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.95, depthWrite: false }),
+    );
+    outline.renderOrder = 6;
+
+    const anchor = new THREE.Object3D();
+    anchor.position.set(cx, cy + size * 0.02, cz);
+
+    group.add(fill, outline, anchor);
+    return { group, anchor };
   }
 
   private clearMarkers(): void {
