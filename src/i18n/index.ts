@@ -28,16 +28,35 @@ import { sw } from './locales/sw';
 import { cs } from './locales/cs';
 import { sv } from './locales/sv';
 import { he } from './locales/he';
+import { kk } from './locales/kk';
+import { uz } from './locales/uz';
+import { az } from './locales/az';
+import { hy } from './locales/hy';
+import { ka } from './locales/ka';
+import { be } from './locales/be';
+import { ky } from './locales/ky';
+import { tg } from './locales/tg';
+import { tk } from './locales/tk';
+import { am } from './locales/am';
+import { ha } from './locales/ha';
+import { yo } from './locales/yo';
+import { ig } from './locales/ig';
+import { zu } from './locales/zu';
+import { af } from './locales/af';
+import { so } from './locales/so';
 
 export type Lang =
   | 'en' | 'ru' | 'uk' | 'tr' | 'de' | 'es' | 'fr' | 'zh'
   | 'ja' | 'ko' | 'hi' | 'id' | 'th' | 'vi'
   | 'pt' | 'ar' | 'it' | 'pl' | 'nl' | 'el' | 'bn' | 'fa'
-  | 'ur' | 'ms' | 'ta' | 'ro' | 'sw' | 'cs' | 'sv' | 'he';
+  | 'ur' | 'ms' | 'ta' | 'ro' | 'sw' | 'cs' | 'sv' | 'he'
+  | 'kk' | 'uz' | 'az' | 'hy' | 'ka' | 'be' | 'ky' | 'tg' | 'tk'
+  | 'am' | 'ha' | 'yo' | 'ig' | 'zu' | 'af' | 'so';
 
 const LOCALES: Record<Lang, Record<string, string>> = {
   en, ru, uk, tr, de, es, fr, zh, ja, ko, hi, id, th, vi,
   pt, ar, it, pl, nl, el, bn, fa, ur, ms, ta, ro, sw, cs, sv, he,
+  kk, uz, az, hy, ka, be, ky, tg, tk, am, ha, yo, ig, zu, af, so,
 };
 
 export interface LanguageDef {
@@ -78,13 +97,29 @@ export const LANGUAGES: LanguageDef[] = [
   { code: 'cs', label: 'Čeština', english: 'Czech' },
   { code: 'sv', label: 'Svenska', english: 'Swedish' },
   { code: 'he', label: 'עברית', english: 'Hebrew', rtl: true },
+  { code: 'kk', label: 'Қазақша', english: 'Kazakh' },
+  { code: 'uz', label: 'Oʻzbekcha', english: 'Uzbek' },
+  { code: 'az', label: 'Azərbaycan', english: 'Azerbaijani' },
+  { code: 'hy', label: 'Հայերեն', english: 'Armenian' },
+  { code: 'ka', label: 'ქართული', english: 'Georgian' },
+  { code: 'be', label: 'Беларуская', english: 'Belarusian' },
+  { code: 'ky', label: 'Кыргызча', english: 'Kyrgyz' },
+  { code: 'tg', label: 'Тоҷикӣ', english: 'Tajik' },
+  { code: 'tk', label: 'Türkmençe', english: 'Turkmen' },
+  { code: 'am', label: 'አማርኛ', english: 'Amharic' },
+  { code: 'ha', label: 'Hausa', english: 'Hausa' },
+  { code: 'yo', label: 'Yorùbá', english: 'Yoruba' },
+  { code: 'ig', label: 'Igbo', english: 'Igbo' },
+  { code: 'zu', label: 'isiZulu', english: 'Zulu' },
+  { code: 'af', label: 'Afrikaans', english: 'Afrikaans' },
+  { code: 'so', label: 'Soomaali', english: 'Somali' },
 ];
 
 // Country (ISO 3166-1 alpha-2) → the supported language most people there read.
 // Used as a fallback when the IP provider doesn't return an explicit language
 // list, so the UI can localize by region.
 const COUNTRY_LANG: Partial<Record<string, Lang>> = {
-  RU: 'ru', BY: 'ru', KZ: 'ru', KG: 'ru',
+  RU: 'ru',
   UA: 'uk',
   TR: 'tr',
   DE: 'de', AT: 'de', CH: 'de', LI: 'de',
@@ -116,6 +151,20 @@ const COUNTRY_LANG: Partial<Record<string, Lang>> = {
   CZ: 'cs',
   SE: 'sv',
   IL: 'he',
+  KZ: 'kk',
+  UZ: 'uz',
+  AZ: 'az',
+  AM: 'hy',
+  GE: 'ka',
+  BY: 'be',
+  KG: 'ky',
+  TJ: 'tg',
+  TM: 'tk',
+  ET: 'am',
+  NE: 'ha',
+  NG: 'ha',
+  ZA: 'af',
+  SO: 'so',
 };
 
 function isLang(v: string | null): v is Lang {
