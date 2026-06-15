@@ -1,0 +1,162 @@
+// English is the source catalog. Other locales mirror these keys; any missing
+// key falls back to English. Keep {placeholders}, emoji and units unchanged
+// when translating.
+export const mr: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'पत्ता, ठिकाण किंवा "अक्षांश, रेखांश"…',
+  'btn.load': 'लोड करा',
+  'btn.loading': 'लोड होत आहे…',
+  'autocomplete.useCoords': 'निर्देशांक {coords} वापरा',
+
+  // Panel + folders
+  'panel.title': 'पूर नकाशा',
+  'sim.title': 'सिम्युलेशन',
+  'rain.title': 'पाऊस',
+  'urban.title': 'शहरी मॉडेल',
+  'soil.title': 'माती व बाष्पीभवन',
+  'physics.title': 'भौतिकशास्त्र',
+  'map.title': 'नकाशा (पुन्हा लोड)',
+  'viz.title': 'दृश्यीकरण',
+  'stats.title': 'आकडेवारी',
+
+  // Simulation
+  'sim.play': 'सुरू ▶',
+  'sim.pause': 'थांबवा ⏸',
+  'sim.step': 'पाऊल ⏭',
+  'sim.reset': 'रीसेट ⟳',
+  'sim.dump': 'पाणी सोडा 💧 (अचानक पूर)',
+  'sim.fill': 'पातळीपर्यंत भरा 🌊 (एकदाच)',
+  'sim.dumpDepth': 'सोडण्याची खोली (m)',
+  'sim.floodLevel': 'पूर पातळी (+m)',
+  'sim.liveFlood': 'थेट पूर पातळी',
+  'sim.timescale': 'वेळ × (सिम s/s)',
+  'sim.substeps': 'उपपावले',
+  'pour.button': 'पाणी ओता',
+  'pour.hint': 'पाणी ओतण्यासाठी नकाशावर क्लिक करा',
+  'pour.depth': 'ओतण्याची खोली (m)',
+  'pour.radius': 'ओतण्याची त्रिज्या (m)',
+
+  // Rain
+  'rain.raining': 'पाऊस पडत आहे',
+  'rain.stormEvent': 'वादळ घटना',
+  'rain.clouds': 'ढग ⛈ + वीज',
+  'rain.constant': 'स्थिर mm/hr',
+  'rain.footprint': 'व्याप्ती',
+  'rain.footprintUniform': 'एकसमान',
+  'rain.footprintSpot': 'वादळी पेशी',
+  'rain.cellX': 'पेशी x',
+  'rain.cellY': 'पेशी y',
+  'rain.cellRadius': 'पेशी त्रिज्या',
+
+  // Storm hyetograph presets
+  'storm.constant': 'स्थिर (मॅन्युअल mm/hr)',
+  'storm.cloudburst': 'ढगफुटी (~50 mm / 2 h)',
+  'storm.design25yr': 'डिझाइन वादळ P≈25 yr',
+  'storm.may2026': 'नोंदलेले 18 मे 2026 (41 mm/2 h)',
+  'storm.jun2026': 'नोंदलेले 12 जून 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'पृष्ठभाग मॉडेल',
+  'urban.buildings': 'इमारती भिंती म्हणून',
+  'urban.sewer': 'पावसाळी गटार (mm/hr)',
+  'urban.groundwater': 'उच्च भूजल',
+
+  // Soil
+  'soil.infiltration': 'मातीत मुरणे (mm/hr)',
+  'soil.evaporation': 'बाष्पीभवन (/hr)',
+
+  // Physics
+  'physics.gravity': 'गुरुत्वाकर्षण (m/s²)',
+  'physics.flow': 'प्रवाह गुणांक',
+  'physics.friction': 'घर्षण',
+  'physics.edges': 'कडा',
+  'physics.edgesOpen': 'उघड्या (निचरा)',
+  'physics.edgesClosed': 'बंद (भिंती)',
+
+  // Map
+  'map.elevation': 'उंची',
+  'map.size': 'आकार (km)',
+  'map.grid': 'जाळी',
+  'map.apply': 'आकार / जाळी लागू करा ⟲',
+  'map.demoMode': 'डेमो मोड',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'डेमो',
+  'demo.precompute': 'वादळ पूर्वगणना ⏳',
+  'demo.statusLabel': 'स्थिती',
+  'demo.timeline': 'कालरेषा',
+  'demo.play': 'कालरेषा चालवा ▶',
+  'demo.live': 'थेट सिम ⟳',
+  'demo.stComputing': 'गणना होत आहे… {pct}%',
+  'demo.stReady': 'दृश्य तयार — वेळ फिरवा',
+  'demo.stLive': 'थेट',
+
+  // Visualization
+  'viz.terrain': 'भूभाग',
+  'viz.terrainSatellite': 'उपग्रह',
+  'viz.terrainHypso': 'उंची रंगछटा',
+  'viz.terrainHeatmap': 'उंची हीटमॅप',
+  'viz.terrainSurface': 'पृष्ठभाग (पूर धोका)',
+  'viz.darkening': 'खोलीनुसार गडदपणा',
+  'viz.vertical': 'उभे ×',
+  'viz.opacity': 'पाणी अपारदर्शकता',
+  'viz.depthMax': 'खोली रंग कमाल (m)',
+  'viz.maxFlood': 'कमाल पूर व्याप्ती',
+  'viz.arrows': 'प्रवाह बाण',
+  'viz.wireframe': 'वायरफ्रेम भूभाग',
+  'viz.language': 'भाषा',
+  'viz.waterQuality': 'पाणी गुणवत्ता',
+  'viz.qLow': 'कमी (वेगवान)',
+  'viz.qMedium': 'मध्यम',
+  'viz.qHigh': 'उच्च (सुंदर)',
+  'viz.reflections': 'आकाश प्रतिबिंब',
+  'viz.refraction': 'अपवर्तन',
+  'viz.clarity': 'पाणी स्वच्छता',
+  'viz.ripples': 'तरंग तीव्रता',
+  'viz.flowSpeed': 'प्रवाह वेग',
+  'viz.foam': 'फेस',
+  'viz.glint': 'सूर्य झळाळी',
+  'viz.shoreline': 'किनारा मऊपणा (m)',
+  'viz.skirt': 'कडा भिंती',
+  'viz.floodOverlay': 'पूर नकाशा आच्छादन',
+  'viz.floodGrid': 'पूर जाळी',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'वातावरण',
+  'atmo.post': 'पोस्ट-प्रोसेसिंग',
+  'atmo.exposure': 'एक्सपोजर',
+  'atmo.bloom': 'झळाळी (bloom)',
+  'atmo.ssao': 'सभोवती छायांकन',
+  'atmo.vignette': 'व्हिनेट',
+  'atmo.wetness': 'ओली जमीन (पाऊस)',
+  'atmo.cloudShadows': 'ढगांच्या सावल्या',
+  'atmo.godRays': 'प्रकाशकिरण (वादळ)',
+  'atmo.haze': 'जमिनीवरील धुके',
+  'atmo.splashes': 'पावसाचे शिंतोडे',
+  'atmo.renderScale': 'रेंडर स्केल',
+  'atmo.autoQuality': 'स्वयं गुणवत्ता',
+
+  // Stats
+  'stats.location': 'ठिकाण',
+  'stats.simTime': 'सिम वेळ',
+  'stats.rainIn': 'पडलेला पाऊस',
+  'stats.stored': 'साठलेले पाणी',
+  'stats.flooded': 'पूरग्रस्त क्षेत्र',
+  'stats.maxDepth': 'कमाल खोली',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” लोड होत आहे…',
+  'toast.loadingSurface': 'पृष्ठभाग मॉडेल लोड होत आहे (भूआच्छादन + OSM)…',
+  'toast.loaded': '{place} लोड झाले',
+  'toast.notFound': '“{q}” साठी कोणतीही जुळणी आढळली नाही.',
+  'toast.geocodeFail': 'जिओकोडिंग अयशस्वी. थोड्या वेळाने पुन्हा प्रयत्न करा.',
+  'toast.enterAddress': 'कृपया पत्ता प्रविष्ट करा.',
+  'toast.autoQuality': 'सुरळीतपणासाठी ग्राफिक्स गुणवत्ता कमी केली.',
+  'toast.detecting': 'तुमचे ठिकाण शोधत आहे…',
+
+  // Misc
+  'legend.elevation': 'उंची',
+  'readout.elev': 'उंची',
+  'readout.water': 'पाणी',
+};

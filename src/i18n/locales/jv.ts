@@ -1,0 +1,162 @@
+// English is the source catalog. Other locales mirror these keys; any missing
+// key falls back to English. Keep {placeholders}, emoji and units unchanged
+// when translating.
+export const jv: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'Alamat, panggonan, utawa "lat, lon"…',
+  'btn.load': 'Mbukak',
+  'btn.loading': 'Ngemot…',
+  'autocomplete.useCoords': 'Nganggo koordinat {coords}',
+
+  // Panel + folders
+  'panel.title': 'Peta Banjir',
+  'sim.title': 'Simulasi',
+  'rain.title': 'Udan',
+  'urban.title': 'Model kutha',
+  'soil.title': 'Lemah & penguapan',
+  'physics.title': 'Fisika',
+  'map.title': 'Peta (mbukak maneh)',
+  'viz.title': 'Visualisasi',
+  'stats.title': 'Statistik',
+
+  // Simulation
+  'sim.play': 'Puter ▶',
+  'sim.pause': 'Mandheg ⏸',
+  'sim.step': 'Langkah ⏭',
+  'sim.reset': 'Mbalekake ⟳',
+  'sim.dump': 'Mbuwang banyu 💧 (banjir bandhang)',
+  'sim.fill': 'Ngebaki tekan level 🌊 (sapisan)',
+  'sim.dumpDepth': 'jerone buwangan (m)',
+  'sim.floodLevel': 'level banjir (+m)',
+  'sim.liveFlood': 'level banjir langsung',
+  'sim.timescale': 'wektu × (sim d/d)',
+  'sim.substeps': 'sublangkah',
+  'pour.button': 'Nyuntak banyu',
+  'pour.hint': 'Klik ing peta kanggo nyuntak banyu',
+  'pour.depth': 'jerone suntakan (m)',
+  'pour.radius': 'radius suntakan (m)',
+
+  // Rain
+  'rain.raining': 'udan',
+  'rain.stormEvent': 'kedadeyan badai',
+  'rain.clouds': 'mendhung ⛈ + kilat',
+  'rain.constant': 'tetep mm/jam',
+  'rain.footprint': 'jangkauan',
+  'rain.footprintUniform': 'Rata',
+  'rain.footprintSpot': 'Sel badai',
+  'rain.cellX': 'sel x',
+  'rain.cellY': 'sel y',
+  'rain.cellRadius': 'radius sel',
+
+  // Storm hyetograph presets
+  'storm.constant': 'Tetep (manual mm/jam)',
+  'storm.cloudburst': 'Udan deres (~50 mm / 2 jam)',
+  'storm.design25yr': 'Badai rancangan P≈25 taun',
+  'storm.may2026': 'Kacathet 18 Mei 2026 (41 mm/2 jam)',
+  'storm.jun2026': 'Kacathet 12 Jun 2026 (90 mm/dina)',
+
+  // Urban model
+  'urban.surface': 'model permukaan',
+  'urban.buildings': 'gedhong dadi tembok',
+  'urban.sewer': 'saluran udan (mm/jam)',
+  'urban.groundwater': 'banyu lemah dhuwur',
+
+  // Soil
+  'soil.infiltration': 'resepan lemah (mm/jam)',
+  'soil.evaporation': 'penguapan (/jam)',
+
+  // Physics
+  'physics.gravity': 'gravitasi (m/s²)',
+  'physics.flow': 'koefisien aliran',
+  'physics.friction': 'gesekan',
+  'physics.edges': 'pinggiran',
+  'physics.edgesOpen': 'Mbukak (mili metu)',
+  'physics.edgesClosed': 'Tutup (tembok)',
+
+  // Map
+  'map.elevation': 'dhuwure lemah',
+  'map.size': 'ukuran (km)',
+  'map.grid': 'kothak',
+  'map.apply': 'Trapake ukuran / kothak ⟲',
+  'map.demoMode': 'mode demo',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'Demo',
+  'demo.precompute': 'Etang dhisik badai ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'garis wektu',
+  'demo.play': 'puter garis wektu ▶',
+  'demo.live': 'Sim langsung ⟳',
+  'demo.stComputing': 'ngetang… {pct}%',
+  'demo.stReady': 'adegan siap — geser wektu',
+  'demo.stLive': 'langsung',
+
+  // Visualization
+  'viz.terrain': 'permukaan lemah',
+  'viz.terrainSatellite': 'Satelit',
+  'viz.terrainHypso': 'Warna miturut dhuwur',
+  'viz.terrainHeatmap': 'Peta panas dhuwur',
+  'viz.terrainSurface': 'Permukaan (risiko banjir)',
+  'viz.darkening': 'peteng miturut jero',
+  'viz.vertical': 'vertikal ×',
+  'viz.opacity': 'kepekatan banyu',
+  'viz.depthMax': 'warna jero maks (m)',
+  'viz.maxFlood': 'jangkauan banjir maks',
+  'viz.arrows': 'panah aliran',
+  'viz.wireframe': 'rangka lemah',
+  'viz.language': 'basa',
+  'viz.waterQuality': 'kualitas banyu',
+  'viz.qLow': 'Endhek (cepet)',
+  'viz.qMedium': 'Sedheng',
+  'viz.qHigh': 'Dhuwur (apik)',
+  'viz.reflections': 'pantulan langit',
+  'viz.refraction': 'pembiasan',
+  'viz.clarity': 'bening banyu',
+  'viz.ripples': 'kekuwatan riak',
+  'viz.flowSpeed': 'kacepetan aliran',
+  'viz.foam': 'umpluk',
+  'viz.glint': 'kilauan srengenge',
+  'viz.shoreline': 'aluse pinggir banyu (m)',
+  'viz.skirt': 'tembok pinggir',
+  'viz.floodOverlay': 'lapisan peta banjir',
+  'viz.floodGrid': 'kothak banjir',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'Atmosfer',
+  'atmo.post': 'pasca-pangolahan',
+  'atmo.exposure': 'paparan',
+  'atmo.bloom': 'sumunar',
+  'atmo.ssao': 'oklusi ambien',
+  'atmo.vignette': 'vinyet',
+  'atmo.wetness': 'lemah teles (udan)',
+  'atmo.cloudShadows': 'wewayangan mendhung',
+  'atmo.godRays': 'pancaran cahya (badai)',
+  'atmo.haze': 'pedhut cedhak lemah',
+  'atmo.splashes': 'kecipratan udan',
+  'atmo.renderScale': 'skala render',
+  'atmo.autoQuality': 'kualitas otomatis',
+
+  // Stats
+  'stats.location': 'panggonan',
+  'stats.simTime': 'wektu sim',
+  'stats.rainIn': 'udan tiba',
+  'stats.stored': 'banyu kasimpen',
+  'stats.flooded': 'wilayah kebanjiran',
+  'stats.maxDepth': 'jero maks',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': 'Ngemot "{q}"…',
+  'toast.loadingSurface': 'Ngemot model permukaan (tutupan lemah + OSM)…',
+  'toast.loaded': 'Kamuat {place}',
+  'toast.notFound': 'Ora ana sing cocog karo "{q}".',
+  'toast.geocodeFail': 'Geocoding gagal. Coba maneh sedhela.',
+  'toast.enterAddress': 'Mangga lebokna alamat.',
+  'toast.autoQuality': 'Nyudo kualitas grafis supaya lancar.',
+  'toast.detecting': 'Ndeteksi panggonanmu…',
+
+  // Misc
+  'legend.elevation': 'Dhuwure lemah',
+  'readout.elev': 'dhuwur',
+  'readout.water': 'banyu',
+};

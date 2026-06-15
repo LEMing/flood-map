@@ -1,0 +1,162 @@
+// English is the source catalog. Other locales mirror these keys; any missing
+// key falls back to English. Keep {placeholders}, emoji and units unchanged
+// when translating.
+export const pa: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'ਪਤਾ, ਥਾਂ, ਜਾਂ "lat, lon"…',
+  'btn.load': 'ਲੋਡ ਕਰੋ',
+  'btn.loading': 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…',
+  'autocomplete.useCoords': 'ਧੁਰੇ {coords} ਵਰਤੋ',
+
+  // Panel + folders
+  'panel.title': 'ਹੜ੍ਹ ਨਕਸ਼ਾ',
+  'sim.title': 'ਸਿਮੂਲੇਸ਼ਨ',
+  'rain.title': 'ਮੀਂਹ',
+  'urban.title': 'ਸ਼ਹਿਰੀ ਮਾਡਲ',
+  'soil.title': 'ਮਿੱਟੀ ਤੇ ਵਾਸ਼ਪੀਕਰਨ',
+  'physics.title': 'ਭੌਤਿਕੀ',
+  'map.title': 'ਨਕਸ਼ਾ (ਮੁੜ ਲੋਡ)',
+  'viz.title': 'ਦ੍ਰਿਸ਼',
+  'stats.title': 'ਅੰਕੜੇ',
+
+  // Simulation
+  'sim.play': 'ਚਲਾਓ ▶',
+  'sim.pause': 'ਰੋਕੋ ⏸',
+  'sim.step': 'ਕਦਮ ⏭',
+  'sim.reset': 'ਰੀਸੈੱਟ ⟳',
+  'sim.dump': 'ਪਾਣੀ ਛੱਡੋ 💧 (ਅਚਾਨਕ ਹੜ੍ਹ)',
+  'sim.fill': 'ਪੱਧਰ ਤੱਕ ਭਰੋ 🌊 (ਇੱਕ-ਵਾਰ)',
+  'sim.dumpDepth': 'ਛੱਡਣ ਦੀ ਡੂੰਘਾਈ (m)',
+  'sim.floodLevel': 'ਹੜ੍ਹ ਪੱਧਰ (+m)',
+  'sim.liveFlood': 'ਲਾਈਵ ਹੜ੍ਹ ਪੱਧਰ',
+  'sim.timescale': 'ਸਮਾਂ × (sim s/s)',
+  'sim.substeps': 'ਉਪ-ਕਦਮ',
+  'pour.button': 'ਪਾਣੀ ਡੋਲ੍ਹੋ',
+  'pour.hint': 'ਪਾਣੀ ਡੋਲ੍ਹਣ ਲਈ ਨਕਸ਼ੇ ਉੱਤੇ ਕਲਿੱਕ ਕਰੋ',
+  'pour.depth': 'ਡੋਲ੍ਹਣ ਡੂੰਘਾਈ (m)',
+  'pour.radius': 'ਡੋਲ੍ਹਣ ਅਰਧ-ਵਿਆਸ (m)',
+
+  // Rain
+  'rain.raining': 'ਮੀਂਹ ਪੈ ਰਿਹਾ ਹੈ',
+  'rain.stormEvent': 'ਤੂਫ਼ਾਨ ਘਟਨਾ',
+  'rain.clouds': 'ਬੱਦਲ ⛈ + ਬਿਜਲੀ',
+  'rain.constant': 'ਸਥਿਰ mm/hr',
+  'rain.footprint': 'ਪਸਾਰ',
+  'rain.footprintUniform': 'ਇਕਸਾਰ',
+  'rain.footprintSpot': 'ਤੂਫ਼ਾਨ ਸੈੱਲ',
+  'rain.cellX': 'ਸੈੱਲ x',
+  'rain.cellY': 'ਸੈੱਲ y',
+  'rain.cellRadius': 'ਸੈੱਲ ਅਰਧ-ਵਿਆਸ',
+
+  // Storm hyetograph presets
+  'storm.constant': 'ਸਥਿਰ (ਹੱਥੀਂ mm/hr)',
+  'storm.cloudburst': 'ਬੱਦਲ ਫਟਣਾ (~50 mm / 2 h)',
+  'storm.design25yr': 'ਡਿਜ਼ਾਈਨ ਤੂਫ਼ਾਨ P≈25 yr',
+  'storm.may2026': 'ਦੇਖਿਆ 18 ਮਈ 2026 (41 mm/2 h)',
+  'storm.jun2026': 'ਦੇਖਿਆ 12 ਜੂਨ 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'ਸਤਹ ਮਾਡਲ',
+  'urban.buildings': 'ਇਮਾਰਤਾਂ ਕੰਧਾਂ ਵਜੋਂ',
+  'urban.sewer': 'ਤੂਫ਼ਾਨੀ ਨਾਲੀ (mm/hr)',
+  'urban.groundwater': 'ਉੱਚਾ ਜ਼ਮੀਨੀ ਪਾਣੀ',
+
+  // Soil
+  'soil.infiltration': 'ਮਿੱਟੀ ਸੋਖ (mm/hr)',
+  'soil.evaporation': 'ਵਾਸ਼ਪੀਕਰਨ (/hr)',
+
+  // Physics
+  'physics.gravity': 'ਗੁਰੂਤਾ (m/s²)',
+  'physics.flow': 'ਵਹਾਅ ਗੁਣਾਂਕ',
+  'physics.friction': 'ਰਗੜ',
+  'physics.edges': 'ਕਿਨਾਰੇ',
+  'physics.edgesOpen': 'ਖੁੱਲ੍ਹੇ (ਨਿਕਾਸ)',
+  'physics.edgesClosed': 'ਬੰਦ (ਕੰਧਾਂ)',
+
+  // Map
+  'map.elevation': 'ਉਚਾਈ',
+  'map.size': 'ਆਕਾਰ (km)',
+  'map.grid': 'ਗਰਿੱਡ',
+  'map.apply': 'ਆਕਾਰ / ਗਰਿੱਡ ਲਾਗੂ ਕਰੋ ⟲',
+  'map.demoMode': 'ਡੈਮੋ ਮੋਡ',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'ਡੈਮੋ',
+  'demo.precompute': 'ਤੂਫ਼ਾਨ ਪਹਿਲਾਂ-ਗਣਨਾ ⏳',
+  'demo.statusLabel': 'ਸਥਿਤੀ',
+  'demo.timeline': 'ਟਾਈਮਲਾਈਨ',
+  'demo.play': 'ਟਾਈਮਲਾਈਨ ਚਲਾਓ ▶',
+  'demo.live': 'ਲਾਈਵ ਸਿਮ ⟳',
+  'demo.stComputing': 'ਗਣਨਾ ਹੋ ਰਹੀ ਹੈ… {pct}%',
+  'demo.stReady': 'ਦ੍ਰਿਸ਼ ਤਿਆਰ — ਸਮਾਂ ਘੁਮਾਓ',
+  'demo.stLive': 'ਲਾਈਵ',
+
+  // Visualization
+  'viz.terrain': 'ਭੂ-ਭਾਗ',
+  'viz.terrainSatellite': 'ਸੈਟੇਲਾਈਟ',
+  'viz.terrainHypso': 'ਉਚਾਈ ਰੰਗਤ',
+  'viz.terrainHeatmap': 'ਉਚਾਈ ਹੀਟਮੈਪ',
+  'viz.terrainSurface': 'ਸਤਹ (ਹੜ੍ਹ ਖ਼ਤਰਾ)',
+  'viz.darkening': 'ਡੂੰਘਾਈ ਨਾਲ ਗੂੜ੍ਹਾਪਨ',
+  'viz.vertical': 'ਖੜ੍ਹਵਾਂ ×',
+  'viz.opacity': 'ਪਾਣੀ ਧੁੰਦਲਾਪਨ',
+  'viz.depthMax': 'ਡੂੰਘਾਈ ਰੰਗ ਵੱਧ (m)',
+  'viz.maxFlood': 'ਵੱਧ ਤੋਂ ਵੱਧ ਹੜ੍ਹ ਪਸਾਰ',
+  'viz.arrows': 'ਵਹਾਅ ਤੀਰ',
+  'viz.wireframe': 'ਤਾਰ-ਢਾਂਚਾ ਭੂ-ਭਾਗ',
+  'viz.language': 'ਭਾਸ਼ਾ',
+  'viz.waterQuality': 'ਪਾਣੀ ਗੁਣਵੱਤਾ',
+  'viz.qLow': 'ਘੱਟ (ਤੇਜ਼)',
+  'viz.qMedium': 'ਦਰਮਿਆਨੀ',
+  'viz.qHigh': 'ਉੱਚੀ (ਸੋਹਣੀ)',
+  'viz.reflections': 'ਅਸਮਾਨ ਪਰਛਾਵਾਂ',
+  'viz.refraction': 'ਅਪਵਰਤਨ',
+  'viz.clarity': 'ਪਾਣੀ ਸਾਫ਼ਤਾ',
+  'viz.ripples': 'ਲਹਿਰ ਤਾਕਤ',
+  'viz.flowSpeed': 'ਵਹਾਅ ਗਤੀ',
+  'viz.foam': 'ਝੱਗ',
+  'viz.glint': 'ਸੂਰਜ ਚਮਕ',
+  'viz.shoreline': 'ਕਿਨਾਰਾ ਨਰਮਾਈ (m)',
+  'viz.skirt': 'ਕਿਨਾਰਾ ਘੇਰਾ ਕੰਧਾਂ',
+  'viz.floodOverlay': 'ਹੜ੍ਹ ਨਕਸ਼ਾ ਓਵਰਲੇ',
+  'viz.floodGrid': 'ਹੜ੍ਹ ਗਰਿੱਡ',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'ਵਾਯੂਮੰਡਲ',
+  'atmo.post': 'ਪੋਸਟ-ਪ੍ਰੋਸੈਸਿੰਗ',
+  'atmo.exposure': 'ਐਕਸਪੋਜ਼ਰ',
+  'atmo.bloom': 'ਚਮਕ (bloom)',
+  'atmo.ssao': 'ਆਲੇ-ਦੁਆਲੇ ਛਾਂ',
+  'atmo.vignette': 'ਵਿਨੈੱਟ',
+  'atmo.wetness': 'ਗਿੱਲੀ ਜ਼ਮੀਨ (ਮੀਂਹ)',
+  'atmo.cloudShadows': 'ਬੱਦਲ ਪਰਛਾਵੇਂ',
+  'atmo.godRays': 'ਰੌਸ਼ਨੀ ਕਿਰਨਾਂ (ਤੂਫ਼ਾਨ)',
+  'atmo.haze': 'ਜ਼ਮੀਨੀ ਧੁੰਦ',
+  'atmo.splashes': 'ਮੀਂਹ ਛਿੱਟੇ',
+  'atmo.renderScale': 'ਰੈਂਡਰ ਪੈਮਾਨਾ',
+  'atmo.autoQuality': 'ਆਟੋ ਗੁਣਵੱਤਾ',
+
+  // Stats
+  'stats.location': 'ਥਾਂ',
+  'stats.simTime': 'ਸਿਮ ਸਮਾਂ',
+  'stats.rainIn': 'ਮੀਂਹ ਅੰਦਰ',
+  'stats.stored': 'ਪਾਣੀ ਜਮ੍ਹਾਂ',
+  'stats.flooded': 'ਹੜ੍ਹ ਖੇਤਰ',
+  'stats.maxDepth': 'ਵੱਧ ਡੂੰਘਾਈ',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…',
+  'toast.loadingSurface': 'ਸਤਹ ਮਾਡਲ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ (ਜ਼ਮੀਨੀ ਢੱਕਣ + OSM)…',
+  'toast.loaded': '{place} ਲੋਡ ਹੋਇਆ',
+  'toast.notFound': '“{q}” ਲਈ ਕੋਈ ਮੇਲ ਨਹੀਂ ਮਿਲਿਆ।',
+  'toast.geocodeFail': 'ਜੀਓਕੋਡਿੰਗ ਅਸਫਲ। ਪਲ ਭਰ ਬਾਅਦ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
+  'toast.enterAddress': 'ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਪਤਾ ਦਾਖਲ ਕਰੋ।',
+  'toast.autoQuality': 'ਸੁਚੱਜਾ ਰੱਖਣ ਲਈ ਗਰਾਫਿਕਸ ਗੁਣਵੱਤਾ ਘਟਾਈ।',
+  'toast.detecting': 'ਤੁਹਾਡੀ ਥਾਂ ਲੱਭੀ ਜਾ ਰਹੀ ਹੈ…',
+
+  // Misc
+  'legend.elevation': 'ਉਚਾਈ',
+  'readout.elev': 'ਉਚਾਈ',
+  'readout.water': 'ਪਾਣੀ',
+};

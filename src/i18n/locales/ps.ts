@@ -1,0 +1,159 @@
+export const ps: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'پته، ځای، یا «lat، lon»…',
+  'btn.load': 'بارول',
+  'btn.loading': 'بارول کیږي…',
+  'autocomplete.useCoords': 'کوارډینېټ {coords} وکاروئ',
+
+  // Panel + folders
+  'panel.title': 'د سیلاب نقشه',
+  'sim.title': 'سمولیشن',
+  'rain.title': 'باران',
+  'urban.title': 'ښاري ماډل',
+  'soil.title': 'خاوره او بخارېدنه',
+  'physics.title': 'فزیک',
+  'map.title': 'نقشه (بیا بارول)',
+  'viz.title': 'انځورونه',
+  'stats.title': 'احصایې',
+
+  // Simulation
+  'sim.play': 'پیل ▶',
+  'sim.pause': 'ودرول ⏸',
+  'sim.step': 'ګام ⏭',
+  'sim.reset': 'بیا تنظیم ⟳',
+  'sim.dump': 'اوبه خوشې کړئ 💧 (ناڅاپي سیلاب)',
+  'sim.fill': 'تر کچې ډکول 🌊 (یو ځل)',
+  'sim.dumpDepth': 'د خوشې کولو ژوروالی (m)',
+  'sim.floodLevel': 'د سیلاب کچه (+m)',
+  'sim.liveFlood': 'ژوندۍ د سیلاب کچه',
+  'sim.timescale': 'وخت × (سیم s/s)',
+  'sim.substeps': 'فرعي ګامونه',
+  'pour.button': 'اوبه توییدل',
+  'pour.hint': 'د اوبو توییدلو لپاره په نقشه کلیک وکړئ',
+  'pour.depth': 'د توییدلو ژوروالی (m)',
+  'pour.radius': 'د توییدلو وړۍ (m)',
+
+  // Rain
+  'rain.raining': 'باران ورېږي',
+  'rain.stormEvent': 'د توپان پېښه',
+  'rain.clouds': 'ورېځې ⛈ + برېښنا',
+  'rain.constant': 'ثابت mm/hr',
+  'rain.footprint': 'پوښښ',
+  'rain.footprintUniform': 'یووالی',
+  'rain.footprintSpot': 'د توپان حجره',
+  'rain.cellX': 'حجره x',
+  'rain.cellY': 'حجره y',
+  'rain.cellRadius': 'د حجرې وړۍ',
+
+  // Storm hyetograph presets
+  'storm.constant': 'ثابت (لاسي mm/hr)',
+  'storm.cloudburst': 'سخت باران (~50 mm / 2 h)',
+  'storm.design25yr': 'ډیزاین توپان P≈25 yr',
+  'storm.may2026': 'لیدل شوی د ۱۸ مۍ ۲۰۲۶ (41 mm/2 h)',
+  'storm.jun2026': 'لیدل شوی د ۱۲ جون ۲۰۲۶ (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'د سطحې ماډل',
+  'urban.buildings': 'ودانۍ لکه دېوالونه',
+  'urban.sewer': 'د باران نالۍ (mm/hr)',
+  'urban.groundwater': 'لوړې ځمکنۍ اوبه',
+
+  // Soil
+  'soil.infiltration': 'د خاورې جذب (mm/hr)',
+  'soil.evaporation': 'بخارېدنه (/hr)',
+
+  // Physics
+  'physics.gravity': 'جاذبه (m/s²)',
+  'physics.flow': 'د بهیر ضریب',
+  'physics.friction': 'مزاحمت',
+  'physics.edges': 'څنډې',
+  'physics.edgesOpen': 'پرانیستې (تخلیه)',
+  'physics.edgesClosed': 'تړلې (دېوالونه)',
+
+  // Map
+  'map.elevation': 'لوړوالی',
+  'map.size': 'کچه (km)',
+  'map.grid': 'جال',
+  'map.apply': 'کچه / جال پلي کړئ ⟲',
+  'map.demoMode': 'ډیمو حالت',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'ډیمو',
+  'demo.precompute': 'توپان مخکې محاسبه کړئ ⏳',
+  'demo.statusLabel': 'حالت',
+  'demo.timeline': 'مهال ویش',
+  'demo.play': 'مهال ویش پیل کړئ ▶',
+  'demo.live': 'ژوندی سیم ⟳',
+  'demo.stComputing': 'محاسبه کیږي… {pct}%',
+  'demo.stReady': 'صحنه چمتو ده — وخت وڅارئ',
+  'demo.stLive': 'ژوندی',
+
+  // Visualization
+  'viz.terrain': 'سطحه',
+  'viz.terrainSatellite': 'سپوږمکۍ',
+  'viz.terrainHypso': 'د لوړوالي رنګ',
+  'viz.terrainHeatmap': 'د لوړوالي تودوخه نقشه',
+  'viz.terrainSurface': 'سطحه (د سیلاب خطر)',
+  'viz.darkening': 'د ژوروالي تورېدنه',
+  'viz.vertical': 'عمودي ×',
+  'viz.opacity': 'د اوبو ناشفافیت',
+  'viz.depthMax': 'د ژوروالي رنګ اعظمي (m)',
+  'viz.maxFlood': 'د سیلاب اعظمي ساحه',
+  'viz.arrows': 'د بهیر غشي',
+  'viz.wireframe': 'د سطحې تار چوکاټ',
+  'viz.language': 'ژبه',
+  'viz.waterQuality': 'د اوبو کیفیت',
+  'viz.qLow': 'ټیټ (چټک)',
+  'viz.qMedium': 'منځنی',
+  'viz.qHigh': 'لوړ (ښکلی)',
+  'viz.reflections': 'د اسمان انعکاس',
+  'viz.refraction': 'انکسار',
+  'viz.clarity': 'د اوبو شفافیت',
+  'viz.ripples': 'د څپو زور',
+  'viz.flowSpeed': 'د بهیر سرعت',
+  'viz.foam': 'ځګ',
+  'viz.glint': 'د لمر ځلا',
+  'viz.shoreline': 'د ساحل نرموالی (m)',
+  'viz.skirt': 'د څنډې لمنۍ دېوالونه',
+  'viz.floodOverlay': 'د سیلاب نقشه پوښښ',
+  'viz.floodGrid': 'د سیلاب جال',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'اتموسفیر',
+  'atmo.post': 'وروستی پروسس',
+  'atmo.exposure': 'اکسپوژر',
+  'atmo.bloom': 'ځلا',
+  'atmo.ssao': 'محیطي بندوالی',
+  'atmo.vignette': 'وینیټ',
+  'atmo.wetness': 'لمده ځمکه (باران)',
+  'atmo.cloudShadows': 'د ورېځو سیوري',
+  'atmo.godRays': 'د رڼا څنډې (توپان)',
+  'atmo.haze': 'ځمکنۍ دوړه',
+  'atmo.splashes': 'د باران څاڅکي',
+  'atmo.renderScale': 'د رینډر کچه',
+  'atmo.autoQuality': 'اتومات کیفیت',
+
+  // Stats
+  'stats.location': 'موقعیت',
+  'stats.simTime': 'د سیم وخت',
+  'stats.rainIn': 'باران دننه',
+  'stats.stored': 'ذخیره شوې اوبه',
+  'stats.flooded': 'لاندې شوې ساحه',
+  'stats.maxDepth': 'اعظمي ژوروالی',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '«{q}» بارول کیږي…',
+  'toast.loadingSurface': 'د سطحې ماډل بارول کیږي (د ځمکې پوښښ + OSM)…',
+  'toast.loaded': '{place} بار شو',
+  'toast.notFound': 'د «{q}» لپاره هیڅ سمون و نه موندل شو.',
+  'toast.geocodeFail': 'جیوکوډینګ ناکام شو. یوه شیبه وروسته بیا هڅه وکړئ.',
+  'toast.enterAddress': 'مهرباني وکړئ پته دننه کړئ.',
+  'toast.autoQuality': 'د روانوالي ساتلو لپاره د ګرافیک کیفیت ټیټ شو.',
+  'toast.detecting': 'ستاسو موقعیت موندل کیږي…',
+
+  // Misc
+  'legend.elevation': 'لوړوالی',
+  'readout.elev': 'لوړوالی',
+  'readout.water': 'اوبه',
+};

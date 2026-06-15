@@ -1,0 +1,159 @@
+export const ml: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'വിലാസം, സ്ഥലം, അല്ലെങ്കിൽ "lat, lon"…',
+  'btn.load': 'ലോഡ് ചെയ്യുക',
+  'btn.loading': 'ലോഡ് ചെയ്യുന്നു…',
+  'autocomplete.useCoords': '{coords} കോർഡിനേറ്റുകൾ ഉപയോഗിക്കുക',
+
+  // Panel + folders
+  'panel.title': 'വെള്ളപ്പൊക്ക ഭൂപടം',
+  'sim.title': 'സിമുലേഷൻ',
+  'rain.title': 'മഴ',
+  'urban.title': 'നഗര മാതൃക',
+  'soil.title': 'മണ്ണും ബാഷ്പീകരണവും',
+  'physics.title': 'ഭൗതികശാസ്ത്രം',
+  'map.title': 'ഭൂപടം (റീലോഡ്)',
+  'viz.title': 'ദൃശ്യവൽക്കരണം',
+  'stats.title': 'സ്ഥിതിവിവരം',
+
+  // Simulation
+  'sim.play': 'പ്ലേ ▶',
+  'sim.pause': 'താൽക്കാലികം ⏸',
+  'sim.step': 'സ്റ്റെപ്പ് ⏭',
+  'sim.reset': 'റീസെറ്റ് ⟳',
+  'sim.dump': 'വെള്ളം പുറന്തള്ളുക 💧 (മിന്നൽ വെള്ളപ്പൊക്കം)',
+  'sim.fill': 'നിലവാരം വരെ നിറയ്ക്കുക 🌊 (ഒറ്റത്തവണ)',
+  'sim.dumpDepth': 'പുറന്തള്ളൽ ആഴം (m)',
+  'sim.floodLevel': 'വെള്ളപ്പൊക്ക നിലവാരം (+m)',
+  'sim.liveFlood': 'തത്സമയ വെള്ളപ്പൊക്ക നിലവാരം',
+  'sim.timescale': 'സമയം × (sim s/s)',
+  'sim.substeps': 'ഉപപടികൾ',
+  'pour.button': 'വെള്ളം ഒഴിക്കുക',
+  'pour.hint': 'വെള്ളം ഒഴിക്കാൻ ഭൂപടത്തിൽ ക്ലിക്ക് ചെയ്യുക',
+  'pour.depth': 'ഒഴിക്കൽ ആഴം (m)',
+  'pour.radius': 'ഒഴിക്കൽ ആരം (m)',
+
+  // Rain
+  'rain.raining': 'മഴ പെയ്യുന്നു',
+  'rain.stormEvent': 'കൊടുങ്കാറ്റ് സംഭവം',
+  'rain.clouds': 'മേഘങ്ങൾ ⛈ + മിന്നൽ',
+  'rain.constant': 'സ്ഥിരം mm/hr',
+  'rain.footprint': 'വ്യാപ്തി',
+  'rain.footprintUniform': 'ഏകീകൃതം',
+  'rain.footprintSpot': 'കൊടുങ്കാറ്റ് കോശം',
+  'rain.cellX': 'കോശം x',
+  'rain.cellY': 'കോശം y',
+  'rain.cellRadius': 'കോശ ആരം',
+
+  // Storm hyetograph presets
+  'storm.constant': 'സ്ഥിരം (മാന്വൽ mm/hr)',
+  'storm.cloudburst': 'മേഘവിസ്ഫോടനം (~50 mm / 2 h)',
+  'storm.design25yr': 'രൂപകൽപന കൊടുങ്കാറ്റ് P≈25 yr',
+  'storm.may2026': 'നിരീക്ഷിച്ചത് 18 മേയ് 2026 (41 mm/2 h)',
+  'storm.jun2026': 'നിരീക്ഷിച്ചത് 12 ജൂൺ 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'പ്രതല മാതൃക',
+  'urban.buildings': 'കെട്ടിടങ്ങൾ ഭിത്തികളായി',
+  'urban.sewer': 'മഴവെള്ള ഓട (mm/hr)',
+  'urban.groundwater': 'ഉയർന്ന ഭൂഗർഭജലം',
+
+  // Soil
+  'soil.infiltration': 'മണ്ണ് വലിച്ചെടുക്കൽ (mm/hr)',
+  'soil.evaporation': 'ബാഷ്പീകരണം (/hr)',
+
+  // Physics
+  'physics.gravity': 'ഗുരുത്വാകർഷണം (m/s²)',
+  'physics.flow': 'ഒഴുക്ക് ഗുണാങ്കം',
+  'physics.friction': 'ഘർഷണം',
+  'physics.edges': 'അരികുകൾ',
+  'physics.edgesOpen': 'തുറന്നത് (ഒഴുകിപ്പോകുന്നു)',
+  'physics.edgesClosed': 'അടച്ചത് (ഭിത്തികൾ)',
+
+  // Map
+  'map.elevation': 'ഉയരം',
+  'map.size': 'വലുപ്പം (km)',
+  'map.grid': 'ഗ്രിഡ്',
+  'map.apply': 'വലുപ്പം / ഗ്രിഡ് പ്രയോഗിക്കുക ⟲',
+  'map.demoMode': 'ഡെമോ മോഡ്',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'ഡെമോ',
+  'demo.precompute': 'കൊടുങ്കാറ്റ് മുൻകൂട്ടി കണക്കാക്കുക ⏳',
+  'demo.statusLabel': 'നില',
+  'demo.timeline': 'സമയരേഖ',
+  'demo.play': 'സമയരേഖ പ്ലേ ചെയ്യുക ▶',
+  'demo.live': 'തത്സമയ സിമുലേഷൻ ⟳',
+  'demo.stComputing': 'കണക്കാക്കുന്നു… {pct}%',
+  'demo.stReady': 'രംഗം തയ്യാർ — സമയം നീക്കുക',
+  'demo.stLive': 'തത്സമയം',
+
+  // Visualization
+  'viz.terrain': 'ഭൂപ്രദേശം',
+  'viz.terrainSatellite': 'ഉപഗ്രഹം',
+  'viz.terrainHypso': 'ഉയര നിറം',
+  'viz.terrainHeatmap': 'ഉയര ഹീറ്റ്മാപ്പ്',
+  'viz.terrainSurface': 'പ്രതലം (വെള്ളപ്പൊക്ക സാധ്യത)',
+  'viz.darkening': 'ആഴത്തിലുള്ള ഇരുട്ടൽ',
+  'viz.vertical': 'ലംബം ×',
+  'viz.opacity': 'ജല സുതാര്യത',
+  'viz.depthMax': 'ആഴ നിറ പരമാവധി (m)',
+  'viz.maxFlood': 'പരമാവധി വെള്ളപ്പൊക്ക വ്യാപ്തി',
+  'viz.arrows': 'ഒഴുക്ക് അമ്പുകൾ',
+  'viz.wireframe': 'വയർഫ്രെയിം ഭൂപ്രദേശം',
+  'viz.language': 'ഭാഷ',
+  'viz.waterQuality': 'ജല ഗുണനിലവാരം',
+  'viz.qLow': 'കുറവ് (വേഗം)',
+  'viz.qMedium': 'ഇടത്തരം',
+  'viz.qHigh': 'ഉയർന്നത് (മനോഹരം)',
+  'viz.reflections': 'ആകാശ പ്രതിഫലനം',
+  'viz.refraction': 'അപവർത്തനം',
+  'viz.clarity': 'ജല സ്വച്ഛത',
+  'viz.ripples': 'ഓളത്തിന്റെ ശക്തി',
+  'viz.flowSpeed': 'ഒഴുക്ക് വേഗത',
+  'viz.foam': 'നുര',
+  'viz.glint': 'സൂര്യ തിളക്കം',
+  'viz.shoreline': 'തീര മൃദുത്വം (m)',
+  'viz.skirt': 'അരിക് ഭിത്തികൾ',
+  'viz.floodOverlay': 'വെള്ളപ്പൊക്ക ഭൂപട ഓവർലേ',
+  'viz.floodGrid': 'വെള്ളപ്പൊക്ക ഗ്രിഡ്',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'അന്തരീക്ഷം',
+  'atmo.post': 'പോസ്റ്റ്-പ്രോസസിംഗ്',
+  'atmo.exposure': 'എക്സ്പോഷർ',
+  'atmo.bloom': 'ബ്ലൂം',
+  'atmo.ssao': 'ആംബിയന്റ് ഒക്ലൂഷൻ',
+  'atmo.vignette': 'വിഗ്നെറ്റ്',
+  'atmo.wetness': 'നനഞ്ഞ നിലം (മഴ)',
+  'atmo.cloudShadows': 'മേഘ നിഴലുകൾ',
+  'atmo.godRays': 'പ്രകാശ കിരണങ്ങൾ (കൊടുങ്കാറ്റ്)',
+  'atmo.haze': 'നില മൂടൽമഞ്ഞ്',
+  'atmo.splashes': 'മഴ തെറിപ്പുകൾ',
+  'atmo.renderScale': 'റെൻഡർ സ്കെയിൽ',
+  'atmo.autoQuality': 'യാന്ത്രിക ഗുണനിലവാരം',
+
+  // Stats
+  'stats.location': 'സ്ഥാനം',
+  'stats.simTime': 'സിം സമയം',
+  'stats.rainIn': 'പെയ്ത മഴ',
+  'stats.stored': 'സംഭരിച്ച വെള്ളം',
+  'stats.flooded': 'വെള്ളപ്പൊക്ക പ്രദേശം',
+  'stats.maxDepth': 'പരമാവധി ആഴം',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” ലോഡ് ചെയ്യുന്നു…',
+  'toast.loadingSurface': 'പ്രതല മാതൃക ലോഡ് ചെയ്യുന്നു (ഭൂവിനിയോഗം + OSM)…',
+  'toast.loaded': '{place} ലോഡ് ചെയ്തു',
+  'toast.notFound': '“{q}” എന്നതിന് പൊരുത്തമൊന്നും കണ്ടെത്തിയില്ല.',
+  'toast.geocodeFail': 'ജിയോകോഡിംഗ് പരാജയപ്പെട്ടു. അൽപ്പസമയത്തിനു ശേഷം വീണ്ടും ശ്രമിക്കുക.',
+  'toast.enterAddress': 'ദയവായി ഒരു വിലാസം നൽകുക.',
+  'toast.autoQuality': 'സുഗമമായി നിലനിർത്താൻ ഗ്രാഫിക്സ് ഗുണനിലവാരം കുറച്ചു.',
+  'toast.detecting': 'നിങ്ങളുടെ സ്ഥാനം കണ്ടെത്തുന്നു…',
+
+  // Misc
+  'legend.elevation': 'ഉയരം',
+  'readout.elev': 'ഉയരം',
+  'readout.water': 'വെള്ളം',
+};

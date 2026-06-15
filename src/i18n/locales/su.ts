@@ -1,0 +1,159 @@
+export const su: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'Alamat, tempat, atawa "lat, lon"…',
+  'btn.load': 'Muat',
+  'btn.loading': 'Keur muat…',
+  'autocomplete.useCoords': 'Paké koordinat {coords}',
+
+  // Panel + folders
+  'panel.title': 'Peta Caah',
+  'sim.title': 'Simulasi',
+  'rain.title': 'Hujan',
+  'urban.title': 'Modél kota',
+  'soil.title': 'Taneuh & evaporasi',
+  'physics.title': 'Fisika',
+  'map.title': 'Peta (muat deui)',
+  'viz.title': 'Visualisasi',
+  'stats.title': 'Statistik',
+
+  // Simulation
+  'sim.play': 'Mainkeun ▶',
+  'sim.pause': 'Reureuh ⏸',
+  'sim.step': 'Léngkah ⏭',
+  'sim.reset': 'Balikan ⟳',
+  'sim.dump': 'Lélébkeun cai 💧 (caah ngadadak)',
+  'sim.fill': 'Eusian nepi ka jugjugan 🌊 (sakali jadi)',
+  'sim.dumpDepth': 'jero léléban (m)',
+  'sim.floodLevel': 'jugjugan caah (+m)',
+  'sim.liveFlood': 'jugjugan caah langsung',
+  'sim.timescale': 'waktu × (sim s/s)',
+  'sim.substeps': 'sublengkah',
+  'pour.button': 'Cicikeun cai',
+  'pour.hint': 'Pencét peta pikeun nyicikeun cai',
+  'pour.depth': 'jero cicikan (m)',
+  'pour.radius': 'radius cicikan (m)',
+
+  // Rain
+  'rain.raining': 'keur hujan',
+  'rain.stormEvent': 'kajadian badai',
+  'rain.clouds': 'méga ⛈ + gelap',
+  'rain.constant': 'tetep mm/hr',
+  'rain.footprint': 'tapak',
+  'rain.footprintUniform': 'Rata',
+  'rain.footprintSpot': 'Sél badai',
+  'rain.cellX': 'sél x',
+  'rain.cellY': 'sél y',
+  'rain.cellRadius': 'radius sél',
+
+  // Storm hyetograph presets
+  'storm.constant': 'Tetep (manual mm/hr)',
+  'storm.cloudburst': 'Hujan ngagebrét (~50 mm / 2 h)',
+  'storm.design25yr': 'Badai rancangan P≈25 yr',
+  'storm.may2026': 'Katalingakeun 18 Méi 2026 (41 mm/2 h)',
+  'storm.jun2026': 'Katalingakeun 12 Jun 2026 (90 mm/poé)',
+
+  // Urban model
+  'urban.surface': 'modél permukaan',
+  'urban.buildings': 'wangunan jadi témbok',
+  'urban.sewer': 'gorong-gorong (mm/hr)',
+  'urban.groundwater': 'cai taneuh luhur',
+
+  // Soil
+  'soil.infiltration': 'infiltrasi taneuh (mm/hr)',
+  'soil.evaporation': 'evaporasi (/hr)',
+
+  // Physics
+  'physics.gravity': 'gravitasi (m/s²)',
+  'physics.flow': 'koéfisién aliran',
+  'physics.friction': 'gésékan',
+  'physics.edges': 'sisi',
+  'physics.edgesOpen': 'Muka (cai ngocor kaluar)',
+  'physics.edgesClosed': 'Nutup (témbok)',
+
+  // Map
+  'map.elevation': 'élévasi',
+  'map.size': 'ukuran (km)',
+  'map.grid': 'grid',
+  'map.apply': 'Larapkeun ukuran / grid ⟲',
+  'map.demoMode': 'modeu démo',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'Démo',
+  'demo.precompute': 'Itung ti heula badai ⏳',
+  'demo.statusLabel': 'status',
+  'demo.timeline': 'garis waktu',
+  'demo.play': 'mainkeun garis waktu ▶',
+  'demo.live': 'Sim langsung ⟳',
+  'demo.stComputing': 'keur ngitung… {pct}%',
+  'demo.stReady': 'adegan siap — geser waktu',
+  'demo.stLive': 'langsung',
+
+  // Visualization
+  'viz.terrain': 'taneuh',
+  'viz.terrainSatellite': 'Satelit',
+  'viz.terrainHypso': 'Werna élévasi',
+  'viz.terrainHeatmap': 'Peta panas jangkungna',
+  'viz.terrainSurface': 'Permukaan (résiko caah)',
+  'viz.darkening': 'poék nuturkeun jero',
+  'viz.vertical': 'vertikal ×',
+  'viz.opacity': 'kakelapan cai',
+  'viz.depthMax': 'jero werna maks (m)',
+  'viz.maxFlood': 'lega caah maks',
+  'viz.arrows': 'panah aliran',
+  'viz.wireframe': 'taneuh rangka kawat',
+  'viz.language': 'basa',
+  'viz.waterQuality': 'kualitas cai',
+  'viz.qLow': 'Handap (gancang)',
+  'viz.qMedium': 'Sedeng',
+  'viz.qHigh': 'Luhur (alus)',
+  'viz.reflections': 'pantulan langit',
+  'viz.refraction': 'pamatahan',
+  'viz.clarity': 'beningna cai',
+  'viz.ripples': 'kuatna riak',
+  'viz.flowSpeed': 'laju aliran',
+  'viz.foam': 'busa',
+  'viz.glint': 'kiceup panonpoé',
+  'viz.shoreline': 'lemesna basisir (m)',
+  'viz.skirt': 'témbok sisi',
+  'viz.floodOverlay': 'lapis peta caah',
+  'viz.floodGrid': 'grid caah',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'Atmosfir',
+  'atmo.post': 'pasca-prosés',
+  'atmo.exposure': 'paparan',
+  'atmo.bloom': 'cahaya nyebar',
+  'atmo.ssao': 'oklusi lingkungan',
+  'atmo.vignette': 'vinyét',
+  'atmo.wetness': 'taneuh baseuh (hujan)',
+  'atmo.cloudShadows': 'kalangkang méga',
+  'atmo.godRays': 'sorot cahaya (badai)',
+  'atmo.haze': 'halimun taneuh',
+  'atmo.splashes': 'récécan hujan',
+  'atmo.renderScale': 'skala rénder',
+  'atmo.autoQuality': 'kualitas otomatis',
+
+  // Stats
+  'stats.location': 'lokasi',
+  'stats.simTime': 'waktu sim',
+  'stats.rainIn': 'hujan asup',
+  'stats.stored': 'cai katyimpen',
+  'stats.flooded': 'lega kakeueum',
+  'stats.maxDepth': 'jero maks',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': 'Keur muat “{q}”…',
+  'toast.loadingSurface': 'Keur muat modél permukaan (tutupan lahan + OSM)…',
+  'toast.loaded': 'Geus dimuat {place}',
+  'toast.notFound': 'Teu kapanggih nu cocog jeung “{q}”.',
+  'toast.geocodeFail': 'Géokodeu gagal. Cobi deui sakedap.',
+  'toast.enterAddress': 'Mangga lebetkeun alamat.',
+  'toast.autoQuality': 'Kualitas grafis diturunkeun sangkan tetep mulus.',
+  'toast.detecting': 'Keur ngadétéksi lokasi anjeun…',
+
+  // Misc
+  'legend.elevation': 'Élévasi',
+  'readout.elev': 'élév',
+  'readout.water': 'cai',
+};

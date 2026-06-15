@@ -1,0 +1,159 @@
+export const te: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'చిరునామా, ప్రదేశం, లేదా "అక్షాంశం, రేఖాంశం"…',
+  'btn.load': 'లోడ్ చేయి',
+  'btn.loading': 'లోడ్ అవుతోంది…',
+  'autocomplete.useCoords': '{coords} నిర్దేశాంకాలను వాడు',
+
+  // Panel + folders
+  'panel.title': 'వరద పటం',
+  'sim.title': 'అనుకరణ',
+  'rain.title': 'వర్షం',
+  'urban.title': 'పట్టణ నమూనా',
+  'soil.title': 'నేల & బాష్పీభవనం',
+  'physics.title': 'భౌతికశాస్త్రం',
+  'map.title': 'పటం (మళ్ళీ లోడ్)',
+  'viz.title': 'దృశ్యీకరణ',
+  'stats.title': 'గణాంకాలు',
+
+  // Simulation
+  'sim.play': 'ఆడించు ▶',
+  'sim.pause': 'విరామం ⏸',
+  'sim.step': 'అడుగు ⏭',
+  'sim.reset': 'రీసెట్ ⟳',
+  'sim.dump': 'నీటిని విడుదల చేయి 💧 (ఆకస్మిక వరద)',
+  'sim.fill': 'స్థాయికి నింపు 🌊 (ఒకేసారి)',
+  'sim.dumpDepth': 'విడుదల లోతు (m)',
+  'sim.floodLevel': 'వరద స్థాయి (+m)',
+  'sim.liveFlood': 'ప్రత్యక్ష వరద స్థాయి',
+  'sim.timescale': 'సమయం × (సిమ్ s/s)',
+  'sim.substeps': 'ఉప అడుగులు',
+  'pour.button': 'నీళ్ళు పోయి',
+  'pour.hint': 'నీళ్ళు పోయడానికి పటంపై క్లిక్ చేయి',
+  'pour.depth': 'పోత లోతు (m)',
+  'pour.radius': 'పోత వ్యాసార్థం (m)',
+
+  // Rain
+  'rain.raining': 'వర్షం పడుతోంది',
+  'rain.stormEvent': 'తుఫాను సంఘటన',
+  'rain.clouds': 'మేఘాలు ⛈ + మెరుపులు',
+  'rain.constant': 'స్థిరం mm/hr',
+  'rain.footprint': 'వ్యాప్తి',
+  'rain.footprintUniform': 'ఏకరూపం',
+  'rain.footprintSpot': 'తుఫాను కణం',
+  'rain.cellX': 'కణం x',
+  'rain.cellY': 'కణం y',
+  'rain.cellRadius': 'కణం వ్యాసార్థం',
+
+  // Storm hyetograph presets
+  'storm.constant': 'స్థిరం (స్వయంగా mm/hr)',
+  'storm.cloudburst': 'మేఘవిస్ఫోటనం (~50 mm / 2 h)',
+  'storm.design25yr': 'నమూనా తుఫాను P≈25 yr',
+  'storm.may2026': 'గమనించినది 18 మే 2026 (41 mm/2 h)',
+  'storm.jun2026': 'గమనించినది 12 జూన్ 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'ఉపరితల నమూనా',
+  'urban.buildings': 'భవనాలు గోడలుగా',
+  'urban.sewer': 'తుఫాను మురుగు (mm/hr)',
+  'urban.groundwater': 'అధిక భూగర్భ జలం',
+
+  // Soil
+  'soil.infiltration': 'నేల అంతఃస్రవణం (mm/hr)',
+  'soil.evaporation': 'బాష్పీభవనం (/hr)',
+
+  // Physics
+  'physics.gravity': 'గురుత్వాకర్షణ (m/s²)',
+  'physics.flow': 'ప్రవాహ గుణకం',
+  'physics.friction': 'ఘర్షణ',
+  'physics.edges': 'అంచులు',
+  'physics.edgesOpen': 'తెరిచిన (కాలువలు)',
+  'physics.edgesClosed': 'మూసిన (గోడలు)',
+
+  // Map
+  'map.elevation': 'ఎత్తు',
+  'map.size': 'పరిమాణం (km)',
+  'map.grid': 'గ్రిడ్',
+  'map.apply': 'పరిమాణం / గ్రిడ్ వర్తింపజేయి ⟲',
+  'map.demoMode': 'డెమో మోడ్',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'డెమో',
+  'demo.precompute': 'తుఫానును ముందుగా గణించు ⏳',
+  'demo.statusLabel': 'స్థితి',
+  'demo.timeline': 'కాలరేఖ',
+  'demo.play': 'కాలరేఖ ఆడించు ▶',
+  'demo.live': 'ప్రత్యక్ష సిమ్ ⟳',
+  'demo.stComputing': 'గణిస్తోంది… {pct}%',
+  'demo.stReady': 'దృశ్యం సిద్ధం — సమయం తిప్పు',
+  'demo.stLive': 'ప్రత్యక్షం',
+
+  // Visualization
+  'viz.terrain': 'భూభాగం',
+  'viz.terrainSatellite': 'ఉపగ్రహం',
+  'viz.terrainHypso': 'ఎత్తు రంగు',
+  'viz.terrainHeatmap': 'ఎత్తు హీట్‌మ్యాప్',
+  'viz.terrainSurface': 'ఉపరితలం (వరద ప్రమాదం)',
+  'viz.darkening': 'లోతు ముదురుదనం',
+  'viz.vertical': 'నిలువు ×',
+  'viz.opacity': 'నీటి అపారదర్శకత',
+  'viz.depthMax': 'లోతు రంగు గరిష్ఠం (m)',
+  'viz.maxFlood': 'గరిష్ఠ వరద విస్తీర్ణం',
+  'viz.arrows': 'ప్రవాహ బాణాలు',
+  'viz.wireframe': 'వైర్‌ఫ్రేమ్ భూభాగం',
+  'viz.language': 'భాష',
+  'viz.waterQuality': 'నీటి నాణ్యత',
+  'viz.qLow': 'తక్కువ (వేగం)',
+  'viz.qMedium': 'మధ్యమం',
+  'viz.qHigh': 'అధికం (అందం)',
+  'viz.reflections': 'ఆకాశ ప్రతిబింబం',
+  'viz.refraction': 'వక్రీభవనం',
+  'viz.clarity': 'నీటి స్వచ్ఛత',
+  'viz.ripples': 'అలల బలం',
+  'viz.flowSpeed': 'ప్రవాహ వేగం',
+  'viz.foam': 'నురుగు',
+  'viz.glint': 'సూర్య మెరుపు',
+  'viz.shoreline': 'తీర మృదుత్వం (m)',
+  'viz.skirt': 'అంచు గోడలు',
+  'viz.floodOverlay': 'వరద పట ఆవరణం',
+  'viz.floodGrid': 'వరద గ్రిడ్',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'వాతావరణం',
+  'atmo.post': 'పోస్ట్-ప్రాసెసింగ్',
+  'atmo.exposure': 'ఎక్స్‌పోజర్',
+  'atmo.bloom': 'బ్లూమ్',
+  'atmo.ssao': 'పరిసర అడ్డుకట్ట',
+  'atmo.vignette': 'వినియెట్',
+  'atmo.wetness': 'తడి నేల (వర్షం)',
+  'atmo.cloudShadows': 'మేఘ నీడలు',
+  'atmo.godRays': 'కాంతి కిరణాలు (తుఫాను)',
+  'atmo.haze': 'నేల పొగమంచు',
+  'atmo.splashes': 'వర్షపు చిమ్ముడులు',
+  'atmo.renderScale': 'రెండర్ స్కేల్',
+  'atmo.autoQuality': 'స్వయంచాలక నాణ్యత',
+
+  // Stats
+  'stats.location': 'ప్రదేశం',
+  'stats.simTime': 'సిమ్ సమయం',
+  'stats.rainIn': 'వర్షం పడింది',
+  'stats.stored': 'నిల్వ ఉన్న నీరు',
+  'stats.flooded': 'వరద ముంపు ప్రాంతం',
+  'stats.maxDepth': 'గరిష్ఠ లోతు',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” లోడ్ అవుతోంది…',
+  'toast.loadingSurface': 'ఉపరితల నమూనా లోడ్ అవుతోంది (భూ ఆవరణం + OSM)…',
+  'toast.loaded': '{place} లోడ్ అయింది',
+  'toast.notFound': '“{q}” కోసం సరిపోలిక దొరకలేదు.',
+  'toast.geocodeFail': 'జియోకోడింగ్ విఫలమైంది. కొద్దిసేపటిలో మళ్ళీ ప్రయత్నించండి.',
+  'toast.enterAddress': 'దయచేసి చిరునామా నమోదు చేయండి.',
+  'toast.autoQuality': 'సాఫీగా ఉంచడానికి గ్రాఫిక్స్ నాణ్యతను తగ్గించాను.',
+  'toast.detecting': 'మీ ప్రదేశాన్ని గుర్తిస్తోంది…',
+
+  // Misc
+  'legend.elevation': 'ఎత్తు',
+  'readout.elev': 'ఎత్తు',
+  'readout.water': 'నీరు',
+};

@@ -1,0 +1,162 @@
+// English is the source catalog. Other locales mirror these keys; any missing
+// key falls back to English. Keep {placeholders}, emoji and units unchanged
+// when translating.
+export const gu: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'સરનામું, સ્થળ, અથવા "અક્ષાંશ, રેખાંશ"…',
+  'btn.load': 'લોડ કરો',
+  'btn.loading': 'લોડ થઈ રહ્યું છે…',
+  'autocomplete.useCoords': 'કોઓર્ડિનેટ્સ વાપરો {coords}',
+
+  // Panel + folders
+  'panel.title': 'પૂર નકશો',
+  'sim.title': 'સિમ્યુલેશન',
+  'rain.title': 'વરસાદ',
+  'urban.title': 'શહેરી મોડેલ',
+  'soil.title': 'માટી અને બાષ્પીભવન',
+  'physics.title': 'ભૌતિકશાસ્ત્ર',
+  'map.title': 'નકશો (ફરી લોડ)',
+  'viz.title': 'વિઝ્યુઅલાઇઝેશન',
+  'stats.title': 'આંકડા',
+
+  // Simulation
+  'sim.play': 'ચલાવો ▶',
+  'sim.pause': 'થોભો ⏸',
+  'sim.step': 'પગલું ⏭',
+  'sim.reset': 'રીસેટ ⟳',
+  'sim.dump': 'પાણી છોડો 💧 (અચાનક પૂર)',
+  'sim.fill': 'સ્તર સુધી ભરો 🌊 (એક વાર)',
+  'sim.dumpDepth': 'છોડવાની ઊંડાઈ (m)',
+  'sim.floodLevel': 'પૂર સ્તર (+m)',
+  'sim.liveFlood': 'જીવંત પૂર સ્તર',
+  'sim.timescale': 'સમય × (સિમ s/s)',
+  'sim.substeps': 'ઉપપગલાં',
+  'pour.button': 'પાણી રેડો',
+  'pour.hint': 'પાણી રેડવા નકશા પર ક્લિક કરો',
+  'pour.depth': 'રેડવાની ઊંડાઈ (m)',
+  'pour.radius': 'રેડવાની ત્રિજ્યા (m)',
+
+  // Rain
+  'rain.raining': 'વરસાદ પડે છે',
+  'rain.stormEvent': 'તોફાન ઘટના',
+  'rain.clouds': 'વાદળ ⛈ + વીજળી',
+  'rain.constant': 'સ્થિર mm/hr',
+  'rain.footprint': 'વ્યાપ',
+  'rain.footprintUniform': 'સમાન',
+  'rain.footprintSpot': 'તોફાન કોષ',
+  'rain.cellX': 'કોષ x',
+  'rain.cellY': 'કોષ y',
+  'rain.cellRadius': 'કોષ ત્રિજ્યા',
+
+  // Storm hyetograph presets
+  'storm.constant': 'સ્થિર (મેન્યુઅલ mm/hr)',
+  'storm.cloudburst': 'વાદળ ફાટવું (~50 mm / 2 h)',
+  'storm.design25yr': 'ડિઝાઇન તોફાન P≈25 yr',
+  'storm.may2026': 'નોંધાયેલ 18 મે 2026 (41 mm/2 h)',
+  'storm.jun2026': 'નોંધાયેલ 12 જૂન 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'સપાટી મોડેલ',
+  'urban.buildings': 'ઇમારતો દિવાલ તરીકે',
+  'urban.sewer': 'વરસાદી ગટર (mm/hr)',
+  'urban.groundwater': 'ઊંચું ભૂગર્ભજળ',
+
+  // Soil
+  'soil.infiltration': 'માટી અંતઃસ્રવણ (mm/hr)',
+  'soil.evaporation': 'બાષ્પીભવન (/hr)',
+
+  // Physics
+  'physics.gravity': 'ગુરુત્વાકર્ષણ (m/s²)',
+  'physics.flow': 'પ્રવાહ ગુણાંક',
+  'physics.friction': 'ઘર્ષણ',
+  'physics.edges': 'કિનારા',
+  'physics.edgesOpen': 'ખુલ્લા (નિકાલ)',
+  'physics.edgesClosed': 'બંધ (દિવાલો)',
+
+  // Map
+  'map.elevation': 'ઊંચાઈ',
+  'map.size': 'કદ (km)',
+  'map.grid': 'ગ્રીડ',
+  'map.apply': 'કદ / ગ્રીડ લાગુ કરો ⟲',
+  'map.demoMode': 'ડેમો મોડ',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'ડેમો',
+  'demo.precompute': 'તોફાન પૂર્વગણતરી ⏳',
+  'demo.statusLabel': 'સ્થિતિ',
+  'demo.timeline': 'ટાઇમલાઇન',
+  'demo.play': 'ટાઇમલાઇન ચલાવો ▶',
+  'demo.live': 'જીવંત સિમ ⟳',
+  'demo.stComputing': 'ગણતરી થઈ રહી છે… {pct}%',
+  'demo.stReady': 'દૃશ્ય તૈયાર — સમય સ્ક્રબ કરો',
+  'demo.stLive': 'જીવંત',
+
+  // Visualization
+  'viz.terrain': 'ભૂપૃષ્ઠ',
+  'viz.terrainSatellite': 'સેટેલાઇટ',
+  'viz.terrainHypso': 'ઊંચાઈ રંગછટા',
+  'viz.terrainHeatmap': 'ઊંચાઈ હીટમેપ',
+  'viz.terrainSurface': 'સપાટી (પૂર જોખમ)',
+  'viz.darkening': 'ઊંડાઈ ઘેરાપણું',
+  'viz.vertical': 'ઊભું ×',
+  'viz.opacity': 'પાણીની અપારદર્શકતા',
+  'viz.depthMax': 'ઊંડાઈ રંગ મહત્તમ (m)',
+  'viz.maxFlood': 'મહત્તમ પૂર વ્યાપ',
+  'viz.arrows': 'પ્રવાહ તીર',
+  'viz.wireframe': 'વાયરફ્રેમ ભૂપૃષ્ઠ',
+  'viz.language': 'ભાષા',
+  'viz.waterQuality': 'પાણીની ગુણવત્તા',
+  'viz.qLow': 'નીચી (ઝડપી)',
+  'viz.qMedium': 'મધ્યમ',
+  'viz.qHigh': 'ઊંચી (સુંદર)',
+  'viz.reflections': 'આકાશ પ્રતિબિંબ',
+  'viz.refraction': 'વક્રીભવન',
+  'viz.clarity': 'પાણીની સ્પષ્ટતા',
+  'viz.ripples': 'લહેર બળ',
+  'viz.flowSpeed': 'પ્રવાહ ગતિ',
+  'viz.foam': 'ફીણ',
+  'viz.glint': 'સૂર્ય ઝબકારો',
+  'viz.shoreline': 'કિનારા કોમળતા (m)',
+  'viz.skirt': 'કિનારી દિવાલો',
+  'viz.floodOverlay': 'પૂર નકશા ઓવરલે',
+  'viz.floodGrid': 'પૂર ગ્રીડ',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'વાતાવરણ',
+  'atmo.post': 'પોસ્ટ-પ્રોસેસિંગ',
+  'atmo.exposure': 'એક્સપોઝર',
+  'atmo.bloom': 'બ્લૂમ',
+  'atmo.ssao': 'એમ્બિયન્ટ ઓક્લુઝન',
+  'atmo.vignette': 'વિનેટ',
+  'atmo.wetness': 'ભીની જમીન (વરસાદ)',
+  'atmo.cloudShadows': 'વાદળ પડછાયા',
+  'atmo.godRays': 'પ્રકાશ કિરણો (તોફાન)',
+  'atmo.haze': 'જમીન ધુમ્મસ',
+  'atmo.splashes': 'વરસાદ છાંટા',
+  'atmo.renderScale': 'રેન્ડર સ્કેલ',
+  'atmo.autoQuality': 'સ્વયં ગુણવત્તા',
+
+  // Stats
+  'stats.location': 'સ્થાન',
+  'stats.simTime': 'સિમ સમય',
+  'stats.rainIn': 'વરસાદ આવ્યો',
+  'stats.stored': 'પાણી સંગ્રહિત',
+  'stats.flooded': 'પૂરગ્રસ્ત વિસ્તાર',
+  'stats.maxDepth': 'મહત્તમ ઊંડાઈ',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” લોડ થઈ રહ્યું છે…',
+  'toast.loadingSurface': 'સપાટી મોડેલ લોડ થઈ રહ્યું છે (ભૂમિ આવરણ + OSM)…',
+  'toast.loaded': '{place} લોડ થયું',
+  'toast.notFound': '“{q}” માટે કોઈ મેળ મળ્યો નથી.',
+  'toast.geocodeFail': 'જિયોકોડિંગ નિષ્ફળ ગયું. થોડી વારમાં ફરી પ્રયાસ કરો.',
+  'toast.enterAddress': 'કૃપા કરી સરનામું દાખલ કરો.',
+  'toast.autoQuality': 'સરળ રાખવા ગ્રાફિક્સ ગુણવત્તા ઘટાડી.',
+  'toast.detecting': 'તમારું સ્થાન શોધી રહ્યું છે…',
+
+  // Misc
+  'legend.elevation': 'ઊંચાઈ',
+  'readout.elev': 'ઊંચાઈ',
+  'readout.water': 'પાણી',
+};

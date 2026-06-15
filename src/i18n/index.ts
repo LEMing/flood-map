@@ -44,6 +44,20 @@ import { ig } from './locales/ig';
 import { zu } from './locales/zu';
 import { af } from './locales/af';
 import { so } from './locales/so';
+import { pa } from './locales/pa';
+import { mr } from './locales/mr';
+import { te } from './locales/te';
+import { gu } from './locales/gu';
+import { kn } from './locales/kn';
+import { ml } from './locales/ml';
+import { or } from './locales/or';
+import { yue } from './locales/yue';
+import { wuu } from './locales/wuu';
+import { jv } from './locales/jv';
+import { su } from './locales/su';
+import { ps } from './locales/ps';
+import { tl } from './locales/tl';
+import { my } from './locales/my';
 
 export type Lang =
   | 'en' | 'ru' | 'uk' | 'tr' | 'de' | 'es' | 'fr' | 'zh'
@@ -51,12 +65,15 @@ export type Lang =
   | 'pt' | 'ar' | 'it' | 'pl' | 'nl' | 'el' | 'bn' | 'fa'
   | 'ur' | 'ms' | 'ta' | 'ro' | 'sw' | 'cs' | 'sv' | 'he'
   | 'kk' | 'uz' | 'az' | 'hy' | 'ka' | 'be' | 'ky' | 'tg' | 'tk'
-  | 'am' | 'ha' | 'yo' | 'ig' | 'zu' | 'af' | 'so';
+  | 'am' | 'ha' | 'yo' | 'ig' | 'zu' | 'af' | 'so'
+  | 'pa' | 'mr' | 'te' | 'gu' | 'kn' | 'ml' | 'or' | 'yue' | 'wuu'
+  | 'jv' | 'su' | 'ps' | 'tl' | 'my';
 
 const LOCALES: Record<Lang, Record<string, string>> = {
   en, ru, uk, tr, de, es, fr, zh, ja, ko, hi, id, th, vi,
   pt, ar, it, pl, nl, el, bn, fa, ur, ms, ta, ro, sw, cs, sv, he,
   kk, uz, az, hy, ka, be, ky, tg, tk, am, ha, yo, ig, zu, af, so,
+  pa, mr, te, gu, kn, ml, or, yue, wuu, jv, su, ps, tl, my,
 };
 
 export interface LanguageDef {
@@ -113,6 +130,20 @@ export const LANGUAGES: LanguageDef[] = [
   { code: 'zu', label: 'isiZulu', english: 'Zulu' },
   { code: 'af', label: 'Afrikaans', english: 'Afrikaans' },
   { code: 'so', label: 'Soomaali', english: 'Somali' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ', english: 'Punjabi' },
+  { code: 'mr', label: 'मराठी', english: 'Marathi' },
+  { code: 'te', label: 'తెలుగు', english: 'Telugu' },
+  { code: 'gu', label: 'ગુજરાતી', english: 'Gujarati' },
+  { code: 'kn', label: 'ಕನ್ನಡ', english: 'Kannada' },
+  { code: 'ml', label: 'മലയാളം', english: 'Malayalam' },
+  { code: 'or', label: 'ଓଡ଼ିଆ', english: 'Odia' },
+  { code: 'yue', label: '粵語', english: 'Cantonese' },
+  { code: 'wuu', label: '吳語', english: 'Wu Chinese' },
+  { code: 'jv', label: 'Basa Jawa', english: 'Javanese' },
+  { code: 'su', label: 'Basa Sunda', english: 'Sundanese' },
+  { code: 'ps', label: 'پښتو', english: 'Pashto', rtl: true },
+  { code: 'tl', label: 'Tagalog', english: 'Tagalog' },
+  { code: 'my', label: 'မြန်မာ', english: 'Burmese' },
 ];
 
 // Country (ISO 3166-1 alpha-2) → the supported language most people there read.
@@ -134,6 +165,8 @@ const COUNTRY_LANG: Partial<Record<string, Lang>> = {
   ID: 'id',
   TH: 'th',
   VN: 'vi',
+  MM: 'my',
+  PH: 'tl',
   PT: 'pt', BR: 'pt', AO: 'pt', MZ: 'pt',
   SA: 'ar', AE: 'ar', EG: 'ar', DZ: 'ar', IQ: 'ar', MA: 'ar', JO: 'ar',
   KW: 'ar', QA: 'ar', LB: 'ar', LY: 'ar', TN: 'ar', OM: 'ar', BH: 'ar',

@@ -1,0 +1,159 @@
+export const kn: Record<string, string> = {
+  // Address bar
+  'input.placeholder': 'ವಿಳಾಸ, ಸ್ಥಳ ಅಥವಾ "ಅಕ್ಷಾಂಶ, ರೇಖಾಂಶ"…',
+  'btn.load': 'ಲೋಡ್ ಮಾಡಿ',
+  'btn.loading': 'ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+  'autocomplete.useCoords': 'ನಿರ್ದೇಶಾಂಕಗಳನ್ನು ಬಳಸಿ {coords}',
+
+  // Panel + folders
+  'panel.title': 'ಪ್ರವಾಹ ನಕ್ಷೆ',
+  'sim.title': 'ಸಿಮ್ಯುಲೇಶನ್',
+  'rain.title': 'ಮಳೆ',
+  'urban.title': 'ನಗರ ಮಾದರಿ',
+  'soil.title': 'ಮಣ್ಣು ಮತ್ತು ಆವಿಯಾಗುವಿಕೆ',
+  'physics.title': 'ಭೌತಶಾಸ್ತ್ರ',
+  'map.title': 'ನಕ್ಷೆ (ಮರುಲೋಡ್)',
+  'viz.title': 'ದೃಶ್ಯೀಕರಣ',
+  'stats.title': 'ಅಂಕಿಅಂಶಗಳು',
+
+  // Simulation
+  'sim.play': 'ಚಲಾಯಿಸಿ ▶',
+  'sim.pause': 'ವಿರಾಮ ⏸',
+  'sim.step': 'ಹೆಜ್ಜೆ ⏭',
+  'sim.reset': 'ಮರುಹೊಂದಿಸಿ ⟳',
+  'sim.dump': 'ನೀರು ಬಿಡುಗಡೆ 💧 (ಹಠಾತ್ ಪ್ರವಾಹ)',
+  'sim.fill': 'ಮಟ್ಟಕ್ಕೆ ತುಂಬಿಸಿ 🌊 (ಒಂದೇ ಬಾರಿ)',
+  'sim.dumpDepth': 'ಬಿಡುಗಡೆ ಆಳ (m)',
+  'sim.floodLevel': 'ಪ್ರವಾಹ ಮಟ್ಟ (+m)',
+  'sim.liveFlood': 'ನೇರ ಪ್ರವಾಹ ಮಟ್ಟ',
+  'sim.timescale': 'ಸಮಯ × (ಸಿಮ್ s/s)',
+  'sim.substeps': 'ಉಪಹೆಜ್ಜೆಗಳು',
+  'pour.button': 'ನೀರು ಸುರಿಯಿರಿ',
+  'pour.hint': 'ನೀರು ಸುರಿಯಲು ನಕ್ಷೆಯ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ',
+  'pour.depth': 'ಸುರಿಯುವ ಆಳ (m)',
+  'pour.radius': 'ಸುರಿಯುವ ತ್ರಿಜ್ಯ (m)',
+
+  // Rain
+  'rain.raining': 'ಮಳೆ ಬೀಳುತ್ತಿದೆ',
+  'rain.stormEvent': 'ಬಿರುಗಾಳಿ ಘಟನೆ',
+  'rain.clouds': 'ಮೋಡಗಳು ⛈ + ಮಿಂಚು',
+  'rain.constant': 'ಸ್ಥಿರ mm/hr',
+  'rain.footprint': 'ವ್ಯಾಪ್ತಿ',
+  'rain.footprintUniform': 'ಏಕರೂಪ',
+  'rain.footprintSpot': 'ಬಿರುಗಾಳಿ ಕೋಶ',
+  'rain.cellX': 'ಕೋಶ x',
+  'rain.cellY': 'ಕೋಶ y',
+  'rain.cellRadius': 'ಕೋಶ ತ್ರಿಜ್ಯ',
+
+  // Storm hyetograph presets
+  'storm.constant': 'ಸ್ಥಿರ (ಕೈಯಿಂದ mm/hr)',
+  'storm.cloudburst': 'ಮೋಡಸ್ಫೋಟ (~50 mm / 2 h)',
+  'storm.design25yr': 'ವಿನ್ಯಾಸ ಬಿರುಗಾಳಿ P≈25 yr',
+  'storm.may2026': 'ಗಮನಿಸಲಾದ 18 ಮೇ 2026 (41 mm/2 h)',
+  'storm.jun2026': 'ಗಮನಿಸಲಾದ 12 ಜೂನ್ 2026 (90 mm/day)',
+
+  // Urban model
+  'urban.surface': 'ಮೇಲ್ಮೈ ಮಾದರಿ',
+  'urban.buildings': 'ಕಟ್ಟಡಗಳು ಗೋಡೆಗಳಂತೆ',
+  'urban.sewer': 'ಮಳೆನೀರಿನ ಚರಂಡಿ (mm/hr)',
+  'urban.groundwater': 'ಹೆಚ್ಚಿನ ಅಂತರ್ಜಲ',
+
+  // Soil
+  'soil.infiltration': 'ಮಣ್ಣಿನ ಒಳನುಸುಳುವಿಕೆ (mm/hr)',
+  'soil.evaporation': 'ಆವಿಯಾಗುವಿಕೆ (/hr)',
+
+  // Physics
+  'physics.gravity': 'ಗುರುತ್ವ (m/s²)',
+  'physics.flow': 'ಹರಿವಿನ ಗುಣಾಂಕ',
+  'physics.friction': 'ಘರ್ಷಣೆ',
+  'physics.edges': 'ಅಂಚುಗಳು',
+  'physics.edgesOpen': 'ತೆರೆದ (ಬಸಿಯುತ್ತದೆ)',
+  'physics.edgesClosed': 'ಮುಚ್ಚಿದ (ಗೋಡೆಗಳು)',
+
+  // Map
+  'map.elevation': 'ಎತ್ತರ',
+  'map.size': 'ಗಾತ್ರ (km)',
+  'map.grid': 'ಗ್ರಿಡ್',
+  'map.apply': 'ಗಾತ್ರ / ಗ್ರಿಡ್ ಅನ್ವಯಿಸಿ ⟲',
+  'map.demoMode': 'ಡೆಮೊ ಮೋಡ್',
+
+  // Demo mode (precomputed, scrubbable storm timeline)
+  'demo.title': 'ಡೆಮೊ',
+  'demo.precompute': 'ಬಿರುಗಾಳಿ ಪೂರ್ವ-ಗಣನೆ ⏳',
+  'demo.statusLabel': 'ಸ್ಥಿತಿ',
+  'demo.timeline': 'ಕಾಲರೇಖೆ',
+  'demo.play': 'ಕಾಲರೇಖೆ ಚಲಾಯಿಸಿ ▶',
+  'demo.live': 'ನೇರ ಸಿಮ್ ⟳',
+  'demo.stComputing': 'ಗಣಿಸುತ್ತಿದೆ… {pct}%',
+  'demo.stReady': 'ದೃಶ್ಯ ಸಿದ್ಧ — ಸಮಯವನ್ನು ಸ್ಕ್ರಬ್ ಮಾಡಿ',
+  'demo.stLive': 'ನೇರ',
+
+  // Visualization
+  'viz.terrain': 'ಭೂಪ್ರದೇಶ',
+  'viz.terrainSatellite': 'ಉಪಗ್ರಹ',
+  'viz.terrainHypso': 'ಎತ್ತರದ ಬಣ್ಣ',
+  'viz.terrainHeatmap': 'ಎತ್ತರದ ಹೀಟ್‌ಮ್ಯಾಪ್',
+  'viz.terrainSurface': 'ಮೇಲ್ಮೈ (ಪ್ರವಾಹ ಅಪಾಯ)',
+  'viz.darkening': 'ಆಳದ ಕಪ್ಪಾಗುವಿಕೆ',
+  'viz.vertical': 'ಲಂಬ ×',
+  'viz.opacity': 'ನೀರಿನ ಅಪಾರದರ್ಶಕತೆ',
+  'viz.depthMax': 'ಆಳದ ಬಣ್ಣ ಗರಿಷ್ಠ (m)',
+  'viz.maxFlood': 'ಗರಿಷ್ಠ ಪ್ರವಾಹ ವ್ಯಾಪ್ತಿ',
+  'viz.arrows': 'ಹರಿವಿನ ಬಾಣಗಳು',
+  'viz.wireframe': 'ವೈರ್‌ಫ್ರೇಮ್ ಭೂಪ್ರದೇಶ',
+  'viz.language': 'ಭಾಷೆ',
+  'viz.waterQuality': 'ನೀರಿನ ಗುಣಮಟ್ಟ',
+  'viz.qLow': 'ಕಡಿಮೆ (ವೇಗ)',
+  'viz.qMedium': 'ಮಧ್ಯಮ',
+  'viz.qHigh': 'ಹೆಚ್ಚು (ಸುಂದರ)',
+  'viz.reflections': 'ಆಕಾಶ ಪ್ರತಿಫಲನ',
+  'viz.refraction': 'ವಕ್ರೀಭವನ',
+  'viz.clarity': 'ನೀರಿನ ಸ್ಪಷ್ಟತೆ',
+  'viz.ripples': 'ತರಂಗ ಬಲ',
+  'viz.flowSpeed': 'ಹರಿವಿನ ವೇಗ',
+  'viz.foam': 'ನೊರೆ',
+  'viz.glint': 'ಸೂರ್ಯನ ಹೊಳಪು',
+  'viz.shoreline': 'ತೀರದ ಮೃದುತ್ವ (m)',
+  'viz.skirt': 'ಅಂಚಿನ ಸ್ಕರ್ಟ್ ಗೋಡೆಗಳು',
+  'viz.floodOverlay': 'ಪ್ರವಾಹ ನಕ್ಷೆ ಮೇಲ್ಪದರ',
+  'viz.floodGrid': 'ಪ್ರವಾಹ ಗ್ರಿಡ್',
+
+  // Atmosphere / post-processing
+  'atmo.title': 'ವಾತಾವರಣ',
+  'atmo.post': 'ಪೋಸ್ಟ್-ಪ್ರೊಸೆಸಿಂಗ್',
+  'atmo.exposure': 'ಎಕ್ಸ್‌ಪೋಶರ್',
+  'atmo.bloom': 'ಬ್ಲೂಮ್',
+  'atmo.ssao': 'ಪರಿಸರ ಮುಚ್ಚುವಿಕೆ',
+  'atmo.vignette': 'ವಿನ್ಯೆಟ್',
+  'atmo.wetness': 'ಒದ್ದೆ ನೆಲ (ಮಳೆ)',
+  'atmo.cloudShadows': 'ಮೋಡದ ನೆರಳುಗಳು',
+  'atmo.godRays': 'ಬೆಳಕಿನ ಕಿರಣಗಳು (ಬಿರುಗಾಳಿ)',
+  'atmo.haze': 'ನೆಲದ ಮಂಜು',
+  'atmo.splashes': 'ಮಳೆ ಚಿಮ್ಮುವಿಕೆ',
+  'atmo.renderScale': 'ರೆಂಡರ್ ಪ್ರಮಾಣ',
+  'atmo.autoQuality': 'ಸ್ವಯಂ ಗುಣಮಟ್ಟ',
+
+  // Stats
+  'stats.location': 'ಸ್ಥಳ',
+  'stats.simTime': 'ಸಿಮ್ ಸಮಯ',
+  'stats.rainIn': 'ಬಿದ್ದ ಮಳೆ',
+  'stats.stored': 'ಸಂಗ್ರಹಿತ ನೀರು',
+  'stats.flooded': 'ಪ್ರವಾಹ ಪ್ರದೇಶ',
+  'stats.maxDepth': 'ಗರಿಷ್ಠ ಆಳ',
+  'stats.fps': 'fps',
+
+  // Toasts
+  'toast.loadingPlace': '“{q}” ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+  'toast.loadingSurface': 'ಮೇಲ್ಮೈ ಮಾದರಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ (ಭೂ ಹೊದಿಕೆ + OSM)…',
+  'toast.loaded': '{place} ಲೋಡ್ ಆಯಿತು',
+  'toast.notFound': '“{q}” ಗೆ ಯಾವುದೇ ಹೊಂದಾಣಿಕೆ ಸಿಗಲಿಲ್ಲ.',
+  'toast.geocodeFail': 'ಜಿಯೋಕೋಡಿಂಗ್ ವಿಫಲವಾಯಿತು. ಕ್ಷಣದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+  'toast.enterAddress': 'ದಯವಿಟ್ಟು ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ.',
+  'toast.autoQuality': 'ಸುಗಮವಾಗಿರಿಸಲು ಗ್ರಾಫಿಕ್ಸ್ ಗುಣಮಟ್ಟವನ್ನು ಕಡಿಮೆ ಮಾಡಲಾಗಿದೆ.',
+  'toast.detecting': 'ನಿಮ್ಮ ಸ್ಥಳವನ್ನು ಪತ್ತೆ ಮಾಡುತ್ತಿದೆ…',
+
+  // Misc
+  'legend.elevation': 'ಎತ್ತರ',
+  'readout.elev': 'ಎತ್ತರ',
+  'readout.water': 'ನೀರು',
+};
