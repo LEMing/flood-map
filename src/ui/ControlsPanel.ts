@@ -81,7 +81,7 @@ export class ControlsPanel {
       options: { 'Copernicus GLO-30': 'glo30', 'FABDEM (bare-earth)': 'fabdem', 'SRTM (terrarium)': 'terrarium' },
     }).on('change', () => cb.onRebuild());
     map.addBinding(params, 'mapSizeKm', { min: 0.5, max: 20, step: 0.5, label: t('map.size') });
-    map.addBinding(params, 'gridResolution', { label: t('map.grid'), options: { '128': 128, '256': 256, '512': 512, '1024': 1024 } });
+    map.addBinding(params, 'gridResolution', { label: t('map.grid'), options: { '128': 128, '256': 256, '512': 512, '1024': 1024, '2048': 2048 } });
     map.addButton({ title: t('map.apply') }).on('click', () => cb.onRebuild());
 
     // --- Visualization ---

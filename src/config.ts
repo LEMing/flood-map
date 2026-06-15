@@ -173,4 +173,4 @@ export const DEFAULT_PARAMS: Params = {
   rainSplashes: true,
 };
 
-export const GRID_RESOLUTIONS = [128, 256, 512, 1024] as const;
+export const GRID_RESOLUTIONS = [128, 256, 512, 1024, 2048] as const;

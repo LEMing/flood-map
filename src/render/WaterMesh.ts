@@ -66,6 +66,8 @@ const fragmentShader = /* glsl */ `
   uniform float uSpotRadius;
   uniform float uStorm, uCloudShadow, uCloudScale;
   uniform vec2  uCloudDrift;
+  uniform sampler2D uWater;     // sampled in-fragment to smooth the coarse sim grid
+  uniform vec2  uTexel;         // 1 / gridResolution
 
   varying float vDepth;
   varying vec2  vVel;
@@ -74,6 +76,20 @@ const fragmentShader = /* glsl */ `
   varying float vSkirtT;
 
   ${GLSL_FBM}
+
+  // Tent-filtered depth: dissolves isolated single-cell water (the "droplets" at
+  // coarse grids) into continuous water without changing the sim itself.
+  float smoothDepth(vec2 uv) {
+    float s = 0.0, w = 0.0;
+    for (int j = -1; j <= 1; j++) {
+      for (int i = -1; i <= 1; i++) {
+        float wt = (i == 0 && j == 0) ? 4.0 : ((i == 0 || j == 0) ? 2.0 : 1.0);
+        s += wt * max(texture2D(uWater, uv + vec2(float(i), float(j)) * uTexel).x, 0.0);
+        w += wt;
+      }
+    }
+    return s / w;
+  }
 
   float viewZ(float d) {                       // non-linear depth [0,1] -> view-space Z (<0)
     float z = d * 2.0 - 1.0;
@@ -125,6 +141,10 @@ const fragmentShader = /* glsl */ `
   }
 
   void main() {
+    // smoothed depth for all the visual terms (kills coarse-grid droplets);
+    // the geometry still rides the per-vertex vDepth.
+    float sd = smoothDepth(vGridUv);
+
     vec3 cn = cross(dFdx(vWorld), dFdy(vWorld));
     float cnLen = length(cn);
     vec3 geomN = cnLen > 1e-12 ? cn / cnLen : vec3(0.0, 1.0, 0.0);
@@ -136,7 +156,7 @@ const fragmentShader = /* glsl */ `
     vec2 flowDir = vVel / max(speed, 1e-4);
     vec2 flow = flowDir * min(speed, 4.0);
     float ripAmp = uRippleStrength * (0.25 + 0.75 * clamp(speed / 1.0, 0.0, 1.0));
-    ripAmp *= (1.0 - 0.7 * vSkirtT) * smoothstep(0.0, 0.06, vDepth);
+    ripAmp *= (1.0 - 0.7 * vSkirtT) * smoothstep(0.0, 0.06, sd);
     vec3 nTS = rippleNormal(vWorld.xz, flow, uTime);
     vec3 surfN = normalize(geomN + ripAmp * vec3(nTS.x, 0.0, nTS.y));
     #ifdef SKIRT
@@ -152,7 +172,7 @@ const fragmentShader = /* glsl */ `
     vec2 screenUv = gl_FragCoord.xy / uResolution;
     vec3 bottomColor;
     if (uRefract > 0.5) {
-      vec2 refrOffset = surfN.xz * uRefractAmount * clamp(vDepth * 0.15, 0.0, 1.0) * (1.0 - 0.85 * vSkirtT);
+      vec2 refrOffset = surfN.xz * uRefractAmount * clamp(sd * 0.15, 0.0, 1.0) * (1.0 - 0.85 * vSkirtT);
       vec2 refrUv = clamp(screenUv + refrOffset, vec2(0.001), vec2(0.999));
       float sceneVZ = viewZ(texture2D(uSceneDepth, refrUv).x);
       float fragVZ = viewZ(gl_FragCoord.z);
@@ -163,13 +183,13 @@ const fragmentShader = /* glsl */ `
     }
 
     // --- Beer-Lambert depth absorption ---
-    vec3 transmit = exp(-vDepth * uAbsorb);
+    vec3 transmit = exp(-sd * uAbsorb);
     vec3 throughWater = mix(uDeepColor, bottomColor * uTint, transmit);
 
     // blend in a clear flood-map depth ramp (white shallow -> cyan -> blue deep)
     // so flooded cells stay legible like the overlay, while refraction still shows
     // through and ripples/foam/glint sit on top for realism.
-    float dt = clamp(vDepth / uDepthColorMax, 0.0, 1.0);
+    float dt = clamp(sd / uDepthColorMax, 0.0, 1.0);
     vec3 fShallow = vec3(0.78, 0.92, 0.99);
     vec3 fMid = vec3(0.18, 0.68, 0.92);
     vec3 fDeep = vec3(0.04, 0.26, 0.68);
@@ -191,10 +211,10 @@ const fragmentShader = /* glsl */ `
     // --- foam: shoreline (depth gradient) + fast flow, animated ---
     float foam = 0.0;
     if (uFoam > 0.0) {
-      float depthGrad = length(vec2(dFdx(vDepth), dFdy(vDepth))) / max(fwidth(length(vWorld.xz)), 1.0);
-      float shoreFoam = smoothstep(0.15, 0.6, depthGrad) * smoothstep(0.0, 0.4, vDepth);
+      float depthGrad = length(vec2(dFdx(sd), dFdy(sd))) / max(fwidth(length(vWorld.xz)), 1.0);
+      float shoreFoam = smoothstep(0.15, 0.6, depthGrad) * smoothstep(0.0, 0.4, sd);
       float flowFoam = smoothstep(uFoamVel, uFoamVel * 3.0, speed) * 0.7;
-      float wallFoam = wallness * smoothstep(0.0, 0.3, vDepth);
+      float wallFoam = wallness * smoothstep(0.0, 0.3, sd);
       float mask = clamp(shoreFoam + flowFoam + wallFoam, 0.0, 1.0);
       float fn = wNoise(vWorld.xz * 0.5 - flow * uTime * 0.3 + uTime * 0.2);
       foam = mask * smoothstep(0.4, 0.85, fn) * uFoam;
@@ -217,8 +237,8 @@ const fragmentShader = /* glsl */ `
 
     // --- alpha: realistic soft shoreline blended toward a fast overlay-like fade by
     // clarity, so flooded cells become visible within a few cm when clarity is up ---
-    float wetSoft = smoothstep(0.0, uShoreFade, vDepth);
-    float wetFast = smoothstep(0.0, 0.05, vDepth);
+    float wetSoft = smoothstep(0.0, uShoreFade, sd);
+    float wetFast = smoothstep(0.0, 0.05, sd);
     float wet = mix(wetSoft, wetFast, uClarity);
     float baseAlpha = uOpacity * (0.45 + 0.55 * dt);
     float alpha = clamp(baseAlpha * wet + fres * 0.2 + foam * 0.5, 0.0, 1.0);
@@ -260,6 +280,7 @@ export class WaterMesh {
   ) {
     this.uniforms = {
       uWater: { value: null },
+      uTexel: { value: new THREE.Vector2(1 / N, 1 / N) },
       uHeightTex: { value: heightTex },
       uMinTerrain: { value: minTerrain },
       uSkirtDrop: { value: 5.0 },

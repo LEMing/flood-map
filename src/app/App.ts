@@ -301,7 +301,7 @@ export class App {
       this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
     );
     this.water.setWeatherUniforms(this.scene.weather);
-    this.floodOverlay = new FloodOverlay(this.terrain.geometry, this.terrain.heightTexture, heightmap.sizeMeters, this.params);
+    this.floodOverlay = new FloodOverlay(this.terrain.geometry, this.terrain.heightTexture, N, heightmap.sizeMeters, this.params);
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
