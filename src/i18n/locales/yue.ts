@@ -17,6 +17,31 @@ export const yue: Record<string, string> = {
   'physics.title': '物理',
   'map.title': '地圖（重新載入）',
   'viz.title': '視覺效果',
+
+  // Subsurface geology
+  'geo.title': '地質',
+  'geo.show': '地下地質剖面',
+  'geo.depth': '顯示深度（公里）',
+  'geo.scale': '地層塊高度',
+  'geo.waterTable': '地下水位',
+  'geo.waterTableDepth': '地下水位深度（米）',
+  'geo.aquiclude': '突顯隔水層',
+  'geo.legendTitle': '地下（模型）',
+  'geo.real': '實測',
+  'geo.model': '模型',
+  'geo.caveat': '頂部約2米：真實泥土（SoilGrids）。再深：概化區域模型，並非鑽孔資料。',
+  'geo.l.topsoil': '表土（黑鈣土）',
+  'geo.l.subsoil': '黏壤質底土',
+  'geo.l.alluvium': '第四紀沖積層',
+  'geo.l.neogene': '新近紀黏土同砂',
+  'geo.l.maikop': '邁科普黏土（隔水層）',
+  'geo.l.mesozoic': '中生代蓋層',
+  'geo.l.basement': '斯基泰地台基底',
+  'geo.l.upperCrust': '上部結晶地殼',
+  'geo.l.midCrust': '中地殼',
+  'geo.l.lowerCrust': '下地殼',
+  'geo.l.mantle': '上地函（莫霍面以下）',
+
   'stats.title': '數據',
 
   // Simulation

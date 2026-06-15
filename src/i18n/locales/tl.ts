@@ -7,14 +7,14 @@ export const tl: Record<string, string> = {
 
   // Panel + folders
   'panel.title': 'Mapa ng Baha',
-  'sim.title': 'Simulation',
+  'sim.title': 'Simulasyon',
   'rain.title': 'Ulan',
   'urban.title': 'Modelong urban',
-  'soil.title': 'Lupa at evaporation',
-  'physics.title': 'Physics',
+  'soil.title': 'Lupa at pagsingaw',
+  'physics.title': 'Pisika',
   'map.title': 'Mapa (i-reload)',
-  'viz.title': 'Visualization',
-  'stats.title': 'Stats',
+  'viz.title': 'Biswalisasyon',
+  'stats.title': 'Estadistika',
 
   // Simulation
   'sim.play': 'Patugtog ▶',
@@ -27,7 +27,7 @@ export const tl: Record<string, string> = {
   'sim.floodLevel': 'antas ng baha (+m)',
   'sim.liveFlood': 'live na antas ng baha',
   'sim.timescale': 'oras × (sim s/s)',
-  'sim.substeps': 'substeps',
+  'sim.substeps': 'mga substep',
   'pour.button': 'Magsalin ng tubig',
   'pour.hint': 'I-click ang mapa para magsalin ng tubig',
   'pour.depth': 'lalim ng salin (m)',
@@ -40,62 +40,62 @@ export const tl: Record<string, string> = {
   'rain.constant': 'tuloy-tuloy na mm/hr',
   'rain.footprint': 'sakop',
   'rain.footprintUniform': 'Pantay-pantay',
-  'rain.footprintSpot': 'Storm cell',
-  'rain.cellX': 'cell x',
-  'rain.cellY': 'cell y',
+  'rain.footprintSpot': 'Sentro ng bagyo',
+  'rain.cellX': 'x ng sentro',
+  'rain.cellY': 'y ng sentro',
   'rain.cellRadius': 'radius ng cell',
 
   // Storm hyetograph presets
   'storm.constant': 'Tuloy-tuloy (manu-manong mm/hr)',
-  'storm.cloudburst': 'Cloudburst (~50 mm / 2 h)',
-  'storm.design25yr': 'Design storm P≈25 yr',
+  'storm.cloudburst': 'Biglaang ulan (~50 mm / 2 h)',
+  'storm.design25yr': 'Disenyong bagyo P≈25 yr',
   'storm.may2026': 'Naobserbahan 18 May 2026 (41 mm/2 h)',
   'storm.jun2026': 'Naobserbahan 12 Jun 2026 (90 mm/day)',
 
   // Urban model
   'urban.surface': 'modelo ng surface',
   'urban.buildings': 'mga gusali bilang pader',
-  'urban.sewer': 'storm sewer (mm/hr)',
+  'urban.sewer': 'imburnal ng bagyo (mm/hr)',
   'urban.groundwater': 'mataas na groundwater',
 
   // Soil
   'soil.infiltration': 'infiltration ng lupa (mm/hr)',
-  'soil.evaporation': 'evaporation (/hr)',
+  'soil.evaporation': 'pagsingaw (/hr)',
 
   // Physics
-  'physics.gravity': 'gravity (m/s²)',
-  'physics.flow': 'flow coefficient',
-  'physics.friction': 'friction',
+  'physics.gravity': 'grabidad (m/s²)',
+  'physics.flow': 'koepisyent ng daloy',
+  'physics.friction': 'friksiyon',
   'physics.edges': 'mga gilid',
   'physics.edgesOpen': 'Bukas (umaagos)',
   'physics.edgesClosed': 'Sarado (mga pader)',
 
   // Map
-  'map.elevation': 'elevation',
+  'map.elevation': 'elebasyon',
   'map.size': 'laki (km)',
-  'map.grid': 'grid',
+  'map.grid': 'guhit-parisukat',
   'map.apply': 'I-apply ang laki / grid ⟲',
-  'map.demoMode': 'demo mode',
+  'map.demoMode': 'demo',
 
   // Demo mode (precomputed, scrubbable storm timeline)
   'demo.title': 'Demo',
   'demo.precompute': 'I-precompute ang bagyo ⏳',
-  'demo.statusLabel': 'status',
-  'demo.timeline': 'timeline',
+  'demo.statusLabel': 'katayuan',
+  'demo.timeline': 'talaorasan',
   'demo.play': 'patugtugin ang timeline ▶',
   'demo.live': 'Live na sim ⟳',
   'demo.stComputing': 'kinakalkula… {pct}%',
   'demo.stReady': 'handa na ang eksena — i-scrub ang oras',
-  'demo.stLive': 'live',
+  'demo.stLive': 'kasalukuyan',
 
   // Visualization
-  'viz.terrain': 'terrain',
+  'viz.terrain': 'lupain',
   'viz.terrainSatellite': 'Satellite',
   'viz.terrainHypso': 'Tint ayon sa taas',
   'viz.terrainHeatmap': 'Heatmap ng taas',
   'viz.terrainSurface': 'Surface (panganib ng baha)',
   'viz.darkening': 'pagdilim ayon sa lalim',
-  'viz.vertical': 'vertical ×',
+  'viz.vertical': 'patayo ×',
   'viz.opacity': 'opacity ng tubig',
   'viz.depthMax': 'max na kulay ng lalim (m)',
   'viz.maxFlood': 'max na sakop ng baha',
@@ -107,7 +107,7 @@ export const tl: Record<string, string> = {
   'viz.qMedium': 'Katamtaman',
   'viz.qHigh': 'Mataas (maganda)',
   'viz.reflections': 'repleksyon ng langit',
-  'viz.refraction': 'refraction',
+  'viz.refraction': 'repraksiyon',
   'viz.clarity': 'linaw ng tubig',
   'viz.ripples': 'lakas ng gilas',
   'viz.flowSpeed': 'bilis ng agos',
@@ -120,8 +120,8 @@ export const tl: Record<string, string> = {
 
   // Atmosphere / post-processing
   'atmo.title': 'Atmospera',
-  'atmo.post': 'post-processing',
-  'atmo.exposure': 'exposure',
+  'atmo.post': 'pagproseso pagkatapos',
+  'atmo.exposure': 'eksposyur',
   'atmo.bloom': 'bloom',
   'atmo.ssao': 'ambient occlusion',
   'atmo.vignette': 'vignette',
@@ -130,8 +130,32 @@ export const tl: Record<string, string> = {
   'atmo.godRays': 'mga sinag ng liwanag (bagyo)',
   'atmo.haze': 'ulap sa lupa',
   'atmo.splashes': 'mga tilamsik ng ulan',
-  'atmo.renderScale': 'render scale',
+  'atmo.renderScale': 'sukat ng render',
   'atmo.autoQuality': 'auto na kalidad',
+
+  // Subsurface geology
+  'geo.title': 'Heolohiya',
+  'geo.show': 'heolohiya sa ilalim ng lupa',
+  'geo.depth': 'lalim na ipinapakita (km)',
+  'geo.scale': 'taas ng block',
+  'geo.waterTable': 'antas ng tubig sa lupa',
+  'geo.waterTableDepth': 'lalim ng water table (m)',
+  'geo.aquiclude': 'i-highlight ang aquiclude',
+  'geo.legendTitle': 'Sa ilalim ng lupa (modelo)',
+  'geo.real': 'totoo',
+  'geo.model': 'modelo',
+  'geo.caveat': 'Itaas na ~2 m: totoong lupa (SoilGrids). Sa ibaba: pangkalahatang modelong panrehiyon, hindi borehole.',
+  'geo.l.topsoil': 'Ibabaw na lupa (chernozem)',
+  'geo.l.subsoil': 'Subsoil na clay-loam',
+  'geo.l.alluvium': 'Aluvium ng Quaternary',
+  'geo.l.neogene': 'Mga clay at buhangin ng Neogene',
+  'geo.l.maikop': 'Luwad ng Maikop (aquiclude)',
+  'geo.l.mesozoic': 'Pantakip na Mesozoic',
+  'geo.l.basement': 'Basement ng Scythian Platform',
+  'geo.l.upperCrust': 'Itaas na crystalline crust',
+  'geo.l.midCrust': 'Gitnang crust',
+  'geo.l.lowerCrust': 'Ibabang crust',
+  'geo.l.mantle': 'Itaas na mantle (sa ilalim ng Moho)',
 
   // Stats
   'stats.location': 'lokasyon',
@@ -153,7 +177,7 @@ export const tl: Record<string, string> = {
   'toast.detecting': 'Tinutukoy ang iyong lokasyon…',
 
   // Misc
-  'legend.elevation': 'Elevation',
-  'readout.elev': 'elev',
+  'legend.elevation': 'Elebasyon',
+  'readout.elev': 'eleb',
   'readout.water': 'tubig',
 };

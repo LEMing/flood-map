@@ -12,6 +12,32 @@ export const fa: Record<string, string> = {
   'physics.title': 'فیزیک',
   'map.title': 'نقشه (بارگذاری مجدد)',
   'viz.title': 'تصویرسازی',
+
+  // Subsurface geology
+  'geo.title': 'زمین‌شناسی',
+  'geo.show': 'زمین‌شناسی زیرسطحی',
+  'geo.depth': 'عمق نمایش‌داده‌شده (کیلومتر)',
+  'geo.scale': 'ارتفاع بلوک',
+  'geo.waterTable': 'سفره آب زیرزمینی',
+  'geo.waterTableDepth': 'عمق سفره آب (متر)',
+  'geo.aquiclude': 'برجسته‌سازی لایه آب‌بند',
+  'geo.legendTitle': 'زیرسطح (مدل)',
+  'geo.real': 'واقعی',
+  'geo.model': 'مدل',
+  'geo.caveat':
+    'حدود ۲ متر بالایی: خاک واقعی (SoilGrids). پایین‌تر: مدل منطقه‌ای تعمیم‌یافته، نه گمانه حفاری.',
+  'geo.l.topsoil': 'خاک سطحی (چرنوزیوم)',
+  'geo.l.subsoil': 'خاک زیرین رسی-لومی',
+  'geo.l.alluvium': 'آبرفت کواترنری',
+  'geo.l.neogene': 'رس‌ها و ماسه‌های نئوژن',
+  'geo.l.maikop': 'رس مایکوپ (لایه آب‌بند)',
+  'geo.l.mesozoic': 'پوشش مزوزوئیک',
+  'geo.l.basement': 'سنگ‌بستر سکوی سکایی',
+  'geo.l.upperCrust': 'پوسته بلورین بالایی',
+  'geo.l.midCrust': 'پوسته میانی',
+  'geo.l.lowerCrust': 'پوسته زیرین',
+  'geo.l.mantle': 'گوشته بالایی (زیر موهو)',
+
   'stats.title': 'آمار',
 
   'sim.play': 'پخش ▶',

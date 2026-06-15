@@ -170,6 +170,15 @@ export class ControlsPanel {
     atmo.addBinding(params, 'renderScale', { min: 0.5, max: 1, step: 0.05, label: t('atmo.renderScale') }).on('change', change);
     atmo.addBinding(params, 'autoQuality', { label: t('atmo.autoQuality') }).on('change', change);
 
+    // --- Subsurface geology (cross-section below the terrain) ---
+    const geo = this.pane.addFolder({ title: t('geo.title'), expanded: false });
+    geo.addBinding(params, 'showGeology', { label: t('geo.show') }).on('change', change);
+    geo.addBinding(params, 'geologyDepthKm', { min: 0.05, max: 45, step: 0.05, label: t('geo.depth') }).on('change', change);
+    geo.addBinding(params, 'subsurfaceScale', { min: 0.1, max: 1.5, step: 0.05, label: t('geo.scale') }).on('change', change);
+    geo.addBinding(params, 'showWaterTable', { label: t('geo.waterTable') }).on('change', change);
+    geo.addBinding(params, 'waterTableDepthM', { min: 0, max: 60, step: 0.5, label: t('geo.waterTableDepth') }).on('change', change);
+    geo.addBinding(params, 'highlightAquiclude', { label: t('geo.aquiclude') }).on('change', change);
+
     // --- Stats (read-only) ---
     const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });
     s.addBinding(stats, 'location', { readonly: true, label: t('stats.location') });

@@ -23,6 +23,9 @@ import { TerrainMesh } from '../render/TerrainMesh';
 import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
+import { GeologyBlock } from '../render/GeologyBlock';
+import { defaultColumn, withSoilProfile, type GeoColumn, type GeoLayer } from '../geo/geology';
+import { fetchSoilProfile } from '../geo/soilgrids';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { PourTool } from '../ui/PourTool';
@@ -56,6 +59,11 @@ export class App {
   private velocity?: VelocityField;
   private rain?: Rain;
   private sim?: FloodSimulation;
+  private geology?: GeologyBlock;
+  private geologyColumn: GeoColumn = defaultColumn();
+  private geologyLegend: HTMLDivElement | null = null;
+  private soilRequested = false;
+  private soilFetchToken = 0;
   private timeline?: Timeline;
   private timelineMode: 'live' | 'computing' | 'scrub' = 'live';
   private precomputeTargetFrames = 0;
@@ -405,9 +413,17 @@ export class App {
       this.terrain.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
       this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
     );
-    // Keep above-water overlays out of the refraction source so they don't get
-    // baked under the water surface.
-    this.scene.setRefractionExcludes([this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object]);
+    // The geology block lives in world space (not the terrain group) so its deep
+    // vertical scale is independent of the terrain's exaggeration.
+    this.geology = new GeologyBlock(heightmap.sizeMeters);
+    this.geologyColumn = defaultColumn();
+    this.soilRequested = false;
+    this.scene.scene.add(this.geology.mesh);
+    // Keep above-water overlays (and the opaque geology block below) out of the
+    // refraction source so they don't get baked under the water surface.
+    this.scene.setRefractionExcludes([
+      this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object, this.geology.mesh,
+    ]);
     this.buildMarkers(heightmap);
 
     this.simTimeSec = 0;
@@ -469,6 +485,85 @@ export class App {
         if (this.legendMax) this.legendMax.textContent = `${this.heightmap.max.toFixed(0)} m`;
       }
     }
+    this.updateGeology();
+  }
+
+  /** Update the subsurface cross-section block + legend from current params. */
+  private updateGeology(): void {
+    if (!this.geology || !this.heightmap) return;
+    const on = this.params.showGeology;
+    this.geology.setVisible(on);
+    if (this.geologyLegend) this.geologyLegend.style.display = on ? 'block' : 'none';
+    if (!on) return;
+    if (!this.soilRequested) {
+      this.soilRequested = true;
+      this.fetchSoil(this.heightmap);
+    }
+    const ve = this.params.verticalExaggeration;
+    this.geology.update({
+      worldTop: this.heightmap.min * ve,
+      worldHeight: this.heightmap.sizeMeters * this.params.subsurfaceScale,
+      depthShownM: this.params.geologyDepthKm * 1000,
+      column: this.geologyColumn,
+      waterTableM: this.params.waterTableDepthM,
+      showWaterTable: this.params.showWaterTable,
+      highlightAquiclude: this.params.highlightAquiclude,
+    });
+    this.renderGeologyLegend();
+  }
+
+  /** Live SoilGrids query for the real top-2 m profile; falls back silently. */
+  private fetchSoil(hm: Heightmap): void {
+    const token = ++this.soilFetchToken;
+    fetchSoilProfile(hm.center.lat, hm.center.lon)
+      .then((soil) => {
+        if (token !== this.soilFetchToken) return;
+        this.geologyColumn = withSoilProfile(soil);
+        if (this.params.showGeology) this.updateGeology();
+      })
+      .catch(() => { /* keep the bundled regional column */ });
+  }
+
+  private renderGeologyLegend(): void {
+    if (!this.geologyLegend) {
+      this.geologyLegend = document.createElement('div');
+      this.geologyLegend.id = 'geo-legend';
+      document.body.appendChild(this.geologyLegend);
+    }
+    const el = this.geologyLegend;
+    const depthShownM = this.params.geologyDepthKm * 1000;
+    const rows = this.geologyLegendRows().filter((r) => r.topM < depthShownM + 1);
+    const fmt = (a: number, b: number): string => (b < 1000
+      ? `${a < 10 ? a : Math.round(a)}–${b < 10 ? b : Math.round(b)} m`
+      : `${(a / 1000).toFixed(a < 1000 ? 1 : 0)}–${(b / 1000).toFixed(1)} km`);
+    const tag = (s: string): string => (s === 'soilgrids' ? t('geo.real') : t('geo.model'));
+    const items = rows.map((r) => {
+      const sw = `<span class="sw" style="background:#${r.hex.toString(16).padStart(6, '0')}"></span>`;
+      return `<div class="row">${sw}<span class="nm">${r.name}</span>`
+        + `<span class="dp">${fmt(r.topM, r.botM)}</span><span class="tg ${r.source}">${tag(r.source)}</span></div>`;
+    }).join('');
+    const wt = this.params.showWaterTable
+      ? `<div class="row wt"><span class="sw" style="background:#3fb6e0"></span>`
+        + `<span class="nm">${t('geo.waterTable')}</span><span class="dp">${Math.round(this.params.waterTableDepthM)} m</span></div>`
+      : '';
+    el.innerHTML = `<div class="title">${t('geo.legendTitle')}</div>${items}${wt}`
+      + `<div class="caveat">${t('geo.caveat')}</div>`;
+  }
+
+  /** Legend rows: collapse the SoilGrids sub-bands into one "topsoil (real)" row. */
+  private geologyLegendRows(): Array<{ name: string; topM: number; botM: number; hex: number; source: string }> {
+    const layers = this.geologyColumn.layers;
+    const soil = layers.filter((l) => l.source === 'soilgrids');
+    const rest: GeoLayer[] = layers.filter((l) => l.source !== 'soilgrids');
+    const out: Array<{ name: string; topM: number; botM: number; hex: number; source: string }> = [];
+    if (soil.length) {
+      out.push({ name: t('geo.l.topsoil'), topM: 0, botM: soil[soil.length - 1].botM, hex: soil[0].hex, source: 'soilgrids' });
+    }
+    for (const l of rest) {
+      if (l.key === 'subsoil' && this.geologyColumn.soilReal) continue; // covered by the real soil row
+      out.push({ name: t(`geo.l.${l.key}`), topM: l.topM, botM: l.botM, hex: l.hex, source: l.source });
+    }
+    return out;
   }
 
   /** Recompute the per-cell drainage/infiltration/roughness fields live (no re-fetch). */
@@ -1018,6 +1113,11 @@ export class App {
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
+    if (this.geology) {
+      this.scene.scene.remove(this.geology.mesh);
+      this.geology.dispose();
+      this.geology = undefined;
+    }
     this.sim?.dispose();
     this.timeline?.dispose();
     this.timeline = undefined;

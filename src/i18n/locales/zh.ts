@@ -14,6 +14,31 @@ export const zh: Record<string, string> = {
   'physics.title': '物理',
   'map.title': '地图（重新加载）',
   'viz.title': '可视化',
+
+  // Subsurface geology
+  'geo.title': '地质',
+  'geo.show': '地下地质剖面',
+  'geo.depth': '显示深度（公里）',
+  'geo.scale': '地块高度',
+  'geo.waterTable': '地下水位',
+  'geo.waterTableDepth': '地下水位深度（米）',
+  'geo.aquiclude': '高亮隔水层',
+  'geo.legendTitle': '地下（模型）',
+  'geo.real': '实测',
+  'geo.model': '模型',
+  'geo.caveat': '顶部约 2 米：真实土壤（SoilGrids）。以下：概化的区域模型，非钻孔数据。',
+  'geo.l.topsoil': '表土（黑钙土）',
+  'geo.l.subsoil': '黏壤质底土',
+  'geo.l.alluvium': '第四纪冲积层',
+  'geo.l.neogene': '新近纪黏土与砂',
+  'geo.l.maikop': '迈科普黏土（隔水层）',
+  'geo.l.mesozoic': '中生代盖层',
+  'geo.l.basement': '斯基泰地台基底',
+  'geo.l.upperCrust': '上部结晶地壳',
+  'geo.l.midCrust': '中地壳',
+  'geo.l.lowerCrust': '下地壳',
+  'geo.l.mantle': '上地幔（莫霍面以下）',
+
   'stats.title': '统计',
 
   // Simulation

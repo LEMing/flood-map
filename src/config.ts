@@ -64,6 +64,14 @@ export interface Params {
   pourDepthM: number; // height of the poured column
   pourRadiusM: number; // radius of the poured cylinder
 
+  // Subsurface geology: a cross-section block extruded below the terrain
+  showGeology: boolean;
+  geologyDepthKm: number; // how deep the block reaches (km below surface)
+  subsurfaceScale: number; // on-screen block height as a fraction of map width
+  showWaterTable: boolean;
+  waterTableDepthM: number; // depth of the groundwater table (m)
+  highlightAquiclude: boolean; // emphasize the Maikop clay aquiclude (подтопление cause)
+
   // One-shot water dump (flash flood) — instant volume instead of rain
   releaseDepthM: number;
   // "Fill to level" — flood ground up to this many metres above the lowest point
@@ -150,6 +158,13 @@ export const DEFAULT_PARAMS: Params = {
   pourMode: false,
   pourDepthM: 4,
   pourRadiusM: 30,
+
+  showGeology: true,
+  geologyDepthKm: 0.2, // hydrogeology focus: top 200 m by default
+  subsurfaceScale: 0.55,
+  showWaterTable: true,
+  waterTableDepthM: 6,
+  highlightAquiclude: true,
 
   releaseDepthM: 3,
   fillLevelM: 5,

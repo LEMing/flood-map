@@ -17,6 +17,31 @@ export const mr: Record<string, string> = {
   'physics.title': 'भौतिकशास्त्र',
   'map.title': 'नकाशा (पुन्हा लोड)',
   'viz.title': 'दृश्यीकरण',
+
+  // Subsurface geology
+  'geo.title': 'भूगर्भशास्त्र',
+  'geo.show': 'भूपृष्ठाखालील भूविज्ञान',
+  'geo.depth': 'दाखवलेली खोली (किमी)',
+  'geo.scale': 'ब्लॉकची उंची',
+  'geo.waterTable': 'भूजल पातळी',
+  'geo.waterTableDepth': 'भूजल पातळीची खोली (मी)',
+  'geo.aquiclude': 'जलरोधक थर ठळक करा',
+  'geo.legendTitle': 'भूपृष्ठाखाली (मॉडेल)',
+  'geo.real': 'प्रत्यक्ष',
+  'geo.model': 'मॉडेल',
+  'geo.caveat': 'वरचे ~2 मी: प्रत्यक्ष माती (SoilGrids). त्याखाली: सर्वसाधारण प्रादेशिक मॉडेल, बोअरहोल नव्हे.',
+  'geo.l.topsoil': 'वरची माती (चेर्नोझेम)',
+  'geo.l.subsoil': 'चिकणमाती-गाळयुक्त खालची माती',
+  'geo.l.alluvium': 'चतुर्थक गाळ',
+  'geo.l.neogene': 'निओजीन चिकणमाती व वाळू',
+  'geo.l.maikop': 'मायकोप चिकणमाती (जलरोधक थर)',
+  'geo.l.mesozoic': 'मेसोझोइक आवरण',
+  'geo.l.basement': 'सिथियन प्लेटचा तळखडक',
+  'geo.l.upperCrust': 'वरची स्फटिकमय कवच',
+  'geo.l.midCrust': 'मधली कवच',
+  'geo.l.lowerCrust': 'खालची कवच',
+  'geo.l.mantle': 'वरचे प्रावरण (मोहोच्या खाली)',
+
   'stats.title': 'आकडेवारी',
 
   // Simulation

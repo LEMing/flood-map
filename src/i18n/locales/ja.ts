@@ -14,6 +14,31 @@ export const ja: Record<string, string> = {
   'physics.title': '物理',
   'map.title': 'マップ（再読み込み）',
   'viz.title': '表示',
+
+  // Subsurface geology
+  'geo.title': '地質',
+  'geo.show': '地下地質',
+  'geo.depth': '表示深度（km）',
+  'geo.scale': 'ブロック高さ',
+  'geo.waterTable': '地下水面',
+  'geo.waterTableDepth': '地下水面の深さ（m）',
+  'geo.aquiclude': '不透水層を強調',
+  'geo.legendTitle': '地下（モデル）',
+  'geo.real': '実測',
+  'geo.model': 'モデル',
+  'geo.caveat': '上部～2 m：実際の土壌（SoilGrids）。それ以深：一般化した地域モデルであり、ボーリング調査ではありません。',
+  'geo.l.topsoil': '表土（黒土）',
+  'geo.l.subsoil': '粘土質ローム下層土',
+  'geo.l.alluvium': '第四紀沖積層',
+  'geo.l.neogene': '新第三紀の粘土と砂',
+  'geo.l.maikop': 'マイコープ粘土（不透水層）',
+  'geo.l.mesozoic': '中生界被覆層',
+  'geo.l.basement': 'スキタイ地塊の基盤',
+  'geo.l.upperCrust': '上部結晶質地殻',
+  'geo.l.midCrust': '中部地殻',
+  'geo.l.lowerCrust': '下部地殻',
+  'geo.l.mantle': '上部マントル（モホ面より下）',
+
   'stats.title': '統計',
 
   // Simulation

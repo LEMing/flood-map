@@ -14,6 +14,31 @@ export const th: Record<string, string> = {
   'physics.title': 'ฟิสิกส์',
   'map.title': 'แผนที่ (โหลดใหม่)',
   'viz.title': 'การแสดงผล',
+
+  // Subsurface geology
+  'geo.title': 'ธรณีวิทยา',
+  'geo.show': 'ธรณีวิทยาใต้ผิวดิน',
+  'geo.depth': 'ความลึกที่แสดง (km)',
+  'geo.scale': 'ความสูงของบล็อก',
+  'geo.waterTable': 'ระดับน้ำใต้ดิน',
+  'geo.waterTableDepth': 'ความลึกระดับน้ำใต้ดิน (m)',
+  'geo.aquiclude': 'เน้นชั้นกันน้ำ',
+  'geo.legendTitle': 'ใต้ผิวดิน (แบบจำลอง)',
+  'geo.real': 'จริง',
+  'geo.model': 'แบบจำลอง',
+  'geo.caveat': 'บนสุด ~2 m: ดินจริง (SoilGrids) ด้านล่าง: แบบจำลองภูมิภาคโดยรวม ไม่ใช่หลุมเจาะ',
+  'geo.l.topsoil': 'ดินชั้นบน (เชอร์โนเซม)',
+  'geo.l.subsoil': 'ดินชั้นล่างดินร่วนเหนียว',
+  'geo.l.alluvium': 'ตะกอนน้ำพายุคควอเทอร์นารี',
+  'geo.l.neogene': 'ดินเหนียวและทรายยุคนีโอจีน',
+  'geo.l.maikop': 'ดินเหนียวไมคอป (ชั้นกันน้ำ)',
+  'geo.l.mesozoic': 'ชั้นปกคลุมยุคมีโซโซอิก',
+  'geo.l.basement': 'ฐานหินแพลตฟอร์มไซเธียน',
+  'geo.l.upperCrust': 'เปลือกโลกผลึกชั้นบน',
+  'geo.l.midCrust': 'เปลือกโลกชั้นกลาง',
+  'geo.l.lowerCrust': 'เปลือกโลกชั้นล่าง',
+  'geo.l.mantle': 'เนื้อโลกชั้นบน (ใต้โมโฮ)',
+
   'stats.title': 'สถิติ',
 
   // Simulation

@@ -14,6 +14,31 @@ export const de: Record<string, string> = {
   'physics.title': 'Physik',
   'map.title': 'Karte (neu laden)',
   'viz.title': 'Visualisierung',
+
+  // Subsurface geology
+  'geo.title': 'Geologie',
+  'geo.show': 'Untergrundgeologie',
+  'geo.depth': 'gezeigte Tiefe (km)',
+  'geo.scale': 'Blockhöhe',
+  'geo.waterTable': 'Grundwasserspiegel',
+  'geo.waterTableDepth': 'Grundwassertiefe (m)',
+  'geo.aquiclude': 'Grundwasserstauer hervorheben',
+  'geo.legendTitle': 'Untergrund (Modell)',
+  'geo.real': 'real',
+  'geo.model': 'Modell',
+  'geo.caveat': 'Oberste ~2 m: realer Boden (SoilGrids). Darunter: verallgemeinertes Regionalmodell, keine Bohrung.',
+  'geo.l.topsoil': 'Oberboden (Tschernosem)',
+  'geo.l.subsoil': 'Tonig-lehmiger Unterboden',
+  'geo.l.alluvium': 'Quartäres Alluvium',
+  'geo.l.neogene': 'Neogene Tone und Sande',
+  'geo.l.maikop': 'Maikop-Ton (Grundwasserstauer)',
+  'geo.l.mesozoic': 'Mesozoische Deckschicht',
+  'geo.l.basement': 'Grundgebirge der Skythischen Platte',
+  'geo.l.upperCrust': 'Obere kristalline Kruste',
+  'geo.l.midCrust': 'Mittlere Kruste',
+  'geo.l.lowerCrust': 'Untere Kruste',
+  'geo.l.mantle': 'Oberer Mantel (unter der Moho)',
+
   'stats.title': 'Statistik',
 
   // Simulation

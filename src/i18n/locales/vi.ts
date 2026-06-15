@@ -14,6 +14,31 @@ export const vi: Record<string, string> = {
   'physics.title': 'Vật lý',
   'map.title': 'Bản đồ (tải lại)',
   'viz.title': 'Trực quan',
+
+  // Subsurface geology
+  'geo.title': 'Địa chất',
+  'geo.show': 'địa chất dưới lòng đất',
+  'geo.depth': 'độ sâu hiển thị (km)',
+  'geo.scale': 'chiều cao khối',
+  'geo.waterTable': 'mực nước ngầm',
+  'geo.waterTableDepth': 'độ sâu mực nước ngầm (m)',
+  'geo.aquiclude': 'làm nổi bật tầng cách nước',
+  'geo.legendTitle': 'Dưới lòng đất (mô hình)',
+  'geo.real': 'thực tế',
+  'geo.model': 'mô hình',
+  'geo.caveat': 'Trên cùng ~2 m: đất thực tế (SoilGrids). Bên dưới: mô hình khu vực tổng quát, không phải lỗ khoan.',
+  'geo.l.topsoil': 'Lớp đất mặt (chernozem)',
+  'geo.l.subsoil': 'Lớp đất dưới sét pha',
+  'geo.l.alluvium': 'Phù sa Đệ Tứ',
+  'geo.l.neogene': 'Sét và cát Neogen',
+  'geo.l.maikop': 'Sét Maikop (tầng cách nước)',
+  'geo.l.mesozoic': 'Lớp phủ Trung Sinh',
+  'geo.l.basement': 'Nền móng Mảng Scythia',
+  'geo.l.upperCrust': 'Lớp vỏ kết tinh trên',
+  'geo.l.midCrust': 'Lớp vỏ giữa',
+  'geo.l.lowerCrust': 'Lớp vỏ dưới',
+  'geo.l.mantle': 'Manti trên (dưới Moho)',
+
   'stats.title': 'Thống kê',
 
   // Simulation

@@ -17,6 +17,31 @@ export const my: Record<string, string> = {
   'physics.title': 'ရူပဗေဒ',
   'map.title': 'မြေပုံ (ပြန်ဖွင့်)',
   'viz.title': 'မြင်ကွင်းဖော်ပြခြင်း',
+
+  // Subsurface geology
+  'geo.title': 'ဘူမိဗေဒ',
+  'geo.show': 'မြေအောက်ဘူမိဗေဒ',
+  'geo.depth': 'ပြသနက်ရှိုင်း (km)',
+  'geo.scale': 'အလုံးအမြင့်',
+  'geo.waterTable': 'မြေအောက်ရေမျက်နှာပြင်',
+  'geo.waterTableDepth': 'မြေအောက်ရေမျက်နှာပြင်နက်ရှိုင်း (m)',
+  'geo.aquiclude': 'ရေပိတ်လွှာ မီးမောင်းထိုးပြ',
+  'geo.legendTitle': 'မြေအောက် (ပုံစံ)',
+  'geo.real': 'အမှန်',
+  'geo.model': 'ပုံစံ',
+  'geo.caveat': 'အပေါ်ဆုံး ~2 m — တကယ့်မြေဆီလွှာ (SoilGrids)။ အောက်ပိုင်း — ယေဘုယျဒေသခံပုံစံ၊ စမ်းသပ်တွင်းမဟုတ်ပါ။',
+  'geo.l.topsoil': 'အပေါ်ယံမြေ (နက်မြေနု)',
+  'geo.l.subsoil': 'ရွှံ့စေး-အောက်ခံမြေ',
+  'geo.l.alluvium': 'စတုဂဏန်းခေတ် နုန်းတင်လွှာ',
+  'geo.l.neogene': 'နီယိုဂျင်းခေတ် ရွှံ့စေးနှင့် သဲများ',
+  'geo.l.maikop': 'မိုင်ကော့ ရွှံ့စေး (ရေပိတ်လွှာ)',
+  'geo.l.mesozoic': 'မီဆိုဇိုးဝစ်ခေတ် ဖုံးအုပ်လွှာ',
+  'geo.l.basement': 'စကီးသီးယန်း ပြားကွက် အောက်ခံကျောက်',
+  'geo.l.upperCrust': 'အထက် ပုံဆောင်ခဲ မြေခွံ',
+  'geo.l.midCrust': 'အလယ် မြေခွံ',
+  'geo.l.lowerCrust': 'အောက် မြေခွံ',
+  'geo.l.mantle': 'အထက်ဝတ္ထု (မိုဟို အောက်)',
+
   'stats.title': 'စာရင်းအင်း',
 
   // Simulation
