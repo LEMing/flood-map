@@ -54,7 +54,6 @@ export class App {
   private readback?: Float32Array;
 
   private waterStored = 0;
-  private terrainWetness = 0;
   private readonly resBuf = new THREE.Vector2();
   private readonly spotBuf = new THREE.Vector2();
   private markers: Array<{
@@ -507,12 +506,10 @@ export class App {
     requestAnimationFrame(this.loop);
   };
 
-  private updateWaterLook(dt: number): void {
-    // wet-look terrain: soak fast while raining, dry over ~30s
-    const wetTarget = this.params.raining ? 1 : 0;
-    const rate = this.params.raining ? dt * 1.5 : dt / 30;
-    this.terrainWetness += (wetTarget - this.terrainWetness) * Math.min(1, rate);
-    this.terrain?.setWetness(this.terrainWetness * this.params.wetness);
+  private updateWaterLook(_dt: number): void {
+    // wet-look is gated per-cell by proximity to water in the terrain shader, so
+    // it follows the flood (and persists after the rain stops) — just pass intensity.
+    this.terrain?.setWetness(this.params.wetness);
 
     if (!this.water) return;
     this.water.setFrame({

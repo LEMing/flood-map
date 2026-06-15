@@ -163,6 +163,8 @@ export class TerrainMesh {
       shader.uniforms.uCloudShadow = w ? w.uCloudShadow : { value: 0.55 };
       shader.uniforms.uCloudScale = w ? w.uCloudScale : { value: 1 / 320 };
       shader.uniforms.uCloudDrift = w ? w.uCloudDrift : { value: new THREE.Vector2(0.03, 0.015) };
+      const n = (this.heightTexture.image as { width: number }).width;
+      shader.uniforms.uTexel = { value: new THREE.Vector2(1 / n, 1 / n) };
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec2 vGridUv;\nuniform float uSize;')
         .replace(
@@ -177,22 +179,30 @@ export class TerrainMesh {
           uniform sampler2D uDepthTex;
           uniform float uDepthAbsorb, uDepthDarken, uWetness, uSize;
           uniform float uTime, uStorm, uCloudShadow, uCloudScale;
-          uniform vec2 uCloudDrift;
+          uniform vec2 uCloudDrift, uTexel;
           ${GLSL_FBM}`,
         )
         .replace(
           '#include <color_fragment>',
           `#include <color_fragment>
+          float gWet = 0.0;
           {
             float wd = texture2D(uDepthTex, vGridUv).x;
             float a = 1.0 - exp(-wd * uDepthAbsorb);
             diffuseColor.rgb *= (1.0 - a * uDepthDarken);
             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.35, 0.55, 0.85), a * 0.5 * uDepthDarken);
 
-            float dryMask = 1.0 - smoothstep(0.0, 0.03, wd);
-            float wet = uWetness * dryMask;
-            diffuseColor.rgb *= (1.0 - 0.28 * wet);
-            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.9, 0.95, 1.05), 0.25 * wet);
+            // wet ground only where there is water nearby (a damp halo around the
+            // flood), NOT the whole map just because it is raining.
+            float nearWater = 0.0;
+            for (int j = -2; j <= 2; j++) {
+              for (int i = -2; i <= 2; i++) {
+                nearWater = max(nearWater, texture2D(uDepthTex, vGridUv + vec2(float(i), float(j)) * uTexel).x);
+              }
+            }
+            gWet = uWetness * smoothstep(0.004, 0.04, nearWater);
+            diffuseColor.rgb *= (1.0 - 0.30 * gWet);
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.88, 0.94, 1.06), 0.30 * gWet);
 
             vec2 worldXZ = (vGridUv - 0.5) * uSize;
             vec2 sp = worldXZ * uCloudScale + uCloudDrift * uTime;
@@ -204,11 +214,7 @@ export class TerrainMesh {
         .replace(
           '#include <roughnessmap_fragment>',
           `#include <roughnessmap_fragment>
-          {
-            float wd2 = texture2D(uDepthTex, vGridUv).x;
-            float dryMask2 = 1.0 - smoothstep(0.0, 0.03, wd2);
-            roughnessFactor = mix(roughnessFactor, 0.35, uWetness * dryMask2);
-          }`,
+          roughnessFactor = mix(roughnessFactor, 0.32, gWet); // wet halo (set in color_fragment)`,
         );
       this.depthUniforms = shader.uniforms;
     };
