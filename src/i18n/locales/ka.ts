@@ -25,6 +25,10 @@ export const ka: Record<string, string> = {
   'sim.liveFlood': 'ცოცხალი დონე',
   'sim.timescale': 'დრო × (სიმ წმ/წმ)',
   'sim.substeps': 'ქვენაბიჯები',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'წვიმს',
   'rain.stormEvent': 'წვიმის ტიპი',

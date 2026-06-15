@@ -28,6 +28,10 @@ export const vi: Record<string, string> = {
   'sim.liveFlood': 'mức ngập trực tiếp',
   'sim.timescale': 'thời gian × (giây mô phỏng/giây)',
   'sim.substeps': 'bước con',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': 'đang mưa',

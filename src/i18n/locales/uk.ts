@@ -28,6 +28,10 @@ export const uk: Record<string, string> = {
   'sim.liveFlood': 'живий рівень повені',
   'sim.timescale': 'час × (сим с/с)',
   'sim.substeps': 'підкроки',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': 'дощ іде',

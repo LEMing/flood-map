@@ -25,6 +25,10 @@ export const tk: Record<string, string> = {
   'sim.liveFlood': 'janly joşgun derejesi',
   'sim.timescale': 'wagt × (sim s/s)',
   'sim.substeps': 'kömekçi ädimler',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'ýagyş ýagýar',
   'rain.stormEvent': 'tupan hadysasy',

@@ -25,6 +25,10 @@ export const yo: Record<string, string> = {
   'sim.liveFlood': 'ìpele ìkún-omi tààrà',
   'sim.timescale': 'àkókò × (sim s/s)',
   'sim.substeps': 'àwọn ìgbésẹ̀ kékeré',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'òjò ń rọ̀',
   'rain.stormEvent': 'ìṣẹ̀lẹ̀ ìjì',

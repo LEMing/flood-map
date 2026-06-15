@@ -28,6 +28,10 @@ export const th: Record<string, string> = {
   'sim.liveFlood': 'ระดับน้ำท่วมแบบสด',
   'sim.timescale': 'เวลา × (วินาทีจำลอง/วินาที)',
   'sim.substeps': 'ขั้นย่อย',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': 'กำลังมีฝน',

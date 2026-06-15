@@ -25,6 +25,10 @@ export const ms: Record<string, string> = {
   'sim.liveFlood': 'aras banjir langsung',
   'sim.timescale': 'masa × (sim s/s)',
   'sim.substeps': 'sub-langkah',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'hujan turun',
   'rain.stormEvent': 'peristiwa ribut',

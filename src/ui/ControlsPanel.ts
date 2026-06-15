@@ -77,6 +77,8 @@ export class ControlsPanel {
     sim.addButton({ title: t('sim.reset') }).on('click', () => cb.onReset());
     sim.addBinding(params, 'releaseDepthM', { min: 0.5, max: 15, step: 0.5, label: t('sim.dumpDepth') });
     sim.addButton({ title: t('sim.dump') }).on('click', () => cb.onDump());
+    sim.addBinding(params, 'pourDepthM', { min: 0.5, max: 20, step: 0.5, label: t('pour.depth') }).on('change', change);
+    sim.addBinding(params, 'pourRadiusM', { min: 5, max: 200, step: 5, label: t('pour.radius') }).on('change', change);
     sim.addBinding(params, 'fillLevelM', { min: 0, max: 50, step: 0.1, label: t('sim.floodLevel') }).on('change', change);
     sim.addBinding(params, 'floodLevelLive', { label: t('sim.liveFlood') }).on('change', change);
     sim.addButton({ title: t('sim.fill') }).on('click', () => cb.onFill());

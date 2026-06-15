@@ -25,6 +25,10 @@ export const bn: Record<string, string> = {
   'sim.liveFlood': 'লাইভ বন্যার স্তর',
   'sim.timescale': 'সময় × (sim s/s)',
   'sim.substeps': 'উপ-ধাপ',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'বৃষ্টি হচ্ছে',
   'rain.stormEvent': 'ঝড়ের ধরন',

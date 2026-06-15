@@ -25,6 +25,7 @@ import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
+import { PourTool } from '../ui/PourTool';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, formatDuration, formatVolume, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
@@ -42,7 +43,10 @@ export class App {
   private readonly group = new THREE.Group();
   private readonly addressBar: AddressBar;
   private readonly languagePicker: LanguagePicker;
+  private readonly pourTool: PourTool;
   private panel: ControlsPanel;
+  private pourDownX = 0;
+  private pourDownY = 0;
   private currentLocation?: GeocodeResult;
 
   private terrain?: TerrainMesh;
@@ -68,7 +72,9 @@ export class App {
     object: THREE.Group | null;
     head: THREE.Object3D | null;
     label: HTMLDivElement;
+    leader: HTMLDivElement | null;
     name: string;
+    district: boolean;
     worldFallback: THREE.Vector3;
   }> = [];
   private readonly tmpVec = new THREE.Vector3();
@@ -111,6 +117,7 @@ export class App {
       onSelect: (lat, lon, label) => this.loadCenter({ lat, lon, displayName: label }),
     });
     this.languagePicker = new LanguagePicker((lang) => this.setLang(lang));
+    this.pourTool = new PourTool({ onToggle: (active) => this.setPourMode(active) });
     // The input is filled only once we know what we're loading (after IP detect
     // / geocode), so a default place never flashes for out-of-region visitors.
 
@@ -131,6 +138,43 @@ export class App {
       this.pointerInside = false;
       if (this.readout) this.readout.style.display = 'none';
     });
+    // Click-to-pour: a click (not a drag, which rotates the camera) pours water.
+    dom.addEventListener('pointerdown', (e) => {
+      this.pourDownX = e.clientX;
+      this.pourDownY = e.clientY;
+    });
+    dom.addEventListener('pointerup', (e) => {
+      if (!this.params.pourMode) return;
+      if (Math.hypot(e.clientX - this.pourDownX, e.clientY - this.pourDownY) > 6) return;
+      this.pourAt(e.clientX, e.clientY);
+    });
+  }
+
+  private setPourMode(active: boolean): void {
+    this.params.pourMode = active;
+    this.pourTool.setActive(active);
+    this.scene.renderer.domElement.style.cursor = active ? 'crosshair' : '';
+  }
+
+  private pourAt(clientX: number, clientY: number): void {
+    if (!this.terrain || !this.heightmap || !this.sim) return;
+    const dom = this.scene.renderer.domElement;
+    const rect = dom.getBoundingClientRect();
+    this.pointerNdc.set(
+      ((clientX - rect.left) / rect.width) * 2 - 1,
+      -((clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    this.raycaster.setFromCamera(this.pointerNdc, this.scene.camera);
+    const hit = this.raycaster.intersectObject(this.terrain.mesh, false)[0];
+    if (!hit) return;
+    const size = this.heightmap.sizeMeters;
+    const u = THREE.MathUtils.clamp(hit.point.x / size + 0.5, 0, 1);
+    const v = THREE.MathUtils.clamp(0.5 - hit.point.z / size, 0, 1);
+    this.sim.requestPointInject(u, v, this.params.pourDepthM, this.params.pourRadiusM / size);
+    this.params.floodLevelLive = false;
+    this.params.running = true;
+    this.timelineMode = 'live';
+    trackEvent('pour_water', { depth: this.params.pourDepthM });
   }
 
   start(): void {
@@ -243,6 +287,7 @@ export class App {
   private rebuildForLanguage(): void {
     this.addressBar.retranslate();
     this.languagePicker.retranslate();
+    this.pourTool.retranslate();
     document.documentElement.lang = getLanguage();
     this.rebuildPanel();
     this.applyParams(); // re-translate legend labels etc.
@@ -731,10 +776,21 @@ export class App {
         head = pin.head;
       }
 
+      const district = !!(poi.polygon && inBounds);
       const label = document.createElement('div');
-      label.className = 'poi-label';
+      let leader: HTMLDivElement | null = null;
+      if (district) {
+        label.className = 'poi-district';
+        label.innerHTML = '<span class="note">♪</span><span class="nm"></span>';
+        (label.querySelector('.nm') as HTMLElement).textContent = poi.label;
+        leader = document.createElement('div');
+        leader.className = 'poi-leader';
+        document.body.appendChild(leader);
+      } else {
+        label.className = 'poi-label';
+      }
       document.body.appendChild(label);
-      this.markers.push({ object, head, label, name: poi.label, worldFallback: fallback });
+      this.markers.push({ object, head, label, leader, name: poi.label, district, worldFallback: fallback });
     }
   }
 
@@ -758,10 +814,10 @@ export class App {
     const n = polygon.length;
     cx /= n; cz /= n; cy /= n;
 
-    const color = 0xe5443a;
     const group = new THREE.Group();
     group.frustumCulled = false;
 
+    // faint fill (fan from centroid)
     const fillVerts: number[] = [];
     for (let i = 0; i < n; i++) {
       const a = pts[i];
@@ -772,21 +828,55 @@ export class App {
     fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(fillVerts, 3));
     const fill = new THREE.Mesh(
       fillGeo,
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({ color: 0xe5443a, transparent: true, opacity: 0.1, depthWrite: false, side: THREE.DoubleSide }),
     );
     fill.renderOrder = 5;
 
-    const outline = new THREE.LineLoop(
-      new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.95, depthWrite: false }),
+    // glowing neon boundary as a soft-edged ribbon (HDR-bright → catches bloom)
+    const w = size * 0.003;
+    const rg: number[] = [];
+    const ra: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const a = pts[i];
+      const b = pts[(i + 1) % n];
+      const d = b.clone().sub(a); d.y = 0;
+      if (d.lengthSq() < 1e-6) continue;
+      d.normalize();
+      const nrm = new THREE.Vector3(-d.z, 0, d.x);
+      const y = (a.y + b.y) * 0.5 + lift * 2.0;
+      const a2 = a.clone().addScaledVector(d, -w);
+      const b2 = b.clone().addScaledVector(d, w);
+      const aL = a2.clone().addScaledVector(nrm, -w); aL.y = y;
+      const aR = a2.clone().addScaledVector(nrm, w); aR.y = y;
+      const bR = b2.clone().addScaledVector(nrm, w); bR.y = y;
+      const bL = b2.clone().addScaledVector(nrm, -w); bL.y = y;
+      rg.push(aL.x, aL.y, aL.z, aR.x, aR.y, aR.z, bR.x, bR.y, bR.z,
+        aL.x, aL.y, aL.z, bR.x, bR.y, bR.z, bL.x, bL.y, bL.z);
+      ra.push(-1, 1, 1, -1, 1, -1);
+    }
+    const ribbonGeo = new THREE.BufferGeometry();
+    ribbonGeo.setAttribute('position', new THREE.Float32BufferAttribute(rg, 3));
+    ribbonGeo.setAttribute('aAcross', new THREE.Float32BufferAttribute(ra, 1));
+    const ribbon = new THREE.Mesh(ribbonGeo, new THREE.ShaderMaterial({
+      uniforms: { uColor: { value: new THREE.Color(5.0, 0.5, 0.35) } },
+      vertexShader: `attribute float aAcross; varying float vA;
+        void main(){ vA = aAcross; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      fragmentShader: `precision highp float; uniform vec3 uColor; varying float vA;
+        void main(){ float core = exp(-vA * vA * 4.0); gl_FragColor = vec4(uColor * core, core); }`,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    }));
+    ribbon.renderOrder = 6;
+
+    // glowing dot at the centroid (the label anchors to it)
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(size * 0.004, 16, 12),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(6.0, 0.7, 0.45) }),
     );
-    outline.renderOrder = 6;
+    dot.position.set(cx, cy + lift * 3.0, cz);
+    dot.renderOrder = 7;
 
-    const anchor = new THREE.Object3D();
-    anchor.position.set(cx, cy + size * 0.02, cz);
-
-    group.add(fill, outline, anchor);
-    return { group, anchor };
+    group.add(fill, ribbon, dot);
+    return { group, anchor: dot };
   }
 
   private clearMarkers(): void {
@@ -800,6 +890,7 @@ export class App {
         });
       }
       m.label.remove();
+      m.leader?.remove();
     }
     this.markers = [];
   }
@@ -817,6 +908,33 @@ export class App {
       const behind = this.tmpVec.z > 1;
       const onScreen =
         !behind && Math.abs(this.tmpVec.x) <= 1 && Math.abs(this.tmpVec.y) <= 1;
+
+      if (m.district) {
+        if (!onScreen) {
+          m.label.style.display = 'none';
+          if (m.leader) m.leader.style.display = 'none';
+          continue;
+        }
+        const dotX = (this.tmpVec.x * 0.5 + 0.5) * w;
+        const dotY = (-this.tmpVec.y * 0.5 + 0.5) * h;
+        const labelX = dotX + 38;
+        const labelY = dotY - 76;
+        m.label.style.display = 'flex';
+        m.label.style.transform = 'translate(0, -100%)';
+        m.label.style.left = `${labelX}px`;
+        m.label.style.top = `${labelY}px`;
+        if (m.leader) {
+          const dx = labelX - dotX;
+          const dy = labelY - dotY;
+          m.leader.style.display = 'block';
+          m.leader.style.left = `${dotX}px`;
+          m.leader.style.top = `${dotY}px`;
+          m.leader.style.width = `${Math.hypot(dx, dy)}px`;
+          m.leader.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+        }
+        continue;
+      }
+
       m.label.style.display = 'block';
 
       if (onScreen) {

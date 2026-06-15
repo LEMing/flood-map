@@ -25,6 +25,10 @@ export const he: Record<string, string> = {
   'sim.liveFlood': 'מפלס הצפה חי',
   'sim.timescale': 'זמן × (סים ש/ש)',
   'sim.substeps': 'תת-צעדים',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'יורד גשם',
   'rain.stormEvent': 'אירוע סערה',

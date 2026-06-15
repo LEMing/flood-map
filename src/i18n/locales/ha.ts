@@ -25,6 +25,10 @@ export const ha: Record<string, string> = {
   'sim.liveFlood': 'matakin ambaliya kai tsaye',
   'sim.timescale': 'lokaci × (sim s/s)',
   'sim.substeps': 'ƙananan matakai',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'ana ruwan sama',
   'rain.stormEvent': 'lamarin guguwa',

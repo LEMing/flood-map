@@ -28,6 +28,10 @@ export const hi: Record<string, string> = {
   'sim.liveFlood': 'लाइव बाढ़ स्तर',
   'sim.timescale': 'समय × (सिम सेकंड/सेकंड)',
   'sim.substeps': 'उप-चरण',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': 'वर्षा हो रही है',

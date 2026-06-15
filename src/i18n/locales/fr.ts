@@ -28,6 +28,10 @@ export const fr: Record<string, string> = {
   'sim.liveFlood': "niveau d'inondation en direct",
   'sim.timescale': 'temps × (sim s/s)',
   'sim.substeps': 'sous-pas',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': 'il pleut',

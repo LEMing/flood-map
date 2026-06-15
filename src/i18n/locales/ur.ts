@@ -25,6 +25,10 @@ export const ur: Record<string, string> = {
   'sim.liveFlood': 'براہ راست سیلابی سطح',
   'sim.timescale': 'وقت × (سم سیکنڈ/سیکنڈ)',
   'sim.substeps': 'ذیلی قدم',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'بارش جاری',
   'rain.stormEvent': 'طوفانی واقعہ',

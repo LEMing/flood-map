@@ -28,6 +28,10 @@ export const ko: Record<string, string> = {
   'sim.liveFlood': '실시간 침수 수위',
   'sim.timescale': '시간 × (시뮬 초/초)',
   'sim.substeps': '하위 단계',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': '강우 중',

@@ -25,6 +25,10 @@ export const am: Record<string, string> = {
   'sim.liveFlood': 'ቀጥታ የጎርፍ ደረጃ',
   'sim.timescale': 'ጊዜ × (ሲም ሰ/ሰ)',
   'sim.substeps': 'ንዑስ ደረጃዎች',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'እየዘነበ ነው',
   'rain.stormEvent': 'የማዕበል ክስተት',

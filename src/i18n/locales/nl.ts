@@ -25,6 +25,10 @@ export const nl: Record<string, string> = {
   'sim.liveFlood': 'live waterpeil',
   'sim.timescale': 'tijd × (sim s/s)',
   'sim.substeps': 'substappen',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'regent',
   'rain.stormEvent': 'buigebeurtenis',

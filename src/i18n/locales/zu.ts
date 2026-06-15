@@ -25,6 +25,10 @@ export const zu: Record<string, string> = {
   'sim.liveFlood': 'izinga lesikhukhula esiphilayo',
   'sim.timescale': 'isikhathi × (sim s/s)',
   'sim.substeps': 'izinyathelwana',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'liyana',
   'rain.stormEvent': 'isiwombe sesiphepho',

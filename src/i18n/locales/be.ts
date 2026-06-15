@@ -25,6 +25,10 @@ export const be: Record<string, string> = {
   'sim.liveFlood': 'жывы ўзровень',
   'sim.timescale': 'час × (сім с/с)',
   'sim.substeps': 'падкрокі',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'дождж ідзе',
   'rain.stormEvent': 'тып ліўню',

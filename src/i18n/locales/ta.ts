@@ -25,6 +25,10 @@ export const ta: Record<string, string> = {
   'sim.liveFlood': 'நேரடி வெள்ள மட்டம்',
   'sim.timescale': 'நேரம் × (உரு வி/வி)',
   'sim.substeps': 'துணைப்படிகள்',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'மழை பெய்கிறது',
   'rain.stormEvent': 'புயல் நிகழ்வு',

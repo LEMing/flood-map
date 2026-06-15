@@ -25,6 +25,10 @@ export const hy: Record<string, string> = {
   'sim.liveFlood': 'կենդանի ջրի մակարդակ',
   'sim.timescale': 'ժամանակ × (սիմ վրկ/վրկ)',
   'sim.substeps': 'ենթաքայլեր',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'անձրև է գալիս',
   'rain.stormEvent': 'տեղատարափի տեսակ',

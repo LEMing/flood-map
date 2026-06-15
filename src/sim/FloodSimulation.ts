@@ -27,6 +27,7 @@ export class FloodSimulation {
   private pendingInject = 0;
   private pendingFill = -1e9;
   private pendingFillSet = false;
+  private readonly pendingPoint = { depth: 0, x: 0.5, y: 0.5, r: 0.05 };
   private pbo: WebGLBuffer | null = null;
   private fence: WebGLSync | null = null;
   private readbackInFlight = false;
@@ -74,6 +75,9 @@ export class FloodSimulation {
       uSpot: { value: new THREE.Vector2(params.spotX, params.spotY) },
       uSpotRadius: { value: params.spotRadius },
       uInjectDepth: { value: 0 },
+      uPointDepth: { value: 0 },
+      uPointUv: { value: new THREE.Vector2(0.5, 0.5) },
+      uPointRadiusUv: { value: 0.05 },
       uFillLevelAbs: { value: -1e9 },
       uFillSet: { value: 0 },
       tSurface: { value: this.dummySurface },
@@ -105,10 +109,14 @@ export class FloodSimulation {
   step(simDt: number): void {
     this.u.uDt.value = simDt;
     this.u.uInjectDepth.value = this.pendingInject; // applied on this single step only
+    this.u.uPointDepth.value = this.pendingPoint.depth;
+    (this.u.uPointUv.value as THREE.Vector2).set(this.pendingPoint.x, this.pendingPoint.y);
+    this.u.uPointRadiusUv.value = this.pendingPoint.r;
     this.u.uFillLevelAbs.value = this.pendingFill;
     this.u.uFillSet.value = this.pendingFillSet ? 1 : 0;
     this.gpu.compute();
     this.pendingInject = 0;
+    this.pendingPoint.depth = 0;
     this.pendingFill = -1e9;
     this.pendingFillSet = false;
   }
@@ -116,6 +124,14 @@ export class FloodSimulation {
   /** Dump `depthMeters` of water across the (footprint-shaped) area on the next step. */
   requestInject(depthMeters: number): void {
     this.pendingInject = depthMeters;
+  }
+
+  /** Pour a localized cylinder of water at grid-uv (x,y), radius in uv space. */
+  requestPointInject(x: number, y: number, depthMeters: number, radiusUv: number): void {
+    this.pendingPoint.depth = depthMeters;
+    this.pendingPoint.x = x;
+    this.pendingPoint.y = y;
+    this.pendingPoint.r = radiusUv;
   }
 
   /**

@@ -25,6 +25,10 @@ export const it: Record<string, string> = {
   'sim.liveFlood': 'livello inondazione live',
   'sim.timescale': 'tempo × (sim s/s)',
   'sim.substeps': 'sottopassi',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'sta piovendo',
   'rain.stormEvent': 'evento temporalesco',

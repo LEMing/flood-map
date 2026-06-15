@@ -25,6 +25,10 @@ export const uz: Record<string, string> = {
   'sim.liveFlood': 'jonli suv sathi',
   'sim.timescale': 'vaqt × (sim s/s)',
   'sim.substeps': 'ichki qadamlar',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'yomgʻir yogʻmoqda',
   'rain.stormEvent': 'jala turi',

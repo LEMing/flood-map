@@ -25,6 +25,10 @@ export const af: Record<string, string> = {
   'sim.liveFlood': 'lewende vloedvlak',
   'sim.timescale': 'tyd × (sim s/s)',
   'sim.substeps': 'substappe',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'dit reën',
   'rain.stormEvent': 'stormgebeurtenis',

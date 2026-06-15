@@ -25,6 +25,10 @@ export const ar: Record<string, string> = {
   'sim.liveFlood': 'مستوى الفيضان الحي',
   'sim.timescale': 'الزمن × (محاكاة ث/ث)',
   'sim.substeps': 'خطوات فرعية',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'تمطر',
   'rain.stormEvent': 'حدث العاصفة',

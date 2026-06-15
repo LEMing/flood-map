@@ -25,6 +25,10 @@ export const so: Record<string, string> = {
   'sim.liveFlood': 'heerka daadka tooska ah',
   'sim.timescale': 'waqti × (sim s/s)',
   'sim.substeps': 'tallaabooyin hoosaad',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'roob da’aya',
   'rain.stormEvent': 'dhacdo duufaan',

@@ -25,6 +25,10 @@ export const ru: Record<string, string> = {
   'sim.liveFlood': 'живой уровень',
   'sim.timescale': 'время × (сим с/с)',
   'sim.substeps': 'подшаги',
+  'pour.button': 'Вылить воду',
+  'pour.hint': 'Кликни по карте, чтобы вылить воду',
+  'pour.depth': 'высота столба (м)',
+  'pour.radius': 'радиус (м)',
 
   'rain.raining': 'дождь идёт',
   'rain.stormEvent': 'тип ливня',

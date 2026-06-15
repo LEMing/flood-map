@@ -25,6 +25,10 @@ export const ig: Record<string, string> = {
   'sim.liveFlood': 'ọkwọ idee na-adị ndụ',
   'sim.timescale': 'oge × (sim s/s)',
   'sim.substeps': 'nzọụkwụ nta',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'mmiri na-ezo',
   'rain.stormEvent': 'oke mmiri ozuzo',

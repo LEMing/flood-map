@@ -25,6 +25,10 @@ export const cs: Record<string, string> = {
   'sim.liveFlood': 'živá hladina záplavy',
   'sim.timescale': 'čas × (sim s/s)',
   'sim.substeps': 'dílčí kroky',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'prší',
   'rain.stormEvent': 'bouřková událost',

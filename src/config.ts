@@ -59,6 +59,11 @@ export interface Params {
   timeScale: number; // simulated seconds per real second
   boundary: BoundaryMode;
 
+  // Click-to-pour: drop a cylinder of water where the user clicks the map
+  pourMode: boolean;
+  pourDepthM: number; // height of the poured column
+  pourRadiusM: number; // radius of the poured cylinder
+
   // One-shot water dump (flash flood) — instant volume instead of rain
   releaseDepthM: number;
   // "Fill to level" — flood ground up to this many metres above the lowest point
@@ -141,6 +146,10 @@ export const DEFAULT_PARAMS: Params = {
   substeps: 4,
   timeScale: 180, // 1 real second = 3 simulated minutes
   boundary: 'open',
+
+  pourMode: false,
+  pourDepthM: 4,
+  pourRadiusM: 30,
 
   releaseDepthM: 3,
   fillLevelM: 5,

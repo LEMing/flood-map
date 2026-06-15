@@ -27,6 +27,9 @@ export const waterFragment = /* glsl */ `
   uniform vec2 uSpot;
   uniform float uSpotRadius;
   uniform float uInjectDepth; // one-shot water dump (metres) applied this step
+  uniform float uPointDepth; // one-shot localized pour (metres) at uPointUv
+  uniform vec2 uPointUv; // grid-uv centre of the pour
+  uniform float uPointRadiusUv; // pour radius in uv space
   uniform float uFillLevelAbs; // "fill terrain up to this elevation" (< -1e8 = off)
   uniform int uFillSet; // 1 = set water exactly to the level (live), 0 = only raise
   // Urban surface model: per-cell fields packed as r=infiltration (m/s),
@@ -96,6 +99,10 @@ export const waterFragment = /* glsl */ `
     }
     if (uRaining == 1) dNew += uRainRate * uDt * fp;
     dNew += uInjectDepth * fp; // instantaneous dump
+    if (uPointDepth > 0.0) { // localized "pour a bucket here" at uPointUv
+      float pr = distance(uv, uPointUv) / max(1e-4, uPointRadiusUv);
+      dNew += uPointDepth * (1.0 - smoothstep(0.7, 1.0, pr));
+    }
     // Losses: per-cell infiltration + storm-drain removal (m/s). Where there is
     // no sewer (Музыкальный/periphery) and impervious ground, almost nothing is
     // removed → water accumulates at the low point. This is the flood trigger.

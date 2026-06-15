@@ -28,6 +28,10 @@ export const zh: Record<string, string> = {
   'sim.liveFlood': '实时洪水位',
   'sim.timescale': '时间 ×（模拟 s/s）',
   'sim.substeps': '子步数',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   // Rain
   'rain.raining': '正在下雨',

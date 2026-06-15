@@ -25,6 +25,10 @@ export const kk: Record<string, string> = {
   'sim.liveFlood': 'тірі су деңгейі',
   'sim.timescale': 'уақыт × (сим с/с)',
   'sim.substeps': 'ішкі қадамдар',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'жаңбыр жауып тұр',
   'rain.stormEvent': 'нөсер түрі',

@@ -25,6 +25,10 @@ export const az: Record<string, string> = {
   'sim.liveFlood': 'canlı su səviyyəsi',
   'sim.timescale': 'vaxt × (sim s/s)',
   'sim.substeps': 'alt addımlar',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'yağış yağır',
   'rain.stormEvent': 'leysan növü',

@@ -25,6 +25,10 @@ export const sw: Record<string, string> = {
   'sim.liveFlood': 'kiwango cha mafuriko hai',
   'sim.timescale': 'muda × (uigaji s/s)',
   'sim.substeps': 'hatua ndogo',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'mvua inanyesha',
   'rain.stormEvent': 'tukio la dhoruba',

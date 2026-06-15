@@ -25,6 +25,10 @@ export const sv: Record<string, string> = {
   'sim.liveFlood': 'live översvämningsnivå',
   'sim.timescale': 'tid × (sim s/s)',
   'sim.substeps': 'delsteg',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'regnar',
   'rain.stormEvent': 'stormhändelse',

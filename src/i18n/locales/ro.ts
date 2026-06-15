@@ -25,6 +25,10 @@ export const ro: Record<string, string> = {
   'sim.liveFlood': 'nivel inundație live',
   'sim.timescale': 'timp × (sim s/s)',
   'sim.substeps': 'subpași',
+  'pour.button': 'Pour water',
+  'pour.hint': 'Click on the map to pour water',
+  'pour.depth': 'pour depth (m)',
+  'pour.radius': 'pour radius (m)',
 
   'rain.raining': 'plouă',
   'rain.stormEvent': 'eveniment de furtună',
