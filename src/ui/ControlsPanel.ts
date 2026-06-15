@@ -97,6 +97,31 @@ export class ControlsPanel {
     viz.addBinding(params, 'showMaxFlood', { label: t('viz.maxFlood') }).on('change', change);
     viz.addBinding(params, 'showVelocity', { label: t('viz.arrows') }).on('change', change);
     viz.addBinding(params, 'wireframe', { label: t('viz.wireframe') }).on('change', change);
+    viz.addBinding(params, 'waterQuality', {
+      label: t('viz.waterQuality'),
+      options: { [t('viz.qLow')]: 'low', [t('viz.qMedium')]: 'medium', [t('viz.qHigh')]: 'high' },
+    }).on('change', change);
+    viz.addBinding(params, 'waterReflections', { label: t('viz.reflections') }).on('change', change);
+    viz.addBinding(params, 'waterRefraction', { label: t('viz.refraction') }).on('change', change);
+    viz.addBinding(params, 'rippleStrength', { min: 0, max: 1, step: 0.01, label: t('viz.ripples') }).on('change', change);
+    viz.addBinding(params, 'flowSpeed', { min: 0, max: 3, step: 0.05, label: t('viz.flowSpeed') }).on('change', change);
+    viz.addBinding(params, 'foamAmount', { min: 0, max: 1, step: 0.01, label: t('viz.foam') }).on('change', change);
+    viz.addBinding(params, 'sunGlint', { min: 0, max: 2, step: 0.05, label: t('viz.glint') }).on('change', change);
+    viz.addBinding(params, 'shorelineSoftness', { min: 0, max: 5, step: 0.1, label: t('viz.shoreline') }).on('change', change);
+    viz.addBinding(params, 'skirtEnabled', { label: t('viz.skirt') }).on('change', change);
+
+    // --- Atmosphere / post-processing ---
+    const atmo = this.pane.addFolder({ title: t('atmo.title'), expanded: false });
+    atmo.addBinding(params, 'postProcessing', { label: t('atmo.post') }).on('change', change);
+    atmo.addBinding(params, 'exposure', { min: 0.3, max: 2.0, step: 0.01, label: t('atmo.exposure') }).on('change', change);
+    atmo.addBinding(params, 'bloom', { min: 0, max: 2, step: 0.01, label: t('atmo.bloom') }).on('change', change);
+    atmo.addBinding(params, 'ssao', { label: t('atmo.ssao') }).on('change', change);
+    atmo.addBinding(params, 'vignette', { min: 0, max: 1, step: 0.01, label: t('atmo.vignette') }).on('change', change);
+    atmo.addBinding(params, 'wetness', { min: 0, max: 1, step: 0.01, label: t('atmo.wetness') }).on('change', change);
+    atmo.addBinding(params, 'cloudShadows', { min: 0, max: 1, step: 0.01, label: t('atmo.cloudShadows') }).on('change', change);
+    atmo.addBinding(params, 'godRays', { min: 0, max: 1, step: 0.01, label: t('atmo.godRays') }).on('change', change);
+    atmo.addBinding(params, 'groundHaze', { min: 0, max: 1, step: 0.01, label: t('atmo.haze') }).on('change', change);
+    atmo.addBinding(params, 'rainSplashes', { label: t('atmo.splashes') }).on('change', change);
 
     // --- Stats (read-only) ---
     const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });

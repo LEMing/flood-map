@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import type { TerrainStyle } from '../config';
 import type { Heightmap } from '../geo/heightmap';
+import { GLSL_FBM } from './glslNoise';
+
+type WeatherUniforms = Record<'uTime' | 'uStorm' | 'uCloudShadow' | 'uCloudScale' | 'uCloudDrift', THREE.IUniform>;
 
 // Build the shared grid geometry (raw elevation in metres, no vertical
 // exaggeration — that is applied as a group scale so terrain and water stay
@@ -119,6 +122,8 @@ export class TerrainMesh {
   private currentDepth: THREE.Texture;
   private absorb = 1.5;
   private darken = 0.8;
+  private wetness = 0;
+  private weatherUniforms?: WeatherUniforms;
   private depthUniforms?: Record<string, THREE.IUniform>;
   private readonly hypsoColor: THREE.BufferAttribute;
   private readonly heatColor: THREE.BufferAttribute;
@@ -147,10 +152,17 @@ export class TerrainMesh {
       wireframe,
     });
     this.material.onBeforeCompile = (shader) => {
+      const w = this.weatherUniforms;
       shader.uniforms.uSize = { value: this.sizeMeters };
       shader.uniforms.uDepthTex = { value: this.currentDepth };
       shader.uniforms.uDepthAbsorb = { value: this.absorb };
       shader.uniforms.uDepthDarken = { value: this.darken };
+      shader.uniforms.uWetness = { value: this.wetness };
+      shader.uniforms.uTime = w ? w.uTime : { value: 0 };
+      shader.uniforms.uStorm = w ? w.uStorm : { value: 0 };
+      shader.uniforms.uCloudShadow = w ? w.uCloudShadow : { value: 0.55 };
+      shader.uniforms.uCloudScale = w ? w.uCloudScale : { value: 1 / 320 };
+      shader.uniforms.uCloudDrift = w ? w.uCloudDrift : { value: new THREE.Vector2(0.03, 0.015) };
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec2 vGridUv;\nuniform float uSize;')
         .replace(
@@ -160,7 +172,13 @@ export class TerrainMesh {
       shader.fragmentShader = shader.fragmentShader
         .replace(
           '#include <common>',
-          '#include <common>\nvarying vec2 vGridUv;\nuniform sampler2D uDepthTex;\nuniform float uDepthAbsorb;\nuniform float uDepthDarken;',
+          `#include <common>
+          varying vec2 vGridUv;
+          uniform sampler2D uDepthTex;
+          uniform float uDepthAbsorb, uDepthDarken, uWetness, uSize;
+          uniform float uTime, uStorm, uCloudShadow, uCloudScale;
+          uniform vec2 uCloudDrift;
+          ${GLSL_FBM}`,
         )
         .replace(
           '#include <color_fragment>',
@@ -169,7 +187,27 @@ export class TerrainMesh {
             float wd = texture2D(uDepthTex, vGridUv).x;
             float a = 1.0 - exp(-wd * uDepthAbsorb);
             diffuseColor.rgb *= (1.0 - a * uDepthDarken);
-            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.35, 0.55, 0.85), a * 0.5);
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.35, 0.55, 0.85), a * 0.5 * uDepthDarken);
+
+            float dryMask = 1.0 - smoothstep(0.0, 0.03, wd);
+            float wet = uWetness * dryMask;
+            diffuseColor.rgb *= (1.0 - 0.28 * wet);
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.9, 0.95, 1.05), 0.25 * wet);
+
+            vec2 worldXZ = (vGridUv - 0.5) * uSize;
+            vec2 sp = worldXZ * uCloudScale + uCloudDrift * uTime;
+            float clouds = wFbm(sp + wFbm(sp * 0.5));
+            float shadow = smoothstep(0.45, 0.85, clouds) * uCloudShadow * uStorm;
+            diffuseColor.rgb *= (1.0 - shadow);
+          }`,
+        )
+        .replace(
+          '#include <roughnessmap_fragment>',
+          `#include <roughnessmap_fragment>
+          {
+            float wd2 = texture2D(uDepthTex, vGridUv).x;
+            float dryMask2 = 1.0 - smoothstep(0.0, 0.03, wd2);
+            roughnessFactor = mix(roughnessFactor, 0.35, uWetness * dryMask2);
           }`,
         );
       this.depthUniforms = shader.uniforms;
@@ -183,6 +221,22 @@ export class TerrainMesh {
   setDepthTexture(tex: THREE.Texture): void {
     this.currentDepth = tex;
     if (this.depthUniforms) this.depthUniforms.uDepthTex.value = tex;
+  }
+
+  setWetness(w: number): void {
+    this.wetness = w;
+    if (this.depthUniforms) this.depthUniforms.uWetness.value = w;
+  }
+
+  /** Alias the shared weather uniform objects so SceneManager's writes propagate. */
+  setWeatherUniforms(w: WeatherUniforms): void {
+    this.weatherUniforms = w;
+    if (!this.depthUniforms) return;
+    this.depthUniforms.uTime = w.uTime;
+    this.depthUniforms.uStorm = w.uStorm;
+    this.depthUniforms.uCloudShadow = w.uCloudShadow;
+    this.depthUniforms.uCloudScale = w.uCloudScale;
+    this.depthUniforms.uCloudDrift = w.uCloudDrift;
   }
 
   updateWater(depthColorMax: number, darkening: number): void {

@@ -52,6 +52,9 @@ export class App {
   private readback?: Float32Array;
 
   private waterStored = 0;
+  private terrainWetness = 0;
+  private readonly resBuf = new THREE.Vector2();
+  private readonly spotBuf = new THREE.Vector2();
   private markers: Array<{
     object: THREE.Group | null;
     head: THREE.Mesh | null;
@@ -282,6 +285,7 @@ export class App {
     }
 
     this.terrain = new TerrainMesh(heightmap, this.params.wireframe);
+    this.terrain.setWeatherUniforms(this.scene.weather);
     this.sim = new FloodSimulation(
       this.scene.renderer,
       this.terrain.heightTexture,
@@ -291,15 +295,22 @@ export class App {
     );
     this.sim.setSurface(this.params.useSurface && this.surfaceTexture ? this.surfaceTexture : null);
     if (surface) this.terrain.setSurfaceColors(surface.surface, N);
-    this.water = new WaterMesh(this.terrain.geometry, this.params);
+    this.water = new WaterMesh(
+      this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
+    );
+    this.water.setWeatherUniforms(this.scene.weather);
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
     this.readback = new Float32Array(N * N * 4);
 
     this.group.add(
-      this.terrain.mesh, this.water.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
+      this.terrain.mesh, this.water.mesh, this.water.skirt,
+      this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
     );
+    // Keep above-water overlays out of the refraction source so they don't get
+    // baked under the water surface.
+    this.scene.setRefractionExcludes([this.maxFlood.mesh, this.velocity.mesh, this.rain.object]);
     this.buildMarkers(heightmap);
 
     this.simTimeSec = 0;
@@ -337,8 +348,12 @@ export class App {
     this.water?.update(this.params);
     this.terrain?.setWireframe(this.params.wireframe);
     this.terrain?.applyStyle(this.params.terrainStyle);
-    this.terrain?.updateWater(this.params.depthColorMax, this.params.imageryDarkening);
+    // When the water shader owns depth colour (medium/high), don't double-darken the
+    // terrain beneath it; the refracted bottom should be the un-darkened satellite.
+    const waterOwnsDepth = this.params.waterQuality !== 'low';
+    this.terrain?.updateWater(this.params.depthColorMax, waterOwnsDepth ? 0 : this.params.imageryDarkening);
     this.scene.setStorm(this.params.storm);
+    this.scene.applyPostParams(this.params);
     if (this.maxFlood) this.maxFlood.mesh.visible = this.params.showMaxFlood;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity;
     if (this.credit) {
@@ -479,12 +494,43 @@ export class App {
 
     this.rain?.update(this.params, now / 1000);
     this.scene.updateStorm(dt);
+    this.updateWaterLook(dt);
     this.updateReadout(dt);
     this.updateDrainArrows();
     this.updateMarkers();
-    this.scene.render();
+    this.scene.render(this.water);
     requestAnimationFrame(this.loop);
   };
+
+  private updateWaterLook(dt: number): void {
+    // wet-look terrain: soak fast while raining, dry over ~30s
+    const wetTarget = this.params.raining ? 1 : 0;
+    const rate = this.params.raining ? dt * 1.5 : dt / 30;
+    this.terrainWetness += (wetTarget - this.terrainWetness) * Math.min(1, rate);
+    this.terrain?.setWetness(this.terrainWetness * this.params.wetness);
+
+    if (!this.water) return;
+    this.water.setFrame({
+      resolution: this.scene.getResolution(this.resBuf),
+      cameraNear: this.scene.camera.near,
+      cameraFar: this.scene.camera.far,
+      sunDir: this.scene.sunDirection,
+      sunColor: this.scene.sunColorLinear,
+      skyTop: this.scene.skyTopColor,
+      skyHorizon: this.scene.skyHorizonColor,
+      cloudReflect: this.params.storm ? 0.5 : 0.15,
+    });
+
+    const size = this.params.mapSizeKm * 1000;
+    const mmHr = this.params.raining
+      ? stormIntensityMmHr(this.params.stormType, this.simTimeSec, this.params.intensityMmPerHr)
+      : 0;
+    const amount = this.params.rainSplashes && this.params.raining
+      ? THREE.MathUtils.clamp(mmHr / 120, 0, 1) : 0;
+    const spot = this.params.rainFootprint === 'spot';
+    this.spotBuf.set((this.params.spotX - 0.5) * size, (0.5 - this.params.spotY) * size);
+    this.water.setRain(amount, spot, this.spotBuf, spot ? this.params.spotRadius * size : 1e9);
+  }
 
   private updateDrainArrows(): void {
     // Auto-reveal flow arrows while draining (rain off) so the water's path shows.
@@ -628,7 +674,7 @@ export class App {
   private disposeWorld(): void {
     this.clearMarkers();
     if (this.terrain) this.group.remove(this.terrain.mesh);
-    if (this.water) this.group.remove(this.water.mesh);
+    if (this.water) this.group.remove(this.water.mesh, this.water.skirt);
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);

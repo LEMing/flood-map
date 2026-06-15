@@ -2,6 +2,7 @@ export type RainFootprint = 'uniform' | 'spot';
 export type BoundaryMode = 'open' | 'closed';
 export type TerrainStyle = 'satellite' | 'hypsometric' | 'heatmap' | 'surface';
 export type ElevationSource = 'glo30' | 'fabdem' | 'terrarium';
+export type WaterQuality = 'low' | 'medium' | 'high';
 
 // Urban pluvial flood model: a realistic design / observed storm hyetograph
 // instead of flat rain. See sim/storm.ts.
@@ -75,6 +76,29 @@ export interface Params {
   showMaxFlood: boolean;
   showVelocity: boolean;
   wireframe: boolean;
+
+  // Water surface (Tier 1 shader)
+  waterQuality: WaterQuality; // master gate: low=flat, medium=+refraction/foam, high=+3-octave/AO-friendly
+  waterReflections: boolean; // sky + cloud reflection with fresnel
+  waterRefraction: boolean; // screen-space refraction of the submerged bottom
+  rippleStrength: number; // 0..1 normal perturbation amount
+  flowSpeed: number; // how fast velX/velY advects the ripples
+  foamAmount: number; // 0..1 shoreline + turbulence foam
+  sunGlint: number; // 0..2 specular highlight strength
+  shorelineSoftness: number; // metres of soft alpha fade at the water edge
+  skirtEnabled: boolean; // perimeter wall so deep edge water doesn't show holes
+
+  // Atmosphere / post-processing (Tier 2)
+  postProcessing: boolean; // master switch for the EffectComposer stack
+  exposure: number; // ACES tonemap exposure
+  bloom: number; // 0..2 bloom strength (0 = off)
+  ssao: boolean; // GTAO ambient occlusion (opt-in, costly)
+  vignette: number; // 0..1 darkness
+  wetness: number; // 0..1 wet-look terrain when raining
+  cloudShadows: number; // 0..1 moving cloud-shadow strength on ground + water
+  godRays: number; // 0..1 light-shaft strength (storm only)
+  groundHaze: number; // 0..1 low ground haze (storm)
+  rainSplashes: boolean; // splash rings on the water when raining
 }
 
 export const DEFAULT_PARAMS: Params = {
@@ -120,6 +144,27 @@ export const DEFAULT_PARAMS: Params = {
   showMaxFlood: false,
   showVelocity: false,
   wireframe: false,
+
+  waterQuality: 'medium',
+  waterReflections: true,
+  waterRefraction: true,
+  rippleStrength: 0.5,
+  flowSpeed: 0.6,
+  foamAmount: 0.6,
+  sunGlint: 1.0,
+  shorelineSoftness: 1.5,
+  skirtEnabled: true,
+
+  postProcessing: true,
+  exposure: 1.15,
+  bloom: 0.35,
+  ssao: false,
+  vignette: 0.35,
+  wetness: 0.7,
+  cloudShadows: 0.4,
+  godRays: 0.4,
+  groundHaze: 0.35,
+  rainSplashes: true,
 };
 
 export const GRID_RESOLUTIONS = [128, 256, 512, 1024] as const;

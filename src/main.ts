@@ -12,6 +12,7 @@ initAnalytics();
 try {
   const app = new App(canvas);
   app.start();
+  if (import.meta.env.DEV) (window as unknown as { app: App }).app = app;
 } catch (err) {
   console.error(err);
   showToast(`Failed to start: ${(err as Error).message}`, true, 0);
