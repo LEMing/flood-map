@@ -2,7 +2,7 @@
 // every GA page's source), so it's safe to commit. It is filled in once Google
 // Analytics is enabled on the Firebase project (Project settings → Integrations
 // → Google Analytics). While empty, all calls below are no-ops.
-const GA_MEASUREMENT_ID = '';
+const GA_MEASUREMENT_ID = 'G-PENXT4YXW9';
 
 type GtagWindow = Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
 
