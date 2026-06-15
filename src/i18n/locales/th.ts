@@ -93,6 +93,7 @@ export const th: Record<string, string> = {
   'toast.notFound': 'ไม่พบผลลัพธ์สำหรับ "{q}"',
   'toast.geocodeFail': 'การระบุพิกัดล้มเหลว ลองอีกครั้งในอีกสักครู่',
   'toast.enterAddress': 'กรุณาป้อนที่อยู่',
+  'toast.detecting': 'กำลังตรวจหาตำแหน่งของคุณ…',
 
   // Misc
   'legend.elevation': 'ความสูง',

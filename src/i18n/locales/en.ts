@@ -96,6 +96,7 @@ export const en: Record<string, string> = {
   'toast.notFound': 'No match found for “{q}”.',
   'toast.geocodeFail': 'Geocoding failed. Try again in a moment.',
   'toast.enterAddress': 'Please enter an address.',
+  'toast.detecting': 'Detecting your location…',
 
   // Misc
   'legend.elevation': 'Elevation',

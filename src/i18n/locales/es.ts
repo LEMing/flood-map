@@ -93,6 +93,7 @@ export const es: Record<string, string> = {
   'toast.notFound': 'No se encontró ninguna coincidencia para «{q}».',
   'toast.geocodeFail': 'La geocodificación falló. Inténtalo de nuevo en un momento.',
   'toast.enterAddress': 'Por favor, introduce una dirección.',
+  'toast.detecting': 'Detectando tu ubicación…',
 
   // Misc
   'legend.elevation': 'Elevación',

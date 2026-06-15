@@ -93,6 +93,7 @@ export const ko: Record<string, string> = {
   'toast.notFound': '"{q}"에 대한 결과가 없습니다.',
   'toast.geocodeFail': '지오코딩에 실패했습니다. 잠시 후 다시 시도하세요.',
   'toast.enterAddress': '주소를 입력하세요.',
+  'toast.detecting': '위치를 감지하는 중…',
 
   // Misc
   'legend.elevation': '고도',

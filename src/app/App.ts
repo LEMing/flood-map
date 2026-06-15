@@ -5,7 +5,10 @@ import { loadTerrainAt } from '../geo/load';
 import { geocode, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
 import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
-import { t, setLanguage, type Lang } from '../i18n';
+import { detectIpLocation } from '../geo/ipLocation';
+import {
+  t, setLanguage, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
+} from '../i18n';
 import { localMetersToLonLat, lonLatToLocalMeters } from '../geo/projection';
 import { POINTS_OF_INTEREST } from '../geo/places';
 import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/surface';
@@ -111,13 +114,39 @@ export class App {
 
   start(): void {
     this.lastTime = performance.now();
-    const url = readUrlState();
-    if (url.lat !== undefined && url.lon !== undefined) {
-      this.loadCenter({ lat: url.lat, lon: url.lon, displayName: formatCoords(url.lat, url.lon) });
-    } else {
-      this.loadAddress(this.params.address);
-    }
+    void this.bootstrapLocation();
     requestAnimationFrame(this.loop);
+  }
+
+  /**
+   * Decide the initial center and UI language. Explicit URL state wins; whatever
+   * the URL leaves open is filled in from a coarse IP lookup (location + a
+   * smart default language), falling back to the built-in default location.
+   */
+  private async bootstrapLocation(): Promise<void> {
+    const url = readUrlState();
+    const haveUrlCenter = url.lat !== undefined && url.lon !== undefined;
+    const langPinned = hasExplicitLanguage();
+
+    const needIp = !(haveUrlCenter && langPinned);
+    if (needIp && !haveUrlCenter) showToast(t('toast.detecting'), false, 0);
+    const ip = needIp ? await detectIpLocation() : null;
+
+    if (!langPinned) {
+      const smart = resolveSmartLanguage(ip);
+      if (smart !== getLanguage()) this.applyDetectedLanguage(smart);
+    }
+
+    if (haveUrlCenter) {
+      await this.loadCenter({ lat: url.lat!, lon: url.lon!, displayName: formatCoords(url.lat!, url.lon!) });
+    } else if (ip) {
+      const displayName = ip.city
+        ? [ip.city, ip.region].filter(Boolean).join(', ')
+        : formatCoords(ip.lat, ip.lon);
+      await this.loadCenter({ lat: ip.lat, lon: ip.lon, displayName });
+    } else {
+      await this.loadAddress(this.params.address);
+    }
   }
 
   private panelCallbacks(): ControlCallbacks {
@@ -148,8 +177,17 @@ export class App {
   }
 
   private setLang(lang: Lang): void {
-    setLanguage(lang);
+    setLanguage(lang); // explicit user choice → persisted
     writeUrlState({ lang });
+    this.rebuildForLanguage();
+  }
+
+  private applyDetectedLanguage(lang: Lang): void {
+    setLanguage(lang, false); // auto-detected → stays re-detectable on next visit
+    this.rebuildForLanguage();
+  }
+
+  private rebuildForLanguage(): void {
     this.addressBar.retranslate();
     this.panel.dispose();
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
@@ -221,7 +259,7 @@ export class App {
 
   private displayLabel(location: GeocodeResult): string {
     if (parseCoords(location.displayName)) return location.displayName;
-    return location.displayName.split(',').slice(0, 2).join(', ');
+    return location.displayName.split(',').slice(0, 2).map((s) => s.trim()).join(', ');
   }
 
   private build(heightmap: Heightmap, surface: SurfaceResult | null): void {

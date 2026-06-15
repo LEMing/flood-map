@@ -93,6 +93,7 @@ export const hi: Record<string, string> = {
   'toast.notFound': '"{q}" के लिए कोई मिलान नहीं मिला।',
   'toast.geocodeFail': 'जियोकोडिंग विफल। कुछ क्षण बाद पुनः प्रयास करें।',
   'toast.enterAddress': 'कृपया एक पता दर्ज करें।',
+  'toast.detecting': 'आपका स्थान पता लगाया जा रहा है…',
 
   // Misc
   'legend.elevation': 'ऊँचाई',

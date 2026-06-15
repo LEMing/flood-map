@@ -82,6 +82,7 @@ export const ru: Record<string, string> = {
   'toast.notFound': 'Ничего не найдено по запросу «{q}».',
   'toast.geocodeFail': 'Геокодирование не удалось. Попробуйте ещё раз.',
   'toast.enterAddress': 'Введите адрес.',
+  'toast.detecting': 'Определяем вашу локацию…',
 
   'legend.elevation': 'Высота',
   'readout.elev': 'высота',

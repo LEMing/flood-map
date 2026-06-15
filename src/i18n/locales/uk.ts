@@ -93,6 +93,7 @@ export const uk: Record<string, string> = {
   'toast.notFound': 'Не знайдено збігів для «{q}».',
   'toast.geocodeFail': 'Геокодування не вдалося. Спробуйте за мить.',
   'toast.enterAddress': 'Будь ласка, введіть адресу.',
+  'toast.detecting': 'Визначаємо ваше місцезнаходження…',
 
   // Misc
   'legend.elevation': 'Висота',

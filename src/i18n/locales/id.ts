@@ -93,6 +93,7 @@ export const id: Record<string, string> = {
   'toast.notFound': 'Tidak ada hasil untuk "{q}".',
   'toast.geocodeFail': 'Geocoding gagal. Coba lagi sebentar.',
   'toast.enterAddress': 'Silakan masukkan alamat.',
+  'toast.detecting': 'Mendeteksi lokasi Anda…',
 
   // Misc
   'legend.elevation': 'Ketinggian',

@@ -93,6 +93,7 @@ export const tr: Record<string, string> = {
   'toast.notFound': '“{q}” için eşleşme bulunamadı.',
   'toast.geocodeFail': 'Coğrafi kodlama başarısız oldu. Birazdan tekrar deneyin.',
   'toast.enterAddress': 'Lütfen bir adres girin.',
+  'toast.detecting': 'Konumunuz belirleniyor…',
 
   // Misc
   'legend.elevation': 'Yükseklik',

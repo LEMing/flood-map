@@ -93,6 +93,7 @@ export const ja: Record<string, string> = {
   'toast.notFound': '「{q}」に一致する結果がありません。',
   'toast.geocodeFail': 'ジオコーディングに失敗しました。しばらくして再試行してください。',
   'toast.enterAddress': '住所を入力してください。',
+  'toast.detecting': '現在地を検出しています…',
 
   // Misc
   'legend.elevation': '標高',
