@@ -356,6 +356,7 @@ export class App {
     const waterOwnsDepth = this.params.waterQuality !== 'low';
     this.terrain?.updateWater(this.params.depthColorMax, waterOwnsDepth ? 0 : this.params.imageryDarkening);
     this.scene.setStorm(this.params.storm);
+    this.terrain?.setSkyTint(this.scene.skyTopColor);
     this.scene.applyPostParams(this.params);
     if (this.maxFlood) this.maxFlood.mesh.visible = this.params.showMaxFlood;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity;

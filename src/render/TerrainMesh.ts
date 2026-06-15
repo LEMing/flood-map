@@ -123,6 +123,7 @@ export class TerrainMesh {
   private absorb = 1.5;
   private darken = 0.8;
   private wetness = 0;
+  private readonly skyTint = new THREE.Color(0.55, 0.68, 0.82);
   private weatherUniforms?: WeatherUniforms;
   private depthUniforms?: Record<string, THREE.IUniform>;
   private readonly hypsoColor: THREE.BufferAttribute;
@@ -165,6 +166,7 @@ export class TerrainMesh {
       shader.uniforms.uCloudDrift = w ? w.uCloudDrift : { value: new THREE.Vector2(0.03, 0.015) };
       const n = (this.heightTexture.image as { width: number }).width;
       shader.uniforms.uTexel = { value: new THREE.Vector2(1 / n, 1 / n) };
+      shader.uniforms.uWetSky = { value: this.skyTint };
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec2 vGridUv;\nuniform float uSize;')
         .replace(
@@ -180,6 +182,7 @@ export class TerrainMesh {
           uniform float uDepthAbsorb, uDepthDarken, uWetness, uSize;
           uniform float uTime, uStorm, uCloudShadow, uCloudScale;
           uniform vec2 uCloudDrift, uTexel;
+          uniform vec3 uWetSky;
           ${GLSL_FBM}`,
         )
         .replace(
@@ -201,8 +204,8 @@ export class TerrainMesh {
               }
             }
             gWet = uWetness * smoothstep(0.004, 0.04, nearWater);
-            diffuseColor.rgb *= (1.0 - 0.30 * gWet);
-            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.88, 0.94, 1.06), 0.30 * gWet);
+            diffuseColor.rgb *= (1.0 - 0.42 * gWet);                                   // wet = darker
+            diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(0.85, 0.92, 1.08), 0.35 * gWet);
 
             vec2 worldXZ = (vGridUv - 0.5) * uSize;
             vec2 sp = worldXZ * uCloudScale + uCloudDrift * uTime;
@@ -214,7 +217,17 @@ export class TerrainMesh {
         .replace(
           '#include <roughnessmap_fragment>',
           `#include <roughnessmap_fragment>
-          roughnessFactor = mix(roughnessFactor, 0.32, gWet); // wet halo (set in color_fragment)`,
+          roughnessFactor = mix(roughnessFactor, 0.12, gWet); // wet = glossy (set in color_fragment)`,
+        )
+        .replace(
+          '#include <opaque_fragment>',
+          `{
+            // wet ground reflects the sky (glossy fresnel sheen) — the main "wet" cue
+            vec3 wetV = normalize(vViewPosition);
+            float wetFr = pow(1.0 - clamp(dot(wetV, normal), 0.0, 1.0), 4.0);
+            outgoingLight = mix(outgoingLight, uWetSky, gWet * (0.22 + 0.65 * wetFr));
+          }
+          #include <opaque_fragment>`,
         );
       this.depthUniforms = shader.uniforms;
     };
@@ -232,6 +245,11 @@ export class TerrainMesh {
   setWetness(w: number): void {
     this.wetness = w;
     if (this.depthUniforms) this.depthUniforms.uWetness.value = w;
+  }
+
+  /** Colour the wet-ground sheen reflects (the current sky). */
+  setSkyTint(color: THREE.Color): void {
+    this.skyTint.copy(color);
   }
 
   /** Alias the shared weather uniform objects so SceneManager's writes propagate. */

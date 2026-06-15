@@ -202,9 +202,10 @@ const fragmentShader = /* glsl */ `
     vec3 skyColor = mix(uSkyHorizon, uSkyTop, pow(up, 0.5));
     float cl = 0.5 + 0.5 * sin(reflDir.x * 8.0 + uTime * 0.05) * sin(reflDir.z * 8.0);
     skyColor = mix(skyColor, uCloudColor, smoothstep(0.6, 0.95, cl) * up * uCloudReflect);
-    float f0 = 0.02;
+    float f0 = 0.05;
     float fres = f0 + (1.0 - f0) * pow(1.0 - max(dot(viewDir, surfN), 0.0), 5.0);
     fres = mix(fres, 1.0, 0.6 * vSkirtT) * uReflect;
+    fres = clamp(fres * 1.4, 0.0, 1.0);          // stronger, more visible sky reflection
 
     vec3 color = mix(throughWater, skyColor, clamp(fres, 0.0, 1.0));
 
