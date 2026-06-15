@@ -22,6 +22,7 @@ import { TerrainMesh } from '../render/TerrainMesh';
 import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { AddressBar } from '../ui/AddressBar';
+import { LanguagePicker } from '../ui/LanguagePicker';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, formatDuration, formatVolume, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
@@ -35,6 +36,7 @@ export class App {
   private readonly scene: SceneManager;
   private readonly group = new THREE.Group();
   private readonly addressBar: AddressBar;
+  private readonly languagePicker: LanguagePicker;
   private panel: ControlsPanel;
   private currentLocation?: GeocodeResult;
 
@@ -89,8 +91,8 @@ export class App {
     this.addressBar = new AddressBar({
       onSubmit: (text) => this.loadAddress(text),
       onSelect: (lat, lon, label) => this.loadCenter({ lat, lon, displayName: label }),
-      onLanguage: (lang) => this.setLang(lang),
     });
+    this.languagePicker = new LanguagePicker((lang) => this.setLang(lang));
     // The input is filled only once we know what we're loading (after IP detect
     // / geocode), so a default place never flashes for out-of-region visitors.
 
@@ -190,6 +192,8 @@ export class App {
 
   private rebuildForLanguage(): void {
     this.addressBar.retranslate();
+    this.languagePicker.retranslate();
+    document.documentElement.lang = getLanguage();
     this.panel.dispose();
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
     this.applyParams(); // re-translate legend labels etc.

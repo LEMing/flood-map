@@ -1,18 +1,16 @@
 import { suggest, type Suggestion } from '../geo/autocomplete';
 import { formatCoords, parseCoords } from '../url';
-import { getLanguage, LANGUAGES, setLanguage, t, type Lang } from '../i18n';
+import { getLanguage, t } from '../i18n';
 
 export interface AddressBarCallbacks {
   onSubmit(text: string): void;
   onSelect(lat: number, lon: number, label: string): void;
-  onLanguage(lang: Lang): void;
 }
 
 export class AddressBar {
   private readonly input: HTMLInputElement;
   private readonly button: HTMLButtonElement;
   private readonly list: HTMLDivElement;
-  private readonly langSelect: HTMLSelectElement;
   private readonly cb: AddressBarCallbacks;
   private items: Suggestion[] = [];
   private highlight = -1;
@@ -24,20 +22,6 @@ export class AddressBar {
     this.input = document.getElementById('address-input') as HTMLInputElement;
     this.button = document.getElementById('address-go') as HTMLButtonElement;
     this.list = document.getElementById('ac-list') as HTMLDivElement;
-    this.langSelect = document.getElementById('lang-select') as HTMLSelectElement;
-
-    for (const l of LANGUAGES) {
-      const opt = document.createElement('option');
-      opt.value = l.code;
-      opt.textContent = l.label;
-      this.langSelect.appendChild(opt);
-    }
-    this.langSelect.value = getLanguage();
-    this.langSelect.addEventListener('change', () => {
-      const lang = this.langSelect.value as Lang;
-      setLanguage(lang);
-      this.cb.onLanguage(lang);
-    });
 
     this.button.addEventListener('click', () => this.submit());
     this.input.addEventListener('input', () => this.onInput());
@@ -51,8 +35,8 @@ export class AddressBar {
 
   retranslate(): void {
     this.input.placeholder = t('input.placeholder');
+    this.input.dir = 'auto'; // RTL for Arabic/Hebrew place names, LTR for coords
     this.button.textContent = this.button.disabled ? t('btn.loading') : t('btn.load');
-    this.langSelect.value = getLanguage();
   }
 
   setValue(value: string): void {

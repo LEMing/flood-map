@@ -12,30 +12,72 @@ import { hi } from './locales/hi';
 import { id } from './locales/id';
 import { th } from './locales/th';
 import { vi } from './locales/vi';
+import { pt } from './locales/pt';
+import { ar } from './locales/ar';
+import { it } from './locales/it';
+import { pl } from './locales/pl';
+import { nl } from './locales/nl';
+import { el } from './locales/el';
+import { bn } from './locales/bn';
+import { fa } from './locales/fa';
+import { ur } from './locales/ur';
+import { ms } from './locales/ms';
+import { ta } from './locales/ta';
+import { ro } from './locales/ro';
+import { sw } from './locales/sw';
+import { cs } from './locales/cs';
+import { sv } from './locales/sv';
+import { he } from './locales/he';
 
 export type Lang =
   | 'en' | 'ru' | 'uk' | 'tr' | 'de' | 'es' | 'fr' | 'zh'
-  | 'ja' | 'ko' | 'hi' | 'id' | 'th' | 'vi';
+  | 'ja' | 'ko' | 'hi' | 'id' | 'th' | 'vi'
+  | 'pt' | 'ar' | 'it' | 'pl' | 'nl' | 'el' | 'bn' | 'fa'
+  | 'ur' | 'ms' | 'ta' | 'ro' | 'sw' | 'cs' | 'sv' | 'he';
 
 const LOCALES: Record<Lang, Record<string, string>> = {
   en, ru, uk, tr, de, es, fr, zh, ja, ko, hi, id, th, vi,
+  pt, ar, it, pl, nl, el, bn, fa, ur, ms, ta, ro, sw, cs, sv, he,
 };
 
-export const LANGUAGES: Array<{ code: Lang; label: string }> = [
-  { code: 'en', label: 'English' },
-  { code: 'ru', label: 'Русский' },
-  { code: 'uk', label: 'Українська' },
-  { code: 'tr', label: 'Türkçe' },
-  { code: 'de', label: 'Deutsch' },
-  { code: 'es', label: 'Español' },
-  { code: 'fr', label: 'Français' },
-  { code: 'zh', label: '中文' },
-  { code: 'ja', label: '日本語' },
-  { code: 'ko', label: '한국어' },
-  { code: 'hi', label: 'हिन्दी' },
-  { code: 'id', label: 'Bahasa Indonesia' },
-  { code: 'th', label: 'ไทย' },
-  { code: 'vi', label: 'Tiếng Việt' },
+export interface LanguageDef {
+  code: Lang;
+  label: string; // endonym (native name) shown in the picker
+  english: string; // English name, so search matches "german", "greek", …
+  rtl?: boolean;
+}
+
+export const LANGUAGES: LanguageDef[] = [
+  { code: 'en', label: 'English', english: 'English' },
+  { code: 'ru', label: 'Русский', english: 'Russian' },
+  { code: 'uk', label: 'Українська', english: 'Ukrainian' },
+  { code: 'tr', label: 'Türkçe', english: 'Turkish' },
+  { code: 'de', label: 'Deutsch', english: 'German' },
+  { code: 'es', label: 'Español', english: 'Spanish' },
+  { code: 'fr', label: 'Français', english: 'French' },
+  { code: 'zh', label: '中文', english: 'Chinese' },
+  { code: 'ja', label: '日本語', english: 'Japanese' },
+  { code: 'ko', label: '한국어', english: 'Korean' },
+  { code: 'hi', label: 'हिन्दी', english: 'Hindi' },
+  { code: 'id', label: 'Bahasa Indonesia', english: 'Indonesian' },
+  { code: 'th', label: 'ไทย', english: 'Thai' },
+  { code: 'vi', label: 'Tiếng Việt', english: 'Vietnamese' },
+  { code: 'pt', label: 'Português', english: 'Portuguese' },
+  { code: 'ar', label: 'العربية', english: 'Arabic', rtl: true },
+  { code: 'it', label: 'Italiano', english: 'Italian' },
+  { code: 'pl', label: 'Polski', english: 'Polish' },
+  { code: 'nl', label: 'Nederlands', english: 'Dutch' },
+  { code: 'el', label: 'Ελληνικά', english: 'Greek' },
+  { code: 'bn', label: 'বাংলা', english: 'Bengali' },
+  { code: 'fa', label: 'فارسی', english: 'Persian', rtl: true },
+  { code: 'ur', label: 'اردو', english: 'Urdu', rtl: true },
+  { code: 'ms', label: 'Bahasa Melayu', english: 'Malay' },
+  { code: 'ta', label: 'தமிழ்', english: 'Tamil' },
+  { code: 'ro', label: 'Română', english: 'Romanian' },
+  { code: 'sw', label: 'Kiswahili', english: 'Swahili' },
+  { code: 'cs', label: 'Čeština', english: 'Czech' },
+  { code: 'sv', label: 'Svenska', english: 'Swedish' },
+  { code: 'he', label: 'עברית', english: 'Hebrew', rtl: true },
 ];
 
 // Country (ISO 3166-1 alpha-2) → the supported language most people there read.
@@ -57,6 +99,23 @@ const COUNTRY_LANG: Partial<Record<string, Lang>> = {
   ID: 'id',
   TH: 'th',
   VN: 'vi',
+  PT: 'pt', BR: 'pt', AO: 'pt', MZ: 'pt',
+  SA: 'ar', AE: 'ar', EG: 'ar', DZ: 'ar', IQ: 'ar', MA: 'ar', JO: 'ar',
+  KW: 'ar', QA: 'ar', LB: 'ar', LY: 'ar', TN: 'ar', OM: 'ar', BH: 'ar',
+  IT: 'it', SM: 'it', VA: 'it',
+  PL: 'pl',
+  NL: 'nl',
+  GR: 'el', CY: 'el',
+  BD: 'bn',
+  IR: 'fa', AF: 'fa',
+  PK: 'ur',
+  MY: 'ms', BN: 'ms',
+  LK: 'ta',
+  RO: 'ro', MD: 'ro',
+  KE: 'sw', TZ: 'sw', UG: 'sw',
+  CZ: 'cs',
+  SE: 'sv',
+  IL: 'he',
 };
 
 function isLang(v: string | null): v is Lang {
@@ -83,6 +142,11 @@ let current: Lang = detectInitial();
 
 export function getLanguage(): Lang {
   return current;
+}
+
+/** Whether the given (or current) language is written right-to-left. */
+export function isRTL(lang: Lang = current): boolean {
+  return !!LANGUAGES.find((l) => l.code === lang)?.rtl;
 }
 
 /** True when the user pinned the language via URL or a prior explicit choice. */

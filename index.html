@@ -31,10 +31,42 @@
         background: #2f6feb; color: white; font-size: 14px; cursor: pointer;
       }
       #addressbar button:disabled { opacity: .5; cursor: default; }
-      #lang-select {
-        padding: 7px 6px; border-radius: 7px; border: 1px solid #2a313b;
-        background: #0e1318; color: #cdd6e0; font-size: 13px; cursor: pointer;
+
+      /* Language picker — top-right, just left of the controls panel */
+      #lang-picker { position: fixed; top: 12px; right: 272px; z-index: 11; }
+      #lang-trigger {
+        display: flex; align-items: center; gap: 6px; line-height: 1;
+        padding: 7px 10px; border-radius: 8px; cursor: pointer;
+        border: 1px solid #2a313b; background: var(--panel-bg);
+        backdrop-filter: blur(6px); color: #cdd6e0; font-size: 13px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.4); transition: border-color .15s, color .15s;
       }
+      #lang-trigger:hover { border-color: #3a4250; color: #fff; }
+      #lang-trigger .globe { font-size: 14px; }
+      #lang-trigger .code { font-weight: 600; letter-spacing: .3px; }
+      #lang-pop {
+        position: absolute; top: calc(100% + 6px); right: 0; width: 240px;
+        background: rgba(14, 19, 24, 0.98); border: 1px solid #2a313b; border-radius: 10px;
+        box-shadow: 0 12px 32px rgba(0,0,0,.55); overflow: hidden;
+      }
+      #lang-pop[hidden] { display: none; }
+      #lang-search {
+        width: 100%; padding: 9px 11px; border: none; border-bottom: 1px solid #1b222c;
+        background: #0e1318; color: #e6edf3; font-size: 13px; outline: none;
+      }
+      #lang-list { max-height: 340px; overflow-y: auto; }
+      #lang-list::-webkit-scrollbar { width: 8px; }
+      #lang-list::-webkit-scrollbar-thumb { background: #2a313b; border-radius: 4px; }
+      .lang-item {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        padding: 8px 11px; font-size: 13px; color: #cdd6e0; cursor: pointer;
+      }
+      .lang-item .lc { font-size: 11px; color: #6b7785; text-transform: uppercase; }
+      .lang-item.current .name { color: #6cb1ff; }
+      .lang-item.active { background: #1f6feb; color: #fff; }
+      .lang-item.active .lc { color: #cfe0ff; }
+      .lang-item.active .name { color: #fff; }
+
       #ac-list {
         position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 20;
         background: rgba(14, 19, 24, 0.98); border: 1px solid #2a313b; border-radius: 8px;
@@ -110,7 +142,6 @@
         <div id="ac-list"></div>
       </div>
       <button id="address-go">Load</button>
-      <select id="lang-select" title="Language"></select>
     </div>
     <div id="toast"></div>
     <div id="credit">Imagery © Esri, Maxar, Earthstar Geographics &amp; the GIS User Community</div>
