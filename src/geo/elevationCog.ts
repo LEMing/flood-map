@@ -43,9 +43,60 @@ async function openTiff(source: ElevationSource, url: string): Promise<GeoTIFF> 
   if (source === 'fabdem') {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    return fromArrayBuffer(await resp.arrayBuffer());
+    const buf = await resp.arrayBuffer();
+    // The HF/Xet signed-redirect backend occasionally serves a tiny error body
+    // or a truncated file; a real land tile is several MB.
+    if (buf.byteLength < 30_000) throw new Error(`FABDEM body too small (${buf.byteLength} B)`);
+    return fromArrayBuffer(buf);
   }
   return fromUrl(url);
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// A transient bad read tends to come back near-zero/flat. If a tile reads as
+// >92% near sea level we treat it as suspect and retry (genuine water tiles
+// will simply read the same way again and be accepted on the last attempt).
+function looksDegenerate(raster: ArrayLike<number>): boolean {
+  const n = raster.length;
+  if (!n) return true;
+  const step = Math.max(1, Math.floor(n / 2000));
+  let near0 = 0;
+  let count = 0;
+  for (let i = 0; i < n; i += step) {
+    if (Math.abs(raster[i] as number) < 0.5) near0++;
+    count++;
+  }
+  return near0 / count > 0.92;
+}
+
+// Fill holes (failed/uncovered tiles) by iteratively averaging valid neighbours,
+// so a missing tile blends with the surrounding terrain instead of dropping to a
+// sea-level cliff.
+function inpaintHoles(data: Float32Array, valid: Uint8Array, N: number): void {
+  const cur = Uint8Array.from(valid);
+  let remaining = 0;
+  for (let i = 0; i < N * N; i++) if (!cur[i]) remaining++;
+  let pass = 0;
+  while (remaining > 0 && pass++ < N) {
+    const filled: number[] = [];
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const k = r * N + c;
+        if (cur[k]) continue;
+        let s = 0;
+        let nb = 0;
+        if (r > 0 && cur[k - N]) { s += data[k - N]; nb++; }
+        if (r < N - 1 && cur[k + N]) { s += data[k + N]; nb++; }
+        if (c > 0 && cur[k - 1]) { s += data[k - 1]; nb++; }
+        if (c < N - 1 && cur[k + 1]) { s += data[k + 1]; nb++; }
+        if (nb > 0) { data[k] = s / nb; filled.push(k); }
+      }
+    }
+    for (const k of filled) cur[k] = 1;
+    remaining -= filled.length;
+    if (!filled.length) break;
+  }
 }
 
 interface Patch {
@@ -113,21 +164,25 @@ export async function fetchElevationCog(
       ];
       const w = Math.min(2048, Math.max(8, Math.ceil((bbox[2] - bbox[0]) / NATIVE_DEG) + 2));
       const h = Math.min(2048, Math.max(8, Math.ceil((bbox[3] - bbox[1]) / NATIVE_DEG) + 2));
-      try {
-        const tiff = await openTiff(source, tileUrl(source, latI, lonI));
-        const raster = await tiff.readRasters({
-          bbox,
-          width: w,
-          height: h,
-          resampleMethod: 'bilinear',
-          interleave: false,
-        });
-        patches.push({
-          minLon: bbox[0], maxLon: bbox[2], minLat: bbox[1], maxLat: bbox[3],
-          w, h, data: raster[0] as ArrayLike<number>,
-        });
-      } catch {
-        // Missing tile (e.g. ocean) — skip; other tiles/fallbacks still apply.
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const tiff = await openTiff(source, tileUrl(source, latI, lonI));
+          const raster = await tiff.readRasters({
+            bbox, width: w, height: h, resampleMethod: 'bilinear', interleave: false,
+          });
+          const band = raster[0] as ArrayLike<number>;
+          // Retry once on a suspiciously near-zero read (flaky backend); a genuine
+          // water tile will read the same way and be accepted on the next attempt.
+          if (attempt === 0 && looksDegenerate(band)) {
+            await sleep(300);
+            continue;
+          }
+          patches.push({ minLon: bbox[0], maxLon: bbox[2], minLat: bbox[1], maxLat: bbox[3], w, h, data: band });
+          return;
+        } catch {
+          if (attempt < 2) await sleep(300 * (attempt + 1));
+          // else: give up on this tile — inpainting fills the gap from neighbours.
+        }
       }
     }),
   );
@@ -136,14 +191,24 @@ export async function fetchElevationCog(
   }
 
   const data = new Float32Array(N * N);
+  const valid = new Uint8Array(N * N);
+  let validCount = 0;
   for (let k = 0; k < N * N; k++) {
     let v: number | null = null;
     for (const p of patches) {
       v = samplePatch(p, lon[k], lat[k]);
       if (v !== null) break;
     }
-    data[k] = v === null || v < NODATA_FLOOR ? 0 : v;
+    if (v === null || v < NODATA_FLOOR) {
+      data[k] = 0;
+    } else {
+      data[k] = v;
+      valid[k] = 1;
+      validCount++;
+    }
   }
+  if (validCount === 0) throw new Error('Elevation read returned no valid data for this area.');
+  if (validCount < N * N) inpaintHoles(data, valid, N); // blend missing tiles, no sea-level cliff
 
   const { min, max } = computeMinMax(data);
   return { data, N, sizeMeters, center, min, max, synthetic: false };
