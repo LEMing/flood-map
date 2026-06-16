@@ -22,7 +22,9 @@ const vertexShader = /* glsl */ `
     vec4 s = texture2D(uSeabed, uv);
     float elev = s.x;
     bool flag = s.y > 0.5;
-    bool sea = elev < uSeaLevel || (flag && elev < uSeaLevel + 2.0);
+    // sea = actual water bodies (land-cover) near sea level, or clearly below sea
+    // level — NOT just any low cell, so a flat coastal city isn't flooded inland.
+    bool sea = (flag && elev < uSeaLevel + 2.0) || elev < uSeaLevel - 1.0;
     vThick = sea ? max(uSeaLevel - elev, flag ? uNominal : 0.01) : -1.0;
     vec3 p = vec3(position.x, uSeaLevel, position.z);
     vec4 world = modelMatrix * vec4(p, 1.0);
@@ -96,7 +98,7 @@ export class SeaMesh {
       const flag = waterMask ? waterMask[i] === WATER_CLASS : false;
       rgba[i * 4] = elev;
       rgba[i * 4 + 1] = flag ? 1 : 0;
-      if (elev < sea || (flag && elev < sea + 2)) hasSea = true;
+      if ((flag && elev < sea + 2) || elev < sea - 1) hasSea = true;
     }
     this.hasSea = hasSea;
     this.seabedTex = new THREE.DataTexture(rgba, N, N, THREE.RGBAFormat, THREE.FloatType);

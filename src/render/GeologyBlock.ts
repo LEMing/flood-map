@@ -185,7 +185,7 @@ export class GeologyBlock {
       yt[o] = top; mar[o] = marine; sb[o] = seabed; o++;
     };
     const col = (pt: RingPoint): { top: number; marine: number; seabed: number } => {
-      const marine = pt.e < sea || pt.water || p.oceanCell ? 1 : 0;
+      const marine = (pt.water && pt.e < sea + 2) || pt.e < sea - 1 || p.oceanCell ? 1 : 0;
       const top = topElev(pt.e) * ve;
       const waterDepth = marine
         ? Math.max(sea - pt.e, pt.water ? NOMINAL_WATER_M : 0, p.oceanCell ? p.oceanWaterDepthM : 0)
