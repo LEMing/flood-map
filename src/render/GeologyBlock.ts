@@ -126,7 +126,7 @@ export class GeologyBlock {
           vec3 landC = texture2D(uLandRamp, vec2(0.5, d)).rgb;
           // water table: a phreatic surface that meets sea level at the coast and
           // rises inland (depth carried per-column in aWtNorm), not a flat band.
-          if (uShowWaterTable > 0.5 && vWtNorm >= 0.0 && abs(d - vWtNorm) < 0.006) {
+          if (uShowWaterTable > 0.5 && vMarine < 0.5 && abs(d - vWtNorm) < 0.006) {
             landC = mix(landC, vec3(0.25, 0.71, 0.88), 0.85);
           }
           vec3 marineC; float water = 0.0;
@@ -201,8 +201,9 @@ export class GeologyBlock {
         : 0;
       const seabed = Math.min(1, Math.max(0, waterDepth / p.depthShownM));
       // water-table depth below this column's surface: 0 at the coast (= sea level),
-      // up to waterTableM inland. Marine columns carry -1 (no water table).
-      const wt = marine ? -1 : Math.min(Math.max(pt.e - sea, 0), p.waterTableM) / p.depthShownM;
+      // up to waterTableM inland. Kept continuous (no -1 jump) so it doesn't smear
+      // across land/marine quad edges; the draw is gated to land fragments.
+      const wt = Math.min(Math.max(pt.e - sea, 0), p.waterTableM) / p.depthShownM;
       return { top, marine, seabed, wt };
     };
     for (let i = 0; i < n; i++) {
@@ -217,8 +218,8 @@ export class GeologyBlock {
     }
     const s = Math.max(...ring.map((pt) => Math.abs(pt.x)), ...ring.map((pt) => Math.abs(pt.z)));
     const deep = yFloor + H * 2;
-    put(-s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, s, deep, 0, 0, -1);
-    put(-s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, s, deep, 0, 0, -1); put(-s, yFloor, s, deep, 0, 0, -1);
+    put(-s, yFloor, -s, deep, 0, 0, 1); put(s, yFloor, -s, deep, 0, 0, 1); put(s, yFloor, s, deep, 0, 0, 1);
+    put(-s, yFloor, -s, deep, 0, 0, 1); put(s, yFloor, s, deep, 0, 0, 1); put(-s, yFloor, s, deep, 0, 0, 1);
 
     for (const name of ['position', 'aYTop', 'aMarine', 'aSeabed01', 'aWtNorm']) {
       (this.geometry.getAttribute(name) as THREE.BufferAttribute).needsUpdate = true;

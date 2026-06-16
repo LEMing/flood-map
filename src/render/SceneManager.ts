@@ -11,6 +11,7 @@ import type { Params } from '../config';
 import { GLSL_FBM } from './glslNoise';
 import { GodRayShader } from './godRayShader';
 import type { WaterMesh } from './WaterMesh';
+import type { SeaMesh } from './SeaMesh';
 
 const BOLT_SEGMENTS = 14;
 
@@ -339,16 +340,19 @@ export class SceneManager {
   }
 
   /** Two-pass render: no-water scene → RT (refraction source), then full scene (+post). */
-  render(water?: WaterMesh): void {
+  render(water?: WaterMesh, sea?: SeaMesh): void {
     this.controls.update();
-    if (water) {
-      const hidden = [water.mesh, water.skirt, ...this.refractionExcludes];
+    if (water || sea) {
+      const hidden: THREE.Object3D[] = [...this.refractionExcludes];
+      if (water) hidden.push(water.mesh, water.skirt);
+      if (sea) hidden.push(sea.mesh);
       const prev = hidden.map((o) => o.visible);
       for (const o of hidden) o.visible = false;
       this.renderer.setRenderTarget(this.sceneRT);
       this.renderer.render(this.scene, this.camera);
       this.renderer.setRenderTarget(null);
-      water.setSceneTextures(this.sceneRT.texture, this.sceneRT.depthTexture);
+      water?.setSceneTextures(this.sceneRT.texture, this.sceneRT.depthTexture);
+      sea?.setSceneTextures(this.sceneRT.texture, this.sceneRT.depthTexture);
       hidden.forEach((o, i) => { o.visible = prev[i]; });
     }
     if (this.godRayPass.enabled) {

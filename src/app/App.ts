@@ -79,6 +79,7 @@ export class App {
   private waterStored = 0;
   private readonly resBuf = new THREE.Vector2();
   private readonly spotBuf = new THREE.Vector2();
+  private readonly seaCloudColor = new THREE.Color(0.34, 0.36, 0.42);
   private markers: Array<{
     object: THREE.Group | null;
     head: THREE.Object3D | null;
@@ -825,7 +826,7 @@ export class App {
     this.updateDrainArrows();
     this.updateMarkers();
     if (this.timelineMode === 'live') this.autoQualityCheck(dt);
-    this.scene.render(this.water);
+    this.scene.render(this.water, this.sea);
     requestAnimationFrame(this.loop);
   };
 
@@ -855,10 +856,14 @@ export class App {
     this.terrain?.setWetness(this.params.wetness);
 
     this.sea?.setFrame({
+      resolution: this.scene.getResolution(this.resBuf),
+      cameraNear: this.scene.camera.near,
+      cameraFar: this.scene.camera.far,
       sunDir: this.scene.sunDirection,
       sunColor: this.scene.sunColorLinear,
       skyTop: this.scene.skyTopColor,
       skyHorizon: this.scene.skyHorizonColor,
+      cloudColor: this.seaCloudColor,
     });
     if (!this.water) return;
     this.water.setFrame({
