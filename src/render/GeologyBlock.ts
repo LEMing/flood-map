@@ -70,7 +70,9 @@ export class GeologyBlock {
   private readonly yTop: Float32Array;
   private readonly marineAttr: Float32Array;
   private readonly seabed01: Float32Array;
+  private readonly wtNorm: Float32Array;
   private readonly uH = { value: 1 };
+  private readonly uShowWaterTable = { value: 0 };
 
   constructor(hm: Heightmap, waterMask: Uint8Array | null = null) {
     this.ring = perimeterRing(hm, waterMask);
@@ -79,12 +81,14 @@ export class GeologyBlock {
     this.yTop = new Float32Array(vertCount);
     this.marineAttr = new Float32Array(vertCount);
     this.seabed01 = new Float32Array(vertCount);
+    this.wtNorm = new Float32Array(vertCount);
 
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute('position', new THREE.BufferAttribute(this.position, 3));
     this.geometry.setAttribute('aYTop', new THREE.BufferAttribute(this.yTop, 1));
     this.geometry.setAttribute('aMarine', new THREE.BufferAttribute(this.marineAttr, 1));
     this.geometry.setAttribute('aSeabed01', new THREE.BufferAttribute(this.seabed01, 1));
+    this.geometry.setAttribute('aWtNorm', new THREE.BufferAttribute(this.wtNorm, 1));
 
     this.landRamp = this.makeRamp(this.landData);
     this.marineRamp = this.makeRamp(this.marineData);
@@ -97,19 +101,20 @@ export class GeologyBlock {
       shader.uniforms.uLandRamp = { value: this.landRamp };
       shader.uniforms.uMarineRamp = { value: this.marineRamp };
       shader.uniforms.uH = this.uH;
+      shader.uniforms.uShowWaterTable = this.uShowWaterTable;
       shader.uniforms.uSeaShallow = { value: new THREE.Color(0.16, 0.42, 0.55) };
       shader.uniforms.uSeaDeep = { value: new THREE.Color(0.04, 0.13, 0.24) };
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', `#include <common>
-          attribute float aYTop; attribute float aMarine; attribute float aSeabed01;
-          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying vec3 vWorld; uniform float uH;`)
+          attribute float aYTop; attribute float aMarine; attribute float aSeabed01; attribute float aWtNorm;
+          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying float vWtNorm; varying vec3 vWorld; uniform float uH;`)
         .replace('#include <begin_vertex>', `#include <begin_vertex>
           vDepth01 = (aYTop - position.y) / max(uH, 1.0);
-          vMarine = aMarine; vSeabed01 = aSeabed01; vWorld = position;`);
+          vMarine = aMarine; vSeabed01 = aSeabed01; vWtNorm = aWtNorm; vWorld = position;`);
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>
-          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying vec3 vWorld;
-          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep;
+          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying float vWtNorm; varying vec3 vWorld;
+          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep; uniform float uShowWaterTable;
           float gHash(vec3 p){ return fract(sin(dot(floor(p), vec3(127.1, 311.7, 74.7))) * 43758.5453); }
           float gNoise(vec3 p){
             vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -119,6 +124,11 @@ export class GeologyBlock {
         .replace('#include <color_fragment>', `#include <color_fragment>
           float d = clamp(vDepth01, 0.0, 1.0);
           vec3 landC = texture2D(uLandRamp, vec2(0.5, d)).rgb;
+          // water table: a phreatic surface that meets sea level at the coast and
+          // rises inland (depth carried per-column in aWtNorm), not a flat band.
+          if (uShowWaterTable > 0.5 && vWtNorm >= 0.0 && abs(d - vWtNorm) < 0.006) {
+            landC = mix(landC, vec3(0.25, 0.71, 0.88), 0.85);
+          }
           vec3 marineC; float water = 0.0;
           if (d < vSeabed01) {
             float wt = vSeabed01 > 1e-4 ? d / vSeabed01 : 0.0;
@@ -156,7 +166,6 @@ export class GeologyBlock {
     const layers = col.layers;
     const last = layers[layers.length - 1];
     const lineHalf = p.depthShownM * 0.004;
-    const wtBand = p.depthShownM * 0.006;
     for (let i = 0; i < RAMP_H; i++) {
       const depthM = (i / (RAMP_H - 1)) * p.depthShownM;
       let layer: GeoLayer = last;
@@ -164,9 +173,9 @@ export class GeologyBlock {
       let hex = layer.hex;
       if (p.highlightAquiclude && layer.key === AQUICLUDE_KEY) hex = mix(hex, 0xff7a3c, 0.28);
       for (const l of layers) { if (l.topM > 0 && Math.abs(depthM - l.topM) < lineHalf) { hex = mix(hex, 0x0a0a0a, 0.55); break; } }
-      if (isLand && p.showWaterTable && Math.abs(depthM - p.waterTableM) < wtBand) hex = mix(hex, 0x3fb6e0, 0.85);
       rgb(hex, i * 4, data);
     }
+    void isLand;
   }
 
   private rebuildGeometry(p: GeologyParams): void {
@@ -178,37 +187,40 @@ export class GeologyBlock {
     const topElev = (e: number): number => Math.max(e, sea);
     const minTop = ring.reduce((m, pt) => Math.min(m, topElev(pt.e)), Infinity);
     const yFloor = minTop * ve - H;
-    const pos = this.position; const yt = this.yTop; const mar = this.marineAttr; const sb = this.seabed01;
+    const pos = this.position; const yt = this.yTop; const mar = this.marineAttr; const sb = this.seabed01; const wn = this.wtNorm;
     let o = 0;
-    const put = (x: number, y: number, z: number, top: number, marine: number, seabed: number): void => {
+    const put = (x: number, y: number, z: number, top: number, marine: number, seabed: number, wt: number): void => {
       pos[o * 3] = x; pos[o * 3 + 1] = y; pos[o * 3 + 2] = z;
-      yt[o] = top; mar[o] = marine; sb[o] = seabed; o++;
+      yt[o] = top; mar[o] = marine; sb[o] = seabed; wn[o] = wt; o++;
     };
-    const col = (pt: RingPoint): { top: number; marine: number; seabed: number } => {
+    const col = (pt: RingPoint): { top: number; marine: number; seabed: number; wt: number } => {
       const marine = (pt.water && pt.e < sea + 2) || pt.e < sea - 1 || p.oceanCell ? 1 : 0;
       const top = topElev(pt.e) * ve;
       const waterDepth = marine
         ? Math.max(sea - pt.e, pt.water ? NOMINAL_WATER_M : 0, p.oceanCell ? p.oceanWaterDepthM : 0)
         : 0;
       const seabed = Math.min(1, Math.max(0, waterDepth / p.depthShownM));
-      return { top, marine, seabed };
+      // water-table depth below this column's surface: 0 at the coast (= sea level),
+      // up to waterTableM inland. Marine columns carry -1 (no water table).
+      const wt = marine ? -1 : Math.min(Math.max(pt.e - sea, 0), p.waterTableM) / p.depthShownM;
+      return { top, marine, seabed, wt };
     };
     for (let i = 0; i < n; i++) {
       const a = ring[i]; const b = ring[(i + 1) % n];
       const ca = col(a); const cb = col(b);
-      put(a.x, ca.top, a.z, ca.top, ca.marine, ca.seabed);
-      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed);
-      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed);
-      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed);
-      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed);
-      put(b.x, yFloor, b.z, cb.top, cb.marine, cb.seabed);
+      put(a.x, ca.top, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
+      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
+      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
+      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
+      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
+      put(b.x, yFloor, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
     }
     const s = Math.max(...ring.map((pt) => Math.abs(pt.x)), ...ring.map((pt) => Math.abs(pt.z)));
     const deep = yFloor + H * 2;
-    put(-s, yFloor, -s, deep, 0, 0); put(s, yFloor, -s, deep, 0, 0); put(s, yFloor, s, deep, 0, 0);
-    put(-s, yFloor, -s, deep, 0, 0); put(s, yFloor, s, deep, 0, 0); put(-s, yFloor, s, deep, 0, 0);
+    put(-s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, s, deep, 0, 0, -1);
+    put(-s, yFloor, -s, deep, 0, 0, -1); put(s, yFloor, s, deep, 0, 0, -1); put(-s, yFloor, s, deep, 0, 0, -1);
 
-    for (const name of ['position', 'aYTop', 'aMarine', 'aSeabed01']) {
+    for (const name of ['position', 'aYTop', 'aMarine', 'aSeabed01', 'aWtNorm']) {
       (this.geometry.getAttribute(name) as THREE.BufferAttribute).needsUpdate = true;
     }
     this.geometry.computeVertexNormals();
@@ -217,6 +229,7 @@ export class GeologyBlock {
 
   update(p: GeologyParams): void {
     this.uH.value = p.worldHeight;
+    this.uShowWaterTable.value = p.showWaterTable ? 1 : 0;
     this.rebuildRamp(p.land, this.landData, p, true);
     this.rebuildRamp(p.marine, this.marineData, p, false);
     this.landRamp.needsUpdate = true;
