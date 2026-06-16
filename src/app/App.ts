@@ -23,12 +23,8 @@ import { TerrainMesh } from '../render/TerrainMesh';
 import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
-import { GeologyBlock } from '../render/GeologyBlock';
 import { SeaMesh } from '../render/SeaMesh';
-import { defaultColumns, buildColumns, buildRegionalColumns, buildMarineRegionalColumns, findRegional, findRegionalMarine, type GeoColumns, type GeoLayer } from '../geo/geology';
-import { getCrust1Cell } from '../geo/crust1';
-import { coarseSeabedElevM } from '../geo/oceanDepth';
-import { fetchSoilProfile } from '../geo/soilgrids';
+import { GeologyController } from './GeologyController';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { PourTool } from '../ui/PourTool';
@@ -63,11 +59,7 @@ export class App {
   private rain?: Rain;
   private sim?: FloodSimulation;
   private sea?: SeaMesh;
-  private geology?: GeologyBlock;
-  private geologyColumns: GeoColumns = defaultColumns();
-  private geologyLegend: HTMLDivElement | null = null;
-  private soilRequested = false;
-  private soilFetchToken = 0;
+  private readonly geology = new GeologyController();
   private timeline?: Timeline;
   private timelineMode: 'live' | 'computing' | 'scrub' = 'live';
   private precomputeTargetFrames = 0;
@@ -440,14 +432,12 @@ export class App {
     );
     // The geology block lives in world space (not the terrain group) so its deep
     // vertical scale is independent of the terrain's exaggeration.
-    this.geology = new GeologyBlock(heightmap, surface?.land ?? null);
-    this.geologyColumns = defaultColumns();
-    this.soilRequested = false;
-    this.scene.scene.add(this.geology.mesh);
+    const geologyMesh = this.geology.build(heightmap, surface?.land ?? null).mesh;
+    this.scene.scene.add(geologyMesh);
     // Keep above-water overlays (and the opaque geology block below) out of the
     // refraction source so they don't get baked under the water surface.
     this.scene.setRefractionExcludes([
-      this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object, this.geology.mesh,
+      this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object, geologyMesh,
     ]);
     this.buildMarkers(heightmap);
 
@@ -511,144 +501,7 @@ export class App {
         if (this.legendMax) this.legendMax.textContent = `${this.heightmap.max.toFixed(0)} m`;
       }
     }
-    this.updateGeology();
-  }
-
-  /** Update the subsurface cross-section block + legend from current params. */
-  private updateGeology(): void {
-    if (!this.geology || !this.heightmap) return;
-    const on = this.params.showGeology;
-    this.geology.setVisible(on);
-    if (this.geologyLegend) this.geologyLegend.classList.toggle('visible', on);
-    if (!on) return;
-    if (!this.soilRequested) {
-      this.soilRequested = true;
-      this.fetchGeology(this.heightmap);
-    }
-    this.geology.update({
-      verticalExaggeration: this.params.verticalExaggeration,
-      worldHeight: this.heightmap.sizeMeters * this.params.subsurfaceScale,
-      depthShownM: this.params.geologyDepthKm * 1000,
-      seaLevelM: this.params.seaLevelM,
-      land: this.geologyColumns.land,
-      marine: this.geologyColumns.marine,
-      oceanCell: this.geologyColumns.isOcean,
-      oceanWaterDepthM: this.geologyColumns.oceanWaterDepthM,
-      waterTableM: this.params.waterTableDepthM,
-      showWaterTable: this.params.showWaterTable,
-      highlightAquiclude: this.params.highlightAquiclude,
-    });
-    this.renderGeologyLegend();
-  }
-
-  /** Build the column for this location: CRUST1.0 cell (global) + live SoilGrids topsoil on land. */
-  private fetchGeology(hm: Heightmap): void {
-    const token = ++this.soilFetchToken;
-    const ci = Math.floor(hm.N / 2) * hm.N + Math.floor(hm.N / 2);
-    const centreElev = hm.data[ci];
-    const land = this.surfaceRaw?.land ?? null;
-    const centreWater = land ? land[ci] === 80 : false;
-    const sea = this.params.seaLevelM;
-
-    getCrust1Cell(hm.center.lat, hm.center.lon)
-      .then(async (cell0) => {
-        if (token !== this.soilFetchToken || !cell0) return undefined; // keep the neutral default
-        // The map DEM reads a flat 0 m over water, so a coarse terrarium tile (which
-        // still carries the GEBCO/ETOPO seabed) is the authoritative "is this at sea"
-        // signal and yields the real water depth; the 1° CRUST1.0 flag and land-cover
-        // are fallbacks (the cell flag mis-classifies coastal cells, e.g. SF as sea).
-        const seabedElev = await coarseSeabedElevM(hm.center.lat, hm.center.lon);
-        if (token !== this.soilFetchToken) return undefined;
-        // Coarse GEBCO/ETOPO bathymetry is the authoritative sea/land signal: the
-        // bare-earth DEM returns nodata garbage over open water (e.g. ~987 m mid
-        // Black Sea), so centreElev can't be trusted there. Fall back to the fine
-        // DEM + land-cover + 1° flag only when no bathymetry tile is available.
-        const bathyKnown = Number.isFinite(seabedElev);
-        const realOcean = bathyKnown
-          ? seabedElev < sea - 2
-          : centreElev > sea + 1 ? false : centreWater || cell0.isOcean;
-        // Prefer a published regional column: land stratigraphy onshore, the
-        // sea's sub-seabed column offshore; fall back to the coarse CRUST1.0 cell.
-        const region = realOcean ? null : findRegional(hm.center.lat, hm.center.lon);
-        const marineRegion = realOcean ? findRegionalMarine(hm.center.lat, hm.center.lon) : null;
-        return getCrust1Cell(hm.center.lat, hm.center.lon, realOcean ? 'ocean' : 'land').then((cell) => {
-          if (token !== this.soilFetchToken || !cell) return;
-          const build = (soil: GeoLayer[] | null): GeoColumns => {
-            if (region) return buildRegionalColumns(region, soil, cell);
-            if (marineRegion) return buildMarineRegionalColumns(marineRegion, cell);
-            return buildColumns(cell, soil, realOcean);
-          };
-          this.geologyColumns = build(null);
-          if (realOcean && bathyKnown) {
-            this.geologyColumns.oceanWaterDepthM = sea - seabedElev;
-          }
-          if (this.params.showGeology) this.updateGeology();
-          if (realOcean) return; // no soil at sea
-          void fetchSoilProfile(hm.center.lat, hm.center.lon).then((soil) => {
-            if (token !== this.soilFetchToken || !soil) return;
-            this.geologyColumns = build(soil);
-            if (this.params.showGeology) this.updateGeology();
-          });
-        });
-      })
-      .catch(() => { /* keep the neutral default column */ });
-  }
-
-  /** The column whose legend to show — marine for an offshore centre, else land. */
-  private centreColumn(): GeoColumns['land'] {
-    return this.geologyColumns.isOcean ? this.geologyColumns.marine : this.geologyColumns.land;
-  }
-
-  private renderGeologyLegend(): void {
-    if (!this.geologyLegend) {
-      this.geologyLegend = document.createElement('div');
-      this.geologyLegend.id = 'geo-legend';
-      const dock = document.getElementById('chrome-panel') ?? document.body;
-      dock.appendChild(this.geologyLegend);
-    }
-    const el = this.geologyLegend;
-    const depthShownM = this.params.geologyDepthKm * 1000;
-    const rows = this.geologyLegendRows().filter((r) => r.topM < depthShownM + 1);
-    const fmt = (a: number, b: number): string => (b < 1000
-      ? `${a < 10 ? a : Math.round(a)}–${b < 10 ? b : Math.round(b)} m`
-      : `${(a / 1000).toFixed(a < 1000 ? 1 : 0)}–${(b / 1000).toFixed(1)} km`);
-    const tag = (s: string): string => (s === 'soilgrids' ? t('geo.real') : t('geo.model'));
-    const items = rows.map((r) => {
-      const sw = `<span class="sw" style="background:#${r.hex.toString(16).padStart(6, '0')}"></span>`;
-      return `<div class="row">${sw}<span class="nm">${r.name}</span>`
-        + `<span class="dp">${fmt(r.topM, r.botM)}</span><span class="tg ${r.source}">${tag(r.source)}</span></div>`;
-    }).join('');
-    const isOcean = this.geologyColumns.isOcean;
-    const seaRow = isOcean
-      ? `<div class="row"><span class="sw" style="background:#2a6e96"></span>`
-        + `<span class="nm">${t('geo.l.seaWater')}</span><span class="dp">${fmt(0, this.geologyColumns.oceanWaterDepthM)}</span>`
-        + `<span class="tg model">${t('geo.model')}</span></div>`
-      : '';
-    const wt = !isOcean && this.params.showWaterTable
-      ? `<div class="row wt"><span class="sw" style="background:#3fb6e0"></span>`
-        + `<span class="nm">${t('geo.waterTable')}</span><span class="dp">${Math.round(this.params.waterTableDepthM)} m</span></div>`
-      : '';
-    const region = this.geologyColumns.regionName;
-    const title = region ? `${t('geo.legendTitle')} · ${region}` : t('geo.legendTitle');
-    el.innerHTML = `<div class="title">${title}</div>${seaRow}${items}${wt}`
-      + `<div class="caveat">${t('geo.caveat')}</div>`;
-  }
-
-  /** Legend rows: collapse the SoilGrids sub-bands into one "topsoil (real)" row. */
-  private geologyLegendRows(): Array<{ name: string; topM: number; botM: number; hex: number; source: string }> {
-    const column = this.centreColumn();
-    const layers = column.layers;
-    const soil = layers.filter((l) => l.source === 'soilgrids');
-    const rest: GeoLayer[] = layers.filter((l) => l.source !== 'soilgrids');
-    const out: Array<{ name: string; topM: number; botM: number; hex: number; source: string }> = [];
-    if (soil.length) {
-      out.push({ name: t('geo.l.topsoil'), topM: 0, botM: soil[soil.length - 1].botM, hex: soil[0].hex, source: 'soilgrids' });
-    }
-    for (const l of rest) {
-      if (l.key === 'subsoil' && column.soilReal) continue; // covered by the real soil row
-      out.push({ name: l.name ?? t(`geo.l.${l.key}`), topM: l.topM, botM: l.botM, hex: l.hex, source: l.source });
-    }
-    return out;
+    this.geology.update(this.params, this.heightmap, this.surfaceRaw?.land ?? null);
   }
 
   /** Recompute the per-cell drainage/infiltration/roughness fields live (no re-fetch). */
@@ -1229,11 +1082,7 @@ export class App {
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
-    if (this.geology) {
-      this.scene.scene.remove(this.geology.mesh);
-      this.geology.dispose();
-      this.geology = undefined;
-    }
+    this.geology.dispose(this.scene.scene);
     this.sim?.dispose();
     this.timeline?.dispose();
     this.timeline = undefined;
