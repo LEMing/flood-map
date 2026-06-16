@@ -17,7 +17,9 @@ export interface GeologyParams {
 }
 
 const RAMP_H = 512;
-const MAX_PERIMETER = 520;
+// Sample EVERY edge cell up to large grids so the wall top exactly traces the
+// terrain edge — a subsampled chord leaves thin gaps that show bright sky.
+const MAX_PERIMETER = 4096;
 const NOMINAL_WATER_M = 10; // assumed depth for landcover water lacking real bathymetry
 const WATER_CLASS = 80; // ESA WorldCover permanent-water class
 
@@ -57,7 +59,7 @@ function mix(a: number, b: number, t: number): number {
  */
 export class GeologyBlock {
   readonly mesh: THREE.Mesh;
-  private readonly material: THREE.MeshStandardMaterial;
+  private readonly material: THREE.MeshBasicMaterial;
   private readonly landRamp: THREE.DataTexture;
   private readonly marineRamp: THREE.DataTexture;
   private readonly landData = new Uint8Array(RAMP_H * 4);
@@ -87,7 +89,10 @@ export class GeologyBlock {
     this.landRamp = this.makeRamp(this.landData);
     this.marineRamp = this.makeRamp(this.marineData);
 
-    this.material = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0.0, side: THREE.DoubleSide });
+    // Unlit so the strata read as a clean diagram, immune to storm lighting, fog
+    // and exposure (a lit bright sediment was clipping into ACES desaturation).
+    this.material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    this.material.fog = false;
     this.material.onBeforeCompile = (shader) => {
       shader.uniforms.uLandRamp = { value: this.landRamp };
       shader.uniforms.uMarineRamp = { value: this.marineRamp };
@@ -127,7 +132,11 @@ export class GeologyBlock {
           float solid = (vMarine > 0.5 && water > 0.5) ? 0.0 : 1.0;
           float grain = gNoise(vWorld * 0.03 + gNoise(vWorld * 0.008));
           float lam = gNoise(vec3(vWorld.x * 0.006, vWorld.y * 0.13, vWorld.z * 0.006));
-          diffuseColor.rgb *= mix(1.0, (0.80 + 0.40 * grain) * (0.92 + 0.16 * lam), solid);`);
+          diffuseColor.rgb *= mix(1.0, (0.84 + 0.30 * grain) * (0.94 + 0.12 * lam), solid);
+          // manual directional shade (unlit material) so the block still reads as 3D
+          vec3 gn = normalize(cross(dFdx(vWorld), dFdy(vWorld)));
+          float lambert = clamp(dot(gn, normalize(vec3(0.45, 0.5, 0.72))), 0.0, 1.0);
+          diffuseColor.rgb *= (0.62 + 0.48 * lambert);`);
     };
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -138,6 +147,7 @@ export class GeologyBlock {
 
   private makeRamp(data: Uint8Array): THREE.DataTexture {
     const t = new THREE.DataTexture(data, 1, RAMP_H, THREE.RGBAFormat);
+    t.colorSpace = THREE.SRGBColorSpace; // the hex layer colours are sRGB, not linear
     t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.needsUpdate = true;
     return t;
   }

@@ -24,6 +24,7 @@ import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
 import { GeologyBlock } from '../render/GeologyBlock';
+import { SeaMesh } from '../render/SeaMesh';
 import { defaultColumns, buildColumns, type GeoColumns, type GeoLayer } from '../geo/geology';
 import { getCrust1Cell } from '../geo/crust1';
 import { fetchSoilProfile } from '../geo/soilgrids';
@@ -60,6 +61,7 @@ export class App {
   private velocity?: VelocityField;
   private rain?: Rain;
   private sim?: FloodSimulation;
+  private sea?: SeaMesh;
   private geology?: GeologyBlock;
   private geologyColumns: GeoColumns = defaultColumns();
   private geologyLegend: HTMLDivElement | null = null;
@@ -402,6 +404,8 @@ export class App {
       this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
     );
     this.water.setWeatherUniforms(this.scene.weather);
+    this.sea = new SeaMesh(this.terrain.geometry, heightmap, surface?.land ?? null, this.params);
+    this.sea.setWeatherUniforms(this.scene.weather);
     this.floodOverlay = new FloodOverlay(this.terrain.geometry, this.terrain.heightTexture, N, heightmap.sizeMeters, this.params);
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
@@ -411,7 +415,7 @@ export class App {
     this.timelineMode = 'live';
 
     this.group.add(
-      this.terrain.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
+      this.terrain.mesh, this.sea.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
       this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
     );
     // The geology block lives in world space (not the terrain group) so its deep
@@ -460,6 +464,7 @@ export class App {
     this.sim?.updateParams(this.params);
     this.refreshSurface();
     this.water?.update(this.params);
+    this.sea?.update(this.params);
     this.floodOverlay?.update(this.params);
     this.terrain?.setWireframe(this.params.wireframe);
     this.terrain?.applyStyle(this.params.terrainStyle);
@@ -849,6 +854,12 @@ export class App {
     // it follows the flood (and persists after the rain stops) — just pass intensity.
     this.terrain?.setWetness(this.params.wetness);
 
+    this.sea?.setFrame({
+      sunDir: this.scene.sunDirection,
+      sunColor: this.scene.sunColorLinear,
+      skyTop: this.scene.skyTopColor,
+      skyHorizon: this.scene.skyHorizonColor,
+    });
     if (!this.water) return;
     this.water.setFrame({
       resolution: this.scene.getResolution(this.resBuf),
@@ -1143,6 +1154,7 @@ export class App {
     this.clearMarkers();
     if (this.terrain) this.group.remove(this.terrain.mesh);
     if (this.water) this.group.remove(this.water.mesh, this.water.skirt);
+    if (this.sea) { this.group.remove(this.sea.mesh); this.sea.dispose(); this.sea = undefined; }
     if (this.floodOverlay) this.group.remove(this.floodOverlay.mesh);
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
