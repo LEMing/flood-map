@@ -10,6 +10,7 @@ import { VignetteShader } from 'three/examples/jsm/shaders/VignetteShader.js';
 import type { Params } from '../config';
 import { GLSL_FBM } from './glslNoise';
 import { GodRayShader } from './godRayShader';
+import { makeCloudDome, type CloudDomeHandle } from './CloudDome';
 import type { WaterMesh } from './WaterMesh';
 import type { SeaMesh } from './SeaMesh';
 
@@ -33,7 +34,6 @@ export class SceneManager {
   readonly sun: THREE.DirectionalLight;
   private readonly hemi: THREE.HemisphereLight;
   private readonly clearSky: THREE.Texture;
-  private readonly stormSky: THREE.Texture;
 
   // linear-space sky colours fed to the water reflection shader
   private readonly clearTop = new THREE.Color('#6f9fd0');
@@ -41,8 +41,13 @@ export class SceneManager {
   private readonly stormTop = new THREE.Color('#1b2230');
   private readonly stormHorizon = new THREE.Color('#5a6470');
 
-  private readonly cloud: THREE.Mesh;
-  private readonly cloudMat: THREE.ShaderMaterial;
+  private readonly cloudDome: CloudDomeHandle;
+  // The dome lives in its own scene and is raymarched into a half-res HDR target
+  // (clouds are low-frequency, so the ~4× pixel saving is near-invisible); a
+  // full-screen blit upscales + tonemaps it into the main scene.
+  private readonly domeScene = new THREE.Scene();
+  private readonly domeRT: THREE.WebGLRenderTarget;
+  private readonly domeBlit: THREE.Mesh;
   private readonly haze: THREE.Mesh;
   private readonly lightningLight: THREE.DirectionalLight;
   private readonly bolt: THREE.LineSegments;
@@ -95,7 +100,6 @@ export class SceneManager {
 
     this.scene = new THREE.Scene();
     this.clearSky = makeSkyGradient(['#6f9fd0', '#a9c8e6', '#d9e6f2']);
-    this.stormSky = makeSkyGradient(['#1b2230', '#39434f', '#5a6470']);
     this.scene.background = this.clearSky;
 
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 200000);
@@ -117,13 +121,18 @@ export class SceneManager {
     this.lightningLight.position.set(0.2, 1, 0.1);
     this.scene.add(this.lightningLight, this.lightningLight.target);
 
-    this.cloudMat = makeCloudMaterial();
-    const cloudGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
-    this.cloud = new THREE.Mesh(cloudGeo, this.cloudMat);
-    this.cloud.frustumCulled = false;
-    this.cloud.renderOrder = -1;
-    this.cloud.visible = false;
-    this.scene.add(this.cloud);
+    this.cloudDome = makeCloudDome(Math.min(this.camera.far * 0.5, 8000));
+    this.cloudDome.mesh.visible = true; // gated by rendering domeScene only when storm is on
+    this.domeScene.add(this.cloudDome.mesh);
+    const dds = this.renderer.getDrawingBufferSize(new THREE.Vector2());
+    this.domeRT = new THREE.WebGLRenderTarget(
+      Math.max(2, Math.ceil(dds.x / 2)), Math.max(2, Math.ceil(dds.y / 2)),
+      { type: THREE.HalfFloatType, depthBuffer: false },
+    );
+    this.domeRT.texture.minFilter = THREE.LinearFilter;
+    this.domeRT.texture.magFilter = THREE.LinearFilter;
+    this.domeBlit = makeDomeBlit(this.domeRT.texture);
+    this.scene.add(this.domeBlit);
 
     this.haze = makeHaze(this.weather);
     this.scene.add(this.haze);
@@ -241,8 +250,8 @@ export class SceneManager {
     this.sun.target.position.copy(target);
 
     this.cloudY = centerHeight + sizeMeters * 0.8 + 300;
-    this.cloud.position.set(0, this.cloudY, 0);
-    this.cloud.scale.set(sizeMeters * 12, 1, sizeMeters * 12);
+    this.cloudDome.uniforms.uCloudBase.value = this.cloudY;
+    this.cloudDome.uniforms.uCloudTop.value = this.cloudY + sizeMeters * 1.6;
     this.haze.position.set(0, centerHeight - sizeMeters * 0.02 + 12, 0);
     this.haze.scale.set(sizeMeters * 8, 1, sizeMeters * 8);
     this.lightningLight.position.set(0.2, 1, 0.1).multiplyScalar(sizeMeters).add(target);
@@ -259,8 +268,10 @@ export class SceneManager {
   private applyStormState(): void {
     const on = this.stormEnabled;
     const s = this.sceneSize;
-    this.scene.background = on ? this.stormSky : this.clearSky;
-    this.cloud.visible = on;
+    // The cloud dome renders its own analytic sky, so the gradient background is
+    // only used in clear weather; during a storm the dome covers it entirely.
+    this.scene.background = on ? null : this.clearSky;
+    this.domeBlit.visible = on;
     this.haze.visible = on && (this.haze.material as THREE.ShaderMaterial).uniforms.uHaze.value > 0.001;
     this.hemi.intensity = on ? 0.72 : 1.0;
     this.hemi.color.set(on ? 0x9fb0c4 : 0xcfe3ff);
@@ -272,30 +283,42 @@ export class SceneManager {
       this.flash = 0;
       this.lightningLight.intensity = 0;
       this.bolt.visible = false;
-      this.cloudMat.uniforms.uFlash.value = 0;
+      this.cloudDome.uniforms.uFlash.value = 0;
     }
   }
 
-  /** Animate clouds, storm ease, sun-screen position and lightning. Every frame. */
-  updateStorm(dt: number): void {
-    this.weather.uTime.value += dt;
-    this.cloudMat.uniforms.uTime.value = this.weather.uTime.value;
-    (this.cloudMat.uniforms.uCamPos.value as THREE.Vector3).copy(this.camera.position);
-    // fade clouds out as the camera rises toward/above the ceiling so they never
-    // block the view from a high or top-down vantage.
-    this.cloudMat.uniforms.uCamFade.value = THREE.MathUtils.clamp(
-      (this.cloudY - this.camera.position.y) / (this.sceneSize * 0.15), 0, 1,
-    );
+  /**
+   * Every frame. Camera-dependent uniforms and the storm-presence ease always
+   * update (so the view stays correct and toggling storm still works), but cloud
+   * DRIFT and lightning only advance when `animate` (Play); on Pause the sky is
+   * a still frame.
+   */
+  updateStorm(dt: number, animate: boolean): void {
+    if (animate) this.weather.uTime.value += dt;
+    // Recentre the dome on the camera so its world-space slab math (ray origin =
+    // camera) stays correct; the look is driven by the eased storm state below.
+    this.cloudDome.mesh.position.copy(this.camera.position);
+    this.cloudDome.uniforms.uTime.value = this.weather.uTime.value;
+    this.cloudDome.uniforms.uCamPos.value.copy(this.camera.position);
     const target = this.stormEnabled ? 1 : 0;
     this.weather.uStorm.value += (target - this.weather.uStorm.value) * Math.min(1, dt * 0.6);
+    this.cloudDome.uniforms.uStorm.value = this.weather.uStorm.value;
 
     // sun screen position + visibility for god rays
     const sunDir = this.tmpSun.copy(this.sun.position).sub(this.controls.target).normalize();
+    this.cloudDome.uniforms.uSunDir.value.copy(sunDir);
     this.tmpVec.copy(this.controls.target).addScaledVector(sunDir, this.sceneSize * 4).project(this.camera);
     this.weather.uSunScreen.value.set(this.tmpVec.x * 0.5 + 0.5, this.tmpVec.y * 0.5 + 0.5);
     const onScreen = this.tmpVec.z < 1 && Math.abs(this.tmpVec.x) < 1.3 && Math.abs(this.tmpVec.y) < 1.3 && sunDir.y > 0.05;
     this.weather.uSunVisible.value = onScreen ? 1 : 0;
 
+    if (!animate) {
+      this.flash = 0;
+      this.lightningLight.intensity = 0;
+      this.bolt.visible = false;
+      this.cloudDome.uniforms.uFlash.value = 0;
+      return;
+    }
     if (!this.stormEnabled) return;
     this.flash = Math.max(0, this.flash - dt * 7);
     this.flashTimer -= dt;
@@ -303,7 +326,7 @@ export class SceneManager {
     this.boltTime -= dt;
     this.hemi.intensity = 0.72 + this.flash * 2.4;
     this.lightningLight.intensity = this.flash * 2.6;
-    this.cloudMat.uniforms.uFlash.value = this.flash * 1.4;
+    this.cloudDome.uniforms.uFlash.value = this.flash * 1.3;
     this.bolt.visible = this.boltTime > 0;
     (this.bolt.material as THREE.LineBasicMaterial).opacity = Math.min(1, this.boltTime * 6);
   }
@@ -343,8 +366,16 @@ export class SceneManager {
   /** Two-pass render: no-water scene → RT (refraction source), then full scene (+post). */
   render(water?: WaterMesh, sea?: SeaMesh): void {
     this.controls.update();
+    // Raymarch the cloud dome once, at half resolution, into its own HDR target.
+    if (this.domeBlit.visible) {
+      this.renderer.setRenderTarget(this.domeRT);
+      this.renderer.render(this.domeScene, this.camera);
+      this.renderer.setRenderTarget(null);
+    }
     if (water || sea) {
-      const hidden: THREE.Object3D[] = [...this.refractionExcludes];
+      // The refraction source only needs what's seen DOWN through the water
+      // (terrain/seabed); skip the sky blit in this pass.
+      const hidden: THREE.Object3D[] = [...this.refractionExcludes, this.domeBlit];
       if (water) hidden.push(water.mesh, water.skirt);
       if (sea) hidden.push(sea.mesh);
       const prev = hidden.map((o) => o.visible);
@@ -378,6 +409,7 @@ export class SceneManager {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     const ds = this.renderer.getDrawingBufferSize(new THREE.Vector2());
     this.sceneRT.setSize(ds.x, ds.y);
+    this.domeRT.setSize(Math.max(2, Math.ceil(ds.x / 2)), Math.max(2, Math.ceil(ds.y / 2)));
     this.composer.setPixelRatio(this.dprCap * this.renderScale);
     this.composer.setSize(window.innerWidth, window.innerHeight);
     this.gtaoPass?.setSize(ds.x, ds.y);
@@ -451,134 +483,31 @@ function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
   return mesh;
 }
 
-function makeCloudMaterial(): THREE.ShaderMaterial {
-  // Single horizontal plane (the storm ceiling) seen from below. Instead of flat
-  // 2D fbm we reconstruct the view ray per-fragment and raymarch a thin slab of
-  // procedural 3D noise hanging beneath the plane, accumulating density with the
-  // Beer-Lambert law and a cheap sun light-march for self-shadowing. Techniques:
-  //   - iq domain-warped fbm + height-gradient density (iquilezles.org dynclouds / fbm)
-  //   - Beer-Lambert transmittance exp(-density*absorption) + front-to-back compositing
-  //   - sun light-march (Maxime Heckel cloudscapes) for silver-lining contrast
-  return new THREE.ShaderMaterial({
-    uniforms: {
-      uTime: { value: 0 },
-      uFlash: { value: 0 },
-      uCamFade: { value: 1 },
-      uCamPos: { value: new THREE.Vector3() },
-    },
-    transparent: true,
+/**
+ * Full-screen quad that upscales the half-res linear-HDR cloud target and lets
+ * the renderer tonemap it once (toneMapped:true), so the sky matches a full-res
+ * dome exactly — only the raymarch resolution drops.
+ */
+function makeDomeBlit(tex: THREE.Texture): THREE.Mesh {
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { uTex: { value: tex } },
+    depthTest: false,
     depthWrite: false,
-    side: THREE.DoubleSide,
+    fog: false,
+    toneMapped: true,
     vertexShader: /* glsl */ `
-      varying vec2 vP;
-      varying vec3 vWorld;
-      void main() {
-        vP = position.xz;
-        vec4 wp = modelMatrix * vec4(position, 1.0);
-        vWorld = wp.xyz;
-        gl_Position = projectionMatrix * viewMatrix * wp;
-      }
+      varying vec2 vUv;
+      void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
     `,
     fragmentShader: /* glsl */ `
-      uniform float uTime, uFlash, uCamFade;
-      uniform vec3 uCamPos;
-      varying vec2 vP;
-      varying vec3 vWorld;
-
-      const int MARCH_STEPS = 9;
-      const int LIGHT_STEPS = 4;
-
-      float hash(vec3 p){
-        p = fract(p * 0.3183099 + 0.1);
-        p *= 17.0;
-        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
-      }
-      float noise(vec3 x){
-        vec3 i = floor(x), f = fract(x);
-        f = f * f * (3.0 - 2.0 * f);
-        return mix(mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
-                       mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
-                   mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
-                       mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
-      }
-      float fbm(vec3 p){
-        float v = 0.0, a = 0.55;
-        for (int i = 0; i < 5; i++){ v += a * noise(p); p = p * 2.02 + 7.3; a *= 0.5; }
-        return v;
-      }
-
-      // density at a slab-local point. y in [0,1] is depth below the ceiling.
-      float cloudDensity(vec3 q){
-        vec3 p = q * 3.2 + vec3(uTime * 0.05, 0.0, uTime * 0.02);
-        // domain warp for billowy structure (iq)
-        vec3 w = vec3(fbm(p * 0.5), fbm(p * 0.5 + 4.1), fbm(p * 0.5 + 9.2));
-        float base = fbm(p + 1.4 * w);
-        // vertical gradient: dense flat ceiling on top fading to wispy tendrils below
-        float profile = smoothstep(0.0, 0.25, q.y) * (1.0 - smoothstep(0.55, 1.0, q.y));
-        float d = (base - 0.50) * 2.4 * profile;
-        return clamp(d, 0.0, 1.0);
-      }
-
-      void main() {
-        // reconstruct the world-space view ray and march DOWN into the slab
-        // beneath this fragment of the ceiling plane.
-        vec3 rd = normalize(vWorld - uCamPos);
-
-        // light comes from above (lightning + sky), tinted by uFlash.
-        vec3 sunDir = normalize(vec3(0.25, 1.0, 0.15));
-
-        // horizontal parallax through the slab: convert the view-ray slope into a
-        // per-depth uv drift so the volume shifts as the camera looks around.
-        vec2 uvBase = vP;
-        float downSpeed = max(-rd.y, 0.04);
-        vec2 uvSlope = rd.xz / (downSpeed * 6.0) * 0.5;
-
-        vec3 cloudCol = vec3(0.0);
-        float transmittance = 1.0;
-
-        // ambient stormy gradient: cold dark base, slightly warmer top
-        vec3 baseDark  = vec3(0.045, 0.052, 0.072);
-        vec3 baseLight = vec3(0.46, 0.50, 0.58);
-        vec3 flashCol  = vec3(0.85, 0.92, 1.0);
-
-        float invSteps = 1.0 / float(MARCH_STEPS);
-        // sub-step dither to break up banding (blue-noise-style offset)
-        float jitter = (hash(vec3(vP * 91.7, uTime)) - 0.5) * invSteps;
-        for (int i = 0; i < MARCH_STEPS; i++){
-          float depth01 = (float(i) + 0.5) * invSteps + jitter;
-          vec3 q = vec3(uvBase + uvSlope * depth01, depth01);
-          float density = cloudDensity(q);
-          if (density > 0.001){
-            // cheap sun light-march for self-shadowing (Beer-Lambert toward sun)
-            float lightAccum = 0.0;
-            for (int j = 0; j < LIGHT_STEPS; j++){
-              float ls = (float(j) + 1.0) * 0.10;
-              vec3 lq = q + vec3(sunDir.xz * ls * 0.4, -sunDir.y * ls);
-              lightAccum += cloudDensity(lq);
-            }
-            float sunT = exp(-lightAccum * 1.7);
-            // beer-powder: dark cores, bright edges
-            float powder = 1.0 - exp(-density * 4.0);
-            float lum = sunT * (0.25 + 0.95 * powder);
-            // colour from stormy ambient gradient, brightened toward lit edges + flash
-            vec3 ambient = mix(baseDark, baseLight, depth01 * 0.7 + 0.3 * powder);
-            vec3 c = ambient + flashCol * (lum * 0.6 + uFlash * (0.4 + powder));
-            float stepT = exp(-density * 2.6);
-            // front-to-back: accumulate emitted light weighted by remaining transmittance
-            cloudCol += transmittance * (1.0 - stepT) * c;
-            transmittance *= stepT;
-            if (transmittance < 0.02) break;
-          }
-        }
-
-        float coverage = 1.0 - transmittance;
-        // overall flash lift so lightning makes the whole ceiling pop
-        cloudCol += flashCol * uFlash * 0.18 * coverage;
-
-        float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
-        float alpha = coverage * 0.97 * edge * uCamFade;
-        gl_FragColor = vec4(cloudCol, alpha);
-      }
+      uniform sampler2D uTex;
+      varying vec2 vUv;
+      void main() { gl_FragColor = texture2D(uTex, vUv); }
     `,
   });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+  mesh.renderOrder = -1000;
+  mesh.frustumCulled = false;
+  mesh.visible = false;
+  return mesh;
 }

@@ -182,6 +182,16 @@
         display: none;
       }
 
+      #fps-meter {
+        position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+        z-index: 30; pointer-events: none;
+        font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: .3px; color: #86e08a;
+        background: rgba(12, 16, 22, 0.62); backdrop-filter: blur(6px);
+        padding: 5px 9px; border-radius: 7px;
+        border: 1px solid rgba(255,255,255,.08);
+      }
+
       #readout {
         position: fixed; z-index: 11; pointer-events: none; display: none;
         background: rgba(18, 22, 28, 0.85); color: #e6edf3;

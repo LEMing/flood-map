@@ -171,7 +171,7 @@ export const DEFAULT_PARAMS: Params = {
   releaseDepthM: 3,
   fillLevelM: 5,
   floodLevelLive: false,
-  running: true,
+  running: false, // start paused: rain + storm + sim are frozen until Play
 
   demoMode: false,
   timelinePos: 0,

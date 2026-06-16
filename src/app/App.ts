@@ -103,6 +103,9 @@ export class App {
   private sinceRaycast = 0;
 
   private simTimeSec = 0;
+  private weatherClock = 0; // advances only while running, so rain/storm freeze on pause
+  private fpsEl: HTMLDivElement | null = null;
+  private lastFpsShown = 0;
   private rainedVolume = 0;
   private observedMaxDepth = 1;
   private sinceReadback = 0;
@@ -861,8 +864,13 @@ export class App {
       }
     }
 
-    this.rain?.update(this.params, now / 1000);
-    this.scene.updateStorm(dt);
+    // Pause freezes the weather too: the rain/storm clock only advances while
+    // running, and lightning/drift are gated, so Pause gives a still scene.
+    if (this.params.running) this.weatherClock += dt;
+    this.rain?.update(this.params, this.weatherClock);
+    if (this.rain) this.rain.object.visible = this.params.raining && this.params.running;
+    this.scene.updateStorm(dt, this.params.running);
+    this.showFps(now);
     this.updateWaterLook(dt);
     this.updateReadout(dt);
     this.updateDrainArrows();
@@ -871,6 +879,20 @@ export class App {
     this.scene.render(this.water, this.sea);
     requestAnimationFrame(this.loop);
   };
+
+  /** Always-visible FPS badge (the panel's stat is collapsible/buried). */
+  private showFps(now: number): void {
+    if (now - this.lastFpsShown < 200) return;
+    this.lastFpsShown = now;
+    if (!this.fpsEl) {
+      this.fpsEl = document.createElement('div');
+      this.fpsEl.id = 'fps-meter';
+      document.body.appendChild(this.fpsEl);
+    }
+    const f = Math.round(this.fpsEma);
+    this.fpsEl.textContent = `${f} fps`;
+    this.fpsEl.style.color = f >= 50 ? '#86e08a' : f >= 30 ? '#e0cf86' : '#e08a86';
+  }
 
   /** One-way quality degradation when FPS stays low, so weak GPUs stay usable. */
   private autoQualityCheck(dt: number): void {
