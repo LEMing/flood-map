@@ -148,7 +148,7 @@ export const en: Record<string, string> = {
   'geo.legendTitle': 'Subsurface (model)',
   'geo.real': 'real',
   'geo.model': 'model',
-  'geo.caveat': 'Top ~2 m: real soil (SoilGrids). Below: global crustal model (CRUST1.0, 1° cells) — a model, not a borehole.',
+  'geo.caveat': 'Top ~2 m: real soil (SoilGrids). Below: a generalised geological model — published regional data where available, else global CRUST1.0 — not a borehole.',
   'geo.l.topsoil': 'Topsoil',
   'geo.l.subsoil': 'Subsoil',
   'geo.l.sediments': 'Sedimentary cover',

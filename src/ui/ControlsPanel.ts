@@ -29,7 +29,8 @@ export class ControlsPanel {
   private playButton?: { title: string };
 
   constructor(params: Params, stats: StatsData, cb: ControlCallbacks) {
-    this.pane = new Pane({ title: t('panel.title') });
+    const container = document.getElementById('tp-mount') ?? undefined;
+    this.pane = new Pane({ title: t('panel.title'), container });
     if (params.demoMode) this.buildDemo(params, stats, cb);
     else this.buildFull(params, stats, cb);
   }

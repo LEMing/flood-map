@@ -6,8 +6,10 @@
 // are generic/scientific so they localize cleanly and read honestly anywhere.
 
 import { L, type Crust1Cell } from './crust1';
+import { REGIONAL_COLUMNS, type RegionalColumn } from './data/regionalColumns';
+import { REGIONAL_MARINE_COLUMNS } from './data/regionalMarineColumns';
 
-export type GeoSource = 'soilgrids' | 'crust1' | 'model';
+export type GeoSource = 'soilgrids' | 'crust1' | 'regional' | 'model';
 
 export interface GeoLayer {
   key: string; // i18n suffix: t('geo.l.' + key)
@@ -15,6 +17,7 @@ export interface GeoLayer {
   botM: number;
   hex: number;
   source: GeoSource;
+  name?: string; // explicit display name (regional layers carry their published name)
 }
 
 export interface GeoColumn {
@@ -27,6 +30,7 @@ export interface GeoColumns {
   marine: GeoColumn;
   isOcean: boolean; // the map-centre cell type (for the legend default)
   oceanWaterDepthM: number; // CRUST1.0 water thickness, used where the land DEM is flat over sea
+  regionName?: string; // set when a published regional column is used instead of CRUST1.0
 }
 
 export const SEA_WATER_HEX = 0x1f5b86;
@@ -102,6 +106,79 @@ export function buildColumns(cell: Crust1Cell, soil: GeoLayer[] | null, isOcean:
     marine: { layers: marineLayers(cell), soilReal: false },
     isOcean,
     oceanWaterDepthM: isOcean ? Math.max(0, cell.bnd[L.water] - cell.bnd[L.ice]) : 0,
+  };
+}
+
+function lookupColumn(cols: RegionalColumn[], lat: number, lon: number): RegionalColumn | null {
+  for (const c of cols) {
+    const [s, n, w, e] = c.bbox;
+    if (lat >= s && lat <= n && lon >= w && lon <= e) return c;
+  }
+  return null;
+}
+
+/** Published land stratigraphy for this coordinate, if any (smallest bbox wins). */
+export function findRegional(lat: number, lon: number): RegionalColumn | null {
+  return lookupColumn(REGIONAL_COLUMNS, lat, lon);
+}
+
+/** Published sub-seabed stratigraphy for this coordinate, if any (smallest bbox wins). */
+export function findRegionalMarine(lat: number, lon: number): RegionalColumn | null {
+  return lookupColumn(REGIONAL_MARINE_COLUMNS, lat, lon);
+}
+
+/**
+ * Assemble columns from a real published regional column (real soil on top,
+ * the region's named layers below) instead of the coarse CRUST1.0 cell. The
+ * marine column still comes from CRUST1.0 (only used for genuinely ocean cells).
+ */
+export function buildRegionalColumns(region: RegionalColumn, soil: GeoLayer[] | null, cell: Crust1Cell): GeoColumns {
+  const top: GeoLayer[] = soil && soil.length
+    ? soil
+    : [
+      { key: 'topsoil', topM: 0, botM: 0.3, hex: HEX.topsoil, source: 'model' },
+      { key: 'subsoil', topM: 0.3, botM: 2, hex: HEX.subsoil, source: 'model' },
+    ];
+  const soilBase = top[top.length - 1].botM;
+  const reg: GeoLayer[] = region.layers.map((l, i) => ({
+    key: `r${i}`,
+    name: l.name,
+    topM: Math.max(l.topM, i === 0 ? soilBase : 0),
+    botM: l.botM,
+    hex: l.hex,
+    source: 'regional',
+  }));
+  return {
+    land: { layers: [...top, ...ordered(...reg)], soilReal: !!(soil && soil.length) },
+    marine: { layers: marineLayers(cell), soilReal: false },
+    isOcean: false,
+    oceanWaterDepthM: 0,
+    regionName: region.name,
+  };
+}
+
+/**
+ * Assemble columns for an ocean centre using a real published sub-seabed
+ * column (the sea's named units below the seabed) instead of the generic
+ * CRUST1.0 marine template. The land column is kept as a CRUST1.0 fallback
+ * for any coastal wall cells; the legend shows the marine column.
+ */
+export function buildMarineRegionalColumns(region: RegionalColumn, cell: Crust1Cell): GeoColumns {
+  const reg: GeoLayer[] = region.layers.map((l, i) => ({
+    key: `m${i}`,
+    name: l.name,
+    topM: l.topM,
+    botM: l.botM,
+    hex: l.hex,
+    source: 'regional',
+  }));
+  const land = landLayers(cell, null);
+  return {
+    land: { layers: land.layers, soilReal: false },
+    marine: { layers: ordered(...reg), soilReal: false },
+    isOcean: true,
+    oceanWaterDepthM: Math.max(0, cell.bnd[L.water] - cell.bnd[L.ice]),
+    regionName: region.name,
   };
 }
 

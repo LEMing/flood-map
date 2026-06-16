@@ -1,3 +1,4 @@
+import './styles.css';
 import { App } from './app/App';
 import { initAnalytics } from './analytics';
 import { showToast } from './ui/toast';

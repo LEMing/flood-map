@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 
 // Dev-server proxies so the browser can reach Nominatim + AWS Terrain Tiles
 // without CORS issues. The proxy also injects the User-Agent that the
 // Nominatim usage policy requires (stock browser UA is rejected).
 export default defineConfig({
+  plugins: [tailwindcss()],
   server: {
     proxy: {
       '/api/geocode': {

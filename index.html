@@ -21,10 +21,18 @@
         padding: 8px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.4);
         max-width: min(520px, calc(100vw - 24px));
       }
-      #ac-wrap { position: relative; }
+      #ac-wrap { position: relative; flex: 1 1 auto; min-width: 0; }
       #addressbar input {
         width: 320px; max-width: 52vw; padding: 7px 10px; border-radius: 7px;
         border: 1px solid #2a313b; background: #0e1318; color: #e6edf3; font-size: 14px;
+      }
+      /* Phones: address bar spans the width but yields room for the menu toggle. */
+      @media (max-width: 767px) {
+        #addressbar {
+          left: 12px; right: 64px; max-width: none;
+        }
+        #ac-wrap { flex: 1 1 auto; }
+        #addressbar input { width: 100%; max-width: none; }
       }
       #addressbar button {
         padding: 7px 14px; border-radius: 7px; border: 1px solid #2f6feb;
@@ -33,7 +41,11 @@
       #addressbar button:disabled { opacity: .5; cursor: default; }
 
       /* Language picker — top-right, just left of the controls panel */
-      #lang-picker { position: fixed; top: 12px; right: 272px; z-index: 11; }
+      #lang-picker { position: fixed; top: 12px; right: 280px; z-index: 11; }
+      /* Phones: panel is a drawer, so the picker sits left of the menu toggle. */
+      @media (max-width: 767px) {
+        #lang-picker { right: 60px; }
+      }
       #lang-trigger {
         display: flex; align-items: center; gap: 6px; line-height: 1;
         padding: 7px 10px; border-radius: 8px; cursor: pointer;
@@ -163,8 +175,6 @@
       #toast.show { opacity: 1; }
       #toast.error { border-left-color: #e5534b; }
 
-      .tp-dfwv { z-index: 10 !important; }
-
       #credit {
         position: fixed; bottom: 6px; left: 8px; z-index: 9;
         font-size: 11px; color: rgba(255,255,255,.7);
@@ -196,13 +206,15 @@
         font-variant-numeric: tabular-nums;
       }
 
+      /* Geology legend — now docked inside the controls drawer, under the panel. */
       #geo-legend {
-        position: fixed; bottom: 30px; left: 12px; z-index: 9; display: none;
+        display: none;
         background: rgba(18, 22, 28, 0.86); backdrop-filter: blur(6px);
         padding: 9px 11px; border-radius: 8px; color: #e6edf3;
         font-size: 11px; box-shadow: 0 2px 10px rgba(0,0,0,.45);
-        max-width: 300px;
+        width: 100%;
       }
+      #geo-legend.visible { display: block; }
       #geo-legend .title { font-weight: 600; margin-bottom: 6px; opacity: .9; }
       #geo-legend .row { display: flex; align-items: center; gap: 7px; margin: 2px 0; }
       #geo-legend .sw {
@@ -216,9 +228,26 @@
         text-transform: uppercase; letter-spacing: .3px;
       }
       #geo-legend .tg.soilgrids { background: rgba(63, 182, 224, .22); color: #8fdcf5; }
-      #geo-legend .tg.model, #geo-legend .tg.crust1 { background: rgba(255,255,255,.10); color: #b9c2cc; }
+      #geo-legend .tg.model, #geo-legend .tg.crust1, #geo-legend .tg.regional { background: rgba(255,255,255,.10); color: #b9c2cc; }
       #geo-legend .row.wt .nm { color: #8fdcf5; }
-      #geo-legend .caveat { margin-top: 7px; opacity: .6; font-size: 10px; line-height: 1.35; max-width: 280px; }
+      #geo-legend .caveat { margin-top: 7px; opacity: .6; font-size: 10px; line-height: 1.35; }
+
+      /* ── Controls chrome ──
+         Layout + responsive behaviour live as Tailwind utilities on the markup
+         (#chrome-panel / #chrome-toggle). These rules cover only what utilities
+         can't express cleanly: the scrollbar skin, Tweakpane's mounted width,
+         and the body-state that collapses the drawer on phones. */
+      #chrome-panel {
+        overscroll-behavior: contain;
+        scrollbar-width: thin; scrollbar-color: #2a313b transparent;
+      }
+      #chrome-panel::-webkit-scrollbar { width: 8px; }
+      #chrome-panel::-webkit-scrollbar-thumb { background: #2a313b; border-radius: 4px; }
+      #tp-mount .tp-rotv { width: 100%; }
+
+      @media (max-width: 767px) {
+        body:not(.chrome-open) #chrome-panel { display: none; }
+      }
 
     </style>
   </head>
@@ -239,6 +268,30 @@
       <div class="bar"></div>
       <div class="labels"><span id="legend-min">0 m</span><span id="legend-max">0 m</span></div>
     </div>
+
+    <!-- Mobile menu toggle (icon-only: ☰ open / ✕ close — no translatable text). -->
+    <button
+      id="chrome-toggle"
+      type="button"
+      aria-label="Toggle controls"
+      aria-expanded="false"
+      class="fixed top-3 right-3 z-[12] hidden h-10 w-10 items-center justify-center
+             rounded-[10px] border border-[#2a313b] bg-[var(--panel-bg)] text-[19px]
+             leading-none text-[#e6edf3] backdrop-blur-[6px] shadow-[0_4px_18px_rgba(0,0,0,.4)]
+             cursor-pointer hover:border-[#3a4250] max-md:flex"
+    >☰</button>
+    <!-- Right-side controls drawer: Tweakpane mounts in #tp-mount, geology legend docks below it. -->
+    <aside
+      id="chrome-panel"
+      class="fixed top-3 right-3 z-10 flex w-64 flex-col gap-2.5 overflow-y-auto
+             max-h-[calc(100vh-24px)]
+             max-md:top-[60px] max-md:w-[min(320px,calc(100vw-24px))]
+             max-md:max-h-[calc(100vh-72px)] max-md:rounded-xl max-md:p-1
+             max-md:bg-[rgba(11,14,19,0.55)] max-md:backdrop-blur-sm"
+    >
+      <div id="tp-mount" class="relative"></div>
+    </aside>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

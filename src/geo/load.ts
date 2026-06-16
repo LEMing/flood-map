@@ -5,6 +5,7 @@ import { geocode } from './geocode';
 import { fetchElevation } from './elevationTiles';
 import { fetchElevationCog } from './elevationCog';
 import { computeMinMax, type Heightmap } from './heightmap';
+import { coarseBathymetryGrid } from './oceanDepth';
 import { syntheticHeightmap } from './syntheticTerrain';
 
 /**
@@ -23,6 +24,32 @@ function mergeBathymetry(land: Heightmap, bathy: Heightmap): void {
   const mm = computeMinMax(a);
   land.min = mm.min;
   land.max = mm.max;
+}
+
+/**
+ * Open water: the bare-earth DEM reads nodata garbage (~1 km) over ocean and the
+ * high-zoom terrarium is a flat 0 there, so neither places the sea floor below
+ * sea level. Carve in coarse GEBCO/ETOPO bathymetry where it says submarine, so
+ * the terrain, sea surface and seabed cross-section all sit at the right level.
+ * Returns true if any ocean cell was carved.
+ */
+async function carveOceanBathymetry(land: Heightmap): Promise<boolean> {
+  const bathy = await coarseBathymetryGrid(land.center, land.sizeMeters, land.N);
+  if (!bathy) return false;
+  const a = land.data;
+  let carved = false;
+  for (let i = 0; i < a.length; i++) {
+    if (bathy[i] < -1 && a[i] > bathy[i] + 1) {
+      a[i] = bathy[i];
+      carved = true;
+    }
+  }
+  if (carved) {
+    const mm = computeMinMax(a);
+    land.min = mm.min;
+    land.max = mm.max;
+  }
+  return carved;
 }
 
 export interface TerrainLoad {
@@ -77,7 +104,13 @@ export async function loadTerrainAt(
           mergeBathymetry(heightmap, await fetchElevation(location, sizeMeters, N));
         } catch { /* no bathymetry available — keep the land DEM */ }
       }
-      if (heightmap.max - heightmap.min < 1e-3) {
+      // Open ocean: carve real coarse bathymetry under the sea floor.
+      let oceanCarved = false;
+      try {
+        oceanCarved = await carveOceanBathymetry(heightmap);
+      } catch { /* no coarse tile — fall through to the relief check */ }
+      // A fully-marine patch is legitimately flat sea, not a data failure.
+      if (!oceanCarved && heightmap.max - heightmap.min < 1e-3) {
         lastError = 'no elevation relief';
         continue;
       }
