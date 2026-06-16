@@ -280,6 +280,7 @@ export class SceneManager {
   updateStorm(dt: number): void {
     this.weather.uTime.value += dt;
     this.cloudMat.uniforms.uTime.value = this.weather.uTime.value;
+    (this.cloudMat.uniforms.uCamPos.value as THREE.Vector3).copy(this.camera.position);
     // fade clouds out as the camera rises toward/above the ceiling so they never
     // block the view from a high or top-down vantage.
     this.cloudMat.uniforms.uCamFade.value = THREE.MathUtils.clamp(
@@ -451,43 +452,132 @@ function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
 }
 
 function makeCloudMaterial(): THREE.ShaderMaterial {
+  // Single horizontal plane (the storm ceiling) seen from below. Instead of flat
+  // 2D fbm we reconstruct the view ray per-fragment and raymarch a thin slab of
+  // procedural 3D noise hanging beneath the plane, accumulating density with the
+  // Beer-Lambert law and a cheap sun light-march for self-shadowing. Techniques:
+  //   - iq domain-warped fbm + height-gradient density (iquilezles.org dynclouds / fbm)
+  //   - Beer-Lambert transmittance exp(-density*absorption) + front-to-back compositing
+  //   - sun light-march (Maxime Heckel cloudscapes) for silver-lining contrast
   return new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uFlash: { value: 0 }, uCamFade: { value: 1 } },
+    uniforms: {
+      uTime: { value: 0 },
+      uFlash: { value: 0 },
+      uCamFade: { value: 1 },
+      uCamPos: { value: new THREE.Vector3() },
+    },
     transparent: true,
     depthWrite: false,
     side: THREE.DoubleSide,
     vertexShader: /* glsl */ `
       varying vec2 vP;
+      varying vec3 vWorld;
       void main() {
         vP = position.xz;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vWorld = wp.xyz;
+        gl_Position = projectionMatrix * viewMatrix * wp;
       }
     `,
     fragmentShader: /* glsl */ `
       uniform float uTime, uFlash, uCamFade;
+      uniform vec3 uCamPos;
       varying vec2 vP;
-      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-      float noise(vec2 p){
-        vec2 i = floor(p), f = fract(p);
-        vec2 u = f * f * (3.0 - 2.0 * f);
-        return mix(mix(hash(i), hash(i + vec2(1,0)), u.x),
-                   mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), u.x), u.y);
+      varying vec3 vWorld;
+
+      const int MARCH_STEPS = 9;
+      const int LIGHT_STEPS = 4;
+
+      float hash(vec3 p){
+        p = fract(p * 0.3183099 + 0.1);
+        p *= 17.0;
+        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
       }
-      float fbm(vec2 p){
-        float v = 0.0, a = 0.5;
-        for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.0; a *= 0.5; }
+      float noise(vec3 x){
+        vec3 i = floor(x), f = fract(x);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
+                       mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+                   mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+                       mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+      }
+      float fbm(vec3 p){
+        float v = 0.0, a = 0.55;
+        for (int i = 0; i < 5; i++){ v += a * noise(p); p = p * 2.02 + 7.3; a *= 0.5; }
         return v;
       }
+
+      // density at a slab-local point. y in [0,1] is depth below the ceiling.
+      float cloudDensity(vec3 q){
+        vec3 p = q * 3.2 + vec3(uTime * 0.05, 0.0, uTime * 0.02);
+        // domain warp for billowy structure (iq)
+        vec3 w = vec3(fbm(p * 0.5), fbm(p * 0.5 + 4.1), fbm(p * 0.5 + 9.2));
+        float base = fbm(p + 1.4 * w);
+        // vertical gradient: dense flat ceiling on top fading to wispy tendrils below
+        float profile = smoothstep(0.0, 0.25, q.y) * (1.0 - smoothstep(0.55, 1.0, q.y));
+        float d = (base - 0.50) * 2.4 * profile;
+        return clamp(d, 0.0, 1.0);
+      }
+
       void main() {
-        vec2 p = vP * 6.0 + vec2(uTime * 0.03, uTime * 0.015);
-        float n = fbm(p + fbm(p * 0.5));
-        float density = smoothstep(0.35, 0.85, n);
-        vec3 dark = vec3(0.10, 0.11, 0.14);
-        vec3 mid = vec3(0.34, 0.36, 0.42);
-        vec3 col = mix(dark, mid, n);
-        col += uFlash * vec3(0.85, 0.9, 1.0) * (0.4 + density);
+        // reconstruct the world-space view ray and march DOWN into the slab
+        // beneath this fragment of the ceiling plane.
+        vec3 rd = normalize(vWorld - uCamPos);
+
+        // light comes from above (lightning + sky), tinted by uFlash.
+        vec3 sunDir = normalize(vec3(0.25, 1.0, 0.15));
+
+        // horizontal parallax through the slab: convert the view-ray slope into a
+        // per-depth uv drift so the volume shifts as the camera looks around.
+        vec2 uvBase = vP;
+        float downSpeed = max(-rd.y, 0.04);
+        vec2 uvSlope = rd.xz / (downSpeed * 6.0) * 0.5;
+
+        vec3 cloudCol = vec3(0.0);
+        float transmittance = 1.0;
+
+        // ambient stormy gradient: cold dark base, slightly warmer top
+        vec3 baseDark  = vec3(0.045, 0.052, 0.072);
+        vec3 baseLight = vec3(0.46, 0.50, 0.58);
+        vec3 flashCol  = vec3(0.85, 0.92, 1.0);
+
+        float invSteps = 1.0 / float(MARCH_STEPS);
+        // sub-step dither to break up banding (blue-noise-style offset)
+        float jitter = (hash(vec3(vP * 91.7, uTime)) - 0.5) * invSteps;
+        for (int i = 0; i < MARCH_STEPS; i++){
+          float depth01 = (float(i) + 0.5) * invSteps + jitter;
+          vec3 q = vec3(uvBase + uvSlope * depth01, depth01);
+          float density = cloudDensity(q);
+          if (density > 0.001){
+            // cheap sun light-march for self-shadowing (Beer-Lambert toward sun)
+            float lightAccum = 0.0;
+            for (int j = 0; j < LIGHT_STEPS; j++){
+              float ls = (float(j) + 1.0) * 0.10;
+              vec3 lq = q + vec3(sunDir.xz * ls * 0.4, -sunDir.y * ls);
+              lightAccum += cloudDensity(lq);
+            }
+            float sunT = exp(-lightAccum * 1.7);
+            // beer-powder: dark cores, bright edges
+            float powder = 1.0 - exp(-density * 4.0);
+            float lum = sunT * (0.25 + 0.95 * powder);
+            // colour from stormy ambient gradient, brightened toward lit edges + flash
+            vec3 ambient = mix(baseDark, baseLight, depth01 * 0.7 + 0.3 * powder);
+            vec3 c = ambient + flashCol * (lum * 0.6 + uFlash * (0.4 + powder));
+            float stepT = exp(-density * 2.6);
+            // front-to-back: accumulate emitted light weighted by remaining transmittance
+            cloudCol += transmittance * (1.0 - stepT) * c;
+            transmittance *= stepT;
+            if (transmittance < 0.02) break;
+          }
+        }
+
+        float coverage = 1.0 - transmittance;
+        // overall flash lift so lightning makes the whole ceiling pop
+        cloudCol += flashCol * uFlash * 0.18 * coverage;
+
         float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
-        gl_FragColor = vec4(col, density * 0.95 * edge * uCamFade);
+        float alpha = coverage * 0.97 * edge * uCamFade;
+        gl_FragColor = vec4(cloudCol, alpha);
       }
     `,
   });
