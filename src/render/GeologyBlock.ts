@@ -73,6 +73,7 @@ export class GeologyBlock {
   private readonly wtNorm: Float32Array;
   private readonly uH = { value: 1 };
   private readonly uShowWaterTable = { value: 0 };
+  private readonly uOceanic = { value: 0 };
 
   constructor(hm: Heightmap, waterMask: Uint8Array | null = null) {
     this.ring = perimeterRing(hm, waterMask);
@@ -109,6 +110,7 @@ export class GeologyBlock {
       shader.uniforms.uMarineRamp = { value: this.marineRamp };
       shader.uniforms.uH = this.uH;
       shader.uniforms.uShowWaterTable = this.uShowWaterTable;
+      shader.uniforms.uOceanic = this.uOceanic;
       shader.uniforms.uSeaShallow = { value: new THREE.Color(0.16, 0.42, 0.55) };
       shader.uniforms.uSeaDeep = { value: new THREE.Color(0.04, 0.13, 0.24) };
       shader.vertexShader = shader.vertexShader
@@ -121,7 +123,7 @@ export class GeologyBlock {
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>
           varying float vDepth01; varying float vMarine; varying float vSeabed01; varying float vWtNorm; varying vec3 vWorld;
-          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep; uniform float uShowWaterTable;
+          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep; uniform float uShowWaterTable, uOceanic;
           float gHash(vec3 p){ return fract(sin(dot(floor(p), vec3(127.1, 311.7, 74.7))) * 43758.5453); }
           float gNoise(vec3 p){
             vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
@@ -140,9 +142,13 @@ export class GeologyBlock {
           if (d < vSeabed01) {
             float wt = vSeabed01 > 1e-4 ? d / vSeabed01 : 0.0;
             marineC = mix(uSeaShallow, uSeaDeep, wt); water = 1.0;
-          } else {
+          } else if (uOceanic > 0.5) {
+            // genuinely oceanic cell: oceanic crust below the seabed
             float bd = (d - vSeabed01) / max(1e-3, 1.0 - vSeabed01);
             marineC = texture2D(uMarineRamp, vec2(0.5, clamp(bd, 0.0, 1.0))).rgb;
+          } else {
+            // continental shelf under coastal water: same rock column as the land
+            marineC = landC;
           }
           diffuseColor.rgb = mix(landC, marineC, vMarine);
           // rock grain + faint horizontal laminae so sediment reads as sediment, not a flat slab
@@ -238,6 +244,7 @@ export class GeologyBlock {
   update(p: GeologyParams): void {
     this.uH.value = p.worldHeight;
     this.uShowWaterTable.value = p.showWaterTable ? 1 : 0;
+    this.uOceanic.value = p.oceanCell ? 1 : 0;
     this.rebuildRamp(p.land, this.landData, p, true);
     this.rebuildRamp(p.marine, this.marineData, p, false);
     this.landRamp.needsUpdate = true;
