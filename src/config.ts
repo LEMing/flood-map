@@ -70,7 +70,8 @@ export interface Params {
   subsurfaceScale: number; // on-screen block height as a fraction of map width
   showWaterTable: boolean;
   waterTableDepthM: number; // depth of the groundwater table (m)
-  highlightAquiclude: boolean; // emphasize the Maikop clay aquiclude (подтопление cause)
+  highlightAquiclude: boolean; // emphasize an aquiclude band, where one exists
+  seaLevelM: number; // elevation of the sea surface (m); cells below it are marine
 
   // One-shot water dump (flash flood) — instant volume instead of rain
   releaseDepthM: number;
@@ -165,6 +166,7 @@ export const DEFAULT_PARAMS: Params = {
   showWaterTable: true,
   waterTableDepthM: 6,
   highlightAquiclude: true,
+  seaLevelM: 0,
 
   releaseDepthM: 3,
   fillLevelM: 5,

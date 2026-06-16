@@ -3,17 +3,21 @@ import type { Heightmap } from '../geo/heightmap';
 import { AQUICLUDE_KEY, type GeoColumn, type GeoLayer } from '../geo/geology';
 
 export interface GeologyParams {
-  verticalExaggeration: number; // terrain Y scale, so the block top meets the relief
+  verticalExaggeration: number;
   worldHeight: number; // on-screen depth the block extends (world units) = depthShownM mapped
-  depthShownM: number; // real depth the block bottom represents (m)
-  column: GeoColumn;
+  depthShownM: number;
+  seaLevelM: number;
+  land: GeoColumn;
+  marine: GeoColumn;
+  oceanCell: boolean; // whole map is open ocean → force marine even where the DEM is flat
+  oceanWaterDepthM: number;
   waterTableM: number;
   showWaterTable: boolean;
   highlightAquiclude: boolean;
 }
 
 const RAMP_H = 512;
-const MAX_PERIMETER = 520; // cap wall columns for perf on big grids
+const MAX_PERIMETER = 520;
 
 interface RingPoint { x: number; z: number; e: number }
 
@@ -26,80 +30,90 @@ function perimeterRing(hm: Heightmap): RingPoint[] {
     e: data[iy * N + ix],
   });
   const ring: RingPoint[] = [];
-  for (let ix = 0; ix < N - 1; ix += step) ring.push(at(ix, 0)); // south: W→E
-  for (let iy = 0; iy < N - 1; iy += step) ring.push(at(N - 1, iy)); // east: S→N
-  for (let ix = N - 1; ix > 0; ix -= step) ring.push(at(ix, N - 1)); // north: E→W
-  for (let iy = N - 1; iy > 0; iy -= step) ring.push(at(0, iy)); // west: N→S
+  for (let ix = 0; ix < N - 1; ix += step) ring.push(at(ix, 0));
+  for (let iy = 0; iy < N - 1; iy += step) ring.push(at(N - 1, iy));
+  for (let ix = N - 1; ix > 0; ix -= step) ring.push(at(ix, N - 1));
+  for (let iy = N - 1; iy > 0; iy -= step) ring.push(at(0, iy));
   return ring;
 }
 
 function rgb(hex: number, i: number, data: Uint8Array): void {
-  data[i] = (hex >> 16) & 0xff;
-  data[i + 1] = (hex >> 8) & 0xff;
-  data[i + 2] = hex & 0xff;
-  data[i + 3] = 255;
+  data[i] = (hex >> 16) & 0xff; data[i + 1] = (hex >> 8) & 0xff; data[i + 2] = hex & 0xff; data[i + 3] = 255;
 }
-
 function mix(a: number, b: number, t: number): number {
   const ar = (a >> 16) & 0xff; const ag = (a >> 8) & 0xff; const ab = a & 0xff;
   const br = (b >> 16) & 0xff; const bg = (b >> 8) & 0xff; const bb = b & 0xff;
-  return (Math.round(ar + (br - ar) * t) << 16)
-    | (Math.round(ag + (bg - ag) * t) << 8)
-    | Math.round(ab + (bb - ab) * t);
+  return (Math.round(ar + (br - ar) * t) << 16) | (Math.round(ag + (bg - ag) * t) << 8) | Math.round(ab + (bb - ab) * t);
 }
 
 /**
- * Geological cross-section extruded below the terrain. The top edge conforms to
- * the real relief (each wall column rises to its terrain elevation × the current
- * exaggeration); depth is measured BELOW the local surface, so strata drape
- * parallel to the topography instead of lying dead flat. Bottom is a flat floor.
- *
- * Lives in world space (not the terrain group) for an independent deep scale.
+ * Global subsurface cross-section. The top conforms to the terrain relief (or
+ * the sea surface over water); strata drape below the local surface. Each wall
+ * column is land or marine by its elevation, so a coastline shows soil/crust on
+ * one side and sea-water + marine sediment on the other.
  */
 export class GeologyBlock {
   readonly mesh: THREE.Mesh;
   private readonly material: THREE.MeshStandardMaterial;
-  private readonly ramp: THREE.DataTexture;
-  private readonly rampData = new Uint8Array(RAMP_H * 4);
+  private readonly landRamp: THREE.DataTexture;
+  private readonly marineRamp: THREE.DataTexture;
+  private readonly landData = new Uint8Array(RAMP_H * 4);
+  private readonly marineData = new Uint8Array(RAMP_H * 4);
   private readonly geometry: THREE.BufferGeometry;
   private readonly ring: RingPoint[];
-  private readonly minE: number;
   private readonly position: Float32Array;
   private readonly yTop: Float32Array;
+  private readonly marineAttr: Float32Array;
+  private readonly seabed01: Float32Array;
   private readonly uH = { value: 1 };
 
   constructor(hm: Heightmap) {
     this.ring = perimeterRing(hm);
-    this.minE = this.ring.reduce((m, p) => Math.min(m, p.e), Infinity);
-
-    const segs = this.ring.length;
-    const vertCount = segs * 6 + 6; // 2 tris per wall quad + 2 for the floor
+    const vertCount = this.ring.length * 6 + 6;
     this.position = new Float32Array(vertCount * 3);
     this.yTop = new Float32Array(vertCount);
+    this.marineAttr = new Float32Array(vertCount);
+    this.seabed01 = new Float32Array(vertCount);
 
     this.geometry = new THREE.BufferGeometry();
     this.geometry.setAttribute('position', new THREE.BufferAttribute(this.position, 3));
     this.geometry.setAttribute('aYTop', new THREE.BufferAttribute(this.yTop, 1));
+    this.geometry.setAttribute('aMarine', new THREE.BufferAttribute(this.marineAttr, 1));
+    this.geometry.setAttribute('aSeabed01', new THREE.BufferAttribute(this.seabed01, 1));
 
-    this.ramp = new THREE.DataTexture(this.rampData, 1, RAMP_H, THREE.RGBAFormat);
-    this.ramp.minFilter = THREE.LinearFilter;
-    this.ramp.magFilter = THREE.LinearFilter;
-    this.ramp.needsUpdate = true;
+    this.landRamp = this.makeRamp(this.landData);
+    this.marineRamp = this.makeRamp(this.marineData);
 
     this.material = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0.0, side: THREE.DoubleSide });
     this.material.onBeforeCompile = (shader) => {
-      shader.uniforms.uRamp = { value: this.ramp };
+      shader.uniforms.uLandRamp = { value: this.landRamp };
+      shader.uniforms.uMarineRamp = { value: this.marineRamp };
       shader.uniforms.uH = this.uH;
+      shader.uniforms.uSeaShallow = { value: new THREE.Color(0.16, 0.42, 0.55) };
+      shader.uniforms.uSeaDeep = { value: new THREE.Color(0.04, 0.13, 0.24) };
       shader.vertexShader = shader.vertexShader
-        .replace('#include <common>', '#include <common>\nattribute float aYTop;\nvarying float vDepth01;\nuniform float uH;')
-        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvDepth01 = (aYTop - position.y) / max(uH, 1.0);');
+        .replace('#include <common>', `#include <common>
+          attribute float aYTop; attribute float aMarine; attribute float aSeabed01;
+          varying float vDepth01; varying float vMarine; varying float vSeabed01; uniform float uH;`)
+        .replace('#include <begin_vertex>', `#include <begin_vertex>
+          vDepth01 = (aYTop - position.y) / max(uH, 1.0);
+          vMarine = aMarine; vSeabed01 = aSeabed01;`);
       shader.fragmentShader = shader.fragmentShader
-        .replace('#include <common>', '#include <common>\nvarying float vDepth01;\nuniform sampler2D uRamp;')
-        .replace(
-          '#include <color_fragment>',
-          `#include <color_fragment>
-          diffuseColor.rgb = texture2D(uRamp, vec2(0.5, clamp(vDepth01, 0.0, 1.0))).rgb;`,
-        );
+        .replace('#include <common>', `#include <common>
+          varying float vDepth01; varying float vMarine; varying float vSeabed01;
+          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep;`)
+        .replace('#include <color_fragment>', `#include <color_fragment>
+          float d = clamp(vDepth01, 0.0, 1.0);
+          vec3 landC = texture2D(uLandRamp, vec2(0.5, d)).rgb;
+          vec3 marineC;
+          if (d < vSeabed01) {
+            float wt = vSeabed01 > 1e-4 ? d / vSeabed01 : 0.0;
+            marineC = mix(uSeaShallow, uSeaDeep, wt);
+          } else {
+            float bd = (d - vSeabed01) / max(1e-3, 1.0 - vSeabed01);
+            marineC = texture2D(uMarineRamp, vec2(0.5, clamp(bd, 0.0, 1.0))).rgb;
+          }
+          diffuseColor.rgb = mix(landC, marineC, vMarine);`);
     };
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -108,74 +122,88 @@ export class GeologyBlock {
     this.mesh.frustumCulled = false;
   }
 
-  private rebuildRamp(p: GeologyParams): void {
-    const { layers } = p.column;
+  private makeRamp(data: Uint8Array): THREE.DataTexture {
+    const t = new THREE.DataTexture(data, 1, RAMP_H, THREE.RGBAFormat);
+    t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.needsUpdate = true;
+    return t;
+  }
+
+  private rebuildRamp(col: GeoColumn, data: Uint8Array, p: GeologyParams, isLand: boolean): void {
+    const layers = col.layers;
     const last = layers[layers.length - 1];
     const lineHalf = p.depthShownM * 0.004;
     const wtBand = p.depthShownM * 0.006;
     for (let i = 0; i < RAMP_H; i++) {
       const depthM = (i / (RAMP_H - 1)) * p.depthShownM;
       let layer: GeoLayer = last;
-      for (const l of layers) {
-        if (depthM >= l.topM && depthM < l.botM) { layer = l; break; }
-      }
+      for (const l of layers) { if (depthM >= l.topM && depthM < l.botM) { layer = l; break; } }
       let hex = layer.hex;
       if (p.highlightAquiclude && layer.key === AQUICLUDE_KEY) hex = mix(hex, 0xff7a3c, 0.28);
-      for (const l of layers) {
-        if (l.topM > 0 && Math.abs(depthM - l.topM) < lineHalf) { hex = mix(hex, 0x0a0a0a, 0.55); break; }
-      }
-      if (p.showWaterTable && Math.abs(depthM - p.waterTableM) < wtBand) hex = mix(hex, 0x3fb6e0, 0.85);
-      rgb(hex, i * 4, this.rampData);
+      for (const l of layers) { if (l.topM > 0 && Math.abs(depthM - l.topM) < lineHalf) { hex = mix(hex, 0x0a0a0a, 0.55); break; } }
+      if (isLand && p.showWaterTable && Math.abs(depthM - p.waterTableM) < wtBand) hex = mix(hex, 0x3fb6e0, 0.85);
+      rgb(hex, i * 4, data);
     }
-    this.ramp.needsUpdate = true;
   }
 
-  private rebuildGeometry(ve: number, H: number): void {
+  private rebuildGeometry(p: GeologyParams): void {
+    const ve = p.verticalExaggeration;
+    const H = p.worldHeight;
+    const sea = p.seaLevelM;
     const ring = this.ring;
     const n = ring.length;
-    const yFloor = this.minE * ve - H;
-    const pos = this.position;
-    const top = this.yTop;
-    let o = 0; // vertex index
-    const put = (x: number, y: number, z: number, yt: number): void => {
+    const topElev = (e: number): number => Math.max(e, sea);
+    const minTop = ring.reduce((m, pt) => Math.min(m, topElev(pt.e)), Infinity);
+    const yFloor = minTop * ve - H;
+    const pos = this.position; const yt = this.yTop; const mar = this.marineAttr; const sb = this.seabed01;
+    let o = 0;
+    const put = (x: number, y: number, z: number, top: number, marine: number, seabed: number): void => {
       pos[o * 3] = x; pos[o * 3 + 1] = y; pos[o * 3 + 2] = z;
-      top[o] = yt;
-      o++;
+      yt[o] = top; mar[o] = marine; sb[o] = seabed; o++;
+    };
+    const col = (pt: RingPoint): { top: number; marine: number; seabed: number } => {
+      const marine = pt.e < sea || p.oceanCell ? 1 : 0;
+      const top = topElev(pt.e) * ve;
+      const waterDepth = marine ? Math.max(sea - pt.e, p.oceanCell ? p.oceanWaterDepthM : 0) : 0;
+      const seabed = Math.min(1, Math.max(0, waterDepth / p.depthShownM));
+      return { top, marine, seabed };
     };
     for (let i = 0; i < n; i++) {
-      const a = ring[i];
-      const b = ring[(i + 1) % n];
-      const aTop = a.e * ve;
-      const bTop = b.e * ve;
-      // quad (aTop, aFloor, bTop, bFloor) → tris (aTop,aFloor,bTop) (bTop,aFloor,bFloor)
-      put(a.x, aTop, a.z, aTop); put(a.x, yFloor, a.z, aTop); put(b.x, bTop, b.z, bTop);
-      put(b.x, bTop, b.z, bTop); put(a.x, yFloor, a.z, aTop); put(b.x, yFloor, b.z, bTop);
+      const a = ring[i]; const b = ring[(i + 1) % n];
+      const ca = col(a); const cb = col(b);
+      put(a.x, ca.top, a.z, ca.top, ca.marine, ca.seabed);
+      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed);
+      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed);
+      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed);
+      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed);
+      put(b.x, yFloor, b.z, cb.top, cb.marine, cb.seabed);
     }
-    // flat floor cap: a quad over the footprint, forced to the deepest band
-    const s = Math.max(...ring.map((p) => Math.abs(p.x)), ...ring.map((p) => Math.abs(p.z)));
-    const deep = yFloor + H * 2; // aYTop so (aYTop - yFloor)/H = 2 → clamps to deepest
-    put(-s, yFloor, -s, deep); put(s, yFloor, -s, deep); put(s, yFloor, s, deep);
-    put(-s, yFloor, -s, deep); put(s, yFloor, s, deep); put(-s, yFloor, s, deep);
+    const s = Math.max(...ring.map((pt) => Math.abs(pt.x)), ...ring.map((pt) => Math.abs(pt.z)));
+    const deep = yFloor + H * 2;
+    put(-s, yFloor, -s, deep, 0, 0); put(s, yFloor, -s, deep, 0, 0); put(s, yFloor, s, deep, 0, 0);
+    put(-s, yFloor, -s, deep, 0, 0); put(s, yFloor, s, deep, 0, 0); put(-s, yFloor, s, deep, 0, 0);
 
-    (this.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true;
-    (this.geometry.getAttribute('aYTop') as THREE.BufferAttribute).needsUpdate = true;
+    for (const name of ['position', 'aYTop', 'aMarine', 'aSeabed01']) {
+      (this.geometry.getAttribute(name) as THREE.BufferAttribute).needsUpdate = true;
+    }
     this.geometry.computeVertexNormals();
     this.geometry.computeBoundingSphere();
   }
 
   update(p: GeologyParams): void {
     this.uH.value = p.worldHeight;
-    this.rebuildRamp(p);
-    this.rebuildGeometry(p.verticalExaggeration, p.worldHeight);
+    this.rebuildRamp(p.land, this.landData, p, true);
+    this.rebuildRamp(p.marine, this.marineData, p, false);
+    this.landRamp.needsUpdate = true;
+    this.marineRamp.needsUpdate = true;
+    this.rebuildGeometry(p);
   }
 
-  setVisible(v: boolean): void {
-    this.mesh.visible = v;
-  }
+  setVisible(v: boolean): void { this.mesh.visible = v; }
 
   dispose(): void {
     this.geometry.dispose();
     this.material.dispose();
-    this.ramp.dispose();
+    this.landRamp.dispose();
+    this.marineRamp.dispose();
   }
 }

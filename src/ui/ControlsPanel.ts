@@ -177,6 +177,7 @@ export class ControlsPanel {
     geo.addBinding(params, 'subsurfaceScale', { min: 0.1, max: 1.5, step: 0.05, label: t('geo.scale') }).on('change', change);
     geo.addBinding(params, 'showWaterTable', { label: t('geo.waterTable') }).on('change', change);
     geo.addBinding(params, 'waterTableDepthM', { min: 0, max: 60, step: 0.5, label: t('geo.waterTableDepth') }).on('change', change);
+    geo.addBinding(params, 'seaLevelM', { min: -50, max: 50, step: 1, label: t('geo.seaLevel') }).on('change', change);
     geo.addBinding(params, 'highlightAquiclude', { label: t('geo.aquiclude') }).on('change', change);
 
     // --- Stats (read-only) ---

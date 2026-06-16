@@ -24,7 +24,8 @@ import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
 import { GeologyBlock } from '../render/GeologyBlock';
-import { defaultColumn, withSoilProfile, type GeoColumn, type GeoLayer } from '../geo/geology';
+import { defaultColumns, buildColumns, type GeoColumns, type GeoLayer } from '../geo/geology';
+import { getCrust1Cell } from '../geo/crust1';
 import { fetchSoilProfile } from '../geo/soilgrids';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
@@ -60,7 +61,7 @@ export class App {
   private rain?: Rain;
   private sim?: FloodSimulation;
   private geology?: GeologyBlock;
-  private geologyColumn: GeoColumn = defaultColumn();
+  private geologyColumns: GeoColumns = defaultColumns();
   private geologyLegend: HTMLDivElement | null = null;
   private soilRequested = false;
   private soilFetchToken = 0;
@@ -416,7 +417,7 @@ export class App {
     // The geology block lives in world space (not the terrain group) so its deep
     // vertical scale is independent of the terrain's exaggeration.
     this.geology = new GeologyBlock(heightmap);
-    this.geologyColumn = defaultColumn();
+    this.geologyColumns = defaultColumns();
     this.soilRequested = false;
     this.scene.scene.add(this.geology.mesh);
     // Keep above-water overlays (and the opaque geology block below) out of the
@@ -497,13 +498,17 @@ export class App {
     if (!on) return;
     if (!this.soilRequested) {
       this.soilRequested = true;
-      this.fetchSoil(this.heightmap);
+      this.fetchGeology(this.heightmap);
     }
     this.geology.update({
       verticalExaggeration: this.params.verticalExaggeration,
       worldHeight: this.heightmap.sizeMeters * this.params.subsurfaceScale,
       depthShownM: this.params.geologyDepthKm * 1000,
-      column: this.geologyColumn,
+      seaLevelM: this.params.seaLevelM,
+      land: this.geologyColumns.land,
+      marine: this.geologyColumns.marine,
+      oceanCell: this.geologyColumns.isOcean,
+      oceanWaterDepthM: this.geologyColumns.oceanWaterDepthM,
       waterTableM: this.params.waterTableDepthM,
       showWaterTable: this.params.showWaterTable,
       highlightAquiclude: this.params.highlightAquiclude,
@@ -511,16 +516,24 @@ export class App {
     this.renderGeologyLegend();
   }
 
-  /** Live SoilGrids query for the real top-2 m profile; falls back silently. */
-  private fetchSoil(hm: Heightmap): void {
+  /** Build the column for this location: CRUST1.0 cell (global) + live SoilGrids topsoil on land. */
+  private fetchGeology(hm: Heightmap): void {
     const token = ++this.soilFetchToken;
-    fetchSoilProfile(hm.center.lat, hm.center.lon)
-      .then((soil) => {
+    getCrust1Cell(hm.center.lat, hm.center.lon)
+      .then(async (cell) => {
+        if (token !== this.soilFetchToken || !cell) return; // keep the neutral default
+        // No soil under the sea — skip the (slow) SoilGrids ring probe for ocean cells.
+        const soil = cell.isOcean ? null : await fetchSoilProfile(hm.center.lat, hm.center.lon);
         if (token !== this.soilFetchToken) return;
-        this.geologyColumn = withSoilProfile(soil);
+        this.geologyColumns = buildColumns(cell, soil);
         if (this.params.showGeology) this.updateGeology();
       })
-      .catch(() => { /* keep the bundled regional column */ });
+      .catch(() => { /* keep the neutral default column */ });
+  }
+
+  /** The column whose legend to show — marine for an offshore centre, else land. */
+  private centreColumn(): GeoColumns['land'] {
+    return this.geologyColumns.isOcean ? this.geologyColumns.marine : this.geologyColumns.land;
   }
 
   private renderGeologyLegend(): void {
@@ -541,17 +554,24 @@ export class App {
       return `<div class="row">${sw}<span class="nm">${r.name}</span>`
         + `<span class="dp">${fmt(r.topM, r.botM)}</span><span class="tg ${r.source}">${tag(r.source)}</span></div>`;
     }).join('');
-    const wt = this.params.showWaterTable
+    const isOcean = this.geologyColumns.isOcean;
+    const seaRow = isOcean
+      ? `<div class="row"><span class="sw" style="background:#2a6e96"></span>`
+        + `<span class="nm">${t('geo.l.seaWater')}</span><span class="dp">${fmt(0, this.geologyColumns.oceanWaterDepthM)}</span>`
+        + `<span class="tg model">${t('geo.model')}</span></div>`
+      : '';
+    const wt = !isOcean && this.params.showWaterTable
       ? `<div class="row wt"><span class="sw" style="background:#3fb6e0"></span>`
         + `<span class="nm">${t('geo.waterTable')}</span><span class="dp">${Math.round(this.params.waterTableDepthM)} m</span></div>`
       : '';
-    el.innerHTML = `<div class="title">${t('geo.legendTitle')}</div>${items}${wt}`
+    el.innerHTML = `<div class="title">${t('geo.legendTitle')}</div>${seaRow}${items}${wt}`
       + `<div class="caveat">${t('geo.caveat')}</div>`;
   }
 
   /** Legend rows: collapse the SoilGrids sub-bands into one "topsoil (real)" row. */
   private geologyLegendRows(): Array<{ name: string; topM: number; botM: number; hex: number; source: string }> {
-    const layers = this.geologyColumn.layers;
+    const column = this.centreColumn();
+    const layers = column.layers;
     const soil = layers.filter((l) => l.source === 'soilgrids');
     const rest: GeoLayer[] = layers.filter((l) => l.source !== 'soilgrids');
     const out: Array<{ name: string; topM: number; botM: number; hex: number; source: string }> = [];
@@ -559,7 +579,7 @@ export class App {
       out.push({ name: t('geo.l.topsoil'), topM: 0, botM: soil[soil.length - 1].botM, hex: soil[0].hex, source: 'soilgrids' });
     }
     for (const l of rest) {
-      if (l.key === 'subsoil' && this.geologyColumn.soilReal) continue; // covered by the real soil row
+      if (l.key === 'subsoil' && column.soilReal) continue; // covered by the real soil row
       out.push({ name: t(`geo.l.${l.key}`), topM: l.topM, botM: l.botM, hex: l.hex, source: l.source });
     }
     return out;
