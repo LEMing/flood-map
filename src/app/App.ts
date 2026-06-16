@@ -415,7 +415,7 @@ export class App {
     );
     // The geology block lives in world space (not the terrain group) so its deep
     // vertical scale is independent of the terrain's exaggeration.
-    this.geology = new GeologyBlock(heightmap.sizeMeters);
+    this.geology = new GeologyBlock(heightmap);
     this.geologyColumn = defaultColumn();
     this.soilRequested = false;
     this.scene.scene.add(this.geology.mesh);
@@ -499,9 +499,8 @@ export class App {
       this.soilRequested = true;
       this.fetchSoil(this.heightmap);
     }
-    const ve = this.params.verticalExaggeration;
     this.geology.update({
-      worldTop: this.heightmap.min * ve,
+      verticalExaggeration: this.params.verticalExaggeration,
       worldHeight: this.heightmap.sizeMeters * this.params.subsurfaceScale,
       depthShownM: this.params.geologyDepthKm * 1000,
       column: this.geologyColumn,
