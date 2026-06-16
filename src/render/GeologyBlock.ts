@@ -207,8 +207,13 @@ export class GeologyBlock {
       yt[o] = top; mar[o] = marine; sb[o] = seabed; wn[o] = wt; o++;
     };
     const col = (pt: RingPoint): { top: number; marine: number; seabed: number; wt: number } => {
-      const marine = (pt.water && pt.e < sea + 2) || pt.e < sea - 1 || p.oceanCell ? 1 : 0;
-      const top = topElev(pt.e) * ve;
+      // Water = land-cover water (canals, harbour, sea) or genuinely deep seabed or
+      // an all-ocean map. NOT merely "below sea level": vast dry land sits below sea
+      // (Dutch polders, -2..-7 m) and must read as land, not a cyan water band.
+      const marine = (pt.water && pt.e < sea + 2) || pt.e < sea - 8 || p.oceanCell ? 1 : 0;
+      // A water column's surface is the waterline (sea level), never the bed/bank
+      // elevation, so the cyan band has a flat top instead of jagged teeth.
+      const top = (marine ? sea : topElev(pt.e)) * ve;
       const waterDepth = marine
         ? Math.max(sea - pt.e, pt.water ? NOMINAL_WATER_M : 0, p.oceanCell ? p.oceanWaterDepthM : 0)
         : 0;
