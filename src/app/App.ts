@@ -869,6 +869,7 @@ export class App {
     if (this.params.running) this.weatherClock += dt;
     this.rain?.update(this.params, this.weatherClock);
     if (this.rain) this.rain.object.visible = this.params.raining && this.params.running;
+    this.scene.setWetness(this.params.raining && this.params.running ? 0.9 : 0);
     this.scene.updateStorm(dt, this.params.running);
     this.showFps(now);
     this.updateWaterLook(dt);

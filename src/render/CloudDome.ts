@@ -53,6 +53,7 @@ uniform float uCloudTop;   // world meters, cloud-deck top
 uniform float uCoverage;   // extra coverage push (added on top of uStorm), 0 default
 uniform float uDensityMul; // global density scaler, ~1.0
 uniform float uExposure;   // pre-tonemap cloud/sky balance scalar, ~0.9
+uniform float uShapeScale; // cloud-cell frequency; scaled to the map so small maps still show whole clouds
 
 // ============================================================================
 //  CONSTANTS  (compile-time loop bounds)
@@ -168,7 +169,7 @@ float cloudDensity(vec3 p) {
     vec3 drift = vec3(uTime * 9.0, 0.0, uTime * 4.0);
 
     // Base shape + coverage remap (Schneider/Lague: raise coverage -> grow area).
-    float shapeScale = 0.00020; // ~5 km base cell; see TUNING
+    float shapeScale = uShapeScale; // cloud-cell size, proportional to the map
     float shape = shapeFBM((p + drift) * shapeScale);
 
     // uStorm=0 -> broken cumulus; uStorm=1 -> heavy but still structured (gaps
@@ -246,16 +247,18 @@ vec3 stormSky(vec3 rd) {
 //  CLOUD RAYMARCH  (world-space slab, front-to-back, energy-conserving)
 // ============================================================================
 vec3 renderClouds(vec3 ro, vec3 rd, vec3 sky, float dither) {
-    // Looking down / along the horizon: ray never crosses the slab -> pure sky.
-    // (Also the sole div-by-zero guard for the 1/rd.y intersection below.)
-    if (rd.y <= 0.004) return sky;
+    // Near-horizontal ray: degenerate intersection, skip (also the div-by-zero
+    // guard). The horizon clouds still come from slightly up/down rays.
+    if (abs(rd.y) < 1e-4) return sky;
 
-    // Camera above the deck would invert the slab; bail to sky (fly-cam safety).
-    if (ro.y >= uCloudTop) return sky;
-
+    // Slab intersection that works from ANY camera height and direction: below
+    // the deck looking up, above it looking down, or inside it. t0 = entry, t1 =
+    // exit (both clamped to the forward ray), so clouds never vanish on zoom-out.
     float invRy = 1.0 / rd.y;
-    float t0 = max((uCloudBase - ro.y) * invRy, 0.0);
-    float t1 = min((uCloudTop  - ro.y) * invRy, MAX_DIST);
+    float tBase = (uCloudBase - ro.y) * invRy;
+    float tTop  = (uCloudTop  - ro.y) * invRy;
+    float t0 = max(min(tBase, tTop), 0.0);
+    float t1 = min(max(tBase, tTop), MAX_DIST);
     if (t1 <= t0) return sky;
 
     // Path length grows as 1/rd.y -> long near the horizon (clouds pile up),
@@ -363,6 +366,7 @@ export interface CloudDomeHandle {
     uFlashColor: { value: THREE.Color };
     uCloudBase: { value: number };
     uCloudTop: { value: number };
+    uShapeScale: { value: number };
     uCoverage: { value: number };
     uDensityMul: { value: number };
     uExposure: { value: number };
@@ -381,6 +385,7 @@ export function makeCloudDome(radius: number): CloudDomeHandle {
     uFlashColor: { value: new THREE.Color(0.55, 0.65, 1.0) },
     uCloudBase: { value: 1800 },
     uCloudTop: { value: 5200 },
+    uShapeScale: { value: 0.0002 },
     uCoverage: { value: 0 },
     uDensityMul: { value: 1.2 },
     uExposure: { value: 0.9 },

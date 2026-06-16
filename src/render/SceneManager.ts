@@ -14,7 +14,7 @@ import { makeCloudDome, type CloudDomeHandle } from './CloudDome';
 import type { WaterMesh } from './WaterMesh';
 import type { SeaMesh } from './SeaMesh';
 
-const BOLT_SEGMENTS = 14;
+const BOLT_CAP = 320; // max line segments in a recursive branching bolt
 
 export interface WeatherUniformBlock {
   uTime: THREE.IUniform<number>;
@@ -58,6 +58,7 @@ export class SceneManager {
   private flash = 0;
   private flashTimer = 3;
   private boltTime = 0;
+  private boltCount = 0;
   private sceneSize = 2000;
   private sceneCenterH = 0;
   private cloudY = 600;
@@ -78,8 +79,11 @@ export class SceneManager {
   private readonly renderPass: RenderPass;
   private readonly bloomPass: UnrealBloomPass;
   private readonly godRayPass: ShaderPass;
+  private readonly wetLensPass: ShaderPass;
   private readonly vignettePass: ShaderPass;
   private readonly outputPass: OutputPass;
+  private wetTarget = 0;
+  private wetCurrent = 0;
   private gtaoPass?: GTAOPass;
   private postEnabled = true;
   private godRayScale = 0.4;
@@ -137,7 +141,7 @@ export class SceneManager {
     this.haze = makeHaze(this.weather);
     this.scene.add(this.haze);
 
-    this.boltPositions = new Float32Array(BOLT_SEGMENTS * 2 * 3);
+    this.boltPositions = new Float32Array(BOLT_CAP * 6);
     this.boltGeo = new THREE.BufferGeometry();
     this.boltGeo.setAttribute('position', new THREE.BufferAttribute(this.boltPositions, 3));
     this.bolt = new THREE.LineSegments(
@@ -162,6 +166,8 @@ export class SceneManager {
     this.renderPass = new RenderPass(this.scene, this.camera);
     this.godRayPass = new ShaderPass(GodRayShader);
     this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.35, 0.6, 0.85);
+    this.wetLensPass = new ShaderPass(WetLensShader);
+    this.wetLensPass.enabled = false;
     this.vignettePass = new ShaderPass(VignetteShader);
     this.vignettePass.uniforms.darkness.value = 0.35;
     this.vignettePass.uniforms.offset.value = 1.1;
@@ -185,6 +191,7 @@ export class SceneManager {
     }
     this.composer.addPass(this.godRayPass);
     this.composer.addPass(this.bloomPass);
+    this.composer.addPass(this.wetLensPass);
     this.composer.addPass(this.vignettePass);
     this.composer.addPass(this.outputPass);
   }
@@ -252,6 +259,9 @@ export class SceneManager {
     this.cloudY = centerHeight + sizeMeters * 0.8 + 300;
     this.cloudDome.uniforms.uCloudBase.value = this.cloudY;
     this.cloudDome.uniforms.uCloudTop.value = this.cloudY + sizeMeters * 1.6;
+    // Cloud cells ≈ 2× the map footprint, so a small map still shows whole clouds
+    // (a fixed ~5 km cell left a 1 km map sitting under a single gap → empty sky).
+    this.cloudDome.uniforms.uShapeScale.value = 1 / (sizeMeters * 2);
     this.haze.position.set(0, centerHeight - sizeMeters * 0.02 + 12, 0);
     this.haze.scale.set(sizeMeters * 8, 1, sizeMeters * 8);
     this.lightningLight.position.set(0.2, 1, 0.1).multiplyScalar(sizeMeters).add(target);
@@ -263,6 +273,11 @@ export class SceneManager {
   setStorm(enabled: boolean): void {
     this.stormEnabled = enabled;
     this.applyStormState();
+  }
+
+  /** 0..1 amount of rain-on-the-lens, driven each frame by the rain state. */
+  setWetness(target: number): void {
+    this.wetTarget = THREE.MathUtils.clamp(target, 0, 1);
   }
 
   private applyStormState(): void {
@@ -304,6 +319,13 @@ export class SceneManager {
     this.weather.uStorm.value += (target - this.weather.uStorm.value) * Math.min(1, dt * 0.6);
     this.cloudDome.uniforms.uStorm.value = this.weather.uStorm.value;
 
+    // wet-lens droplets ease in/out with the rain; uTime is frozen on pause so
+    // they hold still, and the pass is skipped entirely when dry.
+    this.wetCurrent += (this.wetTarget - this.wetCurrent) * Math.min(1, dt * 2.5);
+    this.wetLensPass.uniforms.uIntensity.value = this.wetCurrent;
+    this.wetLensPass.uniforms.uTime.value = this.weather.uTime.value;
+    this.wetLensPass.enabled = this.wetCurrent > 0.01;
+
     // sun screen position + visibility for god rays
     const sunDir = this.tmpSun.copy(this.sun.position).sub(this.controls.target).normalize();
     this.cloudDome.uniforms.uSunDir.value.copy(sunDir);
@@ -343,24 +365,43 @@ export class SceneManager {
 
   private makeBolt(): void {
     const s = this.sceneSize;
-    let x = (Math.random() - 0.5) * s * 0.6;
-    let z = (Math.random() - 0.5) * s * 0.6;
-    const pts: number[][] = [];
-    for (let i = 0; i <= BOLT_SEGMENTS; i++) {
-      const t = i / BOLT_SEGMENTS;
-      pts.push([x, this.cloudY + (this.sceneCenterH - this.cloudY) * t, z]);
-      x += (Math.random() - 0.5) * s * 0.05;
-      z += (Math.random() - 0.5) * s * 0.05;
-    }
-    let o = 0;
-    for (let i = 0; i < BOLT_SEGMENTS; i++) {
-      for (const p of [pts[i], pts[i + 1]]) {
-        this.boltPositions[o++] = p[0];
-        this.boltPositions[o++] = p[1];
-        this.boltPositions[o++] = p[2];
-      }
-    }
+    const start = new THREE.Vector3((Math.random() - 0.5) * s * 0.5, this.cloudY, (Math.random() - 0.5) * s * 0.5);
+    const end = new THREE.Vector3(
+      start.x + (Math.random() - 0.5) * s * 0.12, this.sceneCenterH, start.z + (Math.random() - 0.5) * s * 0.12,
+    );
+    this.boltCount = 0;
+    this.genBolt(start, end, 6, s * 0.045);
+    this.boltGeo.setDrawRange(0, this.boltCount / 3);
     this.boltGeo.attributes.position.needsUpdate = true;
+  }
+
+  /**
+   * Recursive midpoint-displacement bolt (procedural-weather skill): each segment
+   * splits at a jittered midpoint, with a ~35% chance of forking a dimmer branch.
+   * Emits line-segment pairs into boltPositions; bloom turns the bright additive
+   * line into a glow, so no separate glow mesh is needed.
+   */
+  private genBolt(a: THREE.Vector3, b: THREE.Vector3, gen: number, jitter: number): void {
+    const buf = this.boltPositions;
+    if (gen <= 0 || this.boltCount + 6 > buf.length) {
+      buf[this.boltCount++] = a.x; buf[this.boltCount++] = a.y; buf[this.boltCount++] = a.z;
+      buf[this.boltCount++] = b.x; buf[this.boltCount++] = b.y; buf[this.boltCount++] = b.z;
+      return;
+    }
+    const t = 0.4 + Math.random() * 0.2;
+    const mid = new THREE.Vector3(
+      a.x + (b.x - a.x) * t + (Math.random() - 0.5) * jitter,
+      a.y + (b.y - a.y) * t,
+      a.z + (b.z - a.z) * t + (Math.random() - 0.5) * jitter,
+    );
+    this.genBolt(a, mid, gen - 1, jitter * 0.6);
+    this.genBolt(mid, b, gen - 1, jitter * 0.6);
+    if (Math.random() < 0.35 && gen > 2) {
+      const be = new THREE.Vector3(
+        mid.x + (Math.random() - 0.5) * jitter * 2, mid.y - jitter, mid.z + (Math.random() - 0.5) * jitter * 2,
+      );
+      this.genBolt(mid, be, gen - 2, jitter * 0.4);
+    }
   }
 
   /** Two-pass render: no-water scene → RT (refraction source), then full scene (+post). */
@@ -467,11 +508,17 @@ function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
       varying vec2 vP;
       ${GLSL_FBM}
       void main() {
-        vec2 p = vP * 0.002 + uCloudDrift * uTime * 0.3;
-        float n = wFbm(p + wFbm(p * 0.6));
-        float edge = 1.0 - smoothstep(0.32, 0.5, length(vP)); // radial fade -> no hard slab edge
-        float a = smoothstep(0.3, 0.8, n) * 0.20 * uStorm * uHaze * edge;
-        gl_FragColor = vec4(vec3(0.62, 0.67, 0.73), a);
+        // Two drifting, domain-warped fbm layers → rolling volumetric-looking
+        // ground-fog wisps (procedural-weather skill) instead of one flat sheet.
+        vec2 base = vP * 0.0018;
+        vec2 drift = uCloudDrift * uTime;
+        float n1 = wFbm(base + drift * 0.4 + wFbm(base * 0.6 + drift * 0.2));
+        float n2 = wFbm(base * 2.3 - drift * 0.8);
+        float wisp = smoothstep(0.30, 0.74, n1 * 0.68 + n2 * 0.32);
+        float edge = 1.0 - smoothstep(0.30, 0.5, length(vP)); // radial fade -> no hard slab edge
+        float a = wisp * 0.18 * uStorm * uHaze * edge;
+        vec3 col = mix(vec3(0.50, 0.55, 0.62), vec3(0.72, 0.76, 0.82), wisp);
+        gl_FragColor = vec4(col, a);
       }
     `,
   });
@@ -511,3 +558,59 @@ function makeDomeBlit(tex: THREE.Texture): THREE.Mesh {
   mesh.visible = false;
   return mesh;
 }
+
+/**
+ * Wet-lens post pass (procedural-weather skill): rain droplets + running streaks
+ * on the "camera lens" with per-drop refraction, faded in with the rain.
+ */
+const WetLensShader = {
+  uniforms: {
+    tDiffuse: { value: null as THREE.Texture | null },
+    uTime: { value: 0 },
+    uIntensity: { value: 0 },
+  },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+  `,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    uniform float uTime, uIntensity;
+    varying vec2 vUv;
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    void main() {
+      vec2 uv = vUv;
+      vec4 sceneColor = texture2D(tDiffuse, uv);
+      if (uIntensity < 0.01) { gl_FragColor = sceneColor; return; }
+      vec2 grid = floor(uv * 30.0);
+      float droplet = 0.0;
+      vec2 refractOffset = vec2(0.0);
+      for (float dy = -1.0; dy <= 1.0; dy += 1.0) {
+        for (float dx = -1.0; dx <= 1.0; dx += 1.0) {
+          vec2 cell = grid + vec2(dx, dy);
+          float h = hash(cell + floor(uTime * 0.5));
+          if (h > 1.0 - uIntensity * 0.4) {
+            vec2 dropPos = (cell + 0.5 + (hash(cell * 1.3) - 0.5) * 0.8) / 30.0;
+            float dist = length(uv - dropPos);
+            float radius = 0.005 + hash(cell * 2.7) * 0.01;
+            float drop = smoothstep(radius, radius * 0.3, dist);
+            droplet = max(droplet, drop);
+            vec2 dir = normalize(uv - dropPos + 1e-5);
+            refractOffset += dir * drop * 0.003;
+          }
+        }
+      }
+      float streak = hash(vec2(floor(uv.x * 60.0), 0.0));
+      if (streak > 0.92 && uIntensity > 0.5) {
+        float streakY = fract(uv.y * 3.0 - uTime * 0.2 + streak);
+        float streakAlpha = smoothstep(0.0, 0.02, streakY) * smoothstep(0.15, 0.05, streakY);
+        refractOffset.y += streakAlpha * 0.005;
+        droplet = max(droplet, streakAlpha * 0.5);
+      }
+      vec4 refracted = texture2D(tDiffuse, uv + refractOffset);
+      vec4 result = mix(sceneColor, refracted, droplet);
+      result.rgb *= 1.0 - uIntensity * 0.02;
+      gl_FragColor = result;
+    }
+  `,
+};
