@@ -95,7 +95,14 @@ export class GeologyBlock {
 
     // Unlit so the strata read as a clean diagram, immune to storm lighting, fog
     // and exposure (a lit bright sediment was clipping into ACES desaturation).
-    this.material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+    // polygonOffset biases it ahead of the sea (which has its own offset to beat
+    // the seabed), so the cross-section is never washed out by the water plane.
+    this.material = new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      polygonOffsetUnits: -4,
+    });
     this.material.fog = false;
     this.material.onBeforeCompile = (shader) => {
       shader.uniforms.uLandRamp = { value: this.landRamp };
