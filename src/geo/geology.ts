@@ -90,14 +90,18 @@ function marineLayers(cell: Crust1Cell): GeoLayer[] {
   return layers;
 }
 
-/** Assemble land + marine columns for a CRUST1.0 cell (real soil spliced on land). */
-export function buildColumns(cell: Crust1Cell, soil: GeoLayer[] | null): GeoColumns {
+/**
+ * Assemble land + marine columns for a CRUST1.0 cell (real soil spliced on land).
+ * `isOcean` is the authoritative land/ocean call from the fine DEM + land-cover —
+ * NOT the coarse 1° cell flag, which mis-classifies coastal cells.
+ */
+export function buildColumns(cell: Crust1Cell, soil: GeoLayer[] | null, isOcean: boolean): GeoColumns {
   const land = landLayers(cell, soil);
   return {
     land: { layers: land.layers, soilReal: land.soilReal },
     marine: { layers: marineLayers(cell), soilReal: false },
-    isOcean: cell.isOcean,
-    oceanWaterDepthM: cell.isOcean ? Math.max(0, cell.bnd[L.water] - cell.bnd[L.ice]) : 0,
+    isOcean,
+    oceanWaterDepthM: isOcean ? Math.max(0, cell.bnd[L.water] - cell.bnd[L.ice]) : 0,
   };
 }
 
@@ -110,5 +114,5 @@ const GENERIC_CELL: Crust1Cell = {
 };
 
 export function defaultColumns(): GeoColumns {
-  return buildColumns(GENERIC_CELL, null);
+  return buildColumns(GENERIC_CELL, null, false);
 }

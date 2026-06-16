@@ -416,7 +416,7 @@ export class App {
     );
     // The geology block lives in world space (not the terrain group) so its deep
     // vertical scale is independent of the terrain's exaggeration.
-    this.geology = new GeologyBlock(heightmap);
+    this.geology = new GeologyBlock(heightmap, surface?.land ?? null);
     this.geologyColumns = defaultColumns();
     this.soilRequested = false;
     this.scene.scene.add(this.geology.mesh);
@@ -519,14 +519,29 @@ export class App {
   /** Build the column for this location: CRUST1.0 cell (global) + live SoilGrids topsoil on land. */
   private fetchGeology(hm: Heightmap): void {
     const token = ++this.soilFetchToken;
+    const ci = Math.floor(hm.N / 2) * hm.N + Math.floor(hm.N / 2);
+    const centreElev = hm.data[ci];
+    const land = this.surfaceRaw?.land ?? null;
+    const centreWater = land ? land[ci] === 80 : false;
+    const sea = this.params.seaLevelM;
+
     getCrust1Cell(hm.center.lat, hm.center.lon)
-      .then(async (cell) => {
-        if (token !== this.soilFetchToken || !cell) return; // keep the neutral default
-        // No soil under the sea — skip the (slow) SoilGrids ring probe for ocean cells.
-        const soil = cell.isOcean ? null : await fetchSoilProfile(hm.center.lat, hm.center.lon);
-        if (token !== this.soilFetchToken) return;
-        this.geologyColumns = buildColumns(cell, soil);
-        if (this.params.showGeology) this.updateGeology();
+      .then((cell0) => {
+        if (token !== this.soilFetchToken || !cell0) return undefined; // keep the neutral default
+        // Authoritative land/ocean from the fine DEM + land-cover; the coarse 1° cell
+        // flag is only a tiebreaker (it mis-classifies coastal cells, e.g. SF as sea).
+        const realOcean = centreElev > sea + 1 ? false : centreWater || cell0.isOcean;
+        return getCrust1Cell(hm.center.lat, hm.center.lon, realOcean ? 'ocean' : 'land').then((cell) => {
+          if (token !== this.soilFetchToken || !cell) return;
+          this.geologyColumns = buildColumns(cell, null, realOcean);
+          if (this.params.showGeology) this.updateGeology();
+          if (realOcean) return; // no soil at sea
+          void fetchSoilProfile(hm.center.lat, hm.center.lon).then((soil) => {
+            if (token !== this.soilFetchToken || !soil) return;
+            this.geologyColumns = buildColumns(cell, soil, realOcean);
+            if (this.params.showGeology) this.updateGeology();
+          });
+        });
       })
       .catch(() => { /* keep the neutral default column */ });
   }

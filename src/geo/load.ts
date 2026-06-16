@@ -4,8 +4,26 @@ import type { GeocodeResult } from './geocode';
 import { geocode } from './geocode';
 import { fetchElevation } from './elevationTiles';
 import { fetchElevationCog } from './elevationCog';
-import type { Heightmap } from './heightmap';
+import { computeMinMax, type Heightmap } from './heightmap';
 import { syntheticHeightmap } from './syntheticTerrain';
+
+/**
+ * Bare-earth sources (FABDEM, GLO-30) are land-only and read ~0 over water, so
+ * coasts look dry. Terrarium tiles carry real seabed depth (blended GEBCO/ETOPO),
+ * so where the land DEM is at/below sea level we carve in the terrarium
+ * bathymetry — giving the sea floor real relief while keeping land detail.
+ */
+function mergeBathymetry(land: Heightmap, bathy: Heightmap): void {
+  const a = land.data;
+  const b = bathy.data;
+  if (a.length !== b.length) return;
+  for (let i = 0; i < a.length; i++) {
+    if (b[i] < -0.5 && a[i] < 2) a[i] = b[i];
+  }
+  const mm = computeMinMax(a);
+  land.min = mm.min;
+  land.max = mm.max;
+}
 
 export interface TerrainLoad {
   location: GeocodeResult;
@@ -53,6 +71,12 @@ export async function loadTerrainAt(
   for (const s of order) {
     try {
       const heightmap = await fetchFrom(s, location, sizeMeters, N);
+      // Coastal/low areas: blend in terrarium seabed depth so water reads as water.
+      if (s !== 'terrarium' && heightmap.min < 5) {
+        try {
+          mergeBathymetry(heightmap, await fetchElevation(location, sizeMeters, N));
+        } catch { /* no bathymetry available — keep the land DEM */ }
+      }
       if (heightmap.max - heightmap.min < 1e-3) {
         lastError = 'no elevation relief';
         continue;

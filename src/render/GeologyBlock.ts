@@ -18,16 +18,19 @@ export interface GeologyParams {
 
 const RAMP_H = 512;
 const MAX_PERIMETER = 520;
+const NOMINAL_WATER_M = 10; // assumed depth for landcover water lacking real bathymetry
+const WATER_CLASS = 80; // ESA WorldCover permanent-water class
 
-interface RingPoint { x: number; z: number; e: number }
+interface RingPoint { x: number; z: number; e: number; water: boolean }
 
-function perimeterRing(hm: Heightmap): RingPoint[] {
+function perimeterRing(hm: Heightmap, waterMask: Uint8Array | null): RingPoint[] {
   const { N, data, sizeMeters: size } = hm;
   const step = Math.max(1, Math.floor((4 * (N - 1)) / MAX_PERIMETER));
   const at = (ix: number, iy: number): RingPoint => ({
     x: (ix / (N - 1) - 0.5) * size,
     z: (0.5 - iy / (N - 1)) * size,
     e: data[iy * N + ix],
+    water: waterMask ? waterMask[iy * N + ix] === WATER_CLASS : false,
   });
   const ring: RingPoint[] = [];
   for (let ix = 0; ix < N - 1; ix += step) ring.push(at(ix, 0));
@@ -67,8 +70,8 @@ export class GeologyBlock {
   private readonly seabed01: Float32Array;
   private readonly uH = { value: 1 };
 
-  constructor(hm: Heightmap) {
-    this.ring = perimeterRing(hm);
+  constructor(hm: Heightmap, waterMask: Uint8Array | null = null) {
+    this.ring = perimeterRing(hm, waterMask);
     const vertCount = this.ring.length * 6 + 6;
     this.position = new Float32Array(vertCount * 3);
     this.yTop = new Float32Array(vertCount);
@@ -94,26 +97,37 @@ export class GeologyBlock {
       shader.vertexShader = shader.vertexShader
         .replace('#include <common>', `#include <common>
           attribute float aYTop; attribute float aMarine; attribute float aSeabed01;
-          varying float vDepth01; varying float vMarine; varying float vSeabed01; uniform float uH;`)
+          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying vec3 vWorld; uniform float uH;`)
         .replace('#include <begin_vertex>', `#include <begin_vertex>
           vDepth01 = (aYTop - position.y) / max(uH, 1.0);
-          vMarine = aMarine; vSeabed01 = aSeabed01;`);
+          vMarine = aMarine; vSeabed01 = aSeabed01; vWorld = position;`);
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>
-          varying float vDepth01; varying float vMarine; varying float vSeabed01;
-          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep;`)
+          varying float vDepth01; varying float vMarine; varying float vSeabed01; varying vec3 vWorld;
+          uniform sampler2D uLandRamp; uniform sampler2D uMarineRamp; uniform vec3 uSeaShallow, uSeaDeep;
+          float gHash(vec3 p){ return fract(sin(dot(floor(p), vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+          float gNoise(vec3 p){
+            vec3 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+            return mix(mix(mix(gHash(i), gHash(i + vec3(1,0,0)), f.x), mix(gHash(i + vec3(0,1,0)), gHash(i + vec3(1,1,0)), f.x), f.y),
+                       mix(mix(gHash(i + vec3(0,0,1)), gHash(i + vec3(1,0,1)), f.x), mix(gHash(i + vec3(0,1,1)), gHash(i + vec3(1,1,1)), f.x), f.y), f.z);
+          }`)
         .replace('#include <color_fragment>', `#include <color_fragment>
           float d = clamp(vDepth01, 0.0, 1.0);
           vec3 landC = texture2D(uLandRamp, vec2(0.5, d)).rgb;
-          vec3 marineC;
+          vec3 marineC; float water = 0.0;
           if (d < vSeabed01) {
             float wt = vSeabed01 > 1e-4 ? d / vSeabed01 : 0.0;
-            marineC = mix(uSeaShallow, uSeaDeep, wt);
+            marineC = mix(uSeaShallow, uSeaDeep, wt); water = 1.0;
           } else {
             float bd = (d - vSeabed01) / max(1e-3, 1.0 - vSeabed01);
             marineC = texture2D(uMarineRamp, vec2(0.5, clamp(bd, 0.0, 1.0))).rgb;
           }
-          diffuseColor.rgb = mix(landC, marineC, vMarine);`);
+          diffuseColor.rgb = mix(landC, marineC, vMarine);
+          // rock grain + faint horizontal laminae so sediment reads as sediment, not a flat slab
+          float solid = (vMarine > 0.5 && water > 0.5) ? 0.0 : 1.0;
+          float grain = gNoise(vWorld * 0.03 + gNoise(vWorld * 0.008));
+          float lam = gNoise(vec3(vWorld.x * 0.006, vWorld.y * 0.13, vWorld.z * 0.006));
+          diffuseColor.rgb *= mix(1.0, (0.80 + 0.40 * grain) * (0.92 + 0.16 * lam), solid);`);
     };
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -161,9 +175,11 @@ export class GeologyBlock {
       yt[o] = top; mar[o] = marine; sb[o] = seabed; o++;
     };
     const col = (pt: RingPoint): { top: number; marine: number; seabed: number } => {
-      const marine = pt.e < sea || p.oceanCell ? 1 : 0;
+      const marine = pt.e < sea || pt.water || p.oceanCell ? 1 : 0;
       const top = topElev(pt.e) * ve;
-      const waterDepth = marine ? Math.max(sea - pt.e, p.oceanCell ? p.oceanWaterDepthM : 0) : 0;
+      const waterDepth = marine
+        ? Math.max(sea - pt.e, pt.water ? NOMINAL_WATER_M : 0, p.oceanCell ? p.oceanWaterDepthM : 0)
+        : 0;
       const seabed = Math.min(1, Math.max(0, waterDepth / p.depthShownM));
       return { top, marine, seabed };
     };

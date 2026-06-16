@@ -46,25 +46,45 @@ export function loadCrust1(): Promise<{ ocean: Uint8Array; bnds: Int16Array } | 
   return dataPromise;
 }
 
-function cellOffset(lat: number, lon: number): number {
-  const lonW = ((((lon + 180) % 360) + 360) % 360) - 180;
-  const row = Math.min(ROWS - 1, Math.max(0, Math.floor(89.5 - lat)));
-  const col = Math.min(COLS - 1, Math.max(0, Math.floor(lonW + 179.5)));
-  return row * COLS + col;
-}
-
-/** Look up the crustal cell for a coordinate; null until the asset has loaded. */
-export async function getCrust1Cell(lat: number, lon: number): Promise<Crust1Cell | null> {
-  const d = await loadCrust1();
-  if (!d) return null;
-  const cell = cellOffset(lat, lon);
+function readCell(d: { ocean: Uint8Array; bnds: Int16Array }, cell: number): Crust1Cell {
   const base = cell * LAYERS;
   const bnd: number[] = [];
   for (let k = 0; k < LAYERS; k++) bnd.push(d.bnds[base + k] * 10); // decametres → metres
-  return {
-    isOcean: d.ocean[cell] === 1,
-    bnd,
-    surfaceElevM: bnd[L.water],
-    mohoElevM: bnd[L.moho],
-  };
+  return { isOcean: d.ocean[cell] === 1, bnd, surfaceElevM: bnd[L.water], mohoElevM: bnd[L.moho] };
+}
+
+/**
+ * Look up the crustal cell for a coordinate. CRUST1.0's 1° cells are ~110 km, so
+ * a coastal cell centre can fall in the sea (or vice versa); pass `want` and we
+ * snap to the nearest cell of that type so a coastal city gets continental crust
+ * (and the structure under an offshore point stays oceanic). Null until loaded.
+ */
+export async function getCrust1Cell(
+  lat: number,
+  lon: number,
+  want?: 'land' | 'ocean',
+): Promise<Crust1Cell | null> {
+  const d = await loadCrust1();
+  if (!d) return null;
+  const lonW = ((((lon + 180) % 360) + 360) % 360) - 180;
+  const row0 = Math.min(ROWS - 1, Math.max(0, Math.floor(89.5 - lat)));
+  const col0 = Math.floor(lonW + 179.5);
+  const idx = (r: number, c: number): number => r * COLS + (((c % COLS) + COLS) % COLS);
+
+  const base = readCell(d, idx(row0, col0));
+  if (!want || base.isOcean === (want === 'ocean')) return base;
+
+  const wantOcean = want === 'ocean';
+  for (let rad = 1; rad <= 6; rad++) {
+    for (let dr = -rad; dr <= rad; dr++) {
+      for (let dc = -rad; dc <= rad; dc++) {
+        if (Math.max(Math.abs(dr), Math.abs(dc)) !== rad) continue; // ring edge only
+        const r = row0 + dr;
+        if (r < 0 || r >= ROWS) continue;
+        const cell = readCell(d, idx(r, col0 + dc));
+        if (cell.isOcean === wantOcean) return cell;
+      }
+    }
+  }
+  return base;
 }
