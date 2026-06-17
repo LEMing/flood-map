@@ -81,20 +81,17 @@ export default tseslint.config(
   },
 
   // render/*: three.js wiring constructors take many deps and a couple of hot
-  // methods sit just over the complexity bar. The four large files are
-  // dominated by inline GLSL slated for extraction into *.glsl.ts modules,
-  // which brings each back under the line budget.
+  // methods sit just over the complexity bar.
   {
     files: ['src/render/**/*.ts'],
     rules: { complexity: ['error', 11], 'max-params': ['error', 7] },
   },
+  // SceneManager.ts is the last render file over the line budget — unlike the
+  // others (whose bulk was inline GLSL, now extracted to *.glsl.ts), its size
+  // is composer/post-processing/lightning wiring, so it needs a logic split
+  // (extract the post stack + lightning system), tracked separately.
   {
-    files: [
-      'src/render/SceneManager.ts',
-      'src/render/GeologyBlock.ts',
-      'src/render/WaterMesh.ts',
-      'src/render/CloudDome.ts',
-    ],
+    files: ['src/render/SceneManager.ts'],
     rules: { 'max-lines': 'off' },
   },
 
@@ -111,6 +108,14 @@ export default tseslint.config(
   {
     files: ['src/url.ts'],
     rules: { complexity: ['error', 11] },
+  },
+
+  // Shader-source modules: a *.glsl.ts file is just GLSL string constants
+  // (GPU source text, not logic), so the line budget doesn't apply — same
+  // rationale as the generated data files.
+  {
+    files: ['src/**/*.glsl.ts'],
+    rules: { 'max-lines': 'off' },
   },
 
   // sim/*: GPUComputationRenderer wiring constructor takes several render targets.
