@@ -1,0 +1,282 @@
+// Unit tests for the pure per-cell surface-field builder. `computeSurfaceFields`
+// is the only export that does no I/O (buildSurface fetches land cover + OSM over
+// the network), so we test it in isolation with tiny hand-built rasters and assert
+// the exact infiltration / drainage / roughness / building-flag values the
+// classification rules in surface.ts are meant to produce.
+
+import { describe, it, expect } from 'vitest';
+import { computeSurfaceFields } from './surface';
+import type { Heightmap, LatLon } from './heightmap';
+import type { LandClass } from './landcover';
+import type { OsmRasters } from './osm';
+import { lonLatToLocalMeters } from './projection';
+import { DEFAULT_PARAMS, type Params } from '../config';
+
+// Mirror of the private constant in surface.ts: mm/hr -> m/s.
+const MM_S = 1 / 1000 / 3600;
+
+// Land-cover class codes used by ESA WorldCover (see landcover.ts).
+const LC_TREE = 10;
+const LC_GRASSLAND = 30;
+const LC_CROPLAND = 40;
+const LC_BUILT_UP = 50;
+const LC_BARE = 60;
+const LC_WATER = 80;
+
+const N = 8;
+const SIZE_METERS = 70; // step = 10 m between the 8 nodes
+
+// Far from the hard-coded "no storm sewer" zone in surface.ts
+// (Музыкальный микрорайон, lat 45.0762 / lon 38.9988), so every urban cell in
+// the grid is "served" and receives the full drainage capacity. A test below
+// asserts this separation holds for the whole grid.
+const CENTER: LatLon = { lat: 48.8566, lon: 2.3522 }; // central Paris
+
+function makeHeightmap(): Heightmap {
+  return {
+    data: new Float32Array(N * N), // flat — computeSurfaceFields never reads it
+    N,
+    sizeMeters: SIZE_METERS,
+    center: CENTER,
+    min: 0,
+    max: 0,
+    synthetic: true,
+  };
+}
+
+function emptyOsm(): OsmRasters {
+  return {
+    building: new Uint8Array(N * N),
+    road: new Uint8Array(N * N),
+    water: new Uint8Array(N * N),
+    green: new Uint8Array(N * N),
+    counts: { buildings: 0, roads: 0 },
+  };
+}
+
+function idx(ix: number, iy: number): number {
+  return iy * N + ix;
+}
+
+// Channel layout of the surface texture (N*N*4): r=infil m/s, g=drain m/s,
+// b=roughness, a=building flag.
+function cell(surface: Float32Array, k: number) {
+  return {
+    infil: surface[k * 4],
+    drain: surface[k * 4 + 1],
+    rough: surface[k * 4 + 2],
+    building: surface[k * 4 + 3],
+  };
+}
+
+function withParams(overrides: Partial<Params>): Params {
+  return { ...DEFAULT_PARAMS, ...overrides };
+}
+
+describe('computeSurfaceFields', () => {
+  it('returns an N*N*4 array of finite values in plausible ranges', () => {
+    const hm = makeHeightmap();
+    const land: LandClass = new Uint8Array(N * N).fill(LC_GRASSLAND);
+    const surface = computeSurfaceFields(hm, land, emptyOsm(), withParams({}));
+
+    expect(surface.length).toBe(N * N * 4);
+
+    for (let k = 0; k < N * N; k++) {
+      const c = cell(surface, k);
+      expect(Number.isFinite(c.infil)).toBe(true);
+      expect(Number.isFinite(c.drain)).toBe(true);
+      expect(Number.isFinite(c.rough)).toBe(true);
+      expect(c.infil).toBeGreaterThanOrEqual(0);
+      expect(c.drain).toBeGreaterThanOrEqual(0);
+      // roughness is clamped to [0.1, 1] in surface.ts
+      expect(c.rough).toBeGreaterThanOrEqual(0.1);
+      expect(c.rough).toBeLessThanOrEqual(1);
+      // building flag is strictly 0 or 1
+      expect(c.building === 0 || c.building === 1).toBe(true);
+    }
+  });
+
+  it('works with no land cover and no OSM (defaults all cells to grassland)', () => {
+    const hm = makeHeightmap();
+    const params = withParams({ groundwaterHigh: false, infiltrationMmPerHr: 12 });
+    const surface = computeSurfaceFields(hm, null, null, params);
+
+    // lc defaults to 30 (grassland) -> pervious soil infiltration, roughness 0.22.
+    const expectedInfil = 12 * MM_S;
+    for (let k = 0; k < N * N; k++) {
+      const c = cell(surface, k);
+      expect(c.infil).toBeCloseTo(expectedInfil, 12);
+      expect(c.rough).toBeCloseTo(0.22, 6);
+      expect(c.drain).toBe(0); // grassland is not urban -> no storm sewer
+      expect(c.building).toBe(0);
+    }
+  });
+
+  it('classifies each land-cover / OSM feature with its expected fields', () => {
+    const hm = makeHeightmap();
+    const params = withParams({
+      groundwaterHigh: false,
+      infiltrationMmPerHr: 10,
+      drainageCapacityMmPerHr: 8,
+    });
+    const soilInfil = 10; // groundwaterHigh=false -> no 0.25 scaling
+
+    const land: LandClass = new Uint8Array(N * N).fill(LC_GRASSLAND);
+    const osm = emptyOsm();
+
+    const kBuilding = idx(1, 1);
+    const kRoad = idx(2, 2);
+    const kWaterOsm = idx(3, 3);
+    const kBuiltUp = idx(4, 4);
+    const kWaterLc = idx(5, 5);
+    const kCropland = idx(6, 6);
+    const kBare = idx(0, 7);
+    const kTree = idx(7, 0);
+
+    osm.building[kBuilding] = 1;
+    osm.road[kRoad] = 1;
+    osm.water[kWaterOsm] = 1;
+    land[kBuiltUp] = LC_BUILT_UP;
+    land[kWaterLc] = LC_WATER;
+    land[kCropland] = LC_CROPLAND;
+    land[kBare] = LC_BARE;
+    land[kTree] = LC_TREE;
+
+    const surface = computeSurfaceFields(hm, land, osm, params);
+    const drain = 8 * MM_S;
+
+    // Building: impervious-ish infil 0.2, roughness 1, building flag set, served drain.
+    const building = cell(surface, kBuilding);
+    expect(building.infil).toBeCloseTo(0.2 * MM_S, 12);
+    expect(building.rough).toBe(1);
+    expect(building.building).toBe(1);
+    expect(building.drain).toBeCloseTo(drain, 12);
+
+    // OSM road: infil 0.3, roughness 1, urban -> served drain, not a building.
+    const road = cell(surface, kRoad);
+    expect(road.infil).toBeCloseTo(0.3 * MM_S, 12);
+    expect(road.rough).toBe(1);
+    expect(road.building).toBe(0);
+    expect(road.drain).toBeCloseTo(drain, 12);
+
+    // OSM water: no infiltration, roughness 1, NOT urban -> no drain.
+    const waterOsm = cell(surface, kWaterOsm);
+    expect(waterOsm.infil).toBe(0);
+    expect(waterOsm.rough).toBe(1);
+    expect(waterOsm.drain).toBe(0);
+    expect(waterOsm.building).toBe(0);
+
+    // Built-up land cover (lc=50): infil 0.5, roughness 1, urban -> served drain.
+    const builtUp = cell(surface, kBuiltUp);
+    expect(builtUp.infil).toBeCloseTo(0.5 * MM_S, 12);
+    expect(builtUp.rough).toBe(1);
+    expect(builtUp.drain).toBeCloseTo(drain, 12);
+    expect(builtUp.building).toBe(0);
+
+    // Water land cover (lc=80): same no-infiltration behaviour as OSM water.
+    const waterLc = cell(surface, kWaterLc);
+    expect(waterLc.infil).toBe(0);
+    expect(waterLc.rough).toBe(1);
+    expect(waterLc.drain).toBe(0);
+
+    // Cropland (lc=40): infil = soil * 0.6, roughness 0.4, not urban.
+    const cropland = cell(surface, kCropland);
+    expect(cropland.infil).toBeCloseTo(soilInfil * 0.6 * MM_S, 12);
+    expect(cropland.rough).toBeCloseTo(0.4, 6);
+    expect(cropland.drain).toBe(0);
+
+    // Bare (lc=60): infil = soil * 0.4, roughness 0.5, not urban.
+    const bare = cell(surface, kBare);
+    expect(bare.infil).toBeCloseTo(soilInfil * 0.4 * MM_S, 12);
+    expect(bare.rough).toBeCloseTo(0.5, 6);
+    expect(bare.drain).toBe(0);
+
+    // Tree (lc=10): treated like green -> full soil infiltration, roughness 0.22.
+    const tree = cell(surface, kTree);
+    expect(tree.infil).toBeCloseTo(soilInfil * MM_S, 12);
+    expect(tree.rough).toBeCloseTo(0.22, 6);
+    expect(tree.drain).toBe(0);
+  });
+
+  it('building flag wins over road/water and stamps the building infil', () => {
+    const hm = makeHeightmap();
+    const land: LandClass = new Uint8Array(N * N).fill(LC_GRASSLAND);
+    const osm = emptyOsm();
+    const k = idx(3, 4);
+
+    // Same cell is tagged building AND road AND water: building must win.
+    osm.building[k] = 1;
+    osm.road[k] = 1;
+    osm.water[k] = 1;
+
+    const surface = computeSurfaceFields(hm, land, osm, withParams({}));
+    const c = cell(surface, k);
+    expect(c.building).toBe(1);
+    expect(c.infil).toBeCloseTo(0.2 * MM_S, 12); // building infil, not road(0.3)/water(0)
+    expect(c.rough).toBe(1);
+  });
+
+  it('scales soil infiltration to a quarter when groundwater is high', () => {
+    const hm = makeHeightmap();
+    const land: LandClass = new Uint8Array(N * N).fill(LC_GRASSLAND);
+
+    const dry = computeSurfaceFields(
+      hm, land, null, withParams({ groundwaterHigh: false, infiltrationMmPerHr: 12 }),
+    );
+    const wet = computeSurfaceFields(
+      hm, land, null, withParams({ groundwaterHigh: true, infiltrationMmPerHr: 12 }),
+    );
+
+    const k = idx(0, 0);
+    expect(dry[k * 4]).toBeCloseTo(12 * MM_S, 12);
+    expect(wet[k * 4]).toBeCloseTo(12 * 0.25 * MM_S, 12);
+    expect(wet[k * 4]).toBeCloseTo(dry[k * 4] * 0.25, 12);
+  });
+
+  it('drainage tracks the storm-sewer capacity param for served urban cells', () => {
+    const hm = makeHeightmap();
+    const land: LandClass = new Uint8Array(N * N).fill(LC_BUILT_UP); // all urban
+    const osm = emptyOsm();
+
+    const low = computeSurfaceFields(hm, land, osm, withParams({ drainageCapacityMmPerHr: 5 }));
+    const high = computeSurfaceFields(hm, land, osm, withParams({ drainageCapacityMmPerHr: 20 }));
+
+    const k = idx(4, 4);
+    expect(low[k * 4 + 1]).toBeCloseTo(5 * MM_S, 12);
+    expect(high[k * 4 + 1]).toBeCloseTo(20 * MM_S, 12);
+    expect(high[k * 4 + 1]).toBeGreaterThan(low[k * 4 + 1]);
+  });
+
+  it('water cells never drain even when land cover marks them built-up-adjacent', () => {
+    const hm = makeHeightmap();
+    // Whole grid is water by land cover; nothing should get a storm sewer.
+    const land: LandClass = new Uint8Array(N * N).fill(LC_WATER);
+    const surface = computeSurfaceFields(hm, land, null, withParams({ drainageCapacityMmPerHr: 8 }));
+
+    for (let k = 0; k < N * N; k++) {
+      const c = cell(surface, k);
+      expect(c.infil).toBe(0);
+      expect(c.drain).toBe(0);
+    }
+  });
+
+  it('keeps this synthetic grid entirely outside the hard-coded no-drain zone', () => {
+    // Guards the assumption behind every "served drain" assertion above: the
+    // Paris-centred grid must be far from Музыкальный микрорайон's no-sewer disc.
+    const hm = makeHeightmap();
+    const NO_DRAIN_CENTER = { lat: 45.0762, lon: 38.9988 };
+    const NO_DRAIN_RADIUS_M = 1300;
+    const [mzx, mzy] = lonLatToLocalMeters(hm.center, NO_DRAIN_CENTER.lon, NO_DRAIN_CENTER.lat);
+    const half = SIZE_METERS / 2;
+    const step = SIZE_METERS / (N - 1);
+
+    for (let iy = 0; iy < N; iy++) {
+      const cy = -half + iy * step;
+      for (let ix = 0; ix < N; ix++) {
+        const cx = -half + ix * step;
+        const dist2 = (cx - mzx) ** 2 + (cy - mzy) ** 2;
+        expect(dist2).toBeGreaterThan(NO_DRAIN_RADIUS_M ** 2);
+      }
+    }
+  });
+});
