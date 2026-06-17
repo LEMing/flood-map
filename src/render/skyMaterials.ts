@@ -28,13 +28,20 @@ export function makeSkyGradient(stops: [string, string, string]): THREE.Texture 
   return tex;
 }
 
-export function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
+export interface HazeHandle {
+  mesh: THREE.Mesh;
+  /** Ground-haze strength, mutated from params — a typed handle, no cast needed. */
+  uHaze: THREE.IUniform<number>;
+}
+
+export function makeHaze(weather: WeatherUniformBlock): HazeHandle {
+  const uHaze: THREE.IUniform<number> = { value: 0.5 };
   const mat = new THREE.ShaderMaterial({
     uniforms: {
       uTime: weather.uTime,
       uStorm: weather.uStorm,
       uCloudDrift: weather.uCloudDrift,
-      uHaze: { value: 0.5 },
+      uHaze,
     },
     transparent: true,
     depthWrite: false,
@@ -68,7 +75,7 @@ export function makeHaze(weather: WeatherUniformBlock): THREE.Mesh {
   mesh.frustumCulled = false;
   mesh.renderOrder = -1;
   mesh.visible = false;
-  return mesh;
+  return { mesh, uHaze };
 }
 
 /**

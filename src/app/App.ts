@@ -121,6 +121,11 @@ export class App {
       refreshPanel: () => this.panel.refresh(),
       setStatsLocation: (label) => { this.stats.location = label; },
     });
+
+    // GPU context loss (driver reset, OOM): freeze, then rebuild the current
+    // world once the browser restores the context (a clean known-good state).
+    this.scene.onLost = () => { this.params.running = false; };
+    this.scene.onRestored = () => { this.worldBuilder.reloadCurrent(); };
   }
 
   /** Mobile-only: a hamburger toggle that opens/closes the controls drawer. */
@@ -312,6 +317,10 @@ export class App {
   private loop = (now: number): void => {
     const dt = Math.min(0.05, (now - this.lastTime) / 1000) || 0;
     this.lastTime = now;
+    if (this.scene.contextLost) { // GPU gone: skip stepping/rendering until restored
+      requestAnimationFrame(this.loop);
+      return;
+    }
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
     this.simDriver.tick(dt);

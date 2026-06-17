@@ -33,11 +33,17 @@ export class SceneManager {
   private readonly domeRT: THREE.WebGLRenderTarget;
   private readonly domeBlit: THREE.Mesh;
   private readonly haze: THREE.Mesh;
+  private readonly hazeUHaze: THREE.IUniform<number>;
   private readonly lightning: LightningSystem;
 
   private stormEnabled = false;
   private sceneSize = 2000;
   private cloudY = 600;
+
+  private contextIsLost = false;
+  /** Set by the app: pause on GPU context loss, rebuild the world on restore. */
+  onLost?: () => void;
+  onRestored?: () => void;
 
   readonly weather: WeatherUniformBlock = {
     uTime: { value: 0 },
@@ -103,7 +109,9 @@ export class SceneManager {
     this.domeBlit = makeDomeBlit(this.domeRT.texture);
     this.scene.add(this.domeBlit);
 
-    this.haze = makeHaze(this.weather);
+    const haze = makeHaze(this.weather);
+    this.haze = haze.mesh;
+    this.hazeUHaze = haze.uHaze;
     this.scene.add(this.haze);
 
     const ds = this.renderer.getDrawingBufferSize(new THREE.Vector2());
@@ -116,7 +124,25 @@ export class SceneManager {
     this.postFx = new PostFx(this.renderer, this.scene, this.camera);
 
     window.addEventListener('resize', this.onResize);
+    canvas.addEventListener('webglcontextlost', this.handleContextLost);
+    canvas.addEventListener('webglcontextrestored', this.handleContextRestored);
   }
+
+  /** True while the GPU context is lost; the app skips stepping + rendering. */
+  get contextLost(): boolean {
+    return this.contextIsLost;
+  }
+
+  private handleContextLost = (e: Event): void => {
+    e.preventDefault(); // tell the browser we intend to recover, so it fires 'restored'
+    this.contextIsLost = true;
+    this.onLost?.();
+  };
+
+  private handleContextRestored = (): void => {
+    this.contextIsLost = false;
+    this.onRestored?.();
+  };
 
   /** Update the post stack / atmosphere uniforms from params (idempotent). */
   applyPostParams(p: Params): void {
@@ -124,7 +150,7 @@ export class SceneManager {
     this.setRenderScale(p.renderScale);
     this.weather.uCloudShadow.value = p.cloudShadows;
     this.haze.visible = this.stormEnabled && p.groundHaze > 0.001;
-    (this.haze.material as THREE.ShaderMaterial).uniforms.uHaze.value = p.groundHaze;
+    this.hazeUHaze.value = p.groundHaze;
     this.postFx.applyParams(p);
   }
 
@@ -202,7 +228,7 @@ export class SceneManager {
     // only used in clear weather; during a storm the dome covers it entirely.
     this.scene.background = on ? null : this.clearSky;
     this.domeBlit.visible = on;
-    this.haze.visible = on && (this.haze.material as THREE.ShaderMaterial).uniforms.uHaze.value > 0.001;
+    this.haze.visible = on && this.hazeUHaze.value > 0.001;
     this.hemi.intensity = on ? 0.72 : 1.0;
     this.hemi.color.set(on ? 0x9fb0c4 : 0xcfe3ff);
     this.sun.intensity = on ? 0.7 : 2.2;
@@ -315,5 +341,8 @@ export class SceneManager {
     this.sceneRT.dispose();
     this.sceneRT.depthTexture?.dispose();
     window.removeEventListener('resize', this.onResize);
+    const canvas = this.renderer.domElement;
+    canvas.removeEventListener('webglcontextlost', this.handleContextLost);
+    canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
   }
 }
