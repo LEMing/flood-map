@@ -1,6 +1,6 @@
 name: CI
 
-# Quality gate: lint + typecheck + test.
+# Quality gate: lint + typecheck + test + architecture (no circular deps, layer rules).
 # Runs on every PR and on push/merge to main and develop.
 on:
   pull_request:
@@ -27,3 +27,4 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
+      - run: npm run check-arch

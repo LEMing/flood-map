@@ -53,4 +53,16 @@ export default tseslint.config(
       },
     },
   },
+
+  // CommonJS config files (e.g. dependency-cruiser.config.cjs).
+  {
+    files: ['**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
 );
