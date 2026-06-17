@@ -168,9 +168,17 @@ function firstSupported(prefs: Iterable<string>): Lang | null {
 }
 
 function detectInitial(): Lang {
+  // No DOM (e.g. a Web Worker imports the catalog transitively): nothing to
+  // localize there, so don't touch window/localStorage — just default to English.
+  if (typeof window === 'undefined') return 'en';
   const fromUrl = new URLSearchParams(window.location.search).get('lang');
   if (isLang(fromUrl)) return fromUrl;
-  const saved = localStorage.getItem('lang');
+  let saved: string | null = null;
+  try {
+    saved = localStorage.getItem('lang');
+  } catch {
+    /* private mode */
+  }
   if (isLang(saved)) return saved;
   return firstSupported(navigator.languages ?? [navigator.language]) ?? 'en';
 }
