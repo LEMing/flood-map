@@ -120,6 +120,16 @@ export default tseslint.config(
     rules: { 'max-params': ['error', 5] },
   },
 
+  // WebGPU spike + its benchmark: isolated experimental code (separate /bench.html
+  // entry, never imported by the app). The TSL compute helpers read clearest with
+  // positional params and the bench builds long HTML rows — relax the structural
+  // budgets here rather than contort experimental code. (After the sim block so
+  // it wins for FloodSimulationGPU.ts.)
+  {
+    files: ['src/sim/FloodSimulationGPU.ts', 'src/bench/**/*.ts'],
+    rules: { 'max-params': 'off', 'max-len': 'off', complexity: 'off' },
+  },
+
   // Tests favour readability over the production budgets.
   {
     files: ['src/**/*.test.ts'],

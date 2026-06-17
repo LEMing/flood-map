@@ -9,7 +9,7 @@
 import * as THREE from 'three';
 import { DEFAULT_PARAMS, type Params } from '../config';
 import { FloodSimulation } from '../sim/FloodSimulation';
-import { FloodSimulationGPU } from '../sim/FloodSimulationGPU';
+import { FloodSimulationGPU, type GpuVariant } from '../sim/FloodSimulationGPU';
 import { type PipeGrid, type PipeParams, stepTwoPass } from '../sim/virtualPipes';
 
 const WARMUP = 16;
@@ -88,8 +88,10 @@ function runWebGL2(N: number, scene: Scene): { depth: Float32Array; ms: number }
   return { depth, ms };
 }
 
-async function runWebGPU(N: number, scene: Scene): Promise<{ depth: Float32Array; ms: number }> {
-  const sim = await FloodSimulationGPU.create(N, SIZE_METERS, scene.height, scene.water4);
+async function runWebGPU(
+  N: number, scene: Scene, variant: GpuVariant,
+): Promise<{ depth: Float32Array; ms: number }> {
+  const sim = await FloodSimulationGPU.create(N, SIZE_METERS, scene.height, scene.water4, variant);
   sim.setParams(PHYS);
   const scratch = new Float32Array(N * N);
   for (let s = 0; s < WARMUP; s++) sim.stepBatched();
@@ -117,6 +119,27 @@ function perStep(ms: number, steps: number): string {
   return `${ms.toFixed(1)} ms — ${(ms / steps).toFixed(3)} ms/step`;
 }
 
+interface GpuRun { html: string; depth?: Float32Array; ms?: number; }
+
+async function gpuVariant(
+  label: string, N: number, scene: Scene, variant: GpuVariant,
+  cpu: { depth: Float64Array } | null, webgl: { depth: Float32Array; ms: number } | null,
+): Promise<GpuRun> {
+  try {
+    const g = await runWebGPU(N, scene, variant);
+    let html = row(label, perStep(g.ms, STEPS));
+    if (cpu) html += row(`${label} vs CPU parity`, `max |Δ| = ${maxAbsDiff(g.depth, cpu.depth).toExponential(2)} m`);
+    if (webgl) {
+      html += row(`${label} vs WebGL2`,
+        `<b>${(webgl.ms / g.ms).toFixed(2)}×</b> · parity ${maxAbsDiff(g.depth, webgl.depth).toExponential(2)} m`);
+    }
+    return { html, depth: g.depth, ms: g.ms };
+  } catch (e) {
+    console.error(`[bench] ${label}`, e);
+    return { html: row(label, `<span class="err">failed: ${(e as Error).message}</span>`) };
+  }
+}
+
 async function benchOne(N: number): Promise<string> {
   const scene = buildScene(N);
   const cpu = N <= CPU_MAX_N ? runCPU(N, scene) : null;
@@ -129,22 +152,17 @@ async function benchOne(N: number): Promise<string> {
   try {
     webgl = runWebGL2(N, scene);
     html += row('WebGL2 (shipping)', perStep(webgl.ms, STEPS));
-    if (cpu) html += row('WebGL2 vs CPU parity', `max |Δdepth| = ${maxAbsDiff(webgl.depth, cpu.depth).toExponential(2)} m`);
+    if (cpu) html += row('WebGL2 vs CPU parity', `max |Δ| = ${maxAbsDiff(webgl.depth, cpu.depth).toExponential(2)} m`);
   } catch (e) {
     html += row('WebGL2', `<span class="err">failed: ${(e as Error).message}</span>`);
   }
 
-  try {
-    const gpu = await runWebGPU(N, scene);
-    html += row('WebGPU (TSL compute, batched)', perStep(gpu.ms, STEPS));
-    if (cpu) html += row('WebGPU vs CPU parity', `max |Δdepth| = ${maxAbsDiff(gpu.depth, cpu.depth).toExponential(2)} m`);
-    if (webgl) {
-      html += row('WebGPU vs WebGL2 speedup', `<b>${(webgl.ms / gpu.ms).toFixed(2)}×</b>`);
-      html += row('WebGPU vs WebGL2 parity', `max |Δdepth| = ${maxAbsDiff(gpu.depth, webgl.depth).toExponential(2)} m`);
-    }
-  } catch (e) {
-    html += row('WebGPU', `<span class="err">failed: ${(e as Error).message}</span>`);
-    console.error('[bench] WebGPU solver error', e);
+  const glob = await gpuVariant('WebGPU global', N, scene, 'global', cpu, webgl);
+  html += glob.html;
+  const tiled = await gpuVariant('WebGPU tiled', N, scene, 'tiled', cpu, webgl);
+  html += tiled.html;
+  if (glob.ms && tiled.ms) {
+    html += row('WebGPU tiled vs global', `<b>${(glob.ms / tiled.ms).toFixed(2)}×</b>`);
   }
 
   return `${html}</table>`;
