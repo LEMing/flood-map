@@ -1,11 +1,14 @@
-// Unit tests for the pure per-cell surface-field builder. `computeSurfaceFields`
-// is the only export that does no I/O (buildSurface fetches land cover + OSM over
-// the network), so we test it in isolation with tiny hand-built rasters and assert
-// the exact infiltration / drainage / roughness / building-flag values the
-// classification rules in surface.ts are meant to produce.
+// Unit tests for the pure surface-field logic in surface.ts. Three functions are
+// exercised, none of which touch the network/DOM/WebGL (buildSurface, which fetches
+// land cover + OSM, is left to integration tests):
+//   - classifyInfilRoughness: the land-cover/OSM -> infiltration/roughness branch table
+//   - computeSurfaceFields:    packs the per-cell RGBA32F surface texture
+//   - burnHeights:             mutates the DEM (buildings +5 m, roads -0.15 m)
+// We test each in isolation with tiny hand-built rasters and assert the exact values
+// the classification rules in surface.ts are meant to produce.
 
 import { describe, it, expect } from 'vitest';
-import { computeSurfaceFields } from './surface';
+import { computeSurfaceFields, classifyInfilRoughness, burnHeights } from './surface';
 import type { Heightmap, LatLon } from './heightmap';
 import type { LandClass } from './landcover';
 import type { OsmRasters } from './osm';
@@ -278,5 +281,228 @@ describe('computeSurfaceFields', () => {
         expect(dist2).toBeGreaterThan(NO_DRAIN_RADIUS_M ** 2);
       }
     }
+  });
+});
+
+describe('classifyInfilRoughness', () => {
+  // soilInfil is the only "free" input (the rest are class flags / codes); pick a
+  // distinctive value so soil-scaled branches are unambiguous in the assertions.
+  const SOIL = 11;
+
+  it('building wins over every other flag and is impervious-ish + maximally rough', () => {
+    // Building set together with road, water, green and a built-up code: the first
+    // branch must short-circuit so none of the later branches can change the result.
+    expect(classifyInfilRoughness(true, true, true, true, LC_BUILT_UP, SOIL)).toEqual({
+      infil: 0.2,
+      rough: 1.0,
+    });
+  });
+
+  it('water (OSM flag or lc=80) has zero infiltration and roughness 1', () => {
+    expect(classifyInfilRoughness(false, false, true, false, LC_GRASSLAND, SOIL)).toEqual({
+      infil: 0.0,
+      rough: 1.0,
+    });
+    // Same outcome via the land-cover water code, with no OSM water flag.
+    expect(classifyInfilRoughness(false, false, false, false, LC_WATER, SOIL)).toEqual({
+      infil: 0.0,
+      rough: 1.0,
+    });
+  });
+
+  it('water outranks road and green (checked before them)', () => {
+    expect(classifyInfilRoughness(false, true, true, true, LC_GRASSLAND, SOIL)).toEqual({
+      infil: 0.0,
+      rough: 1.0,
+    });
+  });
+
+  it('road (when not a building) is slightly pervious and maximally rough', () => {
+    expect(classifyInfilRoughness(false, true, false, false, LC_GRASSLAND, SOIL)).toEqual({
+      infil: 0.3,
+      rough: 1.0,
+    });
+  });
+
+  it.each([
+    ['grassland', LC_GRASSLAND],
+    ['tree', LC_TREE],
+    ['shrub', 20],
+    ['wetland', 90],
+    ['moss', 100],
+  ])('pervious vegetation code %s passes full soil infiltration with low roughness', (_label, lc) => {
+    expect(classifyInfilRoughness(false, false, false, false, lc, SOIL)).toEqual({
+      infil: SOIL,
+      rough: 0.22,
+    });
+  });
+
+  it('the OSM green flag forces the pervious branch regardless of land-cover code', () => {
+    // lc=60 (bare) would otherwise give soil*0.4 / rough 0.5; the green flag overrides it.
+    expect(classifyInfilRoughness(false, false, false, true, LC_BARE, SOIL)).toEqual({
+      infil: SOIL,
+      rough: 0.22,
+    });
+  });
+
+  it('cropland (lc=40) infiltrates at 60% of soil with medium roughness', () => {
+    expect(classifyInfilRoughness(false, false, false, false, LC_CROPLAND, SOIL)).toEqual({
+      infil: SOIL * 0.6,
+      rough: 0.4,
+    });
+  });
+
+  it('built-up land cover (lc=50) is impervious with roughness 1', () => {
+    expect(classifyInfilRoughness(false, false, false, false, LC_BUILT_UP, SOIL)).toEqual({
+      infil: 0.5,
+      rough: 1.0,
+    });
+  });
+
+  it('bare ground (lc=60) infiltrates at 40% of soil with roughness 0.5', () => {
+    expect(classifyInfilRoughness(false, false, false, false, LC_BARE, SOIL)).toEqual({
+      infil: SOIL * 0.4,
+      rough: 0.5,
+    });
+  });
+
+  it.each([
+    ['snow/ice', 70],
+    ['mangrove', 95],
+    ['nodata/zero', 0],
+    ['unknown high code', 255],
+  ])('unhandled land-cover code %s falls through to the default (soil*0.5, rough 0.4)', (_label, lc) => {
+    expect(classifyInfilRoughness(false, false, false, false, lc, SOIL)).toEqual({
+      infil: SOIL * 0.5,
+      rough: 0.4,
+    });
+  });
+
+  it('infiltration scales linearly with soilInfil on every soil-dependent branch', () => {
+    const soilBranches: Array<[number, number]> = [
+      [LC_GRASSLAND, 1.0], // pervious vegetation -> soil * 1
+      [LC_CROPLAND, 0.6],
+      [LC_BARE, 0.4],
+      [70, 0.5], // default branch
+    ];
+    for (const [lc, factor] of soilBranches) {
+      const a = classifyInfilRoughness(false, false, false, false, lc, 4);
+      const b = classifyInfilRoughness(false, false, false, false, lc, 40);
+      expect(a.infil).toBeCloseTo(4 * factor, 12);
+      expect(b.infil).toBeCloseTo(40 * factor, 12);
+      expect(b.infil).toBeCloseTo(a.infil * 10, 12); // 10x soil -> 10x infil
+    }
+  });
+
+  it('default branch is reachable through computeSurfaceFields with an exotic land code', () => {
+    const hm = makeHeightmap();
+    const land: LandClass = new Uint8Array(N * N).fill(70); // snow/ice: no explicit rule
+    const params = withParams({ groundwaterHigh: false, infiltrationMmPerHr: 10 });
+    const surface = computeSurfaceFields(hm, land, null, params);
+    const c = cell(surface, idx(2, 3));
+    expect(c.infil).toBeCloseTo(10 * 0.5 * MM_S, 12); // soil * 0.5 from the default branch
+    expect(c.rough).toBeCloseTo(0.4, 6);
+    expect(c.drain).toBe(0); // snow/ice is not urban
+    expect(c.building).toBe(0);
+  });
+});
+
+describe('burnHeights', () => {
+  const BUILDING_RAISE_M = 5;
+  const ROAD_LOWER_M = 0.15;
+
+  function flatHeightmap(value: number): Heightmap {
+    const hm = makeHeightmap();
+    hm.data = new Float32Array(N * N).fill(value);
+    return hm;
+  }
+
+  it('raises building cells by exactly +5 m and leaves bare ground untouched', () => {
+    const hm = flatHeightmap(100);
+    const osm = emptyOsm();
+    const kBuilding = idx(2, 2);
+    const kBare = idx(5, 5);
+    osm.building[kBuilding] = 1;
+
+    burnHeights(hm, osm, true);
+
+    expect(hm.data[kBuilding]).toBeCloseTo(100 + BUILDING_RAISE_M, 5);
+    expect(hm.data[kBare]).toBe(100); // unaffected
+  });
+
+  it('lowers road cells by exactly -0.15 m (curb-to-crown channel)', () => {
+    const hm = flatHeightmap(50);
+    const osm = emptyOsm();
+    const kRoad = idx(3, 4);
+    osm.road[kRoad] = 1;
+
+    burnHeights(hm, osm, true);
+
+    expect(hm.data[kRoad]).toBeCloseTo(50 - ROAD_LOWER_M, 5);
+  });
+
+  it('building takes precedence over road on the same cell (else-if, no double burn)', () => {
+    const hm = flatHeightmap(0);
+    const osm = emptyOsm();
+    const k = idx(1, 1);
+    osm.building[k] = 1;
+    osm.road[k] = 1;
+
+    burnHeights(hm, osm, true);
+
+    // Only the building raise applies; the road lowering is in the else branch.
+    expect(hm.data[k]).toBeCloseTo(BUILDING_RAISE_M, 5);
+  });
+
+  it('with burnBuildings=false, buildings are skipped but a road under them still lowers', () => {
+    const hm = flatHeightmap(10);
+    const osm = emptyOsm();
+    const kBuildingOnly = idx(2, 0);
+    const kBuildingAndRoad = idx(4, 4);
+    osm.building[kBuildingOnly] = 1;
+    osm.building[kBuildingAndRoad] = 1;
+    osm.road[kBuildingAndRoad] = 1;
+
+    burnHeights(hm, osm, false);
+
+    // Building-only cell: the building branch is gated off, no road -> unchanged.
+    expect(hm.data[kBuildingOnly]).toBe(10);
+    // Building+road cell: building gated off means the else-if road branch fires.
+    expect(hm.data[kBuildingAndRoad]).toBeCloseTo(10 - ROAD_LOWER_M, 5);
+  });
+
+  it('mutates in place and only touches flagged cells', () => {
+    const base = 7;
+    const hm = flatHeightmap(base);
+    const osm = emptyOsm();
+    const kB = idx(0, 0);
+    const kR = idx(7, 7);
+    osm.building[kB] = 1;
+    osm.road[kR] = 1;
+
+    const returned = burnHeights(hm, osm, true);
+    expect(returned).toBeUndefined(); // mutates, returns nothing
+
+    let changed = 0;
+    for (let k = 0; k < N * N; k++) {
+      if (hm.data[k] !== base) changed++;
+    }
+    expect(changed).toBe(2); // exactly the two flagged cells
+  });
+
+  it('is additive: total elevation change equals raises minus lowerings', () => {
+    const hm = flatHeightmap(0);
+    const osm = emptyOsm();
+    osm.building[idx(0, 0)] = 1;
+    osm.building[idx(1, 0)] = 1; // two buildings -> +2*5
+    osm.road[idx(2, 0)] = 1;
+    osm.road[idx(3, 0)] = 1;
+    osm.road[idx(4, 0)] = 1; // three roads -> -3*0.15
+
+    burnHeights(hm, osm, true);
+
+    let sum = 0;
+    for (let k = 0; k < N * N; k++) sum += hm.data[k];
+    expect(sum).toBeCloseTo(2 * BUILDING_RAISE_M - 3 * ROAD_LOWER_M, 4);
   });
 });

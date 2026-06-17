@@ -25,7 +25,7 @@ export interface SurfaceResult {
   counts: { buildings: number; roads: number };
 }
 
-function classifyInfilRoughness(
+export function classifyInfilRoughness(
   building: boolean, road: boolean, water: boolean, green: boolean, lc: number, soilInfil: number,
 ): { infil: number; rough: number } {
   if (building) return { infil: 0.2, rough: 1.0 };
@@ -78,7 +78,7 @@ export function computeSurfaceFields(
   return surface;
 }
 
-function burnHeights(hm: Heightmap, osm: OsmRasters, burnBuildings: boolean): void {
+export function burnHeights(hm: Heightmap, osm: OsmRasters, burnBuildings: boolean): void {
   for (let k = 0; k < hm.N * hm.N; k++) {
     if (burnBuildings && osm.building[k]) hm.data[k] += BUILDING_RAISE_M;
     else if (osm.road[k]) hm.data[k] -= ROAD_LOWER_M;

@@ -26,7 +26,7 @@ export interface Crust1Cell {
 
 let dataPromise: Promise<{ ocean: Uint8Array; bnds: Int16Array } | null> | null = null;
 
-function parse(buf: ArrayBuffer): { ocean: Uint8Array; bnds: Int16Array } | null {
+export function parse(buf: ArrayBuffer): { ocean: Uint8Array; bnds: Int16Array } | null {
   const magic = new TextDecoder().decode(new Uint8Array(buf, 0, 4));
   if (magic !== 'C1B0') return null;
   const ocean = new Uint8Array(buf, HEADER, CELLS);
@@ -54,18 +54,17 @@ function readCell(d: { ocean: Uint8Array; bnds: Int16Array }, cell: number): Cru
 }
 
 /**
- * Look up the crustal cell for a coordinate. CRUST1.0's 1° cells are ~110 km, so
+ * Pure cell lookup over already-parsed data. CRUST1.0's 1° cells are ~110 km, so
  * a coastal cell centre can fall in the sea (or vice versa); pass `want` and we
  * snap to the nearest cell of that type so a coastal city gets continental crust
- * (and the structure under an offshore point stays oceanic). Null until loaded.
+ * (and the structure under an offshore point stays oceanic).
  */
-export async function getCrust1Cell(
+export function lookupCell(
+  d: { ocean: Uint8Array; bnds: Int16Array },
   lat: number,
   lon: number,
   want?: 'land' | 'ocean',
-): Promise<Crust1Cell | null> {
-  const d = await loadCrust1();
-  if (!d) return null;
+): Crust1Cell {
   const lonW = ((((lon + 180) % 360) + 360) % 360) - 180;
   const row0 = Math.min(ROWS - 1, Math.max(0, Math.floor(89.5 - lat)));
   const col0 = Math.floor(lonW + 179.5);
@@ -87,4 +86,18 @@ export async function getCrust1Cell(
     }
   }
   return base;
+}
+
+/**
+ * Look up the crustal cell for a coordinate. Loads the bundled model, then
+ * defers to {@link lookupCell} for the pure lookup. Null until loaded.
+ */
+export async function getCrust1Cell(
+  lat: number,
+  lon: number,
+  want?: 'land' | 'ocean',
+): Promise<Crust1Cell | null> {
+  const d = await loadCrust1();
+  if (!d) return null;
+  return lookupCell(d, lat, lon, want);
 }

@@ -1,0 +1,1183 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for src/geo/data/regionalMarineColumns.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/geo/data</a> regionalMarineColumns.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>1/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/0</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>1/1</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a>
+<a name='L272'></a><a href='#L272'>272</a>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a>
+<a name='L275'></a><a href='#L275'>275</a>
+<a name='L276'></a><a href='#L276'>276</a>
+<a name='L277'></a><a href='#L277'>277</a>
+<a name='L278'></a><a href='#L278'>278</a>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a>
+<a name='L288'></a><a href='#L288'>288</a>
+<a name='L289'></a><a href='#L289'>289</a>
+<a name='L290'></a><a href='#L290'>290</a>
+<a name='L291'></a><a href='#L291'>291</a>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// AUTO-GENERATED by scripts/buildRegionalMarine.mjs — do not edit by hand.
+// Published sub-seabed stratigraphy for major seas and populated continental
+// shelves, used as an override to the coarse global CRUST1.0 marine template.
+// Depths are metres BELOW THE SEABED. Layer names are international scientific
+// nomenclature. Sorted smallest-bbox first so a point-in-box lookup picks the
+// most specific sea.
+&nbsp;
+import type { RegionalColumn } from './regionalColumns';
+&nbsp;
+export const REGIONAL_MARINE_COLUMNS: RegionalColumn[] = [
+  { name: 'Tokyo Bay &amp; Sagami', bbox: [34.6, 35.7, 139.4, 140.4], layers: [
+    { name: 'Holocene soft marine clay (Yurakucho/Nanagochi Formation)', topM: 0, botM: 30, hex: 0x5a6b5f },
+    { name: 'Pleistocene Shimosa Group (shallow-marine sand and silt)', topM: 30, botM: 550, hex: 0x9aa37c },
+    { name: 'Plio-Pleistocene Kazusa Group (forearc-basin turbidite siltstone and sandstone)', topM: 550, botM: 2800, hex: 0x8a8f72 },
+    { name: 'Pliocene-Miocene Miura Group (deep-marine mudstone with tuff)', topM: 2800, botM: 5200, hex: 0x6f7468 },
+    { name: 'Pre-Neogene accretionary basement (Mesozoic-Paleogene metasedimentary rock)', topM: 5200, botM: 11000, hex: 0x55534e },
+    { name: 'Thinned continental crystalline crust (Honshu arc basement)', topM: 11000, botM: 30000, hex: 0x454049 },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 40000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Sea of Marmara', bbox: [40.3, 41.1, 26.6, 30], layers: [
+    { name: 'Holocene marine mud (hemipelagic clay)', topM: 0, botM: 25, hex: 0x5a6b5f },
+    { name: 'Late Pleistocene lacustrine-deltaic muds and sands', topM: 25, botM: 350, hex: 0x7a8268 },
+    { name: 'Plio-Pleistocene basin fill (turbidites and deltaic sands)', topM: 350, botM: 2600, hex: 0xc2a86b },
+    { name: 'Pliocene fluvio-lacustrine clastics', topM: 2600, botM: 4200, hex: 0x9a8d6a },
+    { name: 'Miocene brackish-lacustrine deposits', topM: 4200, botM: 6000, hex: 0xb0a47a },
+    { name: 'Paleozoic-Mesozoic Istanbul/Sakarya Zone continental crystalline basement', topM: 6000, botM: 27000, hex: 0x6a625a },
+    { name: 'Upper mantle (below Moho)', topM: 27000, botM: 40000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Sea of Azov', bbox: [45, 47.3, 34.8, 39.5], layers: [
+    { name: 'Holocene marine mud (New-Azov beds)', topM: 0, botM: 3, hex: 0x5a6b5f },
+    { name: 'Upper Quaternary silt and sand (Don-Kuban terrigenous)', topM: 3, botM: 90, hex: 0x8a8c6f },
+    { name: 'Lower Quaternary - Pliocene clay and sand (Kuyalnician-Akchagylian)', topM: 90, botM: 600, hex: 0x7d7a55 },
+    { name: 'Upper Miocene Pontian-Meotian-Sarmatian clay, marl and sand', topM: 600, botM: 2200, hex: 0x9a9277 },
+    { name: 'Oligocene-Lower Miocene Maikop Group (organic-rich mudstone)', topM: 2200, botM: 4500, hex: 0x4f5247 },
+    { name: 'Mesozoic-Eocene carbonate and clastic platform cover (Scythian)', topM: 4500, botM: 9000, hex: 0xd4d6d0 },
+    { name: 'Upper Palaeozoic crystalline basement (Scythian Platform)', topM: 9000, botM: 20000, hex: 0x6e6a72 },
+    { name: 'Lower continental crust (mafic granulite)', topM: 20000, botM: 38000, hex: 0x4a4750 },
+    { name: 'Upper mantle (below Moho)', topM: 38000, botM: 50000, hex: 0x2e2a22 },
+  ] },
+  { name: 'California Borderland', bbox: [32, 35, -121, -117], layers: [
+    { name: 'Holocene hemipelagic mud and turbidites', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Pliocene-Pleistocene basin mudstone and siltstone (Pico / San Pedro equiv.)', topM: 120, botM: 900, hex: 0x6b7268 },
+    { name: 'Upper Miocene-Pliocene Sisquoc Formation (diatomaceous mudstone)', topM: 900, botM: 1700, hex: 0xaeb89a },
+    { name: 'Middle-Upper Miocene Monterey Formation (siliceous diatomaceous mudstone)', topM: 1700, botM: 3000, hex: 0xb8c0a0 },
+    { name: 'Lower-Middle Miocene Topanga / Rincon syn-rift volcaniclastics and mudstone', topM: 3000, botM: 4200, hex: 0x8a7d63 },
+    { name: 'Catalina Schist basement (Franciscan-type metamorphic)', topM: 4200, botM: 9000, hex: 0x4a4f52 },
+    { name: 'Transitional continental crystalline crust (thinned, lower crust)', topM: 9000, botM: 24000, hex: 0x55504a },
+    { name: 'Upper mantle (below Moho)', topM: 24000, botM: 34000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Black Sea — NW shelf', bbox: [43.8, 46.7, 29, 33.5], layers: [
+    { name: 'Holocene sapropelic mud and coccolith ooze', topM: 0, botM: 40, hex: 0x5a6b5f },
+    { name: 'Neoeuxinian deltaic sands and muds (Danube/Dnieper paleo-delta)', topM: 40, botM: 350, hex: 0xc2a86b },
+    { name: 'Plio-Pleistocene clastic sequence', topM: 350, botM: 1200, hex: 0x8f8b6e },
+    { name: 'Pontian-Maeotian-Sarmatian (Neogene) carbonate-clastic series', topM: 1200, botM: 3000, hex: 0xd4d6d0 },
+    { name: 'Maikop Group (Oligocene-Lower Miocene organic-rich clays)', topM: 3000, botM: 6500, hex: 0x6b6258 },
+    { name: 'Pre-Maikop Mesozoic-Paleogene sedimentary cover', topM: 6500, botM: 11000, hex: 0x9a8f7a },
+    { name: 'Thinned continental crystalline basement', topM: 11000, botM: 36000, hex: 0x4a4640 },
+    { name: 'Upper mantle (below Moho)', topM: 36000, botM: 50000, hex: 0x2e2a22 },
+  ] },
+  { name: 'US Atlantic margin', bbox: [37, 41, -75, -69], layers: [
+    { name: 'Holocene shelf sand and silty mud', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Pleistocene glacioeustatic shelf sands and gravels', topM: 35, botM: 320, hex: 0xc2a86b },
+    { name: 'Neogene–Paleogene shelf wedge (Miocene siliciclastics, glauconitic sands)', topM: 320, botM: 1900, hex: 0x8a8f6e },
+    { name: 'Upper Cretaceous–Paleocene clastic and carbonate-rich strata (Potomac/Bass River equivalents)', topM: 1900, botM: 4200, hex: 0xb7a878 },
+    { name: 'Lower Cretaceous–Upper Jurassic prograding clastic wedge (Potomac Group / Logan Canyon equivalents)', topM: 4200, botM: 8000, hex: 0xa98e5c },
+    { name: 'Middle–Lower Jurassic carbonate platform and shelf-edge reef (CO-1 / Great Stone Dome carbonates)', topM: 8000, botM: 11500, hex: 0xd4d6d0 },
+    { name: 'Lower Jurassic–Upper Triassic Argo evaporite (salt) and synrift redbeds (Newark Supergroup equivalents)', topM: 11500, botM: 13800, hex: 0xe8dcd0 },
+    { name: 'Thinned continental crystalline basement (Paleozoic metamorphic/igneous, transitional crust)', topM: 13800, botM: 30000, hex: 0x53504a },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Aegean Sea', bbox: [35, 40.5, 22.5, 27.5], layers: [
+    { name: 'Holocene hemipelagic mud (incl. sapropel S1)', topM: 0, botM: 25, hex: 0x5a6b5f },
+    { name: 'Upper Quaternary marl and turbidite sands', topM: 25, botM: 320, hex: 0x6b7468 },
+    { name: 'Lower Quaternary–Pliocene basin marls and clays', topM: 320, botM: 1150, hex: 0x8f8a76 },
+    { name: 'Messinian evaporites (gypsum–halite, Lago-Mare)', topM: 1150, botM: 1550, hex: 0xe8dcd0 },
+    { name: 'Pre-Messinian Miocene volcaniclastic and clastic series', topM: 1550, botM: 3200, hex: 0x9a8f6a },
+    { name: 'Hellenide carbonate–flysch cover (Tripolitza/Pindos)', topM: 3200, botM: 6500, hex: 0xd4d6d0 },
+    { name: 'Thinned continental crystalline basement (Cycladic/Attico-Cycladic)', topM: 6500, botM: 25000, hex: 0x5b5048 },
+    { name: 'Upper mantle (below Moho)', topM: 25000, botM: 33000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Black Sea — deep basin', bbox: [42.2, 44.9, 30, 40.5], layers: [
+    { name: 'Holocene coccolith ooze (Emiliania huxleyi marl, Unit 1)', topM: 0, botM: 0.5, hex: 0xd4d6d0 },
+    { name: 'Holocene sapropel (organic-rich mud, Unit 2)', topM: 0.5, botM: 1.2, hex: 0x4a4a40 },
+    { name: 'Neoeuxinian terrigenous mud (Late Pleistocene lacustrine clays)', topM: 1.2, botM: 120, hex: 0x5a6b5f },
+    { name: 'Pliocene–Quaternary terrigenous sequence (turbidites &amp; hemipelagic clays)', topM: 120, botM: 2000, hex: 0x6b6e63 },
+    { name: 'Pontian–Miocene clastics (post-Maikop sands &amp; clays)', topM: 2000, botM: 4000, hex: 0x7a6f55 },
+    { name: 'Maikop Group (Oligocene–Lower Miocene organic-rich clays; gas/hydrate-bearing)', topM: 4000, botM: 11000, hex: 0x3f4640 },
+    { name: 'Eocene–Cretaceous volcanosedimentary basement (rift-fill, top of consolidated crust)', topM: 11000, botM: 14000, hex: 0x514c46 },
+    { name: 'Thinned continental crystalline basement (transitional crust)', topM: 14000, botM: 21000, hex: 0x564f5a },
+    { name: 'Upper mantle (below Moho)', topM: 21000, botM: 33000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Bay of Biscay', bbox: [43.5, 48, -8, -1], layers: [
+    { name: 'Holocene hemipelagic mud and distal turbidites', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Plio-Quaternary turbidite sands (Cap-Ferret / Armorican fan)', topM: 120, botM: 700, hex: 0xc2a86b },
+    { name: 'Eocene-Oligocene calcareous nannofossil ooze and marl', topM: 700, botM: 1600, hex: 0xd4d6d0 },
+    { name: 'Paleocene-Upper Cretaceous (Campanian-Maastrichtian) pelagic chalk', topM: 1600, botM: 2600, hex: 0xcdd0c8 },
+    { name: 'Aptian-Albian syn-rift slump unit (seismic \'3B layer\')', topM: 2600, botM: 3300, hex: 0x8f8a72 },
+    { name: 'Oceanic crust layer 2 (basalt)', topM: 3300, botM: 5300, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 5300, botM: 10500, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 10500, botM: 13500, hex: 0x2e2a22 },
+  ] },
+  { name: 'Gulf of Guinea &amp; Niger Delta', bbox: [1, 6.5, 2.5, 9], layers: [
+    { name: 'Holocene hemipelagic deltaic mud', topM: 0, botM: 5, hex: 0x5a6b5f },
+    { name: 'Benin Formation (continental sands, Miocene–Recent)', topM: 5, botM: 1500, hex: 0xc2a86b },
+    { name: 'Agbada Formation (paralic delta-front sandstone–shale)', topM: 1500, botM: 5000, hex: 0x9a8f6b },
+    { name: 'Akata Formation (overpressured marine prodelta shale)', topM: 5000, botM: 11000, hex: 0x4a4f4a },
+    { name: 'Cretaceous pre-/syn-rift clastics (transitional sequence)', topM: 11000, botM: 13500, hex: 0x7a6f5a },
+    { name: 'Stretched continental crystalline basement', topM: 13500, botM: 28000, hex: 0x5a5560 },
+    { name: 'Upper mantle (below Moho)', topM: 28000, botM: 36000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Adriatic Sea', bbox: [40, 45.8, 12, 19.8], layers: [
+    { name: 'Holocene prodelta mud (Po/Adriatic mud wedge)', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Late Pleistocene shelf sands and silts (post-LGM transgressive wedge)', topM: 35, botM: 220, hex: 0xc2a86b },
+    { name: 'Plio-Quaternary foredeep clays (Argille Azzurre Fm) and turbidites', topM: 220, botM: 5500, hex: 0x6b7468 },
+    { name: 'Messinian evaporites (Gessoso-Solfifera Fm gypsum) and clastics', topM: 5500, botM: 6300, hex: 0xe8dcd0 },
+    { name: 'Oligocene-Miocene pre-evaporitic marls and siliciclastics', topM: 6300, botM: 7800, hex: 0x9a9684 },
+    { name: 'Apulian carbonate platform (Cretaceous-Jurassic limestone and dolomite)', topM: 7800, botM: 14000, hex: 0xd4d6d0 },
+    { name: 'Adria continental crystalline basement', topM: 14000, botM: 31000, hex: 0x8a7d6b },
+    { name: 'Upper mantle (below Moho)', topM: 31000, botM: 41000, hex: 0x2e2a22 },
+  ] },
+  { name: 'English Channel &amp; Celtic Sea', bbox: [47.5, 51.5, -10, 2], layers: [
+    { name: 'Holocene marine mud and sandy gravel (Quaternary cover)', topM: 0, botM: 12, hex: 0x5a6b5f },
+    { name: 'Pleistocene shelf sands and gravels (Quaternary)', topM: 12, botM: 45, hex: 0x8a8470 },
+    { name: 'Palaeogene mudstone and sandstone (Tertiary basin fill)', topM: 45, botM: 320, hex: 0x7d7a66 },
+    { name: 'Upper Cretaceous Chalk Group', topM: 320, botM: 780, hex: 0xd4d6d0 },
+    { name: 'Lower Cretaceous to Jurassic sandstone, limestone and mudstone', topM: 780, botM: 2200, hex: 0xb9a878 },
+    { name: 'Permo-Triassic red beds (Sherwood Sandstone) with Triassic evaporites', topM: 2200, botM: 5800, hex: 0xc2a86b },
+    { name: 'Variscan crystalline continental basement (thinned)', topM: 5800, botM: 28000, hex: 0x5c5650 },
+    { name: 'Upper mantle (below Moho)', topM: 28000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Gulf of Thailand', bbox: [6, 13.5, 99, 105.5], layers: [
+    { name: 'Holocene marine mud (shelf/deltaic clay)', topM: 0, botM: 25, hex: 0x5a6b5f },
+    { name: 'Pleistocene shelf sand and clay (Quaternary deltaic)', topM: 25, botM: 600, hex: 0xc2a86b },
+    { name: 'Pliocene fluvio-deltaic clastics (post-rift sag)', topM: 600, botM: 2000, hex: 0x8a8f7a },
+    { name: 'Miocene fluvio-deltaic sandstone-shale (Pattani Group reservoir sequence)', topM: 2000, botM: 5000, hex: 0xb8a878 },
+    { name: 'Oligocene-Lower Miocene syn-rift lacustrine shale and fluvial sandstone (source-rock sequence)', topM: 5000, botM: 8000, hex: 0x6b6258 },
+    { name: 'Pre-Tertiary basement (Mesozoic-Paleozoic granitic/metamorphic Sundaland basement)', topM: 8000, botM: 14000, hex: 0x7a6f66 },
+    { name: 'Thinned continental crystalline crust (rifted lower crust)', topM: 14000, botM: 27000, hex: 0x565258 },
+    { name: 'Upper mantle (below Moho)', topM: 27000, botM: 40000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Persian Gulf', bbox: [24, 30.5, 48, 57], layers: [
+    { name: 'Holocene carbonate mud and ooid sand (sabkha-influenced)', topM: 0, botM: 40, hex: 0x5a6b5f },
+    { name: 'Plio-Pleistocene Bakhtyari-Aghajari clastics (Zagros foreland molasse)', topM: 40, botM: 1200, hex: 0xc2a86b },
+    { name: 'Miocene Fars Group with Gachsaran Formation evaporites', topM: 1200, botM: 3000, hex: 0xe8dcd0 },
+    { name: 'Oligo-Miocene Asmari and Eocene Pabdeh-Jahrum carbonates', topM: 3000, botM: 4500, hex: 0xd4d6d0 },
+    { name: 'Cretaceous-Jurassic Bangestan and Khami Group carbonates', topM: 4500, botM: 8000, hex: 0xcdd0c8 },
+    { name: 'Infracambrian Hormuz Series salt', topM: 8000, botM: 10000, hex: 0xe3d8cf },
+    { name: 'Precambrian Arabian crystalline continental basement', topM: 10000, botM: 40000, hex: 0x6a5f52 },
+    { name: 'Upper mantle (below Moho)', topM: 40000, botM: 50000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Gulf of California', bbox: [23, 31.5, -114.5, -107.5], layers: [
+    { name: 'Holocene hemipelagic diatomaceous mud', topM: 0, botM: 45, hex: 0x5a6b5f },
+    { name: 'Quaternary laminated diatom ooze and terrigenous turbidites', topM: 45, botM: 350, hex: 0xb8c0a0 },
+    { name: 'Pliocene-Pleistocene hemipelagic mud and turbidites (organic-rich)', topM: 350, botM: 900, hex: 0x6b6f5a },
+    { name: 'Diagenetic dolomitic mudstone and indurated turbidites', topM: 900, botM: 1450, hex: 0xa8a59a },
+    { name: 'Sill-intruded and contact-metamorphosed sediment with dolerite sills', topM: 1450, botM: 1700, hex: 0x4a4842 },
+    { name: 'Oceanic crust layer 2 (basalt)', topM: 1700, botM: 3700, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 3700, botM: 7800, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 7800, botM: 12000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Santos &amp; Campos Basins', bbox: [-28, -21, -48, -39], layers: [
+    { name: 'Holocene-Quaternary hemipelagic mud (drift)', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Neogene-Paleogene marine marl and sandstone (post-rift drift sequence, Marambaia Fm)', topM: 120, botM: 3600, hex: 0x9aa39a },
+    { name: 'Albian-Cenomanian carbonate platform (Guaruja/Quissama Fm)', topM: 3600, botM: 4900, hex: 0xd4d6d0 },
+    { name: 'Aptian autochthonous salt (Ariri Fm evaporites)', topM: 4900, botM: 6900, hex: 0xe8dcd0 },
+    { name: 'Pre-salt lacustrine microbial carbonates and coquinas (Barra Velha / Itapema Fm)', topM: 6900, botM: 8400, hex: 0xcfc8b0 },
+    { name: 'Syn-rift volcaniclastics and basalt (Camboriu Fm)', topM: 8400, botM: 9600, hex: 0x2f3330 },
+    { name: 'Thinned continental crystalline basement (stretched Precambrian crust)', topM: 9600, botM: 22000, hex: 0x6e6258 },
+    { name: 'Upper mantle (below Moho)', topM: 22000, botM: 34000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Arabian Sea &amp; Indus Fan', bbox: [17, 25, 60, 68], layers: [
+    { name: 'Holocene hemipelagic mud with distal turbidites', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Pleistocene Indus Fan turbidite sand and mud', topM: 120, botM: 1400, hex: 0xc2a86b },
+    { name: 'Pliocene-Upper Miocene Indus Fan channel-levee complex', topM: 1400, botM: 2600, hex: 0x8a8a6a },
+    { name: 'Middle-Lower Miocene mass-transport and hemipelagic claystone', topM: 2600, botM: 3100, hex: 0x6b6b5a },
+    { name: 'Paleogene pre-fan pelagic nannofossil chalk and claystone', topM: 3100, botM: 3500, hex: 0xd4d6d0 },
+    { name: 'Oceanic crust layer 2 (basalt)', topM: 3500, botM: 5500, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 5500, botM: 10000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 10000, botM: 13000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Yellow Sea &amp; Bohai', bbox: [33, 41, 119, 127], layers: [
+    { name: 'Holocene mud (Yellow River / Huanghe delta clay-silt)', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Upper Pleistocene shelf sand and silt', topM: 35, botM: 320, hex: 0xc2a86b },
+    { name: 'Plio-Pleistocene Minghuazhen Formation (fluvial-lacustrine)', topM: 320, botM: 1700, hex: 0x8a8466 },
+    { name: 'Miocene Guantao Formation (fluvial sandstone)', topM: 1700, botM: 3200, hex: 0xb0935a },
+    { name: 'Oligocene Dongying Formation (lacustrine mudstone-sandstone)', topM: 3200, botM: 4600, hex: 0x6f6a52 },
+    { name: 'Eocene Shahejie &amp; Kongdian Formations (rift lacustrine source rock)', topM: 4600, botM: 7500, hex: 0x55503e },
+    { name: 'Mesozoic-Paleozoic platform cover (North China Craton carbonate-clastic)', topM: 7500, botM: 14000, hex: 0xd4d6d0 },
+    { name: 'Precambrian crystalline basement (thinned continental crust)', topM: 14000, botM: 31000, hex: 0x6a5f55 },
+    { name: 'Upper mantle (below Moho)', topM: 31000, botM: 41000, hex: 0x2e2a22 },
+  ] },
+  { name: 'East China Sea shelf', bbox: [25, 33.5, 120, 129], layers: [
+    { name: 'Holocene Changjiang (Yangtze) shelf mud', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Upper Pleistocene shelf sand and silt (transgressive-regressive sequences)', topM: 35, botM: 220, hex: 0xc2a86b },
+    { name: 'Lower-Middle Pleistocene Donghai Group (Quaternary deltaic mud and sand)', topM: 220, botM: 700, hex: 0x7a8478 },
+    { name: 'Pliocene Santon Formation (deltaic sandstone and mudstone, East China Sea Shelf Basin)', topM: 700, botM: 1600, hex: 0x9a8c6a },
+    { name: 'Miocene Liushui-Yuquan-Longjing formations (Xihu Sag deltaic clastics)', topM: 1600, botM: 3600, hex: 0x8a7d5a },
+    { name: 'Oligocene Huagang Formation (fluvio-deltaic sandstone and shale)', topM: 3600, botM: 5200, hex: 0xa08b5e },
+    { name: 'Eocene Pinghu Formation (coal-bearing deltaic and lacustrine clastics, Xihu Sag)', topM: 5200, botM: 7200, hex: 0x6f6048 },
+    { name: 'Mesozoic-Paleozoic folded basement (pre-rift continental sedimentary and metamorphic rocks)', topM: 7200, botM: 12000, hex: 0x655a4a },
+    { name: 'Thinned continental crystalline crust (granitic-gneissic basement)', topM: 12000, botM: 29000, hex: 0x7d6f63 },
+    { name: 'Upper mantle (below Moho)', topM: 29000, botM: 39000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Java Sea &amp; Sunda Shelf', bbox: [-7, 1, 105, 116], layers: [
+    { name: 'Holocene marine mud (soft hemipelagic clay-silt)', topM: 0, botM: 18, hex: 0x5a6b5f },
+    { name: 'Late Pleistocene shelf sand and palaeo-Sunda fluvial sand', topM: 18, botM: 140, hex: 0xc2a86b },
+    { name: 'Plio-Pleistocene shelf clastics and reefal carbonate (upper basin fill)', topM: 140, botM: 1200, hex: 0xd4d6d0 },
+    { name: 'Miocene Cibulakan / Parigi Formation carbonates and marls', topM: 1200, botM: 3000, hex: 0xcfd1c8 },
+    { name: 'Oligo-Miocene Talang Akar Formation deltaic sandstone and shale', topM: 3000, botM: 4600, hex: 0xb89a5e },
+    { name: 'Eocene-Oligocene Jatibarang syn-rift volcaniclastics and lacustrine shale', topM: 4600, botM: 6200, hex: 0x8a7a55 },
+    { name: 'Pre-Tertiary continental crystalline and metamorphic basement (Sundaland)', topM: 6200, botM: 30000, hex: 0x6b6258 },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Western Mediterranean', bbox: [36.5, 44, 0, 12], layers: [
+    { name: 'Holocene hemipelagic mud', topM: 0, botM: 30, hex: 0x5a6b5f },
+    { name: 'Plio-Quaternary turbidite and hemipelagic clays (Upper Pliocene-Pleistocene)', topM: 30, botM: 1500, hex: 0x6b7468 },
+    { name: 'Lower Pliocene marls and nannofossil oozes', topM: 1500, botM: 2200, hex: 0xc2bfa8 },
+    { name: 'Messinian Upper Evaporites (gypsum and marl)', topM: 2200, botM: 2500, hex: 0xd4d6d0 },
+    { name: 'Messinian Mobile Salt (halite, Messinian Salinity Crisis evaporites)', topM: 2500, botM: 3800, hex: 0xe8dcd0 },
+    { name: 'Pre-Messinian Miocene basinal sediments (Tortonian-Serravallian marls and clastics)', topM: 3800, botM: 5500, hex: 0x9c9580 },
+    { name: 'Oceanic crust layer 2 (basalt)', topM: 5500, botM: 7500, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 7500, botM: 11500, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 11500, botM: 16000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Eastern Mediterranean', bbox: [31, 36.5, 18, 35], layers: [
+    { name: 'Holocene hemipelagic mud (Nile-derived sapropel-bearing)', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Plio-Quaternary Nile Cone turbidites and pelagic marl', topM: 35, botM: 2200, hex: 0x8a8472 },
+    { name: 'Messinian evaporites (Messinian salt, halite-dominated)', topM: 2200, botM: 3800, hex: 0xe8dcd0 },
+    { name: 'Oligocene-Miocene pre-salt clastics and marl (Tineh/Saqiye-equivalent)', topM: 3800, botM: 6500, hex: 0x9aa0a6 },
+    { name: 'Mesozoic-Paleogene Levantine carbonate platform (Judea Group equivalent)', topM: 6500, botM: 11000, hex: 0xd4d6d0 },
+    { name: 'Triassic-Jurassic syn-rift clastics and carbonates', topM: 11000, botM: 14000, hex: 0xb0a98c },
+    { name: 'Thinned (transitional) continental crystalline basement', topM: 14000, botM: 24000, hex: 0x5e5048 },
+    { name: 'Upper mantle (below Moho)', topM: 24000, botM: 34000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Norwegian Sea margin', bbox: [62, 70, -2, 12], layers: [
+    { name: 'Holocene hemipelagic mud (Naust Formation, upper)', topM: 0, botM: 35, hex: 0x5a6b5f },
+    { name: 'Pleistocene glacigenic debris-flow fan deposits (Naust Formation)', topM: 35, botM: 1100, hex: 0x6d7068 },
+    { name: 'Pliocene prograding glacimarine clay (Kai/Naust transition)', topM: 1100, botM: 1700, hex: 0x7a7c70 },
+    { name: 'Miocene-Oligocene diatom ooze and biosiliceous mudstone (Kai/Brygge Formation)', topM: 1700, botM: 2600, hex: 0xb8c0a0 },
+    { name: 'Paleocene-lower Eocene tuffaceous claystone and ash beds (Tare/Tang Formation)', topM: 2600, botM: 3200, hex: 0x9a9b88 },
+    { name: 'Lower Eocene seaward-dipping reflector basalts (breakup volcanics)', topM: 3200, botM: 8500, hex: 0x2f3330 },
+    { name: 'Thinned continental crystalline basement with magmatic underplating', topM: 8500, botM: 24000, hex: 0x44464a },
+    { name: 'Upper mantle (below Moho)', topM: 24000, botM: 34000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Sea of Japan (East Sea)', bbox: [35, 46, 129, 140], layers: [
+    { name: 'Holocene-Quaternary hemipelagic mud (ODP Unit I)', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Plio-Quaternary diatomaceous clay and ooze, opal-A (ODP Unit II)', topM: 120, botM: 450, hex: 0xb8c0a0 },
+    { name: 'Upper Miocene-Pliocene siliceous claystone, opal-CT porcellanite (opal-A/CT diagenetic front)', topM: 450, botM: 850, hex: 0xaeb89a },
+    { name: 'Middle-Upper Miocene siliceous-tuffaceous claystone and chert, quartz phase', topM: 850, botM: 1250, hex: 0x9aa088 },
+    { name: 'Lower-Middle Miocene volcaniclastic and tuffaceous syn-rift sediments with basaltic sills', topM: 1250, botM: 1650, hex: 0x6e6a55 },
+    { name: 'Oceanic crust Layer 2 (basalt, back-arc basaltic flows and dolerite, ODP basement)', topM: 1650, botM: 4200, hex: 0x2f3330 },
+    { name: 'Oceanic crust Layer 3 (gabbro)', topM: 4200, botM: 12000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 12000, botM: 30000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Bay of Bengal &amp; Bengal Fan', bbox: [8, 22, 84, 93], layers: [
+    { name: 'Holocene–Pleistocene Ganges–Brahmaputra channel-levee turbidites (Upper Bengal Fan)', topM: 0, botM: 1200, hex: 0x5a6b5f },
+    { name: 'Pliocene–Pleistocene fan sand-mud turbidite complex (Middle Bengal Fan)', topM: 1200, botM: 4500, hex: 0xc2a86b },
+    { name: 'Upper–Middle Miocene Bengal Fan turbidite succession (fan onset)', topM: 4500, botM: 9500, hex: 0x8a8273 },
+    { name: 'Oligocene–Lower Miocene hemipelagic claystone and distal turbidites', topM: 9500, botM: 13000, hex: 0x6e6a5c },
+    { name: 'Paleocene–Eocene pre-fan pelagic calcareous ooze and chalk', topM: 13000, botM: 16000, hex: 0xd4d6d0 },
+    { name: 'Oceanic crust layer 2 (basalt)', topM: 16000, botM: 18000, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 18000, botM: 23000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 23000, botM: 33000, hex: 0x2e2a22 },
+  ] },
+  { name: 'North Sea', bbox: [51, 61, -4, 9], layers: [
+    { name: 'Holocene–Pleistocene marine mud and sand (upper Nordland Group)', topM: 0, botM: 60, hex: 0x5a6b5f },
+    { name: 'Nordland Group (Pliocene–Pleistocene prograding clays and sands)', topM: 60, botM: 1100, hex: 0x6e7a66 },
+    { name: 'Hordaland Group (Oligocene–Miocene marine mudstone)', topM: 1100, botM: 2300, hex: 0x8a8d7a },
+    { name: 'Rogaland Group (Paleocene–Eocene Forties/Sele/Balder sands and tuffs)', topM: 2300, botM: 3100, hex: 0xc2a86b },
+    { name: 'Chalk Group (Upper Cretaceous pelagic carbonate)', topM: 3100, botM: 4600, hex: 0xd4d6d0 },
+    { name: 'Cromer Knoll Group and Jurassic–Triassic rift clastics (Germanic Trias Group)', topM: 4600, botM: 6800, hex: 0x9c7d5a },
+    { name: 'Zechstein Group evaporite (Upper Permian salt)', topM: 6800, botM: 8000, hex: 0xe8dcd0 },
+    { name: 'Thinned continental crystalline basement (Caledonian)', topM: 8000, botM: 30000, hex: 0x4a4a52 },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Red Sea', bbox: [13, 28, 33, 43], layers: [
+    { name: 'Holocene pelagic carbonate ooze (pteropod-foraminiferal mud, sapropels)', topM: 0, botM: 60, hex: 0x5a6b5f },
+    { name: 'Plio-Pleistocene hemipelagic marl and biogenic ooze (post-evaporite Shagara equivalent)', topM: 60, botM: 700, hex: 0xb8c0a0 },
+    { name: 'Late Miocene reefal and shelf carbonate / clastic interbeds (Zeit Formation equivalent)', topM: 700, botM: 1100, hex: 0xd4d6d0 },
+    { name: 'Messinian evaporites: halite with anhydrite (South Gharib / Belayim salt)', topM: 1100, botM: 2600, hex: 0xe8dcd0 },
+    { name: 'Middle Miocene evaporite-clastic sequence (Kareem / Rudeis Formation equivalent)', topM: 2600, botM: 3100, hex: 0xc2a86b },
+    { name: 'Oceanic crust layer 2 (axial pillow and sheeted basalt)', topM: 3100, botM: 4900, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 4900, botM: 9000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 9000, botM: 13000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Patagonian Shelf', bbox: [-52, -38, -66, -55], layers: [
+    { name: 'Holocene glacial-marine and bioclastic sand-mud (post-glacial transgressive sheet)', topM: 0, botM: 12, hex: 0x5a6b5f },
+    { name: 'Quaternary glacial-marine sands (Patagonian shelf sand sheet)', topM: 12, botM: 180, hex: 0xc2a86b },
+    { name: 'Neogene marine clastics, Patagonia Formation (Patagoniense, glauconitic transgressive sandstone)', topM: 180, botM: 850, hex: 0xb5a878 },
+    { name: 'Paleogene-Upper Cretaceous post-rift marine mudstone and sandstone (Salamanca/Colorado Basin fill)', topM: 850, botM: 2600, hex: 0x8f8a76 },
+    { name: 'Lower Cretaceous syn-rift continental clastics and lacustrine shales (Colorado/San Jorge rift fill)', topM: 2600, botM: 4800, hex: 0x9a8560 },
+    { name: 'Upper Jurassic-Lower Cretaceous silicic volcaniclastics (Chon Aike/Tobifera-Serra Geral synrift volcanics)', topM: 4800, botM: 6500, hex: 0x6e5a4e },
+    { name: 'Thinned continental crystalline basement (Paleozoic metamorphic-igneous, Deseado Massif/Patagonian basement)', topM: 6500, botM: 30000, hex: 0x4a4640 },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Gulf of Mexico', bbox: [18, 30, -97, -82], layers: [
+    { name: 'Holocene hemipelagic mud (Mississippi Fan)', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Pleistocene turbiditic sand and mud (Mississippi Fan)', topM: 120, botM: 1400, hex: 0x6d7a66 },
+    { name: 'Plio-Pleistocene deltaic sandstone (Mississippi deltaic wedge)', topM: 1400, botM: 4200, hex: 0xc2a86b },
+    { name: 'Miocene–Oligocene mudstone and turbidite (Frio–Vicksburg)', topM: 4200, botM: 8500, hex: 0x7a7a6a },
+    { name: 'Paleogene–Upper Cretaceous calcareous shale and chalk', topM: 8500, botM: 11500, hex: 0xd4d6d0 },
+    { name: 'Louann Salt (Jurassic evaporite, diapiric)', topM: 11500, botM: 14500, hex: 0xe8dcd0 },
+    { name: 'Transitional continental crystalline basement', topM: 14500, botM: 21000, hex: 0x4a4a50 },
+    { name: 'Upper mantle (below Moho)', topM: 21000, botM: 26000, hex: 0x2e2a22 },
+  ] },
+  { name: 'South China Sea', bbox: [5, 22, 108, 120], layers: [
+    { name: 'Holocene hemipelagic mud', topM: 0, botM: 18, hex: 0x5a6b5f },
+    { name: 'Quaternary–Pliocene turbidite &amp; terrigenous clay (upper deltaic wedge)', topM: 18, botM: 620, hex: 0x6b7268 },
+    { name: 'Miocene Pearl River / Nam Con Son deltaic sandstone &amp; mudstone', topM: 620, botM: 1850, hex: 0xc2a86b },
+    { name: 'Miocene carbonate platform (Liuhua/Dongsha build-ups)', topM: 1850, botM: 2550, hex: 0xd4d6d0 },
+    { name: 'Oligocene syn-rift clay &amp; nannofossil chalk (IODP Exp 349/367)', topM: 2550, botM: 3300, hex: 0xb8c0a0 },
+    { name: 'Oceanic crust layer 2 (basalt, MORB; spreading ~32–15 Ma)', topM: 3300, botM: 5300, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 5300, botM: 9300, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 9300, botM: 13300, hex: 0x2e2a22 },
+  ] },
+  { name: 'Bering Sea', bbox: [54, 64, -180, -158], layers: [
+    { name: 'Holocene–Quaternary diatom ooze (IODP Exp. 323)', topM: 0, botM: 400, hex: 0xb8c0a0 },
+    { name: 'Pliocene–Pleistocene diatomaceous glacial-marine mud', topM: 400, botM: 1200, hex: 0x5a6b5f },
+    { name: 'Miocene–Pliocene consolidated hemipelagic mud &amp; turbidites', topM: 1200, botM: 2800, hex: 0x6a6f63 },
+    { name: 'Paleogene–Neogene siliceous claystone &amp; chert (Aleutian Basin fill)', topM: 2800, botM: 3800, hex: 0x8f9484 },
+    { name: 'Oceanic crust layer 2 (basalt) — trapped Early Cretaceous crust', topM: 3800, botM: 5800, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (gabbro)', topM: 5800, botM: 11000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 11000, botM: 15000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Sea of Okhotsk', bbox: [44, 60, 142, 158], layers: [
+    { name: 'Holocene hemipelagic mud (diatomaceous clay)', topM: 0, botM: 12, hex: 0x5a6b5f },
+    { name: 'Quaternary diatom ooze and silty clay', topM: 12, botM: 320, hex: 0xb8c0a0 },
+    { name: 'Pliocene-Pleistocene Maruyama Formation (diatomaceous siltstone, gas-hydrate-bearing)', topM: 320, botM: 1150, hex: 0xa8b292 },
+    { name: 'Upper Miocene Kurasi-Okobykai Formation (siliceous mudstone, opal-CT)', topM: 1150, botM: 2600, hex: 0x9aa384 },
+    { name: 'Middle Miocene Daginskaya Formation (sandstone-siltstone, gas-charged)', topM: 2600, botM: 4200, hex: 0xc2a86b },
+    { name: 'Oligocene-Lower Miocene Uranay-Mutnaya Group (clastic synrift fill)', topM: 4200, botM: 6800, hex: 0x8a7d62 },
+    { name: 'Cretaceous-Paleogene volcaniclastic and metasedimentary basement', topM: 6800, botM: 9500, hex: 0x4f5550 },
+    { name: 'Thinned continental crystalline crust (Okhotsk block)', topM: 9500, botM: 30000, hex: 0x55504a },
+    { name: 'Upper mantle (below Moho)', topM: 30000, botM: 38000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Baltic Sea', bbox: [53.5, 66, 9.5, 30], layers: [
+    { name: 'Holocene Litorina post-glacial mud (gyttja clay)', topM: 0, botM: 15, hex: 0x5a6b5f },
+    { name: 'Late-glacial Baltic Ice Lake / Yoldia varved clay', topM: 15, botM: 40, hex: 0x6e7468 },
+    { name: 'Weichselian glacial till (diamicton)', topM: 40, botM: 75, hex: 0x8a8472 },
+    { name: 'Cambrian sandstone (Baltic Basin platform cover)', topM: 75, botM: 600, hex: 0xc2a86b },
+    { name: 'Ordovician-Silurian carbonate &amp; shale (Baltic Basin)', topM: 600, botM: 2000, hex: 0xd4d6d0 },
+    { name: 'Precambrian Fennoscandian Shield crystalline basement (granite-gneiss)', topM: 2000, botM: 38000, hex: 0x9a6b5a },
+    { name: 'Upper mantle (below Moho)', topM: 38000, botM: 60000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Caribbean Sea', bbox: [9, 22, -86, -60], layers: [
+    { name: 'Holocene–Quaternary pelagic clay and calcareous turbidites', topM: 0, botM: 120, hex: 0x5a6b5f },
+    { name: 'Plio-Pleistocene foraminifer–nannofossil ooze', topM: 120, botM: 420, hex: 0xd4d6d0 },
+    { name: 'Miocene nannofossil chalk and pelagic carbonate (ODP Leg 165)', topM: 420, botM: 780, hex: 0xcdd0c8 },
+    { name: 'Paleogene siliceous pelagic clay and chert (Horizon A″)', topM: 780, botM: 1080, hex: 0xa9ad9c },
+    { name: 'Campanian–Maastrichtian volcaniclastic limestone (above Horizon B″)', topM: 1080, botM: 1250, hex: 0xc2a86b },
+    { name: 'Oceanic crust layer 2 (CLIP plateau basalt, Horizon B″)', topM: 1250, botM: 5500, hex: 0x2f3330 },
+    { name: 'Oceanic crust layer 3 (overthickened gabbro and picrite)', topM: 5500, botM: 17000, hex: 0x3a3a40 },
+    { name: 'Upper mantle (below Moho)', topM: 17000, botM: 24000, hex: 0x2e2a22 },
+  ] },
+  { name: 'Barents Sea', bbox: [70, 80, 18, 55], layers: [
+    { name: 'Holocene glacimarine mud', topM: 0, botM: 25, hex: 0x5a6b5f },
+    { name: 'Quaternary glacigenic diamicton (Bjørnøya Fan glacigenic debris flows)', topM: 25, botM: 480, hex: 0x6e6a5c },
+    { name: 'Upper Cretaceous–Paleogene mudstone (Nygrunnen &amp; Sotbakken groups, beneath Upper Regional Unconformity)', topM: 480, botM: 1900, hex: 0x7a8079 },
+    { name: 'Lower Cretaceous–Jurassic shale and sandstone (Adventdalen &amp; Kapp Toscana groups; Hekkingen/Stø formations)', topM: 1900, botM: 4200, hex: 0x8a8c84 },
+    { name: 'Triassic deltaic mudstone and sandstone (Sassendalen &amp; Kapp Toscana groups; Kobbe/Snadd formations)', topM: 4200, botM: 6800, hex: 0x9a8f6f },
+    { name: 'Permian–Carboniferous carbonate and evaporite (Gipsdalen &amp; Bjarmeland groups; Gipshuken anhydrite)', topM: 6800, botM: 8800, hex: 0xe8dcd0 },
+    { name: 'Devonian–Carboniferous siliciclastic platform strata (Billefjorden Group)', topM: 8800, botM: 11000, hex: 0xb89a6a },
+    { name: 'Caledonian–Precambrian crystalline continental basement', topM: 11000, botM: 31000, hex: 0x55504a },
+    { name: 'Upper mantle (below Moho)', topM: 31000, botM: 41000, hex: 0x2e2a22 },
+  ] },
+];
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-06-17T13:35:41.197Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    

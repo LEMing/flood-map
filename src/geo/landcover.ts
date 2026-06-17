@@ -17,18 +17,18 @@ const NATIVE_DEG = 10 / 111320; // ~10 m
 const TILE_DEG = 3;
 const MAX_TILES = 4;
 
-function tileUrl(latSW: number, lonSW: number): string {
+export function tileUrl(latSW: number, lonSW: number): string {
   const lat = `${latSW >= 0 ? 'N' : 'S'}${String(Math.abs(latSW)).padStart(2, '0')}`;
   const lon = `${lonSW >= 0 ? 'E' : 'W'}${String(Math.abs(lonSW)).padStart(3, '0')}`;
   return `${ENDPOINTS.worldcover}/v200/2021/map/ESA_WorldCover_10m_2021_v200_${lat}${lon}_Map.tif`;
 }
 
-interface Patch {
+export interface Patch {
   minLon: number; maxLon: number; minLat: number; maxLat: number;
   w: number; h: number; data: ArrayLike<number>;
 }
 
-function samplePatch(p: Patch, lon: number, lat: number): number | null {
+export function samplePatch(p: Patch, lon: number, lat: number): number | null {
   if (lon < p.minLon || lon > p.maxLon || lat < p.minLat || lat > p.maxLat) return null;
   const fx = ((lon - p.minLon) / (p.maxLon - p.minLon)) * (p.w - 1);
   const fy = ((p.maxLat - lat) / (p.maxLat - p.minLat)) * (p.h - 1); // row 0 = north

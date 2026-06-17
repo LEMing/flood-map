@@ -54,7 +54,7 @@ const ROAD_WIDTH: Record<string, number> = {
   pedestrian: 4, footway: 2.5, path: 2, cycleway: 2.5,
 };
 
-function roadWidthM(tags: Record<string, string>): number {
+export function roadWidthM(tags: Record<string, string>): number {
   const w = tags.width ? parseFloat(tags.width) : NaN;
   if (isFinite(w)) return w;
   const lanes = tags.lanes ? parseInt(tags.lanes, 10) : NaN;
@@ -62,7 +62,7 @@ function roadWidthM(tags: Record<string, string>): number {
   return ROAD_WIDTH[tags.highway] ?? 5;
 }
 
-function isGreen(t: Record<string, string>): boolean {
+export function isGreen(t: Record<string, string>): boolean {
   return (
     /^(grass|meadow|forest|farmland|recreation_ground|cemetery|allotments|village_green|orchard|vineyard|greenfield)$/.test(t.landuse ?? '') ||
     /^(park|garden|pitch|golf_course|playground|nature_reserve|dog_park)$/.test(t.leisure ?? '') ||
@@ -70,11 +70,11 @@ function isGreen(t: Record<string, string>): boolean {
   );
 }
 
-function isWater(t: Record<string, string>): boolean {
+export function isWater(t: Record<string, string>): boolean {
   return t.natural === 'water' || t.landuse === 'reservoir' || t.waterway === 'riverbank' || t.water !== undefined;
 }
 
-function bbox(center: LatLon, sizeMeters: number): [number, number, number, number] {
+export function bbox(center: LatLon, sizeMeters: number): [number, number, number, number] {
   const half = sizeMeters / 2;
   let s = Infinity, w = Infinity, n = -Infinity, e = -Infinity;
   for (const x of [-half, 0, half]) {
@@ -87,7 +87,7 @@ function bbox(center: LatLon, sizeMeters: number): [number, number, number, numb
   return [s, w, n, e];
 }
 
-function fillPolygon(pts: number[][], target: Uint8Array, N: number): void {
+export function fillPolygon(pts: number[][], target: Uint8Array, N: number): void {
   let minY = Infinity, maxY = -Infinity;
   for (const p of pts) { minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]); }
   const y0 = Math.max(0, Math.ceil(minY - 0.5));
@@ -110,7 +110,7 @@ function fillPolygon(pts: number[][], target: Uint8Array, N: number): void {
   }
 }
 
-function stampLine(a: number[], b: number[], r: number, target: Uint8Array, N: number): void {
+export function stampLine(a: number[], b: number[], r: number, target: Uint8Array, N: number): void {
   const dx = b[0] - a[0], dy = b[1] - a[1];
   const len = Math.hypot(dx, dy);
   const steps = Math.max(1, Math.ceil(len));

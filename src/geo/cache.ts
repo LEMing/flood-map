@@ -114,7 +114,7 @@ function now(): number {
   return Date.now();
 }
 
-function recordBytes(kind: StoredKind, body: ArrayBuffer | Blob | unknown): number {
+export function recordBytes(kind: StoredKind, body: ArrayBuffer | Blob | unknown): number {
   if (kind === 'arraybuffer') return (body as ArrayBuffer).byteLength;
   if (kind === 'blob') return (body as Blob).size;
   try {
