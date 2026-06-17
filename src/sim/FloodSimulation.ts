@@ -1,29 +1,47 @@
 import * as THREE from 'three';
-import {
-  GPUComputationRenderer,
-  type Variable,
-} from 'three/examples/jsm/misc/GPUComputationRenderer.js';
+import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js';
 import type { Params } from '../config';
-import { waterFragment } from './shaders';
+import { fluxFragment, integrateFragment } from './shaders';
 
 type U = Record<string, THREE.IUniform>;
+
+/** The GPUComputationRenderer primitives we drive manually (some absent from the .d.ts). */
+interface GpuApi {
+  setDataType?(type: THREE.TextureDataType): void;
+  createTexture(): THREE.DataTexture;
+  createRenderTarget(
+    sizeXTexture: number, sizeYTexture: number,
+    wrapS: THREE.Wrapping, wrapT: THREE.Wrapping,
+    minFilter: THREE.MinificationTextureFilter, magFilter: THREE.MagnificationTextureFilter,
+  ): THREE.WebGLRenderTarget;
+  createShaderMaterial(fragmentShader: string, uniforms?: U): THREE.ShaderMaterial;
+  doRenderTarget(material: THREE.ShaderMaterial, output: THREE.WebGLRenderTarget): void;
+  renderTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget): void;
+  dispose(): void;
+}
 
 const MM_PER_HR_TO_M_PER_S = 1 / 1000 / 3600;
 
 /**
- * GPU shallow-water flood simulation. A single ping-pong variable `tWater`
- * stores depth (r), max depth (g) and velocity (b,a); see shaders.ts for the
- * conservative virtual-pipes update.
+ * GPU shallow-water flood simulation. A ping-pong `tWater` texture stores depth
+ * (r), max depth (g) and velocity (b,a). Each step runs two passes: a flux pass
+ * computes every cell's capped outflux into `tFlux`, then an integrate pass reads
+ * the flux field to update depth and apply rain/infiltration/etc. See shaders.ts;
+ * the physics is pinned by virtualPipes.ts + its tests.
  */
 export class FloodSimulation {
   readonly N: number;
   readonly cellSize: number;
   private readonly renderer: THREE.WebGLRenderer;
-  private readonly gpu: GPUComputationRenderer;
-  private readonly water: Variable;
+  private readonly gpu: GpuApi;
+  private readonly fluxMat: THREE.ShaderMaterial;
+  private readonly integrateMat: THREE.ShaderMaterial;
+  private readonly waterRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
+  private readonly fluxRT: THREE.WebGLRenderTarget;
   private readonly water0: THREE.DataTexture;
   private readonly dummySurface: THREE.DataTexture;
   private readonly u: U;
+  private currentIdx = 0;
   private pendingInject = 0;
   private pendingFill = -1e9;
   private pendingFillSet = false;
@@ -43,15 +61,9 @@ export class FloodSimulation {
     this.N = N;
     this.cellSize = sizeMeters / N;
 
-    this.gpu = new GPUComputationRenderer(N, N, renderer);
-    const maybeSetType = (this.gpu as unknown as {
-      setDataType?: (t: THREE.TextureDataType) => void;
-    }).setDataType;
-    if (maybeSetType) maybeSetType.call(this.gpu, THREE.FloatType);
-
-    this.water0 = this.gpu.createTexture();
-    this.water = this.gpu.addVariable('tWater', waterFragment, this.water0);
-    this.gpu.setVariableDependencies(this.water, [this.water]);
+    const gpu = new GPUComputationRenderer(N, N, renderer) as unknown as GpuApi;
+    this.gpu = gpu;
+    gpu.setDataType?.(THREE.FloatType);
 
     // Fallback 1×1 surface (roughness = 1); real per-cell fields set via setSurface().
     this.dummySurface = new THREE.DataTexture(
@@ -59,8 +71,14 @@ export class FloodSimulation {
     );
     this.dummySurface.needsUpdate = true;
 
+    // One uniform object per name, shared by reference between the two materials,
+    // so updateParams/step mutate a single `u` and both passes see it.
     this.u = {
       heightmap: { value: heightTexture },
+      tWater: { value: null }, // bound to the current water RT each step
+      tFlux: { value: null }, // bound to the flux RT before the integrate pass
+      tSurface: { value: this.dummySurface },
+      uUseSurface: { value: 0 },
       uCellSize: { value: this.cellSize },
       uDt: { value: 0 },
       uGravity: { value: params.gravity },
@@ -80,15 +98,28 @@ export class FloodSimulation {
       uPointRadiusUv: { value: 0.05 },
       uFillLevelAbs: { value: -1e9 },
       uFillSet: { value: 0 },
-      tSurface: { value: this.dummySurface },
-      uUseSurface: { value: 0 },
     };
-    Object.assign(this.water.material.uniforms, this.u);
+    const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
+    this.fluxMat = gpu.createShaderMaterial(fluxFragment, pick([
+      'heightmap', 'tWater', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
+      'uGravity', 'uPipeArea', 'uFriction', 'uBoundaryOpen',
+    ]));
+    this.integrateMat = gpu.createShaderMaterial(integrateFragment, pick([
+      'heightmap', 'tWater', 'tFlux', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
+      'uRainRate', 'uInfilRate', 'uEvapRate', 'uRaining', 'uFootprintSpot', 'uSpot',
+      'uSpotRadius', 'uInjectDepth', 'uPointDepth', 'uPointUv', 'uPointRadiusUv',
+      'uFillLevelAbs', 'uFillSet',
+    ]));
 
-    const error = this.gpu.init();
-    if (error !== null) {
-      throw new Error(`GPU simulation init failed: ${error}`);
-    }
+    const make = (): THREE.WebGLRenderTarget => gpu.createRenderTarget(
+      N, N, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.NearestFilter, THREE.NearestFilter,
+    );
+    this.waterRT = [make(), make()];
+    this.fluxRT = make();
+    this.water0 = gpu.createTexture(); // zero-filled
+    gpu.renderTexture(this.water0, this.waterRT[0]);
+    gpu.renderTexture(this.water0, this.waterRT[1]);
+
     this.updateParams(params);
   }
 
@@ -114,7 +145,15 @@ export class FloodSimulation {
     this.u.uPointRadiusUv.value = this.pendingPoint.r;
     this.u.uFillLevelAbs.value = this.pendingFill;
     this.u.uFillSet.value = this.pendingFillSet ? 1 : 0;
-    this.gpu.compute();
+
+    const cur = this.waterRT[this.currentIdx];
+    const next = this.waterRT[1 - this.currentIdx];
+    this.u.tWater.value = cur.texture;
+    this.gpu.doRenderTarget(this.fluxMat, this.fluxRT); // pass 1: capped outflux -> tFlux
+    this.u.tFlux.value = this.fluxRT.texture;
+    this.gpu.doRenderTarget(this.integrateMat, next); // pass 2: integrate depth/vel
+    this.currentIdx = 1 - this.currentIdx;
+
     this.pendingInject = 0;
     this.pendingPoint.depth = 0;
     this.pendingFill = -1e9;
@@ -156,22 +195,20 @@ export class FloodSimulation {
   }
 
   reset(): void {
-    this.gpu.renderTexture(this.water0, this.water.renderTargets[0]);
-    this.gpu.renderTexture(this.water0, this.water.renderTargets[1]);
+    this.gpu.renderTexture(this.water0, this.waterRT[0]);
+    this.gpu.renderTexture(this.water0, this.waterRT[1]);
+    this.currentIdx = 0;
   }
 
   /** rgba = (depth, maxDepth, velX, velY). */
   get waterTexture(): THREE.Texture {
-    return this.gpu.getCurrentRenderTarget(this.water).texture;
+    return this.waterRT[this.currentIdx].texture;
   }
 
   /** Synchronous read of the water state into `out` (length N*N*4). Stalls the
    * pipeline — used only where the result is needed immediately (precompute). */
   readWater(out: Float32Array): void {
-    this.renderer.readRenderTargetPixels(
-      this.gpu.getCurrentRenderTarget(this.water),
-      0, 0, this.N, this.N, out,
-    );
+    this.renderer.readRenderTargetPixels(this.waterRT[this.currentIdx], 0, 0, this.N, this.N, out);
   }
 
   /**
@@ -183,7 +220,7 @@ export class FloodSimulation {
     if (this.readbackInFlight) return false;
     const gl = this.renderer.getContext() as WebGL2RenderingContext;
     if (typeof gl.fenceSync !== 'function') return false;
-    this.renderer.setRenderTarget(this.gpu.getCurrentRenderTarget(this.water));
+    this.renderer.setRenderTarget(this.waterRT[this.currentIdx]);
     if (!this.pbo) {
       this.pbo = gl.createBuffer();
       gl.bindBuffer(gl.PIXEL_PACK_BUFFER, this.pbo);
@@ -217,8 +254,13 @@ export class FloodSimulation {
 
   dispose(): void {
     this.gpu.dispose();
+    this.waterRT[0].dispose();
+    this.waterRT[1].dispose();
+    this.fluxRT.dispose();
     this.water0.dispose();
     this.dummySurface.dispose();
+    this.fluxMat.dispose();
+    this.integrateMat.dispose();
     const gl = this.renderer.getContext() as WebGL2RenderingContext;
     if (this.fence) gl.deleteSync(this.fence);
     if (this.pbo) gl.deleteBuffer(this.pbo);
