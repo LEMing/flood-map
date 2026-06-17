@@ -6,13 +6,6 @@ import tailwindcss from '@tailwindcss/vite';
 // Nominatim usage policy requires (stock browser UA is rejected).
 export default defineConfig({
   plugins: [tailwindcss()],
-  build: {
-    rollupOptions: {
-      // The app, plus the standalone WebGPU solver spike at /bench.html.
-      // Relative to the project root; Vite resolves them.
-      input: { main: 'index.html', bench: 'bench.html' },
-    },
-  },
   server: {
     proxy: {
       '/api/geocode': {

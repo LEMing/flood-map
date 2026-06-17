@@ -200,17 +200,6 @@ export class FloodSimulation {
     this.currentIdx = 0;
   }
 
-  /** Seed the water field directly from an N*N*4 (depth,maxD,vx,vy) array — for
-   * tests/benchmarks that need a known initial condition (not used by the app). */
-  seedWater(data: Float32Array): void {
-    const tex = new THREE.DataTexture(data, this.N, this.N, THREE.RGBAFormat, THREE.FloatType);
-    tex.needsUpdate = true;
-    this.gpu.renderTexture(tex, this.waterRT[0]);
-    this.gpu.renderTexture(tex, this.waterRT[1]);
-    this.currentIdx = 0;
-    tex.dispose();
-  }
-
   /** rgba = (depth, maxDepth, velX, velY). */
   get waterTexture(): THREE.Texture {
     return this.waterRT[this.currentIdx].texture;

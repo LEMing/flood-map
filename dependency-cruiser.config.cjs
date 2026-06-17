@@ -74,10 +74,6 @@ module.exports = {
           // Locale catalogs are loaded lazily via import.meta.glob (i18n/index.ts),
           // which the cruiser can't trace as a static import — they aren't orphans.
           '^src/i18n/locales/',
-          // The WebGPU spike + benchmark are a separate entry (bench.html), not
-          // imported by the app, so the cruiser sees them as orphans.
-          '^src/bench/',
-          '^src/sim/FloodSimulationGPU\\.ts$',
           // Loaded via new Worker(new URL('./geoWorker.ts', ...)), which the
           // cruiser can't trace as a static import.
           '^src/geo/geoWorker\\.ts$',
