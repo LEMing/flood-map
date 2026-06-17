@@ -146,7 +146,12 @@ export class SceneManager {
     this.boltGeo.setAttribute('position', new THREE.BufferAttribute(this.boltPositions, 3));
     this.bolt = new THREE.LineSegments(
       this.boltGeo,
-      new THREE.LineBasicMaterial({ color: 0xeaf2ff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
+      new THREE.LineBasicMaterial({
+        color: 0xeaf2ff,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      }),
     );
     this.bolt.frustumCulled = false;
     this.bolt.renderOrder = 5;
@@ -216,7 +221,11 @@ export class SceneManager {
   }
 
   get sceneColorTexture(): THREE.Texture { return this.sceneRT.texture; }
-  get sceneDepthTexture(): THREE.Texture { return this.sceneRT.depthTexture!; }
+  get sceneDepthTexture(): THREE.Texture {
+    const depth = this.sceneRT.depthTexture;
+    if (!depth) throw new Error('sceneRT was created without a depth texture');
+    return depth;
+  }
   get skyTopColor(): THREE.Color { return this.stormEnabled ? this.stormTop : this.clearTop; }
   get skyHorizonColor(): THREE.Color { return this.stormEnabled ? this.stormHorizon : this.clearHorizon; }
   get sunColorLinear(): THREE.Color {
@@ -331,7 +340,11 @@ export class SceneManager {
     this.cloudDome.uniforms.uSunDir.value.copy(sunDir);
     this.tmpVec.copy(this.controls.target).addScaledVector(sunDir, this.sceneSize * 4).project(this.camera);
     this.weather.uSunScreen.value.set(this.tmpVec.x * 0.5 + 0.5, this.tmpVec.y * 0.5 + 0.5);
-    const onScreen = this.tmpVec.z < 1 && Math.abs(this.tmpVec.x) < 1.3 && Math.abs(this.tmpVec.y) < 1.3 && sunDir.y > 0.05;
+    const onScreen =
+      this.tmpVec.z < 1 &&
+      Math.abs(this.tmpVec.x) < 1.3 &&
+      Math.abs(this.tmpVec.y) < 1.3 &&
+      sunDir.y > 0.05;
     this.weather.uSunVisible.value = onScreen ? 1 : 0;
 
     if (!animate) {
@@ -475,7 +488,8 @@ function makeSkyGradient(stops: [string, string, string]): THREE.Texture {
   const c = document.createElement('canvas');
   c.width = 2;
   c.height = 256;
-  const ctx = c.getContext('2d')!;
+  const ctx = c.getContext('2d');
+  if (!ctx) throw new Error('2d canvas context unavailable');
   const grad = ctx.createLinearGradient(0, 0, 0, 256);
   grad.addColorStop(0, stops[0]);
   grad.addColorStop(0.5, stops[1]);

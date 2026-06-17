@@ -137,7 +137,7 @@ export const sw: Record<string, string> = {
   'geo.legendTitle': 'Chini ya ardhi (kielelezo)',
   'geo.real': 'halisi',
   'geo.model': 'kielelezo',
-  'geo.caveat': "~2 m za juu: udongo halisi (SoilGrids). Chini yake: kielelezo cha kimataifa cha gamba la dunia (CRUST1.0, seli za 1°) — kielelezo, si shimo la kuchimba.",
+  'geo.caveat': '~2 m za juu: udongo halisi (SoilGrids). Chini yake: kielelezo cha kimataifa cha gamba la dunia (CRUST1.0, seli za 1°) — kielelezo, si shimo la kuchimba.',
   'geo.l.topsoil': 'Udongo wa juu',
   'geo.l.subsoil': 'Udongo wa chini',
   'geo.l.alluvium': 'Mchanga wa kina cha Quaternary',

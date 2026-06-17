@@ -48,7 +48,10 @@ function rgb(hex: number, i: number, data: Uint8Array): void {
 function mix(a: number, b: number, t: number): number {
   const ar = (a >> 16) & 0xff; const ag = (a >> 8) & 0xff; const ab = a & 0xff;
   const br = (b >> 16) & 0xff; const bg = (b >> 8) & 0xff; const bb = b & 0xff;
-  return (Math.round(ar + (br - ar) * t) << 16) | (Math.round(ag + (bg - ag) * t) << 8) | Math.round(ab + (bb - ab) * t);
+  const r = Math.round(ar + (br - ar) * t);
+  const g = Math.round(ag + (bg - ag) * t);
+  const b2 = Math.round(ab + (bb - ab) * t);
+  return (r << 16) | (g << 8) | b2;
 }
 
 /**
@@ -363,7 +366,12 @@ export class GeologyBlock {
       for (const l of layers) { if (depthM >= l.topM && depthM < l.botM) { layer = l; break; } }
       let hex = layer.hex;
       if (p.highlightAquiclude && layer.key === AQUICLUDE_KEY) hex = mix(hex, 0xff7a3c, 0.28);
-      for (const l of layers) { if (l.topM > 0 && Math.abs(depthM - l.topM) < lineHalf) { hex = mix(hex, 0x0a0a0a, 0.55); break; } }
+      for (const l of layers) {
+        if (l.topM > 0 && Math.abs(depthM - l.topM) < lineHalf) {
+          hex = mix(hex, 0x0a0a0a, 0.55);
+          break;
+        }
+      }
       rgb(hex, i * 4, data);
     }
     void isLand;
@@ -378,7 +386,11 @@ export class GeologyBlock {
     const topElev = (e: number): number => Math.max(e, sea);
     const minTop = ring.reduce((m, pt) => Math.min(m, topElev(pt.e)), Infinity);
     const yFloor = minTop * ve - H;
-    const pos = this.position; const yt = this.yTop; const mar = this.marineAttr; const sb = this.seabed01; const wn = this.wtNorm;
+    const pos = this.position;
+    const yt = this.yTop;
+    const mar = this.marineAttr;
+    const sb = this.seabed01;
+    const wn = this.wtNorm;
     let o = 0;
     const put = (x: number, y: number, z: number, top: number, marine: number, seabed: number, wt: number): void => {
       pos[o * 3] = x; pos[o * 3 + 1] = y; pos[o * 3 + 2] = z;

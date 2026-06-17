@@ -307,7 +307,7 @@ export class TerrainMesh {
   applyStyle(style: TerrainStyle): void {
     this.style = style;
     const useSat = style === 'satellite' && !!this.satellite;
-    this.material.map = useSat ? this.satellite! : null;
+    this.material.map = useSat ? this.satellite ?? null : null;
     this.material.vertexColors = !useSat;
     this.material.roughness = useSat ? 0.85 : 0.96;
     if (!useSat) {

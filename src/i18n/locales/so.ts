@@ -31,7 +31,7 @@ export const so: Record<string, string> = {
   'geo.legendTitle': 'Dhulka hoostiisa (qaab)',
   'geo.real': 'dhab',
   'geo.model': 'qaab',
-  'geo.caveat': "Kor ~2 m: carro dhab ah (SoilGrids). Hoosteeda: qaab qolofeed oo guud (CRUST1.0, unugyo 1°) — waa qaab, ma aha god lagu dalool qoday.",
+  'geo.caveat': 'Kor ~2 m: carro dhab ah (SoilGrids). Hoosteeda: qaab qolofeed oo guud (CRUST1.0, unugyo 1°) — waa qaab, ma aha god lagu dalool qoday.',
   'geo.l.topsoil': 'Carrada sare',
   'geo.l.subsoil': 'Carro-hoosaad',
   'geo.l.alluvium': 'Dhiis Kuwaternari ah',

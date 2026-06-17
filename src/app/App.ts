@@ -225,8 +225,12 @@ export class App {
       if (smart !== getLanguage()) this.applyDetectedLanguage(smart);
     }
 
-    if (haveUrlCenter) {
-      await this.loadCenter({ lat: url.lat!, lon: url.lon!, displayName: formatCoords(url.lat!, url.lon!) });
+    if (url.lat !== undefined && url.lon !== undefined) {
+      await this.loadCenter({
+        lat: url.lat,
+        lon: url.lon,
+        displayName: formatCoords(url.lat, url.lon),
+      });
     } else if (ip) {
       const displayName = ip.city
         ? [ip.city, ip.region].filter(Boolean).join(', ')
@@ -317,7 +321,7 @@ export class App {
   }
 
   private reloadCurrent(): void {
-    if (this.currentLocation) this.loadCenter(this.currentLocation);
+    if (this.currentLocation) void this.loadCenter(this.currentLocation);
   }
 
   private async loadAddress(text: string): Promise<void> {
@@ -418,7 +422,13 @@ export class App {
     this.water.setWeatherUniforms(this.scene.weather);
     this.sea = new SeaMesh(this.terrain.geometry, heightmap, surface?.land ?? null, this.params);
     this.sea.setWeatherUniforms(this.scene.weather);
-    this.floodOverlay = new FloodOverlay(this.terrain.geometry, this.terrain.heightTexture, N, heightmap.sizeMeters, this.params);
+    this.floodOverlay = new FloodOverlay(
+      this.terrain.geometry,
+      this.terrain.heightTexture,
+      N,
+      heightmap.sizeMeters,
+      this.params,
+    );
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
@@ -891,7 +901,13 @@ export class App {
     fillGeo.setAttribute('position', new THREE.Float32BufferAttribute(fillVerts, 3));
     const fill = new THREE.Mesh(
       fillGeo,
-      new THREE.MeshBasicMaterial({ color: 0xe5443a, transparent: true, opacity: 0.1, depthWrite: false, side: THREE.DoubleSide }),
+      new THREE.MeshBasicMaterial({
+        color: 0xe5443a,
+        transparent: true,
+        opacity: 0.1,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
     );
     fill.renderOrder = 5;
 
@@ -1050,7 +1066,8 @@ export class App {
   }
 
   private sampleElevation(u: number, v: number): number {
-    const hm = this.heightmap!;
+    const hm = this.heightmap;
+    if (!hm) return 0;
     const N = hm.N;
     const fx = u * (N - 1);
     const fy = v * (N - 1);

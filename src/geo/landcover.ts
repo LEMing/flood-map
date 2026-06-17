@@ -73,7 +73,15 @@ export async function fetchLandCover(
       const buf = await cachedArrayBuffer(tileUrl(la, lo));
       const tiff = await fromArrayBuffer(buf);
       const raster = await tiff.readRasters({ bbox, width: w, height: h, resampleMethod: 'nearest', interleave: false });
-      patches.push({ minLon: bbox[0], maxLon: bbox[2], minLat: bbox[1], maxLat: bbox[3], w, h, data: raster[0] as ArrayLike<number> });
+      patches.push({
+        minLon: bbox[0],
+        maxLon: bbox[2],
+        minLat: bbox[1],
+        maxLat: bbox[3],
+        w,
+        h,
+        data: raster[0] as ArrayLike<number>,
+      });
     } catch {
       /* missing tile — skip */
     }

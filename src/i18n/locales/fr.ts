@@ -154,7 +154,7 @@ export const fr: Record<string, string> = {
   'geo.legendTitle': 'Sous-sol (modèle)',
   'geo.real': 'réel',
   'geo.model': 'modèle',
-  'geo.caveat': "~2 m supérieurs : sol réel (SoilGrids). En dessous : modèle global de la croûte (CRUST1.0, cellules de 1°) — un modèle, pas un forage.",
+  'geo.caveat': '~2 m supérieurs : sol réel (SoilGrids). En dessous : modèle global de la croûte (CRUST1.0, cellules de 1°) — un modèle, pas un forage.',
   'geo.l.topsoil': 'Terre végétale',
   'geo.l.subsoil': 'Sous-sol',
   'geo.l.alluvium': 'Alluvions quaternaires',

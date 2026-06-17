@@ -25,7 +25,7 @@ export const it: Record<string, string> = {
   'geo.legendTitle': 'Sottosuolo (modello)',
   'geo.real': 'reale',
   'geo.model': 'modello',
-  'geo.caveat': "Primi ~2 m: suolo reale (SoilGrids). Più sotto: modello globale della crosta (CRUST1.0, celle 1°) — un modello, non un sondaggio.",
+  'geo.caveat': 'Primi ~2 m: suolo reale (SoilGrids). Più sotto: modello globale della crosta (CRUST1.0, celle 1°) — un modello, non un sondaggio.',
   'geo.l.topsoil': 'Suolo superficiale',
   'geo.l.subsoil': 'Sottosuolo',
   'geo.l.sediments': 'Copertura sedimentaria',

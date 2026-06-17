@@ -31,7 +31,7 @@ export const pt: Record<string, string> = {
   'geo.legendTitle': 'Subsolo (modelo)',
   'geo.real': 'real',
   'geo.model': 'modelo',
-  'geo.caveat': "Topo ~2 m: solo real (SoilGrids). Abaixo: modelo crustal global (CRUST1.0, células de 1°) — um modelo, não uma sondagem.",
+  'geo.caveat': 'Topo ~2 m: solo real (SoilGrids). Abaixo: modelo crustal global (CRUST1.0, células de 1°) — um modelo, não uma sondagem.',
   'geo.l.topsoil': 'Camada superficial',
   'geo.l.subsoil': 'Subsolo',
   'geo.l.alluvium': 'Aluvião quaternário',

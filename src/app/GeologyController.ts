@@ -144,12 +144,12 @@ export class GeologyController {
     }).join('');
     const isOcean = this.columns.isOcean;
     const seaRow = isOcean
-      ? `<div class="row"><span class="sw" style="background:#2a6e96"></span>`
+      ? '<div class="row"><span class="sw" style="background:#2a6e96"></span>'
         + `<span class="nm">${t('geo.l.seaWater')}</span><span class="dp">${fmt(0, this.columns.oceanWaterDepthM)}</span>`
         + `<span class="tg model">${t('geo.model')}</span></div>`
       : '';
     const wt = !isOcean && params.showWaterTable
-      ? `<div class="row wt"><span class="sw" style="background:#3fb6e0"></span>`
+      ? '<div class="row wt"><span class="sw" style="background:#3fb6e0"></span>'
         + `<span class="nm">${t('geo.waterTable')}</span><span class="dp">${Math.round(params.waterTableDepthM)} m</span></div>`
       : '';
     const region = this.columns.regionName;
