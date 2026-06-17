@@ -9,7 +9,6 @@ import { detectIpLocation } from '../geo/ipLocation';
 import {
   t, setLanguage, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
 } from '../i18n';
-import { localMetersToLonLat } from '../geo/projection';
 import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
@@ -24,7 +23,7 @@ import { FloodOverlay } from '../render/FloodOverlay';
 import { SeaMesh } from '../render/SeaMesh';
 import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
-import { sampleElevation, sampleDepth } from './terrainSampling';
+import { PointerController } from './PointerController';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { PourTool } from '../ui/PourTool';
@@ -48,8 +47,7 @@ export class App {
   private readonly languagePicker: LanguagePicker;
   private readonly pourTool: PourTool;
   private panel: ControlsPanel;
-  private pourDownX = 0;
-  private pourDownY = 0;
+  private readonly pointer: PointerController;
   private currentLocation?: GeocodeResult;
 
   private terrain?: TerrainMesh;
@@ -74,16 +72,9 @@ export class App {
   private readonly resBuf = new THREE.Vector2();
   private readonly spotBuf = new THREE.Vector2();
   private readonly seaCloudColor = new THREE.Color(0.34, 0.36, 0.42);
-  private readonly readout = document.getElementById('readout') as HTMLDivElement | null;
   private readonly legend = document.getElementById('legend') as HTMLDivElement | null;
   private readonly legendMin = document.getElementById('legend-min');
   private readonly legendMax = document.getElementById('legend-max');
-  private readonly raycaster = new THREE.Raycaster();
-  private readonly pointerNdc = new THREE.Vector2();
-  private pointerInside = false;
-  private pointerClientX = 0;
-  private pointerClientY = 0;
-  private sinceRaycast = 0;
 
   private simTimeSec = 0;
   private weatherClock = 0; // advances only while running, so rain/storm freeze on pause
@@ -123,30 +114,14 @@ export class App {
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
     this.setupChromeToggle();
 
-    const dom = this.scene.renderer.domElement;
-    dom.addEventListener('pointermove', (e) => {
-      const rect = dom.getBoundingClientRect();
-      this.pointerNdc.set(
-        ((e.clientX - rect.left) / rect.width) * 2 - 1,
-        -((e.clientY - rect.top) / rect.height) * 2 + 1,
-      );
-      this.pointerClientX = e.clientX;
-      this.pointerClientY = e.clientY;
-      this.pointerInside = true;
-    });
-    dom.addEventListener('pointerleave', () => {
-      this.pointerInside = false;
-      if (this.readout) this.readout.style.display = 'none';
-    });
-    // Click-to-pour: a click (not a drag, which rotates the camera) pours water.
-    dom.addEventListener('pointerdown', (e) => {
-      this.pourDownX = e.clientX;
-      this.pourDownY = e.clientY;
-    });
-    dom.addEventListener('pointerup', (e) => {
-      if (!this.params.pourMode) return;
-      if (Math.hypot(e.clientX - this.pourDownX, e.clientY - this.pourDownY) > 6) return;
-      this.pourAt(e.clientX, e.clientY);
+    this.pointer = new PointerController({
+      camera: this.scene.camera,
+      dom: this.scene.renderer.domElement,
+      getTerrainMesh: () => this.terrain?.mesh,
+      getHeightmap: () => this.heightmap,
+      getReadback: () => this.readback,
+      isPourMode: () => this.params.pourMode,
+      pour: (u, v) => this.pour(u, v),
     });
   }
 
@@ -170,20 +145,10 @@ export class App {
     this.scene.renderer.domElement.style.cursor = active ? 'crosshair' : '';
   }
 
-  private pourAt(clientX: number, clientY: number): void {
-    if (!this.terrain || !this.heightmap || !this.sim) return;
-    const dom = this.scene.renderer.domElement;
-    const rect = dom.getBoundingClientRect();
-    this.pointerNdc.set(
-      ((clientX - rect.left) / rect.width) * 2 - 1,
-      -((clientY - rect.top) / rect.height) * 2 + 1,
-    );
-    this.raycaster.setFromCamera(this.pointerNdc, this.scene.camera);
-    const hit = this.raycaster.intersectObject(this.terrain.mesh, false)[0];
-    if (!hit) return;
+  /** Inject water at a picked terrain cell (called by the PointerController). */
+  private pour(u: number, v: number): void {
+    if (!this.heightmap || !this.sim) return;
     const size = this.heightmap.sizeMeters;
-    const u = THREE.MathUtils.clamp(hit.point.x / size + 0.5, 0, 1);
-    const v = THREE.MathUtils.clamp(0.5 - hit.point.z / size, 0, 1);
     this.sim.requestPointInject(u, v, this.params.pourDepthM, this.params.pourRadiusM / size);
     this.params.floodLevelLive = false;
     this.params.running = true;
@@ -727,7 +692,7 @@ export class App {
     this.scene.updateStorm(dt, this.params.running);
     this.showFps(now);
     this.updateWaterLook(dt);
-    this.updateReadout(dt);
+    this.pointer.update(dt);
     this.updateDrainArrows();
     this.markerLayer.update(this.scene.camera);
     if (this.timelineMode === 'live') this.autoQualityCheck(dt);
@@ -811,32 +776,6 @@ export class App {
     // Auto-reveal flow arrows while draining (rain off) so the water's path shows.
     const draining = this.params.running && !this.params.raining && this.waterStored > 1;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity || draining;
-  }
-
-  private updateReadout(dt: number): void {
-    if (!this.readout || !this.pointerInside || !this.terrain || !this.heightmap) return;
-    this.sinceRaycast += dt;
-    if (this.sinceRaycast < 0.1) return;
-    this.sinceRaycast = 0;
-
-    this.raycaster.setFromCamera(this.pointerNdc, this.scene.camera);
-    const hit = this.raycaster.intersectObject(this.terrain.mesh, false)[0];
-    if (!hit) {
-      this.readout.style.display = 'none';
-      return;
-    }
-    const size = this.heightmap.sizeMeters;
-    const u = THREE.MathUtils.clamp(hit.point.x / size + 0.5, 0, 1);
-    const v = THREE.MathUtils.clamp(0.5 - hit.point.z / size, 0, 1);
-    const elev = sampleElevation(this.heightmap, u, v);
-    const depth = this.readback ? sampleDepth(this.readback, this.heightmap.N, u, v) : 0;
-    const [lon, lat] = localMetersToLonLat(this.heightmap.center, hit.point.x, -hit.point.z);
-
-    const water = depth > 0.01 ? `  ·  ${t('readout.water')} ${depth.toFixed(2)} m` : '';
-    this.readout.textContent = `${t('readout.elev')} ${elev.toFixed(1)} m${water}  ·  ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-    this.readout.style.display = 'block';
-    this.readout.style.left = `${this.pointerClientX + 14}px`;
-    this.readout.style.top = `${this.pointerClientY + 14}px`;
   }
 
   private disposeWorld(): void {
