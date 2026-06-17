@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>flood-map — WebGPU solver spike</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1a2230; }
+      h1 { font-size: 1.25rem; }
+      h2 { font-size: 1rem; margin-top: 1.5rem; }
+      p { line-height: 1.5; color: #34404f; }
+      table { border-collapse: collapse; width: 100%; margin-top: 0.25rem; }
+      td { border-bottom: 1px solid #e3e8ef; padding: 4px 8px; font-variant-numeric: tabular-nums; }
+      td:first-child { color: #5b6675; width: 15rem; }
+      .err { color: #c0392b; }
+      button { padding: 6px 14px; font-size: 1rem; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <h1>WebGPU solver spike — flood sim two-pass benchmark</h1>
+    <p>
+      Runs the virtual-pipes shallow-water solver three ways on identical input —
+      CPU reference, WebGL2 (the shipping path), and an experimental WebGPU/TSL
+      compute port — then reports per-step wall time and the max depth difference.
+      Numerically identical output is the parity check; the WebGPU-vs-WebGL2
+      speedup is the decision data. Open in a WebGPU browser (Chrome/Edge/Firefox,
+      or Safari 26+). If the WebGPU row errors, the message is the thing to relay.
+    </p>
+    <button id="run">Run benchmark</button>
+    <div id="results"></div>
+    <script type="module" src="/src/bench/benchMain.ts"></script>
+  </body>
+</html>
