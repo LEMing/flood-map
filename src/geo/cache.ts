@@ -210,6 +210,14 @@ export function cachedImage(url: string): Promise<HTMLImageElement> {
   });
 }
 
+// Decodes a cached Blob to an ImageBitmap. Unlike cachedImage (HTMLImageElement),
+// this works on a Web Worker too — the DEM/bathymetry decode path uses it so the
+// geo build can run off the main thread.
+export async function cachedBitmap(url: string): Promise<ImageBitmap> {
+  const blob = await cachedBlob(url);
+  return createImageBitmap(blob);
+}
+
 // Store an already-fetched/validated body so a caller that did its own fetch
 // (e.g. with retry + size validation) can still populate the cache.
 export function putArrayBuffer(key: string, buf: ArrayBuffer): void {

@@ -78,6 +78,9 @@ module.exports = {
           // imported by the app, so the cruiser sees them as orphans.
           '^src/bench/',
           '^src/sim/FloodSimulationGPU\\.ts$',
+          // Loaded via new Worker(new URL('./geoWorker.ts', ...)), which the
+          // cruiser can't trace as a static import.
+          '^src/geo/geoWorker\\.ts$',
         ],
       },
       to: {},

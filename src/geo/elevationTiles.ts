@@ -2,15 +2,15 @@ import type { Heightmap, LatLon } from './heightmap';
 import { computeMinMax } from './heightmap';
 import { chooseZoom, lonLatToPixel, projectGrid } from './projection';
 import { ENDPOINTS } from './endpoints';
-import { cachedImage } from './cache';
+import { cachedBitmap } from './cache';
 
 const TILE = 256;
 const MAX_TILES = 100; // safety cap on number of tiles to stitch
 
-// cachedImage loads from a same-origin blob: URL, so the decode canvas stays
-// untainted without crossOrigin. A missing tile -> null, treated as sea level.
-function loadImage(url: string): Promise<HTMLImageElement | null> {
-  return cachedImage(url).catch(() => null);
+// Decode to an ImageBitmap (works on a Worker, unlike HTMLImageElement) from a
+// same-origin blob: URL. A missing tile -> null, treated as sea level.
+function loadImage(url: string): Promise<ImageBitmap | null> {
+  return cachedBitmap(url).catch(() => null);
 }
 
 // Terrarium PNG decoding: height = (R*256 + G + B/256) - 32768 (metres).
@@ -57,9 +57,7 @@ export async function fetchElevation(
     throw new Error(`DEM tile count ${tilesX * tilesY} exceeds cap (${MAX_TILES}).`);
   }
 
-  const canvas = document.createElement('canvas');
-  canvas.width = tilesX * TILE;
-  canvas.height = tilesY * TILE;
+  const canvas = new OffscreenCanvas(tilesX * TILE, tilesY * TILE);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('Could not create 2D canvas context for DEM decoding.');
 

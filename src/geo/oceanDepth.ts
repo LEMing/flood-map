@@ -1,6 +1,7 @@
 import { ENDPOINTS } from './endpoints';
 import type { LatLon } from './heightmap';
 import { lonLatToPixel, projectGrid } from './projection';
+import { cachedBitmap } from './cache';
 
 const TILE = 256;
 
@@ -10,14 +11,9 @@ const TILE = 256;
 // "is this point at sea" and gives a real water depth there.
 const COARSE_ZOOM = 9;
 
-function loadImage(url: string): Promise<HTMLImageElement | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(null);
-    img.src = url;
-  });
+// ImageBitmap (works on a Worker) from the cached tile blob; null on failure.
+function loadImage(url: string): Promise<ImageBitmap | null> {
+  return cachedBitmap(url).catch(() => null);
 }
 
 /**
@@ -36,9 +32,7 @@ export async function coarseSeabedElevM(lat: number, lon: number): Promise<numbe
 
   const img = await loadImage(`${ENDPOINTS.tiles}/terrarium/${COARSE_ZOOM}/${tx}/${ty}.png`);
   if (!img) return Infinity;
-  const canvas = document.createElement('canvas');
-  canvas.width = img.width;
-  canvas.height = img.height;
+  const canvas = new OffscreenCanvas(img.width, img.height);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) return Infinity;
   ctx.drawImage(img, 0, 0);
@@ -94,9 +88,7 @@ export async function coarseBathymetryGrid(
   const tilesY = tyMax - tyMin + 1;
   if (tilesX * tilesY > 16) return null; // a 2 km footprint spans 1–4 coarse tiles
 
-  const canvas = document.createElement('canvas');
-  canvas.width = tilesX * TILE;
-  canvas.height = tilesY * TILE;
+  const canvas = new OffscreenCanvas(tilesX * TILE, tilesY * TILE);
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) return null;
   ctx.fillStyle = 'rgb(128,0,0)'; // decodes to 0 m, so a missing tile reads as sea level

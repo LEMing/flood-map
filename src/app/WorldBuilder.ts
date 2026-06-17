@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { loadTerrainAt } from '../geo/load';
+import { loadTerrainInWorker } from '../geo/loadInWorker';
 import { geocode, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
 import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
@@ -9,7 +9,7 @@ import { detectIpLocation } from '../geo/ipLocation';
 import {
   t, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
 } from '../i18n';
-import { buildSurface, type SurfaceResult } from '../geo/surface';
+import type { SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
@@ -148,15 +148,16 @@ export class WorldBuilder {
     showToast(t('toast.loadingPlace', { q: place }), false, 0);
     try {
       const N = this.host.params.gridResolution;
-      const { heightmap, warning, sourceUsed } = await loadTerrainAt(
-        location, this.host.params.mapSizeKm, N, this.host.params.elevationSource,
-      );
-
-      let surface: SurfaceResult | null = null;
-      if (this.host.params.useSurface) {
-        showToast(t('toast.loadingSurface'), false, 0);
-        surface = await buildSurface(heightmap, this.host.params); // burns buildings/roads into the DEM
-      }
+      // DEM fetch/decode/inpaint + ocean bathymetry + OSM rasterize + surface
+      // fields all run off the main thread; the meshes are built here (WebGL).
+      const { heightmap, warning, sourceUsed, surface } = await loadTerrainInWorker({
+        location,
+        mapSizeKm: this.host.params.mapSizeKm,
+        N,
+        elevationSource: this.host.params.elevationSource,
+        useSurface: this.host.params.useSurface,
+        params: this.host.params,
+      });
 
       this.build(heightmap, surface);
       this.host.setStatsLocation(location.displayName.split(',').slice(0, 3).join(','));
