@@ -135,6 +135,17 @@ export class FloodSimulationGPU {
     this.cur = 1 - this.cur;
   }
 
+  /** Enqueue one step without a CPU<->GPU sync — for throughput benchmarking.
+   * Order is preserved in the GPU queue; await a readback to drain it. */
+  stepBatched(): void {
+    // compute() submits synchronously once the renderer is initialized (the
+    // Promise-returning branch is only the pre-init fallback), so voiding here
+    // enqueues both passes without a CPU<->GPU sync; readDepth drains the queue.
+    void this.renderer.compute(this.fluxOf[this.cur]);
+    void this.renderer.compute(this.integrateInto[this.cur]);
+    this.cur = 1 - this.cur;
+  }
+
   /** Read the current depth field (out length N*N) back to the CPU. */
   async readDepth(out: Float32Array): Promise<void> {
     const buf = await this.renderer.getArrayBufferAsync((this.water[this.cur] as N).value);
