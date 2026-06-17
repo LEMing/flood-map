@@ -31,12 +31,30 @@ function aeqdDef(center: LatLon): string {
   return `+proj=aeqd +lat_0=${center.lat} +lon_0=${center.lon} +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs`;
 }
 
+// A handful of loaders (DEM, land-cover, bathymetry, satellite) each need the
+// same lon/lat grid for one world. Memoize the last few so the ~N*N proj4
+// forward sweep runs once per (center, size, N) instead of per loader. The
+// returned arrays are treated as read-only by every caller, so sharing is safe.
+const GRID_CACHE: Array<{ key: string; grid: ProjectedGrid }> = [];
+const GRID_CACHE_MAX = 2;
+
 /**
  * Compute the lon/lat of every node of an `N×N` grid covering `sizeMeters` on
  * a side, centred on `center`, using a local equidistant projection so the
  * grid is metric and square on the ground. Row 0 = south, row N-1 = north.
+ * Memoized per (center, size, N) — see GRID_CACHE.
  */
 export function projectGrid(center: LatLon, sizeMeters: number, N: number): ProjectedGrid {
+  const key = `${center.lat},${center.lon},${sizeMeters},${N}`;
+  const hit = GRID_CACHE.find((e) => e.key === key);
+  if (hit) return hit.grid;
+  const grid = computeProjectedGrid(center, sizeMeters, N);
+  GRID_CACHE.push({ key, grid });
+  if (GRID_CACHE.length > GRID_CACHE_MAX) GRID_CACHE.shift();
+  return grid;
+}
+
+function computeProjectedGrid(center: LatLon, sizeMeters: number, N: number): ProjectedGrid {
   const aeqd = aeqdDef(center);
   const toWgs = proj4(aeqd, WGS84);
   const lon = new Float64Array(N * N);

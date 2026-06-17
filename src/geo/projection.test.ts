@@ -36,6 +36,32 @@ function groundMeters(a: LatLon, b: LatLon): number {
   return Math.hypot(bx, by);
 }
 
+describe('projectGrid memoization', () => {
+  it('returns the same arrays for identical (center, size, N) — proj4 runs once', () => {
+    const center = { lat: 12.34, lon: 56.78 };
+    const a = projectGrid(center, 3000, 33);
+    const b = projectGrid({ lat: 12.34, lon: 56.78 }, 3000, 33);
+    expect(b.lon).toBe(a.lon); // same reference -> cache hit, not recomputed
+    expect(b.lat).toBe(a.lat);
+  });
+
+  it('recomputes when any of (center, size, N) changes', () => {
+    const center = { lat: 1, lon: 2 };
+    const base = projectGrid(center, 3000, 33);
+    expect(projectGrid(center, 3000, 34).lon).not.toBe(base.lon); // N differs
+    expect(projectGrid(center, 3100, 33).lon).not.toBe(base.lon); // size differs
+    expect(projectGrid({ lat: 1, lon: 2.1 }, 3000, 33).lon).not.toBe(base.lon); // center differs
+  });
+
+  it('still computes correct values through the cache', () => {
+    const center = { lat: 0, lon: 0 };
+    const { lon, lat } = projectGrid(center, 4000, 65);
+    const mid = 32 * 65 + 32;
+    expect(lon[mid]).toBeCloseTo(0, 9);
+    expect(lat[mid]).toBeCloseTo(0, 9);
+  });
+});
+
 describe('projectGrid', () => {
   describe.each(CENTERS)('$name', ({ center }) => {
     const sizeMeters = 4000;
