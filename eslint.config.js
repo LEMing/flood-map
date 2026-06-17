@@ -72,9 +72,13 @@ export default tseslint.config(
   // without a paydown plan. (Mirrors site-plan-engine's per-area relaxations
   // for ported/algorithmic code.)
 
-  // App.ts: god-object mid-decomposition (GeologyController already extracted;
-  // MarkerLayer / SimDriver / TimelineController / WorldBuilder still inline).
-  // Line + complexity budget relaxed until the controllers are split out.
+  // App.ts: the composition root / orchestrator. The heavy subsystems are now
+  // their own modules (GeologyController, MarkerLayer, PointerController,
+  // SimDriver, WorldBuilder); what remains wires scene-post + world meshes +
+  // sim + UI + geology together each frame and on a param change. applyParams
+  // is an inherent param fan-out. Kept off the line/complexity budget by design
+  // — splitting the orchestration further would only create feature-envy
+  // classes that reach straight back into the app.
   {
     files: ['src/app/App.ts'],
     rules: { 'max-lines': 'off', complexity: 'off' },

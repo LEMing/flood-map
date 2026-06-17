@@ -1,19 +1,11 @@
 import * as THREE from 'three';
-import { DEFAULT_PARAMS, GRID_RESOLUTIONS, SOURCE_LABELS, type Params } from '../config';
+import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { loadTerrainAt } from '../geo/load';
-import { geocode, type GeocodeResult } from '../geo/geocode';
-import { fetchSatellite } from '../geo/satelliteTiles';
-import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
-import { detectIpLocation } from '../geo/ipLocation';
-import {
-  t, setLanguage, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
-} from '../i18n';
-import { buildSurface, computeSurfaceFields, type SurfaceResult } from '../geo/surface';
+import { readUrlState, writeUrlState } from '../url';
+import { t, setLanguage, getLanguage, type Lang } from '../i18n';
+import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
-import { FloodSimulation } from '../sim/FloodSimulation';
-import { Timeline } from '../sim/Timeline';
 import { Rain } from '../render/Rain';
 import { SceneManager } from '../render/SceneManager';
 import { TerrainMesh } from '../render/TerrainMesh';
@@ -25,6 +17,7 @@ import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
 import { PointerController } from './PointerController';
 import { SimDriver } from './SimDriver';
+import { WorldBuilder, type BuiltWorld } from './WorldBuilder';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { PourTool } from '../ui/PourTool';
@@ -44,7 +37,7 @@ export class App {
   private panel: ControlsPanel;
   private readonly pointer: PointerController;
   private readonly simDriver: SimDriver;
-  private currentLocation?: GeocodeResult;
+  private readonly worldBuilder: WorldBuilder;
 
   private terrain?: TerrainMesh;
   private water?: WaterMesh;
@@ -71,8 +64,6 @@ export class App {
   private lowFpsTime = 0;
   private fpsEma = 60;
   private lastTime = 0;
-  private loading = false;
-  private buildToken = 0;
   private readonly credit = document.getElementById('credit');
 
   constructor(canvas: HTMLCanvasElement) {
@@ -87,8 +78,8 @@ export class App {
     if (url.demo) this.params.demoMode = true;
 
     this.addressBar = new AddressBar({
-      onSubmit: (text) => this.loadAddress(text),
-      onSelect: (lat, lon, label) => this.loadCenter({ lat, lon, displayName: label }),
+      onSubmit: (text) => this.worldBuilder.loadAddress(text),
+      onSelect: (lat, lon, label) => this.worldBuilder.loadCenter({ lat, lon, displayName: label }),
     });
     this.languagePicker = new LanguagePicker((lang) => this.setLang(lang));
     this.pourTool = new PourTool({ onToggle: (active) => this.setPourMode(active) });
@@ -112,6 +103,23 @@ export class App {
       getReadback: () => this.simDriver.readback,
       isPourMode: () => this.params.pourMode,
       pour: (u, v) => this.pour(u, v),
+    });
+
+    this.worldBuilder = new WorldBuilder({
+      scene: this.scene,
+      group: this.group,
+      params: this.params,
+      addressBar: this.addressBar,
+      simDriver: this.simDriver,
+      geology: this.geology,
+      markerLayer: this.markerLayer,
+      disposeWorld: () => this.disposeWorld(),
+      setBuiltWorld: (w) => this.setBuiltWorld(w),
+      getTerrain: () => this.terrain,
+      applyParams: () => this.applyParams(),
+      applyDetectedLanguage: (lang) => this.applyDetectedLanguage(lang),
+      refreshPanel: () => this.panel.refresh(),
+      setStatsLocation: (label) => { this.stats.location = label; },
     });
   }
 
@@ -147,49 +155,14 @@ export class App {
 
   start(): void {
     this.lastTime = performance.now();
-    void this.bootstrapLocation();
+    void this.worldBuilder.bootstrap();
     requestAnimationFrame(this.loop);
-  }
-
-  /**
-   * Decide the initial center and UI language. Explicit URL state wins; whatever
-   * the URL leaves open is filled in from a coarse IP lookup (location + a
-   * smart default language), falling back to the built-in default location.
-   */
-  private async bootstrapLocation(): Promise<void> {
-    const url = readUrlState();
-    const haveUrlCenter = url.lat !== undefined && url.lon !== undefined;
-    const langPinned = hasExplicitLanguage();
-
-    const needIp = !(haveUrlCenter && langPinned);
-    if (needIp && !haveUrlCenter) showToast(t('toast.detecting'), false, 0);
-    const ip = needIp ? await detectIpLocation() : null;
-
-    if (!langPinned) {
-      const smart = resolveSmartLanguage(ip);
-      if (smart !== getLanguage()) this.applyDetectedLanguage(smart);
-    }
-
-    if (url.lat !== undefined && url.lon !== undefined) {
-      await this.loadCenter({
-        lat: url.lat,
-        lon: url.lon,
-        displayName: formatCoords(url.lat, url.lon),
-      });
-    } else if (ip) {
-      const displayName = ip.city
-        ? [ip.city, ip.region].filter(Boolean).join(', ')
-        : formatCoords(ip.lat, ip.lon);
-      await this.loadCenter({ lat: ip.lat, lon: ip.lon, displayName });
-    } else {
-      await this.loadAddress(this.params.address);
-    }
   }
 
   private panelCallbacks(): ControlCallbacks {
     return {
       onParamChange: () => this.applyParams(),
-      onRebuild: () => this.reloadCurrent(),
+      onRebuild: () => this.worldBuilder.reloadCurrent(),
       onReset: () => this.simDriver.reset(),
       onStep: () => this.simDriver.stepOnce(),
       onTogglePlay: () => {
@@ -262,157 +235,18 @@ export class App {
     this.applyParams(); // re-translate legend labels etc.
   }
 
-  private reloadCurrent(): void {
-    if (this.currentLocation) void this.loadCenter(this.currentLocation);
-  }
-
-  private async loadAddress(text: string): Promise<void> {
-    if (this.loading) return;
-    const coords = parseCoords(text);
-    if (coords) {
-      await this.loadCenter({ lat: coords.lat, lon: coords.lon, displayName: formatCoords(coords.lat, coords.lon) });
-      return;
-    }
-    this.loading = true;
-    this.addressBar.setBusy(true);
-    let location: GeocodeResult | null = null;
-    try {
-      location = await geocode(text);
-    } catch (err) {
-      showToast((err as Error).message, true);
-    }
-    this.loading = false;
-    this.addressBar.setBusy(false);
-    if (location) await this.loadCenter(location);
-  }
-
-  /** Build the terrain + surface + sim for an already-resolved center. */
-  private async loadCenter(location: GeocodeResult): Promise<void> {
-    if (this.loading) return;
-    this.loading = true;
-    this.currentLocation = location;
-    this.addressBar.setBusy(true);
-    const place = location.displayName.split(',')[0];
-    showToast(t('toast.loadingPlace', { q: place }), false, 0);
-    try {
-      const N = this.params.gridResolution;
-      const { heightmap, warning, sourceUsed } = await loadTerrainAt(
-        location, this.params.mapSizeKm, N, this.params.elevationSource,
-      );
-
-      let surface: SurfaceResult | null = null;
-      if (this.params.useSurface) {
-        showToast(t('toast.loadingSurface'), false, 0);
-        surface = await buildSurface(heightmap, this.params); // burns buildings/roads into the DEM
-      }
-
-      this.build(heightmap, surface);
-      this.stats.location = location.displayName.split(',').slice(0, 3).join(',');
-      writeUrlState({
-        lat: location.lat, lon: location.lon,
-        km: this.params.mapSizeKm, grid: this.params.gridResolution,
-      });
-      this.addressBar.setValue(this.displayLabel(location));
-      this.panel.refresh();
-      const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
-      showToast(
-        warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`,
-        !!warning,
-      );
-      trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.params.mapSizeKm });
-    } catch (err) {
-      showToast((err as Error).message, true);
-    } finally {
-      this.loading = false;
-      this.addressBar.setBusy(false);
-    }
-  }
-
-  private displayLabel(location: GeocodeResult): string {
-    if (parseCoords(location.displayName)) return location.displayName;
-    return location.displayName.split(',').slice(0, 2).map((s) => s.trim()).join(', ');
-  }
-
-  private build(heightmap: Heightmap, surface: SurfaceResult | null): void {
-    this.disposeWorld();
-    this.heightmap = heightmap;
-    this.buildToken++;
-    const N = heightmap.N;
-
-    if (surface) {
-      this.surfaceRaw = { land: surface.land, osm: surface.osm };
-      this.surfaceTexture = new THREE.DataTexture(surface.surface, N, N, THREE.RGBAFormat, THREE.FloatType);
-      this.surfaceTexture.minFilter = THREE.NearestFilter;
-      this.surfaceTexture.magFilter = THREE.NearestFilter;
-      this.surfaceTexture.needsUpdate = true;
-    }
-
-    this.terrain = new TerrainMesh(heightmap, this.params.wireframe);
-    this.terrain.setWeatherUniforms(this.scene.weather);
-    const sim = new FloodSimulation(
-      this.scene.renderer,
-      this.terrain.heightTexture,
-      N,
-      heightmap.sizeMeters,
-      this.params,
-    );
-    this.simDriver.setWorld(sim, new Timeline(N), heightmap);
-    this.simDriver.setSurface(this.params.useSurface && this.surfaceTexture ? this.surfaceTexture : null);
-    if (surface) this.terrain.setSurfaceColors(surface.surface, N);
-    this.water = new WaterMesh(
-      this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
-    );
-    this.water.setWeatherUniforms(this.scene.weather);
-    this.sea = new SeaMesh(this.terrain.geometry, heightmap, surface?.land ?? null, this.params);
-    this.sea.setWeatherUniforms(this.scene.weather);
-    this.floodOverlay = new FloodOverlay(
-      this.terrain.geometry,
-      this.terrain.heightTexture,
-      N,
-      heightmap.sizeMeters,
-      this.params,
-    );
-    this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
-    this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
-    this.rain = new Rain(heightmap);
-
-    this.group.add(
-      this.terrain.mesh, this.sea.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
-      this.maxFlood.mesh, this.velocity.mesh, this.rain.object,
-    );
-    // The geology block lives in world space (not the terrain group) so its deep
-    // vertical scale is independent of the terrain's exaggeration.
-    const geologyMesh = this.geology.build(heightmap, surface?.land ?? null).mesh;
-    this.scene.scene.add(geologyMesh);
-    // Keep above-water overlays (and the opaque geology block below) out of the
-    // refraction source so they don't get baked under the water surface.
-    this.scene.setRefractionExcludes([
-      this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object, geologyMesh,
-    ]);
-    this.markerLayer.build(heightmap);
-
-    this.applyParams();
-    const midHeight = ((heightmap.min + heightmap.max) / 2) * this.params.verticalExaggeration;
-    this.scene.fitToTerrain(heightmap.sizeMeters, midHeight);
-    this.loadSatellite(this.buildToken, heightmap);
-  }
-
-  private loadSatellite(token: number, hm: Heightmap): void {
-    fetchSatellite(hm.center, hm.sizeMeters, hm.N)
-      .then(({ texture, uvSat }) => {
-        if (token !== this.buildToken || !this.terrain) {
-          texture.dispose();
-          return;
-        }
-        this.terrain.setSatellite(texture, uvSat);
-        this.applyParams();
-      })
-      .catch((err) => {
-        if (token !== this.buildToken) return;
-        if (this.params.terrainStyle === 'satellite') {
-          showToast(`Satellite imagery unavailable (${(err as Error).message}). Showing elevation tint.`, true);
-        }
-      });
+  /** Adopt a freshly built world from the WorldBuilder as the live scene. */
+  private setBuiltWorld(w: BuiltWorld): void {
+    this.heightmap = w.heightmap;
+    this.terrain = w.terrain;
+    this.water = w.water;
+    this.sea = w.sea;
+    this.floodOverlay = w.floodOverlay;
+    this.maxFlood = w.maxFlood;
+    this.velocity = w.velocity;
+    this.rain = w.rain;
+    this.surfaceTexture = w.surfaceTexture;
+    this.surfaceRaw = w.surfaceRaw;
   }
 
   private applyParams(): void {
