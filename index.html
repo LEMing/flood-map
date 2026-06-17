@@ -26,10 +26,11 @@
         width: 320px; max-width: 52vw; padding: 7px 10px; border-radius: 7px;
         border: 1px solid #2a313b; background: #0e1318; color: #e6edf3; font-size: 14px;
       }
-      /* Phones: address bar spans the width but yields room for the menu toggle. */
+      /* Phones: address bar spans the width but yields the top-right corner to
+         the language picker (right: 60px) + the settings gear (right: 12px). */
       @media (max-width: 767px) {
         #addressbar {
-          left: 12px; right: 64px; max-width: none;
+          left: 12px; right: 128px; max-width: none;
         }
         #ac-wrap { flex: 1 1 auto; }
         #addressbar input { width: 100%; max-width: none; }
@@ -341,10 +342,10 @@
     <!-- Right-side controls drawer: Tweakpane mounts in #tp-mount, geology legend docks below it. -->
     <aside
       id="chrome-panel"
-      class="fixed top-3 right-3 z-10 flex w-64 flex-col gap-2.5 overflow-y-auto
-             max-h-[calc(100vh-24px)]
-             max-md:top-[60px] max-md:w-[min(320px,calc(100vw-24px))]
-             max-md:max-h-[calc(100vh-72px)] max-md:rounded-xl max-md:p-1
+      class="fixed top-[60px] right-3 z-10 flex w-64 flex-col gap-2.5 overflow-y-auto
+             max-h-[calc(100vh-72px)]
+             max-md:w-[min(320px,calc(100vw-24px))]
+             max-md:rounded-xl max-md:p-1
              max-md:bg-[rgba(11,14,19,0.55)] max-md:backdrop-blur-sm"
     >
       <div id="tp-mount" class="relative"></div>
