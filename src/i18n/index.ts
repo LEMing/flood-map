@@ -1,63 +1,4 @@
 import { en } from './locales/en';
-import { ru } from './locales/ru';
-import { uk } from './locales/uk';
-import { tr } from './locales/tr';
-import { de } from './locales/de';
-import { es } from './locales/es';
-import { fr } from './locales/fr';
-import { zh } from './locales/zh';
-import { ja } from './locales/ja';
-import { ko } from './locales/ko';
-import { hi } from './locales/hi';
-import { id } from './locales/id';
-import { th } from './locales/th';
-import { vi } from './locales/vi';
-import { pt } from './locales/pt';
-import { ar } from './locales/ar';
-import { it } from './locales/it';
-import { pl } from './locales/pl';
-import { nl } from './locales/nl';
-import { el } from './locales/el';
-import { bn } from './locales/bn';
-import { fa } from './locales/fa';
-import { ur } from './locales/ur';
-import { ms } from './locales/ms';
-import { ta } from './locales/ta';
-import { ro } from './locales/ro';
-import { sw } from './locales/sw';
-import { cs } from './locales/cs';
-import { sv } from './locales/sv';
-import { he } from './locales/he';
-import { kk } from './locales/kk';
-import { uz } from './locales/uz';
-import { az } from './locales/az';
-import { hy } from './locales/hy';
-import { ka } from './locales/ka';
-import { be } from './locales/be';
-import { ky } from './locales/ky';
-import { tg } from './locales/tg';
-import { tk } from './locales/tk';
-import { am } from './locales/am';
-import { ha } from './locales/ha';
-import { yo } from './locales/yo';
-import { ig } from './locales/ig';
-import { zu } from './locales/zu';
-import { af } from './locales/af';
-import { so } from './locales/so';
-import { pa } from './locales/pa';
-import { mr } from './locales/mr';
-import { te } from './locales/te';
-import { gu } from './locales/gu';
-import { kn } from './locales/kn';
-import { ml } from './locales/ml';
-import { or } from './locales/or';
-import { yue } from './locales/yue';
-import { wuu } from './locales/wuu';
-import { jv } from './locales/jv';
-import { su } from './locales/su';
-import { ps } from './locales/ps';
-import { tl } from './locales/tl';
-import { my } from './locales/my';
 
 export type Lang =
   | 'en' | 'ru' | 'uk' | 'tr' | 'de' | 'es' | 'fr' | 'zh'
@@ -69,12 +10,26 @@ export type Lang =
   | 'pa' | 'mr' | 'te' | 'gu' | 'kn' | 'ml' | 'or' | 'yue' | 'wuu'
   | 'jv' | 'su' | 'ps' | 'tl' | 'my';
 
-const LOCALES: Record<Lang, Record<string, string>> = {
-  en, ru, uk, tr, de, es, fr, zh, ja, ko, hi, id, th, vi,
-  pt, ar, it, pl, nl, el, bn, fa, ur, ms, ta, ro, sw, cs, sv, he,
-  kk, uz, az, hy, ka, be, ky, tg, tk, am, ha, yo, ig, zu, af, so,
-  pa, mr, te, gu, kn, ml, or, yue, wuu, jv, su, ps, tl, my,
-};
+type Catalog = Record<string, string>;
+
+// Every non-English catalog is lazy: Vite code-splits each locale into its own
+// chunk, so the initial bundle ships only English (~5 KB) rather than all 60
+// catalogs (~1.4 MB). loadLanguage() pulls the active one in before first paint;
+// until it resolves, t() falls back to English.
+const LOADERS: Record<string, () => Promise<unknown>> = {};
+for (const [path, loader] of Object.entries(import.meta.glob('./locales/*.ts'))) {
+  const code = path.replace('./locales/', '').replace('.ts', '');
+  if (code !== 'en') LOADERS[code] = loader;
+}
+
+const loaded: Partial<Record<Lang, Catalog>> = { en };
+
+/** Pull a locale's catalog into the cache (no-op if already loaded or unknown). */
+export async function loadLanguage(lang: Lang): Promise<void> {
+  if (loaded[lang] || !LOADERS[lang]) return;
+  const mod = (await LOADERS[lang]()) as Record<string, Catalog>;
+  loaded[lang] = Object.values(mod)[0]; // each file has one named catalog export
+}
 
 export interface LanguageDef {
   code: Lang;
@@ -275,7 +230,7 @@ export function setLanguage(lang: Lang, persist = true): void {
 
 /** Translate a key, substituting {placeholders}. Falls back to English, then the key. */
 export function t(key: string, params?: Record<string, string | number>): string {
-  let s = LOCALES[current][key] ?? en[key] ?? key;
+  let s = loaded[current]?.[key] ?? en[key] ?? key;
   if (params) {
     for (const k of Object.keys(params)) s = s.replaceAll(`{${k}}`, String(params[k]));
   }

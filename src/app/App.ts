@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import { readUrlState, writeUrlState } from '../url';
-import { t, setLanguage, getLanguage, type Lang } from '../i18n';
+import { t, setLanguage, getLanguage, loadLanguage, type Lang } from '../i18n';
 import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
@@ -81,7 +81,7 @@ export class App {
       onSubmit: (text) => this.worldBuilder.loadAddress(text),
       onSelect: (lat, lon, label) => this.worldBuilder.loadCenter({ lat, lon, displayName: label }),
     });
-    this.languagePicker = new LanguagePicker((lang) => this.setLang(lang));
+    this.languagePicker = new LanguagePicker((lang) => void this.setLang(lang));
     this.pourTool = new PourTool({ onToggle: (active) => this.setPourMode(active) });
     // The input is filled only once we know what we're loading (after IP detect
     // / geocode), so a default place never flashes for out-of-region visitors.
@@ -220,13 +220,15 @@ export class App {
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
   }
 
-  private setLang(lang: Lang): void {
+  private async setLang(lang: Lang): Promise<void> {
+    await loadLanguage(lang); // lazy locale chunk — fetch before re-rendering
     setLanguage(lang); // explicit user choice → persisted
     writeUrlState({ lang });
     this.rebuildForLanguage();
   }
 
-  private applyDetectedLanguage(lang: Lang): void {
+  private async applyDetectedLanguage(lang: Lang): Promise<void> {
+    await loadLanguage(lang);
     setLanguage(lang, false); // auto-detected → stays re-detectable on next visit
     this.rebuildForLanguage();
   }

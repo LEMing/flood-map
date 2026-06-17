@@ -66,7 +66,15 @@ module.exports = {
       comment: 'Unused module (no importers) — dead code unless it is an entry point.',
       from: {
         orphan: true,
-        pathNot: ['^src/main\\.ts$', '\\.test\\.ts$', '\\.d\\.ts$', '(^|/)vite-env\\.d\\.ts$'],
+        pathNot: [
+          '^src/main\\.ts$',
+          '\\.test\\.ts$',
+          '\\.d\\.ts$',
+          '(^|/)vite-env\\.d\\.ts$',
+          // Locale catalogs are loaded lazily via import.meta.glob (i18n/index.ts),
+          // which the cruiser can't trace as a static import — they aren't orphans.
+          '^src/i18n/locales/',
+        ],
       },
       to: {},
     },

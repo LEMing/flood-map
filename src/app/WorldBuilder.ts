@@ -54,7 +54,7 @@ export interface WorldBuilderHost {
   setBuiltWorld(world: BuiltWorld): void;
   getTerrain(): TerrainMesh | undefined;
   applyParams(): void;
-  applyDetectedLanguage(lang: Lang): void;
+  applyDetectedLanguage(lang: Lang): void | Promise<void>;
   refreshPanel(): void;
   setStatsLocation(label: string): void;
 }
@@ -88,7 +88,7 @@ export class WorldBuilder {
 
     if (!langPinned) {
       const smart = resolveSmartLanguage(ip);
-      if (smart !== getLanguage()) this.host.applyDetectedLanguage(smart);
+      if (smart !== getLanguage()) await this.host.applyDetectedLanguage(smart);
     }
 
     await this.loadInitialCenter(url, ip);
