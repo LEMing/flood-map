@@ -59,11 +59,6 @@ export interface Params {
   timeScale: number; // simulated seconds per real second
   boundary: BoundaryMode;
 
-  // Click-to-pour: drop a cylinder of water where the user clicks the map
-  pourMode: boolean;
-  pourDepthM: number; // height of the poured column
-  pourRadiusM: number; // radius of the poured cylinder
-
   // Subsurface geology: a cross-section block extruded below the terrain
   showGeology: boolean;
   geologyDepthKm: number; // how deep the block reaches (km below surface)
@@ -155,10 +150,6 @@ export const DEFAULT_PARAMS: Params = {
   substeps: 4,
   timeScale: 180, // 1 real second = 3 simulated minutes
   boundary: 'open',
-
-  pourMode: false,
-  pourDepthM: 4,
-  pourRadiusM: 30,
 
   showGeology: true,
   geologyDepthKm: 0.2, // hydrogeology focus: top 200 m by default

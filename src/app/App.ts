@@ -20,7 +20,7 @@ import { SimDriver } from './SimDriver';
 import { WorldBuilder, type BuiltWorld } from './WorldBuilder';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
-import { PourTool } from '../ui/PourTool';
+import { GameUI } from '../ui/GameUI';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
@@ -33,7 +33,7 @@ export class App {
   private readonly markerLayer = new MarkerLayer(this.group);
   private readonly addressBar: AddressBar;
   private readonly languagePicker: LanguagePicker;
-  private readonly pourTool: PourTool;
+  private readonly gameUI: GameUI;
   private panel: ControlsPanel;
   private readonly pointer: PointerController;
   private readonly simDriver: SimDriver;
@@ -82,7 +82,11 @@ export class App {
       onSelect: (lat, lon, label) => this.worldBuilder.loadCenter({ lat, lon, displayName: label }),
     });
     this.languagePicker = new LanguagePicker((lang) => void this.setLang(lang));
-    this.pourTool = new PourTool({ onToggle: (active) => this.setPourMode(active) });
+    this.gameUI = new GameUI({
+      onStart: () => this.startSimulation(),
+      onTogglePause: () => this.togglePause(),
+      onRestart: () => this.restartSimulation(),
+    });
     // The input is filled only once we know what we're loading (after IP detect
     // / geocode), so a default place never flashes for out-of-region visitors.
 
@@ -101,8 +105,6 @@ export class App {
       getTerrainMesh: () => this.terrain?.mesh,
       getHeightmap: () => this.heightmap,
       getReadback: () => this.simDriver.readback,
-      isPourMode: () => this.params.pourMode,
-      pour: (u, v) => this.pour(u, v),
     });
 
     this.worldBuilder = new WorldBuilder({
@@ -119,7 +121,7 @@ export class App {
       applyParams: () => this.applyParams(),
       applyDetectedLanguage: (lang) => this.applyDetectedLanguage(lang),
       refreshPanel: () => this.panel.refresh(),
-      setStatsLocation: (label) => { this.stats.location = label; },
+      setStatsLocation: (label) => { this.stats.location = label; this.gameUI.setSubtitle(label); },
     });
 
     // GPU context loss (driver reset, OOM): freeze, then rebuild the current
@@ -128,13 +130,14 @@ export class App {
     this.scene.onRestored = () => { this.worldBuilder.reloadCurrent(); };
   }
 
-  /** Mobile-only: a hamburger toggle that opens/closes the controls drawer. */
+  /** The ⚙ gear: opens/closes the controls drawer (closed by default — the
+   *  production view is a clean game UI; every option lives behind the gear). */
   private setupChromeToggle(): void {
     const toggle = document.getElementById('chrome-toggle');
     if (!toggle) return;
     const setOpen = (open: boolean): void => {
       document.body.classList.toggle('chrome-open', open);
-      toggle.textContent = open ? '✕' : '☰';
+      toggle.textContent = open ? '✕' : '⚙';
       toggle.setAttribute('aria-expanded', String(open));
     };
     toggle.addEventListener('click', () => {
@@ -142,20 +145,27 @@ export class App {
     });
   }
 
-  private setPourMode(active: boolean): void {
-    this.params.pourMode = active;
-    this.pourTool.setActive(active);
-    this.scene.renderer.domElement.style.cursor = active ? 'crosshair' : '';
+  /** Launch button: start the rain and run the sim from dry ground. */
+  private startSimulation(): void {
+    this.params.raining = true;
+    this.params.running = true;
+    this.applyParams();
+    this.panel.refresh();
+    this.gameUI.setRunning(true);
+    trackEvent('sim_start');
   }
 
-  /** Inject water at a picked terrain cell (called by the PointerController). */
-  private pour(u: number, v: number): void {
-    if (!this.heightmap || !this.simDriver.hasSim) return;
-    const size = this.heightmap.sizeMeters;
-    this.simDriver.requestPointInject(u, v, this.params.pourDepthM, this.params.pourRadiusM / size);
-    this.params.floodLevelLive = false;
+  private togglePause(): void {
+    this.params.running = !this.params.running;
+    this.gameUI.setRunning(this.params.running);
+    this.panel.refresh();
+  }
+
+  private restartSimulation(): void {
+    this.simDriver.reset();
     this.params.running = true;
-    trackEvent('pour_water', { depth: this.params.pourDepthM });
+    this.gameUI.setRunning(true);
+    this.panel.refresh();
   }
 
   start(): void {
@@ -236,7 +246,7 @@ export class App {
   private rebuildForLanguage(): void {
     this.addressBar.retranslate();
     this.languagePicker.retranslate();
-    this.pourTool.retranslate();
+    this.gameUI.retranslate();
     document.documentElement.lang = getLanguage();
     this.rebuildPanel();
     this.applyParams(); // re-translate legend labels etc.
@@ -356,6 +366,7 @@ export class App {
     const f = Math.round(this.fpsEma);
     this.fpsEl.textContent = `${f} fps`;
     this.fpsEl.style.color = f >= 50 ? '#86e08a' : f >= 30 ? '#e0cf86' : '#e08a86';
+    this.gameUI.setStats(this.simDriver.peakDepth, this.simDriver.floodedFraction * 100);
   }
 
   /** One-way quality degradation when FPS stays low, so weak GPUs stay usable. */

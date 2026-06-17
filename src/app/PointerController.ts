@@ -11,14 +11,11 @@ export interface PointerHost {
   getTerrainMesh(): THREE.Mesh | undefined;
   getHeightmap(): Heightmap | undefined;
   getReadback(): Float32Array | undefined;
-  isPourMode(): boolean;
-  pour(u: number, v: number): void;
 }
 
 /**
- * Pointer interaction over the canvas: a throttled hover readout (elevation,
- * water depth, lat/lon) and click-to-pour — a click, as opposed to a
- * camera-rotating drag, injects water at the picked cell.
+ * Pointer interaction over the canvas: a throttled hover readout of the cell
+ * under the cursor (elevation, water depth, lat/lon).
  */
 export class PointerController {
   private readonly ndc = new THREE.Vector2();
@@ -26,8 +23,6 @@ export class PointerController {
   private inside = false;
   private clientX = 0;
   private clientY = 0;
-  private downX = 0;
-  private downY = 0;
   private sinceRaycast = 0;
   private readonly readout = document.getElementById('readout') as HTMLDivElement | null;
 
@@ -47,15 +42,6 @@ export class PointerController {
       this.inside = false;
       if (this.readout) this.readout.style.display = 'none';
     });
-    dom.addEventListener('pointerdown', (e) => {
-      this.downX = e.clientX;
-      this.downY = e.clientY;
-    });
-    dom.addEventListener('pointerup', (e) => {
-      if (!this.host.isPourMode()) return;
-      if (Math.hypot(e.clientX - this.downX, e.clientY - this.downY) > 6) return;
-      this.pourAt(e.clientX, e.clientY);
-    });
   }
 
   private pickUv(clientX: number, clientY: number): { u: number; v: number; point: THREE.Vector3 } | null {
@@ -74,11 +60,6 @@ export class PointerController {
     const u = THREE.MathUtils.clamp(hit.point.x / size + 0.5, 0, 1);
     const v = THREE.MathUtils.clamp(0.5 - hit.point.z / size, 0, 1);
     return { u, v, point: hit.point };
-  }
-
-  private pourAt(clientX: number, clientY: number): void {
-    const pick = this.pickUv(clientX, clientY);
-    if (pick) this.host.pour(pick.u, pick.v);
   }
 
   /** Throttled hover readout; raycasts at most every 0.1s while inside the canvas. */

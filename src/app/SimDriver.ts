@@ -43,6 +43,8 @@ export class SimDriver {
   private rainedVolume = 0;
   private observedMaxDepth = 1;
   private stored = 0;
+  private floodedFrac = 0;
+  private peakDepthNow = 0;
   private sinceReadback = 0;
   private readbackPending = false;
 
@@ -57,6 +59,8 @@ export class SimDriver {
   get readback(): Float32Array | undefined { return this.buf; }
   get waterStored(): number { return this.stored; }
   get simTimeSec(): number { return this.simTime; }
+  get floodedFraction(): number { return this.floodedFrac; }
+  get peakDepth(): number { return this.peakDepthNow; }
 
   setWorld(sim: FloodSimulation, timeline: Timeline, heightmap: Heightmap): void {
     this.sim = sim;
@@ -85,11 +89,6 @@ export class SimDriver {
   setSurface(tex: THREE.Texture | null): void { this.sim?.setSurface(tex); }
   requestInject(depthM: number): void { this.sim?.requestInject(depthM); }
   requestFill(level: number): void { this.sim?.requestFill(level); }
-
-  requestPointInject(u: number, v: number, depthM: number, radiusFrac: number): void {
-    this.sim?.requestPointInject(u, v, depthM, radiusFrac);
-    this.timelineMode = 'live';
-  }
 
   currentDepthTexture(): THREE.Texture | null {
     if (this.timelineMode === 'scrub' && this.timeline) return this.timeline.tex;
@@ -279,6 +278,8 @@ export class SimDriver {
     }
     if (this.timelineMode !== 'scrub') this.observedMaxDepth = Math.max(1, maxEver);
     this.stored = stored * cellArea;
+    this.floodedFrac = flooded / (N * N);
+    this.peakDepthNow = maxNow;
     this.stats.simTime = formatDuration(simTime);
     this.stats.rained = formatVolume(this.rainedVolume);
     this.stats.stored = formatVolume(stored * cellArea);

@@ -15,7 +15,7 @@ export interface ControlCallbacks {
   onReset(): void;
   onStep(): void;
   onTogglePlay(): void;
-  onDump(): void; // pour a one-shot batch of water
+  onDump(): void; // dump a one-shot batch of water (flash flood)
   onFill(): void; // flood ground up to a chosen level
   onPrecompute(): void; // demo: precompute the storm into a scrubbable timeline
   onScrub(): void; // demo: timeline slider moved
@@ -68,7 +68,7 @@ export class ControlsPanel {
     const change = () => cb.onParamChange();
 
     // --- Simulation controls ---
-    const sim = this.pane.addFolder({ title: t('sim.title'), expanded: true });
+    const sim = this.pane.addFolder({ title: t('sim.title'), expanded: false });
     this.playButton = sim.addButton({ title: params.running ? t('sim.pause') : t('sim.play') });
     (this.playButton as ReturnType<Pane['addButton']>).on('click', () => {
       cb.onTogglePlay();
@@ -78,8 +78,6 @@ export class ControlsPanel {
     sim.addButton({ title: t('sim.reset') }).on('click', () => cb.onReset());
     sim.addBinding(params, 'releaseDepthM', { min: 0.5, max: 15, step: 0.5, label: t('sim.dumpDepth') });
     sim.addButton({ title: t('sim.dump') }).on('click', () => cb.onDump());
-    sim.addBinding(params, 'pourDepthM', { min: 0.5, max: 20, step: 0.5, label: t('pour.depth') }).on('change', change);
-    sim.addBinding(params, 'pourRadiusM', { min: 5, max: 200, step: 5, label: t('pour.radius') }).on('change', change);
     sim.addBinding(params, 'fillLevelM', { min: 0, max: 50, step: 0.1, label: t('sim.floodLevel') }).on('change', change);
     sim.addBinding(params, 'floodLevelLive', { label: t('sim.liveFlood') }).on('change', change);
     sim.addButton({ title: t('sim.fill') }).on('click', () => cb.onFill());
@@ -87,7 +85,7 @@ export class ControlsPanel {
     sim.addBinding(params, 'substeps', { min: 1, max: 12, step: 1, label: t('sim.substeps') }).on('change', change);
 
     // --- Rain ---
-    const rain = this.pane.addFolder({ title: t('rain.title'), expanded: true });
+    const rain = this.pane.addFolder({ title: t('rain.title'), expanded: false });
     rain.addBinding(params, 'raining', { label: t('rain.raining') }).on('change', change);
     rain.addBinding(params, 'stormType', { label: t('rain.stormEvent'), options: stormOptions() }).on('change', () => { change(); cb.onReset(); });
     rain.addBinding(params, 'storm', { label: t('rain.clouds') }).on('change', change);
@@ -98,7 +96,7 @@ export class ControlsPanel {
     rain.addBinding(params, 'spotRadius', { min: 0.02, max: 0.6, step: 0.01, label: t('rain.cellRadius') }).on('change', change);
 
     // --- Urban surface model (land cover + OSM) ---
-    const urban = this.pane.addFolder({ title: t('urban.title'), expanded: true });
+    const urban = this.pane.addFolder({ title: t('urban.title'), expanded: false });
     urban.addBinding(params, 'useSurface', { label: t('urban.surface') }).on('change', () => cb.onRebuild());
     urban.addBinding(params, 'burnBuildings', { label: t('urban.buildings') }).on('change', () => cb.onRebuild());
     urban.addBinding(params, 'drainageCapacityMmPerHr', { min: 0, max: 60, step: 1, label: t('urban.sewer') }).on('change', change);
@@ -182,7 +180,7 @@ export class ControlsPanel {
     geo.addBinding(params, 'highlightAquiclude', { label: t('geo.aquiclude') }).on('change', change);
 
     // --- Stats (read-only) ---
-    const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });
+    const s = this.pane.addFolder({ title: t('stats.title'), expanded: false });
     s.addBinding(stats, 'location', { readonly: true, label: t('stats.location') });
     s.addBinding(stats, 'simTime', { readonly: true, label: t('stats.simTime') });
     s.addBinding(stats, 'rained', { readonly: true, label: t('stats.rainIn') });
