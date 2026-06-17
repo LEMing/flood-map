@@ -24,18 +24,13 @@ import { SeaMesh } from '../render/SeaMesh';
 import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
 import { PointerController } from './PointerController';
+import { SimDriver } from './SimDriver';
 import { AddressBar } from '../ui/AddressBar';
 import { LanguagePicker } from '../ui/LanguagePicker';
 import { PourTool } from '../ui/PourTool';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
-import { INITIAL_STATS, formatDuration, formatVolume, type StatsData } from '../ui/stats';
+import { INITIAL_STATS, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
-
-const MAX_STEPS_PER_FRAME = 48;
-const READBACK_INTERVAL = 0.4; // seconds (wall clock)
-const DEMO_SIM_SECONDS = 2.5 * 3600; // storm length precomputed for the demo timeline
-const MAX_PRECOMPUTE_STEPS = 600; // sim substeps per captured frame
-const TIMELINE_PLAY_SECONDS = 12; // real seconds to play the whole precomputed timeline
 
 export class App {
   private readonly params: Params = { ...DEFAULT_PARAMS };
@@ -48,6 +43,7 @@ export class App {
   private readonly pourTool: PourTool;
   private panel: ControlsPanel;
   private readonly pointer: PointerController;
+  private readonly simDriver: SimDriver;
   private currentLocation?: GeocodeResult;
 
   private terrain?: TerrainMesh;
@@ -56,19 +52,12 @@ export class App {
   private maxFlood?: MaxFloodOverlay;
   private velocity?: VelocityField;
   private rain?: Rain;
-  private sim?: FloodSimulation;
   private sea?: SeaMesh;
   private readonly geology = new GeologyController();
-  private timeline?: Timeline;
-  private timelineMode: 'live' | 'computing' | 'scrub' = 'live';
-  private precomputeTargetFrames = 0;
-  private precomputeFrameSec = 0;
   private heightmap?: Heightmap;
   private surfaceTexture?: THREE.DataTexture;
   private surfaceRaw?: Pick<SurfaceResult, 'land' | 'osm'>;
-  private readback?: Float32Array;
 
-  private waterStored = 0;
   private readonly resBuf = new THREE.Vector2();
   private readonly spotBuf = new THREE.Vector2();
   private readonly seaCloudColor = new THREE.Color(0.34, 0.36, 0.42);
@@ -76,14 +65,9 @@ export class App {
   private readonly legendMin = document.getElementById('legend-min');
   private readonly legendMax = document.getElementById('legend-max');
 
-  private simTimeSec = 0;
   private weatherClock = 0; // advances only while running, so rain/storm freeze on pause
   private fpsEl: HTMLDivElement | null = null;
   private lastFpsShown = 0;
-  private rainedVolume = 0;
-  private observedMaxDepth = 1;
-  private sinceReadback = 0;
-  private readbackPending = false;
   private lowFpsTime = 0;
   private fpsEma = 60;
   private lastTime = 0;
@@ -114,12 +98,18 @@ export class App {
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
     this.setupChromeToggle();
 
+    this.simDriver = new SimDriver(this.params, this.stats, {
+      refreshPanel: () => this.panel.refresh(),
+      syncTextures: () => this.syncTextures(),
+      fps: () => this.fpsEma,
+    });
+
     this.pointer = new PointerController({
       camera: this.scene.camera,
       dom: this.scene.renderer.domElement,
       getTerrainMesh: () => this.terrain?.mesh,
       getHeightmap: () => this.heightmap,
-      getReadback: () => this.readback,
+      getReadback: () => this.simDriver.readback,
       isPourMode: () => this.params.pourMode,
       pour: (u, v) => this.pour(u, v),
     });
@@ -147,12 +137,11 @@ export class App {
 
   /** Inject water at a picked terrain cell (called by the PointerController). */
   private pour(u: number, v: number): void {
-    if (!this.heightmap || !this.sim) return;
+    if (!this.heightmap || !this.simDriver.hasSim) return;
     const size = this.heightmap.sizeMeters;
-    this.sim.requestPointInject(u, v, this.params.pourDepthM, this.params.pourRadiusM / size);
+    this.simDriver.requestPointInject(u, v, this.params.pourDepthM, this.params.pourRadiusM / size);
     this.params.floodLevelLive = false;
     this.params.running = true;
-    this.timelineMode = 'live';
     trackEvent('pour_water', { depth: this.params.pourDepthM });
   }
 
@@ -201,40 +190,37 @@ export class App {
     return {
       onParamChange: () => this.applyParams(),
       onRebuild: () => this.reloadCurrent(),
-      onReset: () => this.resetSim(),
-      onStep: () => this.stepOnce(),
+      onReset: () => this.simDriver.reset(),
+      onStep: () => this.simDriver.stepOnce(),
       onTogglePlay: () => {
         this.params.running = !this.params.running;
       },
       onDump: () => {
-        this.sim?.requestInject(this.params.releaseDepthM);
+        this.simDriver.requestInject(this.params.releaseDepthM);
         this.params.raining = false; // watch it flow & drain, not rain
         this.params.running = true;
         this.applyParams();
         this.panel.refresh();
       },
       onFill: () => {
-        if (!this.sim || !this.heightmap) return;
-        this.sim.requestFill(this.heightmap.min + this.params.fillLevelM);
+        if (!this.simDriver.hasSim || !this.heightmap) return;
+        this.simDriver.requestFill(this.heightmap.min + this.params.fillLevelM);
         this.params.raining = false;
         this.params.running = true;
         this.applyParams();
         this.panel.refresh();
       },
-      onPrecompute: () => this.startPrecompute(),
-      onScrub: () => {
-        if (!this.timeline?.ready) return;
-        this.timelineMode = 'scrub';
-        this.params.timelinePlaying = false;
-        this.showTimelineFrame();
+      onPrecompute: () => {
+        this.simDriver.beginPrecompute();
+        this.applyParams();
+        this.panel.refresh();
       },
-      onTimelinePlay: () => {
-        if (this.timeline?.ready) this.timelineMode = 'scrub';
-      },
+      onScrub: () => this.simDriver.scrub(),
+      onTimelinePlay: () => this.simDriver.toScrubIfReady(),
       onLive: () => {
-        this.timelineMode = 'live';
+        this.simDriver.setLive();
         this.params.timelinePlaying = false;
-        this.resetSim();
+        this.simDriver.reset();
         this.applyParams();
         this.panel.refresh();
       },
@@ -245,7 +231,7 @@ export class App {
   private setDemoMode(on: boolean): void {
     this.params.demoMode = on;
     writeUrlState({ demo: on });
-    this.timelineMode = 'live';
+    this.simDriver.setLive();
     this.params.timelinePlaying = false;
     this.rebuildPanel();
     this.applyParams();
@@ -363,14 +349,15 @@ export class App {
 
     this.terrain = new TerrainMesh(heightmap, this.params.wireframe);
     this.terrain.setWeatherUniforms(this.scene.weather);
-    this.sim = new FloodSimulation(
+    const sim = new FloodSimulation(
       this.scene.renderer,
       this.terrain.heightTexture,
       N,
       heightmap.sizeMeters,
       this.params,
     );
-    this.sim.setSurface(this.params.useSurface && this.surfaceTexture ? this.surfaceTexture : null);
+    this.simDriver.setWorld(sim, new Timeline(N), heightmap);
+    this.simDriver.setSurface(this.params.useSurface && this.surfaceTexture ? this.surfaceTexture : null);
     if (surface) this.terrain.setSurfaceColors(surface.surface, N);
     this.water = new WaterMesh(
       this.terrain.geometry, this.terrain.heightTexture, heightmap.min, N, heightmap.sizeMeters, this.params,
@@ -388,9 +375,6 @@ export class App {
     this.maxFlood = new MaxFloodOverlay(this.terrain.geometry);
     this.velocity = new VelocityField(heightmap.sizeMeters, this.terrain.heightTexture);
     this.rain = new Rain(heightmap);
-    this.readback = new Float32Array(N * N * 4);
-    this.timeline = new Timeline(N);
-    this.timelineMode = 'live';
 
     this.group.add(
       this.terrain.mesh, this.sea.mesh, this.water.mesh, this.water.skirt, this.floodOverlay.mesh,
@@ -406,10 +390,6 @@ export class App {
       this.floodOverlay.mesh, this.maxFlood.mesh, this.velocity.mesh, this.rain.object, geologyMesh,
     ]);
     this.markerLayer.build(heightmap);
-
-    this.simTimeSec = 0;
-    this.rainedVolume = 0;
-    this.observedMaxDepth = 1;
 
     this.applyParams();
     const midHeight = ((heightmap.min + heightmap.max) / 2) * this.params.verticalExaggeration;
@@ -437,7 +417,7 @@ export class App {
 
   private applyParams(): void {
     this.group.scale.y = this.params.verticalExaggeration;
-    this.sim?.updateParams(this.params);
+    this.simDriver.updateParams(this.params);
     this.refreshSurface();
     this.water?.update(this.params);
     this.sea?.update(this.params);
@@ -472,130 +452,22 @@ export class App {
 
   /** Recompute the per-cell drainage/infiltration/roughness fields live (no re-fetch). */
   private refreshSurface(): void {
-    if (!this.sim) return;
+    if (!this.simDriver.hasSim) return;
     if (this.params.useSurface && this.surfaceRaw && this.surfaceTexture && this.heightmap) {
       const data = computeSurfaceFields(this.heightmap, this.surfaceRaw.land, this.surfaceRaw.osm, this.params);
       (this.surfaceTexture.image.data as Float32Array).set(data);
       this.surfaceTexture.needsUpdate = true;
-      this.sim.setSurface(this.surfaceTexture);
+      this.simDriver.setSurface(this.surfaceTexture);
       this.terrain?.setSurfaceColors(data, this.heightmap.N);
     } else {
-      this.sim.setSurface(null);
+      this.simDriver.setSurface(null);
     }
   }
 
-  private resetSim(): void {
-    this.sim?.reset();
-    this.simTimeSec = 0;
-    this.rainedVolume = 0;
-    this.observedMaxDepth = 1;
-  }
-
-  private stepOnce(): void {
-    if (!this.sim) return;
-    const stepDt = this.params.mapSizeKm * 1000 / this.params.gridResolution * 0.1;
-    this.sim.step(stepDt);
-    this.simTimeSec += stepDt;
-  }
-
-  private advanceSim(dtReal: number): void {
-    this.stepSimSeconds(dtReal * this.params.timeScale, MAX_STEPS_PER_FRAME);
-  }
-
-  /** Advance the sim by a fixed number of simulated seconds (CFL-substepped). */
-  private stepSimSeconds(simSeconds: number, maxSteps: number): void {
-    if (!this.sim) return;
-    // Drive rain from the storm hyetograph (peaked залповый ливень) over sim time.
-    const intensityMmHr = this.params.raining
-      ? stormIntensityMmHr(this.params.stormType, this.simTimeSec, this.params.intensityMmPerHr)
-      : 0;
-    this.sim.setRainRateMmPerHr(intensityMmHr);
-
-    const g = Math.max(0.1, this.params.gravity);
-    const cellSize = this.sim.cellSize;
-    const refDepth = Math.max(1, this.observedMaxDepth);
-    const cflMax = (0.45 * cellSize) / Math.sqrt(g * refDepth);
-
-    const stepDt = Math.min(simSeconds / this.params.substeps, cflMax);
-    let remaining = simSeconds;
-    let steps = 0;
-    while (remaining > 1e-6 && steps < maxSteps && stepDt > 0) {
-      const dt = Math.min(stepDt, remaining);
-      this.sim.step(dt);
-      remaining -= dt;
-      steps++;
-    }
-    const simulated = simSeconds - remaining;
-    this.simTimeSec += simulated;
-    this.rainedVolume += (intensityMmHr / 1000 / 3600) * this.rainArea() * simulated;
-  }
-
-  // --- demo timeline: precompute the storm into scrubbable frames ---
-  private startPrecompute(): void {
-    if (!this.sim || !this.timeline) return;
-    this.resetSim();
-    this.params.raining = true;
-    this.params.floodLevelLive = false;
-    this.params.timelinePlaying = false;
-    this.params.timelinePos = 0;
-    this.timeline.begin();
-    this.timelineMode = 'computing';
-    const N = this.sim.N;
-    this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
-    this.precomputeFrameSec = DEMO_SIM_SECONDS / this.precomputeTargetFrames;
-    this.applyParams();
-    this.panel.refresh();
-  }
-
-  private tickPrecompute(): void {
-    if (!this.sim || !this.timeline || !this.readback) return;
-    this.stepSimSeconds(this.precomputeFrameSec, MAX_PRECOMPUTE_STEPS);
-    this.sim.readWater(this.readback);
-    let maxEver = 1;
-    for (let i = 1; i < this.readback.length; i += 4) {
-      if (this.readback[i] > maxEver) maxEver = this.readback[i];
-    }
-    this.observedMaxDepth = maxEver;
-    this.timeline.capture(this.readback, this.simTimeSec);
-    this.timeline.progress = this.timeline.count / this.precomputeTargetFrames;
-    if (this.timeline.count >= this.precomputeTargetFrames) {
-      this.timeline.finish();
-      this.timelineMode = 'scrub';
-      this.params.timelinePos = 0;
-      this.params.timelinePlaying = true; // auto-play the finished scene once
-      this.showTimelineFrame();
-      this.panel.refresh();
-    }
-  }
-
-  private showTimelineFrame(): void {
-    if (!this.timeline || !this.readback) return;
-    const f = this.timeline.showAt(this.params.timelinePos);
-    if (!f) return;
-    this.readback.set(f.rgba);
-    this.computeStatsFromReadback(f.time);
-  }
-
-  private timelineStatus(): string {
-    if (this.timelineMode === 'computing' && this.timeline) {
-      return t('demo.stComputing', { pct: Math.round(this.timeline.progress * 100) });
-    }
-    if (this.timelineMode === 'scrub') return t('demo.stReady');
-    return t('demo.stLive');
-  }
-
-  private rainArea(): number {
-    const size = this.params.mapSizeKm * 1000;
-    if (this.params.rainFootprint === 'uniform') return size * size;
-    const frac = Math.min(1, Math.PI * this.params.spotRadius * this.params.spotRadius * 0.5);
-    return size * size * frac;
-  }
-
+  /** Wire the sim's (or scrubbed timeline's) depth texture into the render meshes. */
   private syncTextures(): void {
-    if (!this.sim) return;
-    const depthTex = this.timelineMode === 'scrub' && this.timeline
-      ? this.timeline.tex
-      : this.sim.waterTexture;
+    const depthTex = this.simDriver.currentDepthTexture();
+    if (!depthTex) return;
     this.water?.setDepthTexture(depthTex);
     this.terrain?.setDepthTexture(depthTex);
     this.floodOverlay?.setDepthTexture(depthTex);
@@ -603,85 +475,12 @@ export class App {
     this.velocity?.setTextures(depthTex, depthTex);
   }
 
-  private updateStats(): void {
-    if (!this.sim || !this.readback || !this.heightmap) return;
-    this.sim.readWater(this.readback);
-    this.computeStatsFromReadback(this.simTimeSec);
-  }
-
-  /** Non-blocking stats: poll a finished async readback, then kick the next one.
-   * Avoids the ~26ms gl.readPixels stall (at 1024) every refresh interval. */
-  private pumpStatsReadback(dt: number): void {
-    if (!this.sim || !this.readback) return;
-    if (this.readbackPending && this.sim.pollReadback(this.readback)) {
-      this.readbackPending = false;
-      this.computeStatsFromReadback(this.simTimeSec);
-    }
-    this.sinceReadback += dt;
-    if (!this.readbackPending && this.sinceReadback >= READBACK_INTERVAL) {
-      this.sinceReadback = 0;
-      if (this.sim.requestReadback()) this.readbackPending = true;
-      else this.updateStats(); // no WebGL2 fence support → sync fallback
-    }
-  }
-
-  private computeStatsFromReadback(simTime: number): void {
-    if (!this.sim || !this.readback) return;
-    const N = this.sim.N;
-    const cellArea = this.sim.cellSize * this.sim.cellSize;
-    let stored = 0;
-    let flooded = 0;
-    let maxNow = 0;
-    let maxEver = 0;
-    for (let i = 0; i < N * N; i++) {
-      const d = this.readback[i * 4];
-      const m = this.readback[i * 4 + 1];
-      stored += d;
-      if (d > 0.05) flooded++;
-      if (d > maxNow) maxNow = d;
-      if (m > maxEver) maxEver = m;
-    }
-    if (this.timelineMode !== 'scrub') this.observedMaxDepth = Math.max(1, maxEver);
-    this.waterStored = stored * cellArea;
-    this.stats.simTime = formatDuration(simTime);
-    this.stats.rained = formatVolume(this.rainedVolume);
-    this.stats.stored = formatVolume(stored * cellArea);
-    this.stats.floodedArea = `${((flooded / (N * N)) * 100).toFixed(1)} %`;
-    this.stats.maxDepth = `${maxNow.toFixed(2)} m (max ${maxEver.toFixed(2)})`;
-    this.stats.fps = this.fpsEma.toFixed(0);
-    this.stats.timelineStatus = this.timelineStatus();
-    this.panel.refresh();
-  }
-
   private loop = (now: number): void => {
     const dt = Math.min(0.05, (now - this.lastTime) / 1000) || 0;
     this.lastTime = now;
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
-    if (this.sim) {
-      if (this.timelineMode === 'computing') {
-        this.tickPrecompute(); // fills this.readback synchronously + captures
-        this.computeStatsFromReadback(this.simTimeSec);
-        this.syncTextures();
-      } else if (this.timelineMode === 'scrub') {
-        if (this.params.timelinePlaying) {
-          this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
-          if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
-          this.panel.refresh();
-        }
-        this.showTimelineFrame();
-        this.syncTextures();
-      } else {
-        if (this.params.floodLevelLive && this.heightmap) {
-          this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
-          this.sim.step(0); // set water exactly to the level, no dynamics
-        } else if (this.params.running) {
-          this.advanceSim(dt);
-        }
-        this.syncTextures();
-        this.pumpStatsReadback(dt);
-      }
-    }
+    this.simDriver.tick(dt);
 
     // Pause freezes the weather too: the rain/storm clock only advances while
     // running, and lightning/drift are gated, so Pause gives a still scene.
@@ -695,7 +494,7 @@ export class App {
     this.pointer.update(dt);
     this.updateDrainArrows();
     this.markerLayer.update(this.scene.camera);
-    if (this.timelineMode === 'live') this.autoQualityCheck(dt);
+    if (this.simDriver.mode === 'live') this.autoQualityCheck(dt);
     this.scene.render(this.water, this.sea);
     requestAnimationFrame(this.loop);
   };
@@ -763,7 +562,7 @@ export class App {
 
     const size = this.params.mapSizeKm * 1000;
     const mmHr = this.params.raining
-      ? stormIntensityMmHr(this.params.stormType, this.simTimeSec, this.params.intensityMmPerHr)
+      ? stormIntensityMmHr(this.params.stormType, this.simDriver.simTimeSec, this.params.intensityMmPerHr)
       : 0;
     const amount = this.params.rainSplashes && this.params.raining
       ? THREE.MathUtils.clamp(mmHr / 120, 0, 1) : 0;
@@ -774,7 +573,7 @@ export class App {
 
   private updateDrainArrows(): void {
     // Auto-reveal flow arrows while draining (rain off) so the water's path shows.
-    const draining = this.params.running && !this.params.raining && this.waterStored > 1;
+    const draining = this.params.running && !this.params.raining && this.simDriver.waterStored > 1;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity || draining;
   }
 
@@ -788,9 +587,7 @@ export class App {
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
     this.geology.dispose(this.scene.scene);
-    this.sim?.dispose();
-    this.timeline?.dispose();
-    this.timeline = undefined;
+    this.simDriver.dispose();
     this.water?.dispose();
     this.floodOverlay?.dispose();
     this.maxFlood?.dispose();
@@ -798,7 +595,6 @@ export class App {
     this.rain?.dispose();
     this.terrain?.dispose();
     this.surfaceTexture?.dispose();
-    this.sim = undefined;
     this.water = undefined;
     this.floodOverlay = undefined;
     this.maxFlood = undefined;
