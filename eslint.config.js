@@ -90,14 +90,6 @@ export default tseslint.config(
     files: ['src/render/**/*.ts'],
     rules: { complexity: ['error', 11], 'max-params': ['error', 7] },
   },
-  // SceneManager.ts is the last render file over the line budget — unlike the
-  // others (whose bulk was inline GLSL, now extracted to *.glsl.ts), its size
-  // is composer/post-processing/lightning wiring, so it needs a logic split
-  // (extract the post stack + lightning system), tracked separately.
-  {
-    files: ['src/render/SceneManager.ts'],
-    rules: { 'max-lines': 'off' },
-  },
 
   // geo/*: data-acquisition layer — tile fetch/fallback chains, raster decode
   // and terrain classification carry inherent branching. Worst offenders
