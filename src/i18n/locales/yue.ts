@@ -191,4 +191,23 @@ export const yue: Record<string, string> = {
   'legend.elevation': '海拔',
   'readout.elev': '海拔',
   'readout.water': '水',
+
+  // Landing + video
+  'landing.headline': '睇下大雨點樣浸冧任何一個地址',
+  'landing.tagline': '輸入一個地方,起佢嘅3D地形,模擬一場狂風暴雨——即時,或者整成30秒影片。',
+  'landing.cta.realtime': '即時 ▶',
+  'landing.cta.video': '整影片 🎬',
+  'landing.fact.preparing': '準備緊地形…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': '平坦地形',
+  'landing.fact.terrainHilly': '丘陵地形',
+  'landing.fact.terrainMountain': '多山',
+  'landing.fact.buildings': '{count} 幢樓',
+  'video.preparing': '模擬緊暴風雨… {pct}%',
+  'video.recording': '錄緊影片… {pct}%',
+  'video.title': '你嘅水浸影片',
+  'video.download': '下載 ⬇',
+  'video.again': '重新開始 ↻',
+  'video.realtime': '打開即時 ▶',
+  'video.unsupported': '呢個瀏覽器唔支援影片匯出。試吓即時啦。',
 };

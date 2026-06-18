@@ -190,4 +190,23 @@ export const wuu: Record<string, string> = {
   'legend.elevation': '海拔',
   'readout.elev': '海拔',
   'readout.water': '水',
+
+  // Landing + video
+  'landing.headline': '看看大雨是哪能淹没随便啥地址个',
+  'landing.tagline': '输入一个地方,搭建伊个3D地形,模拟一场暴雨——实时,或者做成30秒个视频。',
+  'landing.cta.realtime': '实时 ▶',
+  'landing.cta.video': '做视频 🎬',
+  'landing.fact.preparing': '正辰光准备地形…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': '平坦地形',
+  'landing.fact.terrainHilly': '丘陵地形',
+  'landing.fact.terrainMountain': '多山',
+  'landing.fact.buildings': '{count} 幢房子',
+  'video.preparing': '正辰光模拟暴风雨… {pct}%',
+  'video.recording': '正辰光录视频… {pct}%',
+  'video.title': '侬个洪水视频',
+  'video.download': '下载 ⬇',
+  'video.again': '重新开始 ↻',
+  'video.realtime': '打开实时 ▶',
+  'video.unsupported': '搿只浏览器勿支持视频导出。可以试试实时。',
 };

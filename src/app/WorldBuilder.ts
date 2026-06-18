@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { loadTerrainInWorker } from '../geo/loadInWorker';
+import { acquireWorld } from '../geo/worldDataCache';
 import { geocode, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
 import { clearDownloadSink, setDownloadSink } from '../geo/cache';
@@ -153,7 +153,8 @@ export class WorldBuilder {
       const N = this.host.params.gridResolution;
       // DEM fetch/decode/inpaint + ocean bathymetry + OSM rasterize + surface
       // fields all run off the main thread; the meshes are built here (WebGL).
-      const { heightmap, warning, sourceUsed, surface } = await loadTerrainInWorker(
+      // acquireWorld reuses the landing's background prefetch when it matches.
+      const { heightmap, warning, sourceUsed, surface } = await acquireWorld(
         {
           location,
           mapSizeKm: this.host.params.mapSizeKm,

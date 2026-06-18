@@ -170,4 +170,23 @@ export const sv: Record<string, string> = {
   'legend.elevation': 'Höjd',
   'readout.elev': 'höjd',
   'readout.water': 'vatten',
+
+  // Landing + video
+  'landing.headline': 'Se hur ett skyfall översvämmar vilken adress som helst',
+  'landing.tagline': 'Ange en plats för att bygga dess 3D-terräng och simulera ett skyfall — live eller som en 30-sekundersvideo.',
+  'landing.cta.realtime': 'Realtid ▶',
+  'landing.cta.video': 'Skapa video 🎬',
+  'landing.fact.preparing': 'Förbereder terräng…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Platt terräng',
+  'landing.fact.terrainHilly': 'Kuperad terräng',
+  'landing.fact.terrainMountain': 'Bergig',
+  'landing.fact.buildings': '{count} byggnader',
+  'video.preparing': 'Simulerar stormen… {pct}%',
+  'video.recording': 'Spelar in video… {pct}%',
+  'video.title': 'Din översvämningsvideo',
+  'video.download': 'Ladda ner ⬇',
+  'video.again': 'Börja om ↻',
+  'video.realtime': 'Öppna realtid ▶',
+  'video.unsupported': 'Videoexport stöds inte i den här webbläsaren. Prova realtid i stället.',
 };

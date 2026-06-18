@@ -170,4 +170,23 @@ export const az: Record<string, string> = {
   'legend.elevation': 'Hündürlük',
   'readout.elev': 'hündürlük',
   'readout.water': 'su',
+
+  // Landing + video
+  'landing.headline': 'Leysan yağışının istənilən ünvanı necə basdığını görün',
+  'landing.tagline': '3D relyefini qurmaq və leysanı simulyasiya etmək üçün bir yer daxil edin — canlı, yaxud 30 saniyəlik video kimi.',
+  'landing.cta.realtime': 'Canlı ▶',
+  'landing.cta.video': 'Video yarat 🎬',
+  'landing.fact.preparing': 'Relyef hazırlanır…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Düz relyef',
+  'landing.fact.terrainHilly': 'Təpəlik relyef',
+  'landing.fact.terrainMountain': 'Dağlıq',
+  'landing.fact.buildings': '{count} bina',
+  'video.preparing': 'Fırtına simulyasiya edilir… {pct}%',
+  'video.recording': 'Video çəkilir… {pct}%',
+  'video.title': 'Sizin daşqın videonuz',
+  'video.download': 'Yüklə ⬇',
+  'video.again': 'Yenidən başla ↻',
+  'video.realtime': 'Canlını aç ▶',
+  'video.unsupported': 'Bu brauzerdə video ixracı dəstəklənmir. Bunun əvəzinə canlı rejimi sınayın.',
 };

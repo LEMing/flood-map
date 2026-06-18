@@ -182,4 +182,23 @@ export const vi: Record<string, string> = {
   'legend.elevation': 'Độ cao',
   'readout.elev': 'độ cao',
   'readout.water': 'nước',
+
+  // Landing + video
+  'landing.headline': 'Xem mưa lớn làm ngập bất kỳ địa chỉ nào như thế nào',
+  'landing.tagline': 'Nhập một địa điểm để dựng địa hình 3D của nó và mô phỏng mưa xối xả — trực tiếp, hoặc dưới dạng video 30 giây.',
+  'landing.cta.realtime': 'Trực tiếp ▶',
+  'landing.cta.video': 'Tạo video 🎬',
+  'landing.fact.preparing': 'Đang chuẩn bị địa hình…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Địa hình bằng phẳng',
+  'landing.fact.terrainHilly': 'Địa hình đồi',
+  'landing.fact.terrainMountain': 'Núi non',
+  'landing.fact.buildings': '{count} tòa nhà',
+  'video.preparing': 'Đang mô phỏng cơn bão… {pct}%',
+  'video.recording': 'Đang ghi video… {pct}%',
+  'video.title': 'Video ngập lụt của bạn',
+  'video.download': 'Tải xuống ⬇',
+  'video.again': 'Bắt đầu lại ↻',
+  'video.realtime': 'Mở trực tiếp ▶',
+  'video.unsupported': 'Trình duyệt này không hỗ trợ xuất video. Hãy thử chế độ trực tiếp.',
 };

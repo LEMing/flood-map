@@ -170,4 +170,23 @@ export const tg: Record<string, string> = {
   'legend.elevation': 'Баландӣ',
   'readout.elev': 'баландӣ',
   'readout.water': 'об',
+
+  // Landing + video
+  'landing.headline': 'Бубинед, ки чӣ тавр борони сахт ҳар суроғаро зери об мегузорад',
+  'landing.tagline': 'Маконеро ворид кунед, то релефи 3D-и онро созед ва борони сахтро тақлид кунед — зинда ё ҳамчун видеои 30-сонияӣ.',
+  'landing.cta.realtime': 'Зинда ▶',
+  'landing.cta.video': 'Видео созед 🎬',
+  'landing.fact.preparing': 'Тайёр кардани релеф…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Релефи ҳамвор',
+  'landing.fact.terrainHilly': 'Релефи теппагӣ',
+  'landing.fact.terrainMountain': 'Кӯҳсор',
+  'landing.fact.buildings': '{count} бино',
+  'video.preparing': 'Тақлиди тӯфон… {pct}%',
+  'video.recording': 'Сабти видео… {pct}%',
+  'video.title': 'Видеои обхезии шумо',
+  'video.download': 'Боргирӣ ⬇',
+  'video.again': 'Аз нав оғоз кунед ↻',
+  'video.realtime': 'Кушодани зинда ▶',
+  'video.unsupported': 'Содироти видео дар ин браузер дастгирӣ намешавад. Ба ҷои он зиндаро санҷед.',
 };

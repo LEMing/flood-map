@@ -169,4 +169,23 @@ export const be: Record<string, string> = {
   'legend.elevation': 'Вышыня',
   'readout.elev': 'вышыня',
   'readout.water': 'вада',
+
+  // Landing + video
+  'landing.headline': 'Паглядзіце, як лівень затапляе любы адрас',
+  'landing.tagline': 'Увядзіце месца, каб пабудаваць яго 3D-рэльеф і змадэляваць залеву — у рэжыме рэальнага часу або як 30-секундны відэаролік.',
+  'landing.cta.realtime': 'У рэальным часе ▶',
+  'landing.cta.video': 'Зрабіць відэа 🎬',
+  'landing.fact.preparing': 'Падрыхтоўка рэльефу…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Плоскі рэльеф',
+  'landing.fact.terrainHilly': 'Узгорысты рэльеф',
+  'landing.fact.terrainMountain': 'Гарысты',
+  'landing.fact.buildings': '{count} будынкаў',
+  'video.preparing': 'Мадэляванне навальніцы… {pct}%',
+  'video.recording': 'Запіс відэа… {pct}%',
+  'video.title': 'Ваша відэа паводкі',
+  'video.download': 'Спампаваць ⬇',
+  'video.again': 'Пачаць спачатку ↻',
+  'video.realtime': 'Адкрыць рэальны час ▶',
+  'video.unsupported': 'Экспарт відэа не падтрымліваецца ў гэтым браўзеры. Паспрабуйце рэжым рэальнага часу.',
 };

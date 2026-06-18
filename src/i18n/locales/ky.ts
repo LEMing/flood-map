@@ -170,4 +170,23 @@ export const ky: Record<string, string> = {
   'legend.elevation': 'Бийиктик',
   'readout.elev': 'бийиктик',
   'readout.water': 'суу',
+
+  // Landing + video
+  'landing.headline': 'Нөшөрлөгөн жамгыр кайсы даректи кантип каптаганын көрүңүз',
+  'landing.tagline': 'Жердин 3D рельефин түзүп, нөшөрлөгөн жамгырды моделдөө үчүн жайды киргизиңиз — түз эфирде же 30 секунддук видео катары.',
+  'landing.cta.realtime': 'Чыныгы убакыт ▶',
+  'landing.cta.video': 'Видео жасоо 🎬',
+  'landing.fact.preparing': 'Рельеф даярдалууда…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Түз рельеф',
+  'landing.fact.terrainHilly': 'Дөбөлүү рельеф',
+  'landing.fact.terrainMountain': 'Тоолуу',
+  'landing.fact.buildings': '{count} имарат',
+  'video.preparing': 'Бороон моделделүүдө… {pct}%',
+  'video.recording': 'Видео жазылууда… {pct}%',
+  'video.title': 'Сиздин суу ташкын видеоңуз',
+  'video.download': 'Жүктөп алуу ⬇',
+  'video.again': 'Кайра баштоо ↻',
+  'video.realtime': 'Чыныгы убакытты ачуу ▶',
+  'video.unsupported': 'Бул браузерде видео экспорттоо колдоого алынбайт. Анын ордуна чыныгы убакытты колдонуп көрүңүз.',
 };

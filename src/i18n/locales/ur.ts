@@ -170,4 +170,23 @@ export const ur: Record<string, string> = {
   'legend.elevation': 'بلندی',
   'readout.elev': 'بلندی',
   'readout.water': 'پانی',
+
+  // Landing + video
+  'landing.headline': 'دیکھیں کہ کیسے موسلادھار بارش کسی بھی پتے کو ڈبو دیتی ہے',
+  'landing.tagline': 'کوئی جگہ درج کریں تاکہ اس کا 3D خطہ بنایا جا سکے اور تیز بارش کی نقل تیار کی جا سکے — براہِ راست، یا 30 سیکنڈ کی ویڈیو کے طور پر۔',
+  'landing.cta.realtime': 'براہِ راست ▶',
+  'landing.cta.video': 'ویڈیو بنائیں 🎬',
+  'landing.fact.preparing': 'خطہ تیار ہو رہا ہے…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ہموار خطہ',
+  'landing.fact.terrainHilly': 'پہاڑیوں والا خطہ',
+  'landing.fact.terrainMountain': 'پہاڑی',
+  'landing.fact.buildings': '{count} عمارتیں',
+  'video.preparing': 'طوفان کی نقل بنائی جا رہی ہے… {pct}%',
+  'video.recording': 'ویڈیو ریکارڈ ہو رہی ہے… {pct}%',
+  'video.title': 'آپ کی سیلاب کی ویڈیو',
+  'video.download': 'ڈاؤن لوڈ ⬇',
+  'video.again': 'دوبارہ شروع کریں ↻',
+  'video.realtime': 'براہِ راست کھولیں ▶',
+  'video.unsupported': 'اس براؤزر میں ویڈیو ایکسپورٹ کی معاونت نہیں ہے۔ اس کے بجائے براہِ راست آزمائیں۔',
 };

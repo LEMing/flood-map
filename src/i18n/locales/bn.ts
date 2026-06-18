@@ -170,4 +170,23 @@ export const bn: Record<string, string> = {
   'legend.elevation': 'উচ্চতা',
   'readout.elev': 'উচ্চতা',
   'readout.water': 'পানি',
+
+  // Landing + video
+  'landing.headline': 'দেখুন প্রবল বৃষ্টি কীভাবে যেকোনো ঠিকানা প্লাবিত করে',
+  'landing.tagline': 'একটি স্থান লিখুন যাতে এর 3D ভূখণ্ড তৈরি হয় এবং মেঘভাঙা বৃষ্টির অনুকরণ হয় — সরাসরি, অথবা ৩০ সেকেন্ডের ভিডিও হিসেবে।',
+  'landing.cta.realtime': 'রিয়েলটাইম ▶',
+  'landing.cta.video': 'ভিডিও বানান 🎬',
+  'landing.fact.preparing': 'ভূখণ্ড প্রস্তুত হচ্ছে…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'সমতল ভূখণ্ড',
+  'landing.fact.terrainHilly': 'পাহাড়ি ভূখণ্ড',
+  'landing.fact.terrainMountain': 'পার্বত্য',
+  'landing.fact.buildings': '{count} ভবন',
+  'video.preparing': 'ঝড়ের অনুকরণ চলছে… {pct}%',
+  'video.recording': 'ভিডিও রেকর্ড হচ্ছে… {pct}%',
+  'video.title': 'আপনার বন্যার ভিডিও',
+  'video.download': 'ডাউনলোড ⬇',
+  'video.again': 'আবার শুরু করুন ↻',
+  'video.realtime': 'রিয়েলটাইম খুলুন ▶',
+  'video.unsupported': 'এই ব্রাউজারে ভিডিও এক্সপোর্ট সমর্থিত নয়। পরিবর্তে রিয়েলটাইম চেষ্টা করুন।',
 };

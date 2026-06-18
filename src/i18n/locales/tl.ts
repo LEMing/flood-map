@@ -187,4 +187,23 @@ export const tl: Record<string, string> = {
   'legend.elevation': 'Elebasyon',
   'readout.elev': 'eleb',
   'readout.water': 'tubig',
+
+  // Landing + video
+  'landing.headline': 'Tingnan kung paano binabaha ng malakas na ulan ang anumang address',
+  'landing.tagline': 'Maglagay ng lugar para buuin ang 3D terrain nito at gayahin ang malakas na pag-ulan — live, o bilang 30-segundong video.',
+  'landing.cta.realtime': 'Real-time ▶',
+  'landing.cta.video': 'Gumawa ng video 🎬',
+  'landing.fact.preparing': 'Inihahanda ang terrain…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Patag na terrain',
+  'landing.fact.terrainHilly': 'Maburol na terrain',
+  'landing.fact.terrainMountain': 'Mabundok',
+  'landing.fact.buildings': '{count} gusali',
+  'video.preparing': 'Ginagaya ang bagyo… {pct}%',
+  'video.recording': 'Nire-record ang video… {pct}%',
+  'video.title': 'Ang iyong video ng baha',
+  'video.download': 'I-download ⬇',
+  'video.again': 'Magsimula muli ↻',
+  'video.realtime': 'Buksan ang real-time ▶',
+  'video.unsupported': 'Hindi suportado ang pag-export ng video sa browser na ito. Subukan ang real-time sa halip.',
 };

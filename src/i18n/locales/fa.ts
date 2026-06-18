@@ -171,4 +171,23 @@ export const fa: Record<string, string> = {
   'legend.elevation': 'ارتفاع',
   'readout.elev': 'ارتفاع',
   'readout.water': 'آب',
+
+  // Landing + video
+  'landing.headline': 'ببینید چگونه یک رگبار شدید هر نشانی را غرق می‌کند',
+  'landing.tagline': 'مکانی را وارد کنید تا زمین سه‌بعدی آن ساخته شود و یک رگبار سیل‌آسا شبیه‌سازی شود — به‌صورت زنده یا به‌شکل ویدیویی ۳۰ ثانیه‌ای.',
+  'landing.cta.realtime': 'زمان واقعی ▶',
+  'landing.cta.video': 'ساخت ویدیو 🎬',
+  'landing.fact.preparing': 'در حال آماده‌سازی زمین…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'زمین مسطح',
+  'landing.fact.terrainHilly': 'زمین تپه‌ای',
+  'landing.fact.terrainMountain': 'کوهستانی',
+  'landing.fact.buildings': '{count} ساختمان',
+  'video.preparing': 'در حال شبیه‌سازی طوفان… {pct}%',
+  'video.recording': 'در حال ضبط ویدیو… {pct}%',
+  'video.title': 'ویدیوی سیل شما',
+  'video.download': 'دانلود ⬇',
+  'video.again': 'شروع دوباره ↻',
+  'video.realtime': 'باز کردن زمان واقعی ▶',
+  'video.unsupported': 'خروجی ویدیو در این مرورگر پشتیبانی نمی‌شود. به‌جای آن حالت زمان واقعی را امتحان کنید.',
 };

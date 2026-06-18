@@ -171,4 +171,23 @@ export const ta: Record<string, string> = {
   'legend.elevation': 'உயரம்',
   'readout.elev': 'உயரம்',
   'readout.water': 'நீர்',
+
+  // Landing + video
+  'landing.headline': 'ஒரு பெருமழை எந்த முகவரியையும் எப்படி வெள்ளத்தில் மூழ்கடிக்கிறது என்பதைப் பாருங்கள்',
+  'landing.tagline': 'ஒரு இடத்தை உள்ளிட்டு அதன் 3D நிலப்பரப்பை உருவாக்கி, கனமழையை உருவகப்படுத்துங்கள் — நேரலையாக அல்லது 30 வினாடி வீடியோவாக.',
+  'landing.cta.realtime': 'நேரலை ▶',
+  'landing.cta.video': 'வீடியோ உருவாக்கு 🎬',
+  'landing.fact.preparing': 'நிலப்பரப்பு தயாராகிறது…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'சமதள நிலம்',
+  'landing.fact.terrainHilly': 'குன்றுகள் நிறைந்த நிலம்',
+  'landing.fact.terrainMountain': 'மலைப்பாங்கானது',
+  'landing.fact.buildings': '{count} கட்டிடங்கள்',
+  'video.preparing': 'புயலை உருவகப்படுத்துகிறது… {pct}%',
+  'video.recording': 'வீடியோ பதிவாகிறது… {pct}%',
+  'video.title': 'உங்கள் வெள்ள வீடியோ',
+  'video.download': 'பதிவிறக்கு ⬇',
+  'video.again': 'மீண்டும் தொடங்கு ↻',
+  'video.realtime': 'நேரலையைத் திற ▶',
+  'video.unsupported': 'இந்த உலாவியில் வீடியோ ஏற்றுமதி ஆதரிக்கப்படவில்லை. அதற்குப் பதிலாக நேரலையை முயற்சிக்கவும்.',
 };

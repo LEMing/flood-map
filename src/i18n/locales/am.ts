@@ -170,4 +170,23 @@ export const am: Record<string, string> = {
   'legend.elevation': 'ከፍታ',
   'readout.elev': 'ከፍታ',
   'readout.water': 'ውሃ',
+
+  // Landing + video
+  'landing.headline': 'ኃይለኛ ዝናብ ማንኛውንም አድራሻ እንዴት እንደሚያጥለቀልቅ ይመልከቱ',
+  'landing.tagline': 'የ3ዲ መልክዓ ምድሩን ለመገንባት እና ድንገተኛ ዝናብን ለማስመሰል ቦታ ያስገቡ — በቀጥታ፣ ወይም በ30 ሰከንድ ቪዲዮ።',
+  'landing.cta.realtime': 'በቀጥታ ▶',
+  'landing.cta.video': 'ቪዲዮ ስራ 🎬',
+  'landing.fact.preparing': 'መልክዓ ምድሩን በማዘጋጀት ላይ…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ጠፍጣፋ መሬት',
+  'landing.fact.terrainHilly': 'ኮረብታማ መሬት',
+  'landing.fact.terrainMountain': 'ተራራማ',
+  'landing.fact.buildings': '{count} ሕንፃዎች',
+  'video.preparing': 'ማዕበሉን በማስመሰል ላይ… {pct}%',
+  'video.recording': 'ቪዲዮ በመቅዳት ላይ… {pct}%',
+  'video.title': 'የጎርፍ ቪዲዮዎ',
+  'video.download': 'አውርድ ⬇',
+  'video.again': 'እንደገና ጀምር ↻',
+  'video.realtime': 'በቀጥታ ክፈት ▶',
+  'video.unsupported': 'በዚህ አሳሽ ውስጥ ቪዲዮ ወደ ውጭ መላክ አይደገፍም። በምትኩ በቀጥታ ይሞክሩ።',
 };

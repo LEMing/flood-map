@@ -187,4 +187,23 @@ export const ps: Record<string, string> = {
   'legend.elevation': 'لوړوالی',
   'readout.elev': 'لوړوالی',
   'readout.water': 'اوبه',
+
+  // Landing + video
+  'landing.headline': 'وګورئ چې سخت باران څنګه هر پته ډوبوي',
+  'landing.tagline': 'یو ځای دننه کړئ ترڅو د هغه 3D خاوره جوړه شي او د سختې بارانۍ سمولیشن وشي — مستقیم، یا د ۳۰ ثانیو ویډیو په توګه.',
+  'landing.cta.realtime': 'ریښتیني وخت ▶',
+  'landing.cta.video': 'ویډیو جوړ کړئ 🎬',
+  'landing.fact.preparing': 'خاوره چمتو کیږي…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'هواره خاوره',
+  'landing.fact.terrainHilly': 'غونډۍ لرونکې خاوره',
+  'landing.fact.terrainMountain': 'غرنۍ',
+  'landing.fact.buildings': '{count} ودانۍ',
+  'video.preparing': 'د طوفان سمولیشن کیږي… {pct}%',
+  'video.recording': 'ویډیو ثبتیږي… {pct}%',
+  'video.title': 'ستاسو د سیلاب ویډیو',
+  'video.download': 'ډاونلوډ ⬇',
+  'video.again': 'بیا پیل کړئ ↻',
+  'video.realtime': 'ریښتیني وخت پرانیزئ ▶',
+  'video.unsupported': 'په دې براوزر کې د ویډیو صادرول ملاتړ نه کیږي. د دې پرځای ریښتیني وخت هڅه وکړئ.',
 };

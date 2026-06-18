@@ -170,4 +170,23 @@ export const it: Record<string, string> = {
   'legend.elevation': 'Quota',
   'readout.elev': 'quota',
   'readout.water': 'acqua',
+
+  // Landing + video
+  'landing.headline': 'Scopri come un acquazzone allaga qualsiasi indirizzo',
+  'landing.tagline': 'Inserisci un luogo per costruire il suo terreno in 3D e simulare un nubifragio — dal vivo o come video di 30 secondi.',
+  'landing.cta.realtime': 'Tempo reale ▶',
+  'landing.cta.video': 'Crea video 🎬',
+  'landing.fact.preparing': 'Preparazione del terreno…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Terreno pianeggiante',
+  'landing.fact.terrainHilly': 'Terreno collinare',
+  'landing.fact.terrainMountain': 'Montuoso',
+  'landing.fact.buildings': '{count} edifici',
+  'video.preparing': 'Simulazione della tempesta… {pct}%',
+  'video.recording': 'Registrazione del video… {pct}%',
+  'video.title': "Il tuo video dell'alluvione",
+  'video.download': 'Scarica ⬇',
+  'video.again': 'Ricomincia ↻',
+  'video.realtime': 'Apri tempo reale ▶',
+  'video.unsupported': "L'esportazione video non è supportata in questo browser. Prova invece il tempo reale.",
 };

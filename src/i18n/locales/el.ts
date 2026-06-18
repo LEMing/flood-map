@@ -170,4 +170,23 @@ export const el: Record<string, string> = {
   'legend.elevation': 'Υψόμετρο',
   'readout.elev': 'υψόμ.',
   'readout.water': 'νερό',
+
+  // Landing + video
+  'landing.headline': 'Δείτε πώς μια νεροποντή πλημμυρίζει οποιαδήποτε διεύθυνση',
+  'landing.tagline': 'Εισαγάγετε μια τοποθεσία για να δημιουργήσετε το τρισδιάστατο ανάγλυφό της και να προσομοιώσετε μια καταιγίδα — ζωντανά ή ως βίντεο 30 δευτερολέπτων.',
+  'landing.cta.realtime': 'Σε πραγματικό χρόνο ▶',
+  'landing.cta.video': 'Δημιουργία βίντεο 🎬',
+  'landing.fact.preparing': 'Προετοιμασία ανάγλυφου…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Επίπεδο ανάγλυφο',
+  'landing.fact.terrainHilly': 'Λοφώδες ανάγλυφο',
+  'landing.fact.terrainMountain': 'Ορεινό',
+  'landing.fact.buildings': '{count} κτίρια',
+  'video.preparing': 'Προσομοίωση καταιγίδας… {pct}%',
+  'video.recording': 'Εγγραφή βίντεο… {pct}%',
+  'video.title': 'Το βίντεο πλημμύρας σας',
+  'video.download': 'Λήψη ⬇',
+  'video.again': 'Έναρξη από την αρχή ↻',
+  'video.realtime': 'Άνοιγμα σε πραγματικό χρόνο ▶',
+  'video.unsupported': "Η εξαγωγή βίντεο δεν υποστηρίζεται σε αυτό το πρόγραμμα περιήγησης. Δοκιμάστε αντ' αυτού σε πραγματικό χρόνο.",
 };

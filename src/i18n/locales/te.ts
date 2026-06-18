@@ -187,4 +187,23 @@ export const te: Record<string, string> = {
   'legend.elevation': 'ఎత్తు',
   'readout.elev': 'ఎత్తు',
   'readout.water': 'నీరు',
+
+  // Landing + video
+  'landing.headline': 'భారీ వర్షం ఏ చిరునామానైనా ఎలా ముంచెత్తుతుందో చూడండి',
+  'landing.tagline': 'ఒక ప్రదేశాన్ని నమోదు చేసి దాని 3D భూభాగాన్ని నిర్మించి, కుండపోత వర్షాన్ని అనుకరించండి — ప్రత్యక్షంగా లేదా 30 సెకన్ల వీడియోగా.',
+  'landing.cta.realtime': 'ప్రత్యక్షం ▶',
+  'landing.cta.video': 'వీడియో చేయి 🎬',
+  'landing.fact.preparing': 'భూభాగం సిద్ధమవుతోంది…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'చదునైన భూభాగం',
+  'landing.fact.terrainHilly': 'కొండ ప్రాంత భూభాగం',
+  'landing.fact.terrainMountain': 'పర్వత ప్రాంతం',
+  'landing.fact.buildings': '{count} భవనాలు',
+  'video.preparing': 'తుఫానును అనుకరిస్తోంది… {pct}%',
+  'video.recording': 'వీడియో రికార్డవుతోంది… {pct}%',
+  'video.title': 'మీ వరద వీడియో',
+  'video.download': 'డౌన్‌లోడ్ ⬇',
+  'video.again': 'మళ్లీ ప్రారంభించు ↻',
+  'video.realtime': 'ప్రత్యక్షం తెరువు ▶',
+  'video.unsupported': 'ఈ బ్రౌజర్‌లో వీడియో ఎగుమతి మద్దతు లేదు. బదులుగా ప్రత్యక్షాన్ని ప్రయత్నించండి.',
 };

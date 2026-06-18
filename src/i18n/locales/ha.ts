@@ -168,4 +168,23 @@ export const ha: Record<string, string> = {
   'legend.elevation': 'Tsayi',
   'readout.elev': 'tsayi',
   'readout.water': 'ruwa',
+
+  // Landing + video
+  'landing.headline': 'Duba yadda ruwan sama mai ƙarfi ke ambaliya kowane adireshi',
+  'landing.tagline': 'Shigar da wuri don gina yanayinsa na 3D da kuma kwaikwayon ruwan tsawa — kai tsaye, ko a matsayin bidiyo na daƙiƙa 30.',
+  'landing.cta.realtime': 'Lokaci na ainihi ▶',
+  'landing.cta.video': 'Yi bidiyo 🎬',
+  'landing.fact.preparing': 'Ana shirya yanayin ƙasa…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Faffadan ƙasa',
+  'landing.fact.terrainHilly': 'Ƙasa mai tuddai',
+  'landing.fact.terrainMountain': 'Mai duwatsu',
+  'landing.fact.buildings': 'Gine-gine {count}',
+  'video.preparing': 'Ana kwaikwayon hadari… {pct}%',
+  'video.recording': 'Ana ɗaukar bidiyo… {pct}%',
+  'video.title': 'Bidiyon ambaliyarka',
+  'video.download': 'Sauke ⬇',
+  'video.again': 'Fara daga farko ↻',
+  'video.realtime': 'Buɗe lokaci na ainihi ▶',
+  'video.unsupported': 'Wannan burauza ba ta goyon bayan fitar da bidiyo ba. Gwada lokaci na ainihi maimakon haka.',
 };

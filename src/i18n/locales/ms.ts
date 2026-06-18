@@ -170,4 +170,23 @@ export const ms: Record<string, string> = {
   'legend.elevation': 'Ketinggian',
   'readout.elev': 'ketinggian',
   'readout.water': 'air',
+
+  // Landing + video
+  'landing.headline': 'Lihat bagaimana hujan lebat membanjiri mana-mana alamat',
+  'landing.tagline': 'Masukkan satu tempat untuk membina rupa bumi 3D-nya dan mensimulasikan hujan lebat — secara langsung, atau sebagai video 30 saat.',
+  'landing.cta.realtime': 'Masa nyata ▶',
+  'landing.cta.video': 'Buat video 🎬',
+  'landing.fact.preparing': 'Menyediakan rupa bumi…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Rupa bumi rata',
+  'landing.fact.terrainHilly': 'Rupa bumi berbukit',
+  'landing.fact.terrainMountain': 'Bergunung-ganang',
+  'landing.fact.buildings': '{count} bangunan',
+  'video.preparing': 'Mensimulasikan ribut… {pct}%',
+  'video.recording': 'Merakam video… {pct}%',
+  'video.title': 'Video banjir anda',
+  'video.download': 'Muat turun ⬇',
+  'video.again': 'Mula semula ↻',
+  'video.realtime': 'Buka masa nyata ▶',
+  'video.unsupported': 'Eksport video tidak disokong dalam pelayar ini. Cuba masa nyata sebagai gantinya.',
 };

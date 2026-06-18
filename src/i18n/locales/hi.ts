@@ -187,4 +187,23 @@ export const hi: Record<string, string> = {
   'legend.elevation': 'ऊँचाई',
   'readout.elev': 'ऊँचाई',
   'readout.water': 'जल',
+
+  // Landing + video
+  'landing.headline': 'देखें कि मूसलाधार बारिश किसी भी पते को कैसे डुबो देती है',
+  'landing.tagline': 'इसका 3डी भूभाग बनाने और बादल फटने का अनुकरण करने के लिए कोई स्थान दर्ज करें — लाइव, या 30 सेकंड के वीडियो के रूप में।',
+  'landing.cta.realtime': 'रियलटाइम ▶',
+  'landing.cta.video': 'वीडियो बनाएं 🎬',
+  'landing.fact.preparing': 'भूभाग तैयार किया जा रहा है…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'समतल भूभाग',
+  'landing.fact.terrainHilly': 'पहाड़ी भूभाग',
+  'landing.fact.terrainMountain': 'पर्वतीय',
+  'landing.fact.buildings': '{count} इमारतें',
+  'video.preparing': 'तूफान का अनुकरण किया जा रहा है… {pct}%',
+  'video.recording': 'वीडियो रिकॉर्ड हो रहा है… {pct}%',
+  'video.title': 'आपका बाढ़ का वीडियो',
+  'video.download': 'डाउनलोड ⬇',
+  'video.again': 'फिर से शुरू करें ↻',
+  'video.realtime': 'रियलटाइम खोलें ▶',
+  'video.unsupported': 'इस ब्राउज़र में वीडियो निर्यात समर्थित नहीं है। इसके बजाय रियलटाइम आज़माएं।',
 };

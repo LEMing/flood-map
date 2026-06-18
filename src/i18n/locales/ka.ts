@@ -169,4 +169,23 @@ export const ka: Record<string, string> = {
   'legend.elevation': 'სიმაღლე',
   'readout.elev': 'სიმაღლე',
   'readout.water': 'წყალი',
+
+  // Landing + video
+  'landing.headline': 'ნახეთ, როგორ ტბორავს თავსხმა ნებისმიერ მისამართს',
+  'landing.tagline': 'შეიყვანეთ ადგილი მისი 3D რელიეფის ასაგებად და კოკისპირული წვიმის სიმულაციისთვის — პირდაპირ ან 30-წამიან ვიდეოდ.',
+  'landing.cta.realtime': 'რეალურ დროში ▶',
+  'landing.cta.video': 'ვიდეოს შექმნა 🎬',
+  'landing.fact.preparing': 'რელიეფი მზადდება…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ბრტყელი რელიეფი',
+  'landing.fact.terrainHilly': 'გორაკიანი რელიეფი',
+  'landing.fact.terrainMountain': 'მთიანი',
+  'landing.fact.buildings': '{count} შენობა',
+  'video.preparing': 'ქარიშხლის სიმულაცია… {pct}%',
+  'video.recording': 'ვიდეოს ჩაწერა… {pct}%',
+  'video.title': 'თქვენი წყალდიდობის ვიდეო',
+  'video.download': 'ჩამოტვირთვა ⬇',
+  'video.again': 'თავიდან დაწყება ↻',
+  'video.realtime': 'რეალურ დროში გახსნა ▶',
+  'video.unsupported': 'ვიდეოს ექსპორტი ამ ბრაუზერში არ არის მხარდაჭერილი. სცადეთ რეალურ დროში.',
 };

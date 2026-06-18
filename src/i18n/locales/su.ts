@@ -187,4 +187,23 @@ export const su: Record<string, string> = {
   'legend.elevation': 'Élévasi',
   'readout.elev': 'élév',
   'readout.water': 'cai',
+
+  // Landing + video
+  'landing.headline': 'Tingali kumaha hujan ageung ngabanjiran sagala alamat',
+  'landing.tagline': 'Asupkeun hiji tempat pikeun ngawangun rupa bumi 3D-na sarta nyimulasikeun hujan badag — langsung, atawa salaku pidéo 30 detik.',
+  'landing.cta.realtime': 'Langsung ▶',
+  'landing.cta.video': 'Jieun pidéo 🎬',
+  'landing.fact.preparing': 'Nyiapkeun rupa bumi…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Rupa bumi datar',
+  'landing.fact.terrainHilly': 'Rupa bumi pasir',
+  'landing.fact.terrainMountain': 'Pagunungan',
+  'landing.fact.buildings': '{count} wangunan',
+  'video.preparing': 'Nyimulasikeun badai… {pct}%',
+  'video.recording': 'Ngarékam pidéo… {pct}%',
+  'video.title': 'Pidéo banjir anjeun',
+  'video.download': 'Undeur ⬇',
+  'video.again': 'Mimitian deui ↻',
+  'video.realtime': 'Buka langsung ▶',
+  'video.unsupported': 'Ékspor pidéo henteu didukung dina panyungsi ieu. Cobian langsung waé.',
 };

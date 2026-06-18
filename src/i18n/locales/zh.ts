@@ -182,4 +182,23 @@ export const zh: Record<string, string> = {
   'legend.elevation': '高程',
   'readout.elev': '高程',
   'readout.water': '水',
+
+  // Landing + video
+  'landing.headline': '看看一场暴雨如何淹没任何地址',
+  'landing.tagline': '输入一个地点,构建其3D地形并模拟一场暴雨——实时进行,或生成30秒视频。',
+  'landing.cta.realtime': '实时 ▶',
+  'landing.cta.video': '制作视频 🎬',
+  'landing.fact.preparing': '正在准备地形…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': '平坦地形',
+  'landing.fact.terrainHilly': '丘陵地形',
+  'landing.fact.terrainMountain': '多山',
+  'landing.fact.buildings': '{count} 栋建筑',
+  'video.preparing': '正在模拟暴风雨… {pct}%',
+  'video.recording': '正在录制视频… {pct}%',
+  'video.title': '您的洪水视频',
+  'video.download': '下载 ⬇',
+  'video.again': '重新开始 ↻',
+  'video.realtime': '打开实时 ▶',
+  'video.unsupported': '此浏览器不支持视频导出。请改用实时模式。',
 };

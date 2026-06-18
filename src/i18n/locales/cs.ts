@@ -170,4 +170,23 @@ export const cs: Record<string, string> = {
   'legend.elevation': 'Nadmořská výška',
   'readout.elev': 'výška',
   'readout.water': 'voda',
+
+  // Landing + video
+  'landing.headline': 'Podívejte se, jak liják zaplaví libovolnou adresu',
+  'landing.tagline': 'Zadejte místo a sestavte jeho 3D terén a simulujte průtrž mračen — živě, nebo jako 30sekundové video.',
+  'landing.cta.realtime': 'V reálném čase ▶',
+  'landing.cta.video': 'Vytvořit video 🎬',
+  'landing.fact.preparing': 'Připravuje se terén…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Rovinatý terén',
+  'landing.fact.terrainHilly': 'Kopcovitý terén',
+  'landing.fact.terrainMountain': 'Hornatý',
+  'landing.fact.buildings': '{count} budov',
+  'video.preparing': 'Simuluje se bouře… {pct}%',
+  'video.recording': 'Nahrává se video… {pct}%',
+  'video.title': 'Vaše video o povodni',
+  'video.download': 'Stáhnout ⬇',
+  'video.again': 'Začít znovu ↻',
+  'video.realtime': 'Otevřít v reálném čase ▶',
+  'video.unsupported': 'Export videa není v tomto prohlížeči podporován. Zkuste místo toho režim v reálném čase.',
 };

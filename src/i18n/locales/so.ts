@@ -170,4 +170,23 @@ export const so: Record<string, string> = {
   'legend.elevation': 'Sare u kac',
   'readout.elev': 'sare u kac',
   'readout.water': 'biyo',
+
+  // Landing + video
+  'landing.headline': 'Arag sida roob daadku u qarqiyo cinwaan kasta',
+  'landing.tagline': 'Geli meel si aad u dhisto dhul-saaridda 3D ee uguna jilato roob xoog leh — toos ama sida muuqaal 30-ilbiriqsi ah.',
+  'landing.cta.realtime': 'Waqti dhab ah ▶',
+  'landing.cta.video': 'Samee muuqaal 🎬',
+  'landing.fact.preparing': 'Diyaarinta dhul-saaridda…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Dhul-saarid siman',
+  'landing.fact.terrainHilly': 'Dhul-saarid buuro leh',
+  'landing.fact.terrainMountain': 'Buurleey',
+  'landing.fact.buildings': '{count} dhismayaal',
+  'video.preparing': 'Jilitaanka duufaanta… {pct}%',
+  'video.recording': 'Duubitaanka muuqaalka… {pct}%',
+  'video.title': 'Muuqaalkaaga daadka',
+  'video.download': 'Soo dejiso ⬇',
+  'video.again': 'Dib u bilow ↻',
+  'video.realtime': 'Fur waqti dhab ah ▶',
+  'video.unsupported': 'Dhoofinta muuqaalka laguma taageero browser-kan. Halkii isku day waqti dhab ah.',
 };

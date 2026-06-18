@@ -190,4 +190,23 @@ export const or: Record<string, string> = {
   'legend.elevation': 'ଉଚ୍ଚତା',
   'readout.elev': 'ଉଚ୍ଚତା',
   'readout.water': 'ଜଳ',
+
+  // Landing + video
+  'landing.headline': 'ବର୍ଷା କୌଣସି ଠିକଣାକୁ କିପରି ବନ୍ୟା କରେ ଦେଖନ୍ତୁ',
+  'landing.tagline': 'ଏକ ସ୍ଥାନ ପ୍ରବେଶ କରନ୍ତୁ ଏବଂ ଏହାର 3D ଭୂଭାଗ ନିର୍ମାଣ କରି ମୂଷଳଧାର ବର୍ଷାକୁ ଅନୁକରଣ କରନ୍ତୁ — ସିଧାସଳଖ କିମ୍ବା 30-ସେକେଣ୍ଡ ଭିଡିଓ ଭାବରେ।',
+  'landing.cta.realtime': 'ରିଅଲ ଟାଇମ ▶',
+  'landing.cta.video': 'ଭିଡିଓ ତିଆରି କରନ୍ତୁ 🎬',
+  'landing.fact.preparing': 'ଭୂଭାଗ ପ୍ରସ୍ତୁତ ହେଉଛି…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ସମତଳ ଭୂଭାଗ',
+  'landing.fact.terrainHilly': 'ପାହାଡିଆ ଭୂଭାଗ',
+  'landing.fact.terrainMountain': 'ପର୍ବତମୟ',
+  'landing.fact.buildings': '{count} ଅଟ୍ଟାଳିକା',
+  'video.preparing': 'ଝଡ଼କୁ ଅନୁକରଣ କରୁଛି… {pct}%',
+  'video.recording': 'ଭିଡିଓ ରେକର୍ଡ କରୁଛି… {pct}%',
+  'video.title': 'ଆପଣଙ୍କ ବନ୍ୟା ଭିଡିଓ',
+  'video.download': 'ଡାଉନଲୋଡ ⬇',
+  'video.again': 'ପୁନର୍ବାର ଆରମ୍ଭ କରନ୍ତୁ ↻',
+  'video.realtime': 'ରିଅଲ ଟାଇମ ଖୋଲନ୍ତୁ ▶',
+  'video.unsupported': 'ଏହି ବ୍ରାଉଜରରେ ଭିଡିଓ ରପ୍ତାନି ସମର୍ଥିତ ନୁହେଁ। ଏହା ବଦଳରେ ରିଅଲ ଟାଇମ ଚେଷ୍ଟା କରନ୍ତୁ।',
 };

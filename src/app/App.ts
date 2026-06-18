@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
+import type { GeocodeResult } from '../geo/geocode';
+import { VideoMode } from './VideoMode';
+import { pickVideoMime } from '../video/Recorder';
 import { readUrlState, writeUrlState } from '../url';
 import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
 import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
@@ -72,8 +75,21 @@ export class App {
   private framesRendered = 0;
   private readonly credit = document.getElementById('credit');
 
+  // Routing lifecycle: the loop is kicked once (started), but only steps/renders
+  // while `active` (this view is the live /sim, not the hidden landing) and not
+  // `capturing` (the video recorder drives frames manually, so the rAF loop
+  // steps aside to avoid double-stepping the sim).
+  private started = false;
+  private active = false;
+  private capturing = false;
+  private videoMode?: VideoMode;
+
   /** Total GPU frames actually drawn — should plateau when the scene is idle. */
   get rendered(): number { return this.framesRendered; }
+
+  /** Whether the render loop has been kicked (the router uses this to avoid
+   *  re-bootstrapping a kept-alive App on a Forward navigation to /sim). */
+  get isStarted(): boolean { return this.started; }
 
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new SceneManager(canvas);
@@ -200,10 +216,57 @@ export class App {
     this.panel.refresh();
   }
 
+  /** Deep-link / refresh entry: pick the center from URL/IP and run live. */
   start(): void {
-    this.lastTime = performance.now();
+    this.active = true;
+    this.ensureLoop();
     void this.worldBuilder.bootstrap();
+  }
+
+  /** Entry from the landing page: load an already-resolved place, optionally
+   *  going straight into the cinematic video capture once it's built. */
+  startAt(location: GeocodeResult, opts: { cinematic?: boolean } = {}): void {
+    this.active = true;
+    this.lastTime = performance.now();
+    this.ensureLoop();
+    void this.enterLocation(location, opts);
+  }
+
+  private async enterLocation(location: GeocodeResult, opts: { cinematic?: boolean }): Promise<void> {
+    await this.worldBuilder.loadCenter(location);
+    if (opts.cinematic) this.enterVideoMode();
+  }
+
+  /** Show/hide this view: while the landing is up the sim is paused (no step,
+   *  no render) so a backgrounded 3D scene never burns the GPU. */
+  setActive(active: boolean): void {
+    this.active = active;
+    if (active) this.lastTime = performance.now();
+  }
+
+  private ensureLoop(): void {
+    if (this.started) return;
+    this.started = true;
+    this.lastTime = performance.now();
     requestAnimationFrame(this.loop);
+  }
+
+  /** Record an accelerated storm over the current world to a downloadable clip. */
+  enterVideoMode(): void {
+    if (this.videoMode) return;
+    if (!pickVideoMime()) { showToast(t('video.unsupported'), true); return; }
+    this.videoMode = new VideoMode({
+      params: this.params,
+      simDriver: this.simDriver,
+      scene: this.scene,
+      placeName: () => this.stats.location || this.params.address,
+      applyParams: () => this.applyParams(),
+      refreshPanel: () => this.panel.refresh(),
+      renderCaptureFrame: (dt) => this.renderCaptureFrame(dt),
+      setCapturing: (on) => this.setCapturing(on),
+      onExit: () => { this.videoMode = undefined; },
+    });
+    void this.videoMode.run();
   }
 
   private panelCallbacks(): ControlCallbacks {
@@ -364,9 +427,10 @@ export class App {
     requestAnimationFrame(this.loop);
     const dt = Math.min(0.05, (now - this.lastTime) / 1000) || 0;
     this.lastTime = now;
-    // GPU gone, or tab hidden: don't step or render (saves the battery/fan when
+    // GPU gone, tab hidden, parked on the landing, or the recorder is driving
+    // frames itself: don't step or render (saves the battery/fan when
     // backgrounded — browsers don't throttle occluded-but-visible windows).
-    if (this.scene.contextLost || document.hidden) return;
+    if (this.scene.contextLost || document.hidden || !this.active || this.capturing) return;
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
     const stepped = this.simDriver.tick(dt);
@@ -384,17 +448,37 @@ export class App {
     if (!(this.needsRender || stepped || cameraMoved || animating)) return;
     this.needsRender = false;
 
+    this.composeAndRender(dt, this.params.running, this.params.running);
+  };
+
+  /** Update the rain/storm/water look and draw one frame. `rainActive` gates the
+   *  rain particles + wet-lens; `animate` advances cloud drift + lightning. The
+   *  live loop ties both to `running`; the video recorder drives them itself. */
+  private composeAndRender(dt: number, rainActive: boolean, animate: boolean): void {
     this.rain?.update(this.params, this.weatherClock);
-    if (this.rain) this.rain.object.visible = this.params.raining && this.params.running;
-    this.scene.setWetness(this.params.raining && this.params.running ? 0.9 : 0);
-    this.scene.updateStorm(dt, this.params.running);
+    if (this.rain) this.rain.object.visible = this.params.raining && rainActive;
+    this.scene.setWetness(this.params.raining && rainActive ? 0.9 : 0);
+    this.scene.updateStorm(dt, animate);
     this.updateWaterLook(dt);
     this.updateDrainArrows();
     this.markerLayer.update(this.scene.camera);
     if (this.simDriver.mode === 'live') this.autoQualityCheck(dt);
     this.scene.render(this.water, this.sea);
     this.framesRendered++;
-  };
+  }
+
+  /** One unconditional frame for the video recorder (bypasses the on-demand gate);
+   *  advances the weather clock so rain/clouds animate during the capture. */
+  renderCaptureFrame(dt: number): void {
+    this.weatherClock += dt;
+    this.composeAndRender(dt, true, true);
+  }
+
+  /** Let the recorder take over (or hand back) the frame loop. */
+  setCapturing(on: boolean): void {
+    this.capturing = on;
+    if (!on) this.lastTime = performance.now();
+  }
 
   /** Always-visible FPS badge (the panel's stat is collapsible/buried). */
   private showFps(now: number): void {

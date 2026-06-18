@@ -190,4 +190,25 @@ export const en: Record<string, string> = {
   'legend.elevation': 'Elevation',
   'readout.elev': 'elev',
   'readout.water': 'water',
+
+  // Landing page
+  'landing.headline': 'See how a downpour floods any address',
+  'landing.tagline': 'Enter a place to build its 3D terrain and simulate a cloudburst — live, or as a 30-second video.',
+  'landing.cta.realtime': 'Realtime ▶',
+  'landing.cta.video': 'Make video 🎬',
+  'landing.fact.preparing': 'Preparing terrain…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Flat terrain',
+  'landing.fact.terrainHilly': 'Hilly terrain',
+  'landing.fact.terrainMountain': 'Mountainous',
+  'landing.fact.buildings': '{count} buildings',
+
+  // Cinematic video export
+  'video.preparing': 'Simulating the storm… {pct}%',
+  'video.recording': 'Recording video… {pct}%',
+  'video.title': 'Your flood video',
+  'video.download': 'Download ⬇',
+  'video.again': 'Start over ↻',
+  'video.realtime': 'Open realtime ▶',
+  'video.unsupported': 'Video export is not supported in this browser. Try realtime instead.',
 };

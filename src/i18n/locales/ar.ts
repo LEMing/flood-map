@@ -170,4 +170,23 @@ export const ar: Record<string, string> = {
   'legend.elevation': 'الارتفاع',
   'readout.elev': 'ارتفاع',
   'readout.water': 'ماء',
+
+  // Landing + video
+  'landing.headline': 'شاهد كيف يغمر المطر الغزير أي عنوان',
+  'landing.tagline': 'أدخل مكانًا لبناء تضاريسه ثلاثية الأبعاد ومحاكاة وابل مطري — مباشرة، أو كمقطع فيديو مدته 30 ثانية.',
+  'landing.cta.realtime': 'مباشر ▶',
+  'landing.cta.video': 'إنشاء فيديو 🎬',
+  'landing.fact.preparing': 'جارٍ تجهيز التضاريس…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'تضاريس مسطحة',
+  'landing.fact.terrainHilly': 'تضاريس تلية',
+  'landing.fact.terrainMountain': 'جبلية',
+  'landing.fact.buildings': '{count} مبانٍ',
+  'video.preparing': 'جارٍ محاكاة العاصفة… {pct}%',
+  'video.recording': 'جارٍ تسجيل الفيديو… {pct}%',
+  'video.title': 'فيديو الفيضان الخاص بك',
+  'video.download': 'تنزيل ⬇',
+  'video.again': 'ابدأ من جديد ↻',
+  'video.realtime': 'فتح البث المباشر ▶',
+  'video.unsupported': 'تصدير الفيديو غير مدعوم في هذا المتصفح. جرّب الوضع المباشر بدلاً من ذلك.',
 };

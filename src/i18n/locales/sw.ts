@@ -170,4 +170,23 @@ export const sw: Record<string, string> = {
   'legend.elevation': 'Mwinuko',
   'readout.elev': 'mwinuko',
   'readout.water': 'maji',
+
+  // Landing + video
+  'landing.headline': 'Ona jinsi mvua kubwa inavyofurika anwani yoyote',
+  'landing.tagline': 'Weka mahali ili kujenga ardhi yake ya 3D na kuiga mvua ya ghafla — moja kwa moja, au kama video ya sekunde 30.',
+  'landing.cta.realtime': 'Moja kwa moja ▶',
+  'landing.cta.video': 'Tengeneza video 🎬',
+  'landing.fact.preparing': 'Inaandaa ardhi…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Ardhi tambarare',
+  'landing.fact.terrainHilly': 'Ardhi yenye vilima',
+  'landing.fact.terrainMountain': 'Yenye milima',
+  'landing.fact.buildings': 'Majengo {count}',
+  'video.preparing': 'Inaiga dhoruba… {pct}%',
+  'video.recording': 'Inarekodi video… {pct}%',
+  'video.title': 'Video yako ya mafuriko',
+  'video.download': 'Pakua ⬇',
+  'video.again': 'Anza upya ↻',
+  'video.realtime': 'Fungua moja kwa moja ▶',
+  'video.unsupported': 'Usafirishaji wa video hauungwi mkono katika kivinjari hiki. Jaribu moja kwa moja badala yake.',
 };

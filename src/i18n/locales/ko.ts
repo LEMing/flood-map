@@ -187,4 +187,23 @@ export const ko: Record<string, string> = {
   'legend.elevation': '고도',
   'readout.elev': '고도',
   'readout.water': '수위',
+
+  // Landing + video
+  'landing.headline': '폭우가 모든 주소를 어떻게 침수시키는지 확인하세요',
+  'landing.tagline': '장소를 입력해 3D 지형을 만들고 집중호우를 시뮬레이션하세요 — 실시간 또는 30초 영상으로.',
+  'landing.cta.realtime': '실시간 ▶',
+  'landing.cta.video': '영상 만들기 🎬',
+  'landing.fact.preparing': '지형 준비 중…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': '평탄한 지형',
+  'landing.fact.terrainHilly': '구릉 지형',
+  'landing.fact.terrainMountain': '산악 지형',
+  'landing.fact.buildings': '건물 {count}개',
+  'video.preparing': '폭풍 시뮬레이션 중… {pct}%',
+  'video.recording': '영상 녹화 중… {pct}%',
+  'video.title': '나의 홍수 영상',
+  'video.download': '다운로드 ⬇',
+  'video.again': '다시 시작 ↻',
+  'video.realtime': '실시간 열기 ▶',
+  'video.unsupported': '이 브라우저에서는 영상 내보내기를 지원하지 않습니다. 대신 실시간을 사용해 보세요.',
 };

@@ -188,4 +188,23 @@ export const de: Record<string, string> = {
   'legend.elevation': 'Höhe',
   'readout.elev': 'Höhe',
   'readout.water': 'Wasser',
+
+  // Landing + video
+  'landing.headline': 'Sehen Sie, wie ein Wolkenbruch jede Adresse überflutet',
+  'landing.tagline': 'Geben Sie einen Ort ein, um sein 3D-Gelände zu erstellen und einen Wolkenbruch zu simulieren — live oder als 30-Sekunden-Video.',
+  'landing.cta.realtime': 'Echtzeit ▶',
+  'landing.cta.video': 'Video erstellen 🎬',
+  'landing.fact.preparing': 'Gelände wird vorbereitet…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Flaches Gelände',
+  'landing.fact.terrainHilly': 'Hügeliges Gelände',
+  'landing.fact.terrainMountain': 'Gebirgig',
+  'landing.fact.buildings': '{count} Gebäude',
+  'video.preparing': 'Sturm wird simuliert… {pct}%',
+  'video.recording': 'Video wird aufgenommen… {pct}%',
+  'video.title': 'Ihr Hochwasser-Video',
+  'video.download': 'Herunterladen ⬇',
+  'video.again': 'Neu starten ↻',
+  'video.realtime': 'Echtzeit öffnen ▶',
+  'video.unsupported': 'Der Videoexport wird in diesem Browser nicht unterstützt. Versuchen Sie stattdessen die Echtzeit-Ansicht.',
 };

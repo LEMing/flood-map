@@ -187,4 +187,23 @@ export const uk: Record<string, string> = {
   'legend.elevation': 'Висота',
   'readout.elev': 'вис',
   'readout.water': 'вода',
+
+  // Landing + video
+  'landing.headline': 'Подивіться, як злива затоплює будь-яку адресу',
+  'landing.tagline': 'Введіть місце, щоб побудувати його 3D-рельєф і змоделювати зливу — наживо або як 30-секундне відео.',
+  'landing.cta.realtime': 'Наживо ▶',
+  'landing.cta.video': 'Створити відео 🎬',
+  'landing.fact.preparing': 'Підготовка рельєфу…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Рівнинний рельєф',
+  'landing.fact.terrainHilly': 'Горбистий рельєф',
+  'landing.fact.terrainMountain': 'Гористий',
+  'landing.fact.buildings': '{count} будівель',
+  'video.preparing': 'Моделювання шторму… {pct}%',
+  'video.recording': 'Запис відео… {pct}%',
+  'video.title': 'Ваше відео повені',
+  'video.download': 'Завантажити ⬇',
+  'video.again': 'Почати спочатку ↻',
+  'video.realtime': 'Відкрити наживо ▶',
+  'video.unsupported': 'Експорт відео не підтримується в цьому браузері. Спробуйте натомість режим наживо.',
 };

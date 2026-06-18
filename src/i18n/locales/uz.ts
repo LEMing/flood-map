@@ -169,4 +169,23 @@ export const uz: Record<string, string> = {
   'legend.elevation': 'Balandlik',
   'readout.elev': 'balandlik',
   'readout.water': 'suv',
+
+  // Landing + video
+  'landing.headline': 'Kuchli yomgʻir istalgan manzilni qanday suv bosishini koʻring',
+  'landing.tagline': 'Joyni kiriting, uning 3D relyefini yarating va jala yomgʻirini modellashtiring — jonli yoki 30 soniyalik video sifatida.',
+  'landing.cta.realtime': 'Jonli ▶',
+  'landing.cta.video': 'Video yaratish 🎬',
+  'landing.fact.preparing': 'Relyef tayyorlanmoqda…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Tekis relyef',
+  'landing.fact.terrainHilly': 'Tepalikli relyef',
+  'landing.fact.terrainMountain': 'Togʻli',
+  'landing.fact.buildings': '{count} bino',
+  'video.preparing': 'Boʻron modellashtirilmoqda… {pct}%',
+  'video.recording': 'Video yozib olinmoqda… {pct}%',
+  'video.title': 'Sizning toshqin videongiz',
+  'video.download': 'Yuklab olish ⬇',
+  'video.again': 'Qaytadan boshlash ↻',
+  'video.realtime': 'Jonlini ochish ▶',
+  'video.unsupported': 'Bu brauzerda video eksporti qoʻllab-quvvatlanmaydi. Buning oʻrniga jonlini sinab koʻring.',
 };

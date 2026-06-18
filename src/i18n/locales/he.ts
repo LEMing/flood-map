@@ -170,4 +170,23 @@ export const he: Record<string, string> = {
   'legend.elevation': 'גובה',
   'readout.elev': 'גובה',
   'readout.water': 'מים',
+
+  // Landing + video
+  'landing.headline': 'ראו כיצד גשם זלעפות מציף כל כתובת',
+  'landing.tagline': 'הזינו מקום כדי לבנות את פני השטח התלת-ממדיים שלו ולדמות שבר ענן — בשידור חי או כסרטון בן 30 שניות.',
+  'landing.cta.realtime': 'זמן אמת ▶',
+  'landing.cta.video': 'צור סרטון 🎬',
+  'landing.fact.preparing': 'מכין את פני השטח…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'שטח מישורי',
+  'landing.fact.terrainHilly': 'שטח גבעי',
+  'landing.fact.terrainMountain': 'הררי',
+  'landing.fact.buildings': '{count} מבנים',
+  'video.preparing': 'מדמה את הסערה… {pct}%',
+  'video.recording': 'מקליט סרטון… {pct}%',
+  'video.title': 'סרטון ההצפה שלך',
+  'video.download': 'הורד ⬇',
+  'video.again': 'התחל מחדש ↻',
+  'video.realtime': 'פתח זמן אמת ▶',
+  'video.unsupported': 'ייצוא וידאו אינו נתמך בדפדפן זה. נסה במקום זאת זמן אמת.',
 };

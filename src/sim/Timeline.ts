@@ -59,6 +59,29 @@ export class Timeline {
     return { rgba, time: this.times[i] };
   }
 
+  /** Linearly interpolate between the two nearest captured frames into the scrub
+   *  texture — lets a coarse 24–72-frame precompute play back smoothly across
+   *  the hundreds of frames a 30 s video needs (no per-playback-frame storage). */
+  sampleAt(pos: number): { time: number } | null {
+    const n = this.frames.length;
+    if (!n) return null;
+    const out = this.tex.image.data as Float32Array;
+    if (n === 1) {
+      out.set(this.frames[0]);
+      this.tex.needsUpdate = true;
+      return { time: this.times[0] };
+    }
+    const x = THREE.MathUtils.clamp(pos, 0, 1) * (n - 1);
+    const i0 = Math.floor(x);
+    const i1 = Math.min(n - 1, i0 + 1);
+    const f = x - i0;
+    const a = this.frames[i0];
+    const b = this.frames[i1];
+    for (let k = 0; k < out.length; k++) out[k] = a[k] + (b[k] - a[k]) * f;
+    this.tex.needsUpdate = true;
+    return { time: this.times[i0] + (this.times[i1] - this.times[i0]) * f };
+  }
+
   dispose(): void {
     this.tex.dispose();
     this.frames = [];

@@ -190,4 +190,23 @@ export const jv: Record<string, string> = {
   'legend.elevation': 'Dhuwure lemah',
   'readout.elev': 'dhuwur',
   'readout.water': 'banyu',
+
+  // Landing + video
+  'landing.headline': 'Deleng kepiye udan deres ngebanjiri alamat apa wae',
+  'landing.tagline': 'Lebokna panggonan kanggo mbangun lemah 3D-ne lan nyimulasi udan deres — langsung, utawa minangka video 30 detik.',
+  'landing.cta.realtime': 'Wektu nyata ▶',
+  'landing.cta.video': 'Gawe video 🎬',
+  'landing.fact.preparing': 'Nyiapake lemah…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Lemah rata',
+  'landing.fact.terrainHilly': 'Lemah gembrukuk',
+  'landing.fact.terrainMountain': 'Pagunungan',
+  'landing.fact.buildings': '{count} bangunan',
+  'video.preparing': 'Nyimulasi badai… {pct}%',
+  'video.recording': 'Ngrekam video… {pct}%',
+  'video.title': 'Video banjir sampeyan',
+  'video.download': 'Undhuh ⬇',
+  'video.again': 'Wiwiti maneh ↻',
+  'video.realtime': 'Bukak wektu nyata ▶',
+  'video.unsupported': 'Ekspor video ora didhukung ing browser iki. Coba wektu nyata wae.',
 };

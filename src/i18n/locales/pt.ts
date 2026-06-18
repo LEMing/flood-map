@@ -170,4 +170,23 @@ export const pt: Record<string, string> = {
   'legend.elevation': 'Elevação',
   'readout.elev': 'elev',
   'readout.water': 'água',
+
+  // Landing + video
+  'landing.headline': 'Veja como um temporal inunda qualquer endereço',
+  'landing.tagline': 'Insira um local para construir o seu terreno 3D e simular um aguaceiro — ao vivo ou como vídeo de 30 segundos.',
+  'landing.cta.realtime': 'Tempo real ▶',
+  'landing.cta.video': 'Criar vídeo 🎬',
+  'landing.fact.preparing': 'Preparando o terreno…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Terreno plano',
+  'landing.fact.terrainHilly': 'Terreno acidentado',
+  'landing.fact.terrainMountain': 'Montanhoso',
+  'landing.fact.buildings': '{count} edifícios',
+  'video.preparing': 'Simulando a tempestade… {pct}%',
+  'video.recording': 'Gravando o vídeo… {pct}%',
+  'video.title': 'Seu vídeo da enchente',
+  'video.download': 'Baixar ⬇',
+  'video.again': 'Recomeçar ↻',
+  'video.realtime': 'Abrir tempo real ▶',
+  'video.unsupported': 'A exportação de vídeo não é compatível com este navegador. Tente o tempo real.',
 };

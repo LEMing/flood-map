@@ -182,4 +182,23 @@ export const tr: Record<string, string> = {
   'legend.elevation': 'Yükseklik',
   'readout.elev': 'yük',
   'readout.water': 'su',
+
+  // Landing + video
+  'landing.headline': 'Şiddetli bir sağanağın herhangi bir adresi nasıl su altında bıraktığını görün',
+  'landing.tagline': 'Bir yer girin, 3D arazisini oluşturun ve sağanak yağışı canlandırın — canlı olarak ya da 30 saniyelik video olarak.',
+  'landing.cta.realtime': 'Gerçek zamanlı ▶',
+  'landing.cta.video': 'Video oluştur 🎬',
+  'landing.fact.preparing': 'Arazi hazırlanıyor…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Düz arazi',
+  'landing.fact.terrainHilly': 'Tepelik arazi',
+  'landing.fact.terrainMountain': 'Dağlık',
+  'landing.fact.buildings': '{count} bina',
+  'video.preparing': 'Fırtına canlandırılıyor… {pct}%',
+  'video.recording': 'Video kaydediliyor… {pct}%',
+  'video.title': 'Sel videonuz',
+  'video.download': 'İndir ⬇',
+  'video.again': 'Baştan başla ↻',
+  'video.realtime': 'Gerçek zamanlıyı aç ▶',
+  'video.unsupported': 'Bu tarayıcıda video dışa aktarma desteklenmiyor. Bunun yerine gerçek zamanlıyı deneyin.',
 };

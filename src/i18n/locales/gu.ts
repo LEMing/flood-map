@@ -190,4 +190,23 @@ export const gu: Record<string, string> = {
   'legend.elevation': 'ઊંચાઈ',
   'readout.elev': 'ઊંચાઈ',
   'readout.water': 'પાણી',
+
+  // Landing + video
+  'landing.headline': 'જુઓ કે ભારે વરસાદ કોઈપણ સરનામાને કેવી રીતે ડૂબાડે છે',
+  'landing.tagline': 'તેનું 3D ભૂપ્રદેશ બનાવવા અને વાદળ ફાટવાનું અનુકરણ કરવા માટે કોઈ સ્થળ દાખલ કરો — જીવંત, અથવા ૩૦ સેકન્ડના વિડિયો તરીકે.',
+  'landing.cta.realtime': 'રિયલટાઇમ ▶',
+  'landing.cta.video': 'વિડિયો બનાવો 🎬',
+  'landing.fact.preparing': 'ભૂપ્રદેશ તૈયાર થઈ રહ્યો છે…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'સપાટ ભૂપ્રદેશ',
+  'landing.fact.terrainHilly': 'ડુંગરાળ ભૂપ્રદેશ',
+  'landing.fact.terrainMountain': 'પર્વતીય',
+  'landing.fact.buildings': '{count} મકાનો',
+  'video.preparing': 'વાવાઝોડાનું અનુકરણ થઈ રહ્યું છે… {pct}%',
+  'video.recording': 'વિડિયો રેકોર્ડ થઈ રહ્યો છે… {pct}%',
+  'video.title': 'તમારો પૂરનો વિડિયો',
+  'video.download': 'ડાઉનલોડ ⬇',
+  'video.again': 'ફરી શરૂ કરો ↻',
+  'video.realtime': 'રિયલટાઇમ ખોલો ▶',
+  'video.unsupported': 'આ બ્રાઉઝરમાં વિડિયો નિકાસ સમર્થિત નથી. તેના બદલે રિયલટાઇમ અજમાવો.',
 };

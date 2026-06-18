@@ -183,4 +183,23 @@ export const id: Record<string, string> = {
   'legend.elevation': 'Ketinggian',
   'readout.elev': 'ketinggian',
   'readout.water': 'air',
+
+  // Landing + video
+  'landing.headline': 'Lihat bagaimana hujan deras membanjiri alamat mana pun',
+  'landing.tagline': 'Masukkan sebuah tempat untuk membangun medan 3D-nya dan menyimulasikan hujan badai — secara langsung, atau sebagai video berdurasi 30 detik.',
+  'landing.cta.realtime': 'Waktu nyata ▶',
+  'landing.cta.video': 'Buat video 🎬',
+  'landing.fact.preparing': 'Menyiapkan medan…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Medan datar',
+  'landing.fact.terrainHilly': 'Medan berbukit',
+  'landing.fact.terrainMountain': 'Pegunungan',
+  'landing.fact.buildings': '{count} bangunan',
+  'video.preparing': 'Menyimulasikan badai… {pct}%',
+  'video.recording': 'Merekam video… {pct}%',
+  'video.title': 'Video banjir Anda',
+  'video.download': 'Unduh ⬇',
+  'video.again': 'Mulai lagi ↻',
+  'video.realtime': 'Buka waktu nyata ▶',
+  'video.unsupported': 'Ekspor video tidak didukung di browser ini. Coba waktu nyata sebagai gantinya.',
 };

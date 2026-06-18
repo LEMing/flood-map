@@ -190,4 +190,23 @@ export const pa: Record<string, string> = {
   'legend.elevation': 'ਉਚਾਈ',
   'readout.elev': 'ਉਚਾਈ',
   'readout.water': 'ਪਾਣੀ',
+
+  // Landing + video
+  'landing.headline': 'ਦੇਖੋ ਕਿ ਮੋਹਲੇਧਾਰ ਮੀਂਹ ਕਿਸੇ ਵੀ ਪਤੇ ਨੂੰ ਕਿਵੇਂ ਡੁਬੋ ਦਿੰਦਾ ਹੈ',
+  'landing.tagline': 'ਇੱਕ ਥਾਂ ਦਾਖਲ ਕਰੋ ਤਾਂ ਜੋ ਇਸਦਾ 3D ਭੂਮੀ-ਖੇਤਰ ਬਣਾ ਕੇ ਬੱਦਲ ਫਟਣ ਦੀ ਨਕਲ ਕੀਤੀ ਜਾ ਸਕੇ — ਸਿੱਧਾ ਜਾਂ 30-ਸਕਿੰਟ ਦੀ ਵੀਡੀਓ ਵਜੋਂ।',
+  'landing.cta.realtime': 'ਰੀਅਲ ਟਾਈਮ ▶',
+  'landing.cta.video': 'ਵੀਡੀਓ ਬਣਾਓ 🎬',
+  'landing.fact.preparing': 'ਭੂਮੀ-ਖੇਤਰ ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ਪੱਧਰਾ ਭੂਮੀ-ਖੇਤਰ',
+  'landing.fact.terrainHilly': 'ਪਹਾੜੀ ਭੂਮੀ-ਖੇਤਰ',
+  'landing.fact.terrainMountain': 'ਪਹਾੜੀ ਇਲਾਕਾ',
+  'landing.fact.buildings': '{count} ਇਮਾਰਤਾਂ',
+  'video.preparing': 'ਤੂਫਾਨ ਦੀ ਨਕਲ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… {pct}%',
+  'video.recording': 'ਵੀਡੀਓ ਰਿਕਾਰਡ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ… {pct}%',
+  'video.title': 'ਤੁਹਾਡੀ ਹੜ੍ਹ ਵੀਡੀਓ',
+  'video.download': 'ਡਾਊਨਲੋਡ ⬇',
+  'video.again': 'ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ ↻',
+  'video.realtime': 'ਰੀਅਲ ਟਾਈਮ ਖੋਲ੍ਹੋ ▶',
+  'video.unsupported': 'ਇਸ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਵੀਡੀਓ ਨਿਰਯਾਤ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ। ਇਸਦੀ ਬਜਾਏ ਰੀਅਲ ਟਾਈਮ ਅਜ਼ਮਾਓ।',
 };

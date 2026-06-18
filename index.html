@@ -660,10 +660,230 @@
         }
       }
 
+      /* ── Landing ("/") ─────────────────────────────────────────────
+         An immersive entry: the chosen place's satellite snapshot fills the
+         screen behind a darkening scrim; a glass card holds the search, a few
+         live facts, and the two CTAs. When body.landing is set we hide the 3D
+         canvas + all sim chrome so nothing peeks through. */
+      #landing { display: none; }
+      body.landing #landing {
+        display: block; position: fixed; inset: 0; z-index: 50;
+        overflow: hidden; background: #070b10;
+      }
+      body.landing #scene,
+      body.landing #addressbar,
+      body.landing #lang-picker,
+      body.landing #chrome-toggle,
+      body.landing #chrome-panel,
+      body.landing #start-overlay,
+      body.landing #game-dock,
+      body.landing #hud-stats,
+      body.landing #fps-meter,
+      body.landing #credit,
+      body.landing #toast,
+      body.landing #loading-card { display: none !important; }
+
+      .lp-bg {
+        position: absolute; inset: 0; z-index: 0;
+        background-position: center; background-size: cover;
+        opacity: 0; transform: scale(1.06);
+        transition: opacity .9s ease, transform 9s ease-out;
+      }
+      .lp-bg.show { opacity: 1; transform: scale(1.0); }
+      .lp-scrim {
+        position: absolute; inset: 0; z-index: 1; pointer-events: none;
+        background:
+          radial-gradient(120% 90% at 50% 12%, rgba(5,9,14,.12), rgba(5,9,14,.62) 64%, rgba(5,9,14,.9) 100%),
+          linear-gradient(180deg, rgba(5,9,14,.52) 0%, rgba(5,9,14,.18) 32%, rgba(5,9,14,.66) 100%);
+      }
+
+      .lp-card {
+        position: absolute; z-index: 2;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: min(540px, calc(100vw - 32px));
+        display: flex; flex-direction: column; gap: 18px;
+        padding: 26px 26px 24px;
+        border-radius: 18px; color: #eef4fb;
+        background: var(--panel-bg-strong);
+        border: 1px solid var(--panel-border-strong);
+        box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 2px 0 rgba(255,255,255,.05) inset;
+        backdrop-filter: blur(20px) saturate(1.1); -webkit-backdrop-filter: blur(20px) saturate(1.1);
+        animation: lp-rise .5s cubic-bezier(.2,.7,.2,1) both;
+      }
+      @keyframes lp-rise { from { opacity: 0; transform: translate(-50%, -46%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+
+      .lp-brand { display: flex; flex-direction: column; gap: 6px; }
+      .lp-headline {
+        margin: 0; font-size: 25px; line-height: 1.15; font-weight: 760; letter-spacing: -.2px;
+        text-wrap: balance;
+      }
+      .lp-tagline { margin: 0; font-size: 14px; line-height: 1.45; color: rgba(214,226,240,.82); }
+
+      .lp-search { position: relative; }
+      .lp-input {
+        width: 100%; height: 52px; padding: 0 16px;
+        border-radius: 12px; border: 1px solid rgba(120,160,235,.32);
+        background: rgba(7,11,16,.86); color: #f0f6fd; font-size: 16px; outline: none;
+        transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+      }
+      .lp-input::placeholder { color: rgba(206,219,235,.5); }
+      .lp-input:focus {
+        border-color: rgba(96,150,255,.8);
+        box-shadow: 0 0 0 4px rgba(59,109,246,.18);
+        background: rgba(7,11,16,.95);
+      }
+      .lp-ac {
+        position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 5;
+        background: var(--panel-bg-strong); border: 1px solid var(--panel-border-strong);
+        border-radius: 12px; overflow: hidden; box-shadow: 0 18px 44px rgba(0,0,0,.55);
+        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); display: none;
+      }
+      .lp-ac.show { display: block; }
+      .lp-ac-item {
+        padding: 11px 14px; font-size: 14px; color: #d5dfea; cursor: pointer;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+      .lp-ac-item:last-child { border-bottom: none; }
+      .lp-ac-item.active, .lp-ac-item:hover { background: var(--accent); color: #fff; }
+
+      .lp-facts { display: flex; flex-wrap: wrap; gap: 8px; min-height: 30px; }
+      .lp-chip {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 6px 11px; border-radius: 999px; font-size: 13px;
+        background: rgba(255,255,255,.06); border: 1px solid var(--panel-border);
+        color: #dbe6f2; font-variant-numeric: tabular-nums;
+        opacity: 0; transform: translateY(4px); transition: opacity .3s ease, transform .3s ease;
+      }
+      .lp-chip.show { opacity: 1; transform: none; }
+      .lp-chip .ic { font-size: 14px; line-height: 1; }
+      .lp-chip.loading { color: rgba(219,230,242,.6); }
+      .lp-chip .spin {
+        width: 11px; height: 11px; border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.2); border-top-color: var(--accent);
+        animation: spin .8s linear infinite;
+      }
+
+      .lp-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+      .lp-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+        min-height: 54px; padding: 0 16px; border-radius: 13px; cursor: pointer;
+        font-size: 16px; font-weight: 680; letter-spacing: .2px;
+        transition: transform .12s ease, box-shadow .16s ease, filter .16s ease, background .16s ease, border-color .16s ease;
+        touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      }
+      .lp-btn:disabled { opacity: .5; cursor: default; }
+      .lp-btn:not(:disabled):active { transform: translateY(1px) scale(.99); }
+      .lp-btn-primary {
+        border: 1px solid rgba(122,170,255,.55); color: #fff;
+        background: linear-gradient(180deg, rgba(59,109,246,.98), rgba(42,86,210,.98));
+        box-shadow: 0 12px 30px rgba(47,111,235,.4);
+      }
+      .lp-btn-primary:not(:disabled):hover { filter: brightness(1.07); box-shadow: 0 14px 38px rgba(47,111,235,.56); }
+      .lp-btn-ghost {
+        border: 1px solid var(--panel-border-strong); color: #e9f1fb;
+        background: rgba(255,255,255,.07);
+      }
+      .lp-btn-ghost:not(:disabled):hover { background: rgba(255,255,255,.12); border-color: rgba(226,237,255,.32); }
+      .lp-btn-ghost[hidden] { display: none; }
+      .lp-cta.single { grid-template-columns: 1fr; }
+
+      @media (max-width: 767px) {
+        .lp-card {
+          top: auto; bottom: 0; left: 0; transform: none;
+          width: 100%; border-radius: 20px 20px 0 0;
+          padding: 22px 18px calc(20px + var(--safe-b));
+          gap: 15px; animation: lp-rise-m .42s cubic-bezier(.2,.7,.2,1) both;
+        }
+        @keyframes lp-rise-m { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+        .lp-headline { font-size: 22px; }
+        .lp-input { height: 50px; }
+        .lp-btn { min-height: 52px; font-size: 15px; }
+      }
+
+      /* ── Cinematic video overlay ───────────────────────────────────
+         Progress phase: a light scrim so the storm computing behind shows
+         through. Result phase: an opaque modal with the player + actions. */
+      .vm-overlay {
+        position: fixed; inset: 0; z-index: 60;
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px; background: rgba(5, 9, 14, .62);
+        backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+        animation: vm-fade .25s ease both;
+      }
+      .vm-overlay.result { background: rgba(5, 9, 14, .88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+      @keyframes vm-fade { from { opacity: 0; } to { opacity: 1; } }
+
+      .vm-progress {
+        position: relative; width: min(440px, calc(100vw - 40px));
+        display: flex; flex-direction: column; gap: 14px;
+        padding: 22px 22px 24px; border-radius: 16px; color: #eef4fb;
+        background: var(--panel-bg-strong); border: 1px solid var(--panel-border-strong);
+        box-shadow: 0 30px 80px rgba(0,0,0,.55);
+        backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      }
+      .vm-title { font-size: 15px; font-weight: 640; font-variant-numeric: tabular-nums; }
+      .vm-bar { width: 100%; height: 8px; border-radius: 999px; background: rgba(255,255,255,.1); overflow: hidden; }
+      .vm-bar-fill {
+        height: 100%; width: 0%; border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), #7aa6ff);
+        transition: width .15s ease;
+      }
+      .vm-cancel {
+        position: absolute; top: 12px; right: 12px;
+        width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+        border: 1px solid var(--panel-border); background: rgba(255,255,255,.06);
+        color: #cdd8e6; font-size: 13px; line-height: 1;
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .vm-cancel:hover { background: rgba(255,255,255,.12); }
+
+      .vm-result {
+        width: min(880px, calc(100vw - 40px));
+        display: flex; flex-direction: column; gap: 16px;
+        padding: 22px; border-radius: 16px; color: #eef4fb;
+        background: var(--panel-bg-strong); border: 1px solid var(--panel-border-strong);
+        box-shadow: 0 30px 80px rgba(0,0,0,.6);
+        animation: lp-rise 0s; /* reuse fade-in via overlay */
+      }
+      .vm-result-title { font-size: 18px; font-weight: 720; }
+      .vm-video {
+        width: 100%; max-height: 64vh; border-radius: 12px; background: #000;
+        border: 1px solid var(--panel-border); display: block;
+      }
+      .vm-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+      .vm-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        min-height: 48px; padding: 0 20px; border-radius: 12px; cursor: pointer;
+        font-size: 15px; font-weight: 660; text-decoration: none;
+        transition: transform .12s ease, filter .16s ease, background .16s ease, border-color .16s ease;
+        touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      }
+      .vm-btn:active { transform: translateY(1px) scale(.99); }
+      .vm-btn-primary {
+        border: 1px solid rgba(122,170,255,.55); color: #fff;
+        background: linear-gradient(180deg, rgba(59,109,246,.98), rgba(42,86,210,.98));
+        box-shadow: 0 10px 26px rgba(47,111,235,.4);
+      }
+      .vm-btn-primary:hover { filter: brightness(1.07); }
+      .vm-btn-ghost {
+        border: 1px solid var(--panel-border-strong); color: #e9f1fb; background: rgba(255,255,255,.07);
+      }
+      .vm-btn-ghost:hover { background: rgba(255,255,255,.12); }
+      @media (max-width: 767px) {
+        .vm-actions .vm-btn { flex: 1 1 auto; }
+      }
+
     </style>
   </head>
   <body>
     <canvas id="scene"></canvas>
+
+    <!-- Landing surface (route "/"): an immersive satellite backdrop with a glass
+         card (search + facts + two CTAs). Built by src/landing/Landing.ts; shown
+         only while body.landing is set, which also hides the sim chrome below. -->
+    <div id="landing"></div>
+
     <div id="addressbar">
       <div id="ac-wrap">
         <input id="address-input" type="text" placeholder="Enter an address or place…" autocomplete="off" spellcheck="false" />

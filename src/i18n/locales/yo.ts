@@ -170,4 +170,23 @@ export const yo: Record<string, string> = {
   'legend.elevation': 'Gíga',
   'readout.elev': 'gíga',
   'readout.water': 'omi',
+
+  // Landing + video
+  'landing.headline': 'Wo bí òjò ńlá ṣe ń kún àdírẹ́sì èyíkéyìí',
+  'landing.tagline': 'Tẹ ibì kan sí i láti kọ́ ilẹ̀ 3D rẹ̀ kí o sì ṣe àfarawé òjò ríró — tààrà, tàbí gẹ́gẹ́ bí fídíò ìṣẹ́jú àáyá 30.',
+  'landing.cta.realtime': 'Tààrà ▶',
+  'landing.cta.video': 'Ṣe fídíò 🎬',
+  'landing.fact.preparing': 'Ń ṣe ìmúrasílẹ̀ ilẹ̀…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Ilẹ̀ pẹ̀tẹ́lẹ̀',
+  'landing.fact.terrainHilly': 'Ilẹ̀ olókè kéékèèké',
+  'landing.fact.terrainMountain': 'Olókè ńlá',
+  'landing.fact.buildings': 'Ilé {count}',
+  'video.preparing': 'Ń ṣe àfarawé ìjì… {pct}%',
+  'video.recording': 'Ń gba fídíò sílẹ̀… {pct}%',
+  'video.title': 'Fídíò ìkún omi rẹ',
+  'video.download': 'Gbà sílẹ̀ ⬇',
+  'video.again': 'Bẹ̀rẹ̀ láti ìbẹ̀rẹ̀ ↻',
+  'video.realtime': 'Ṣí tààrà ▶',
+  'video.unsupported': 'Atẹ̀wé yìí kò ní ìtìlẹ́yìn fún àkójáde fídíò. Gbìyànjú tààrà dípò.',
 };

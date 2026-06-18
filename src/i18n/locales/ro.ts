@@ -169,4 +169,23 @@ export const ro: Record<string, string> = {
   'legend.elevation': 'Altitudine',
   'readout.elev': 'alt',
   'readout.water': 'apă',
+
+  // Landing + video
+  'landing.headline': 'Vezi cum o ploaie torențială inundă orice adresă',
+  'landing.tagline': 'Introdu un loc pentru a construi terenul său 3D și a simula o rupere de nori — în direct sau ca videoclip de 30 de secunde.',
+  'landing.cta.realtime': 'Timp real ▶',
+  'landing.cta.video': 'Creează videoclip 🎬',
+  'landing.fact.preparing': 'Se pregătește terenul…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Teren plat',
+  'landing.fact.terrainHilly': 'Teren deluros',
+  'landing.fact.terrainMountain': 'Muntos',
+  'landing.fact.buildings': '{count} clădiri',
+  'video.preparing': 'Se simulează furtuna… {pct}%',
+  'video.recording': 'Se înregistrează videoclipul… {pct}%',
+  'video.title': 'Videoclipul tău cu inundația',
+  'video.download': 'Descarcă ⬇',
+  'video.again': 'Începe din nou ↻',
+  'video.realtime': 'Deschide timp real ▶',
+  'video.unsupported': 'Exportul video nu este acceptat în acest browser. Încearcă în schimb timpul real.',
 };

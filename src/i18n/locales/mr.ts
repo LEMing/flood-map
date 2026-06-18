@@ -191,4 +191,23 @@ export const mr: Record<string, string> = {
   'legend.elevation': 'उंची',
   'readout.elev': 'उंची',
   'readout.water': 'पाणी',
+
+  // Landing + video
+  'landing.headline': 'मुसळधार पाऊस कोणत्याही पत्त्याला कसा बुडवतो ते पहा',
+  'landing.tagline': 'एखादे ठिकाण प्रविष्ट करून त्याचा 3D भूभाग तयार करा आणि ढगफुटीचे अनुकरण करा — थेट किंवा 30-सेकंदांचा व्हिडिओ म्हणून.',
+  'landing.cta.realtime': 'रिअल टाइम ▶',
+  'landing.cta.video': 'व्हिडिओ बनवा 🎬',
+  'landing.fact.preparing': 'भूभाग तयार करत आहे…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'सपाट भूभाग',
+  'landing.fact.terrainHilly': 'टेकड्यांचा भूभाग',
+  'landing.fact.terrainMountain': 'डोंगराळ',
+  'landing.fact.buildings': '{count} इमारती',
+  'video.preparing': 'वादळाचे अनुकरण करत आहे… {pct}%',
+  'video.recording': 'व्हिडिओ रेकॉर्ड करत आहे… {pct}%',
+  'video.title': 'तुमचा पूर व्हिडिओ',
+  'video.download': 'डाउनलोड ⬇',
+  'video.again': 'पुन्हा सुरू करा ↻',
+  'video.realtime': 'रिअल टाइम उघडा ▶',
+  'video.unsupported': 'या ब्राउझरमध्ये व्हिडिओ निर्यात समर्थित नाही. त्याऐवजी रिअल टाइम वापरून पहा.',
 };

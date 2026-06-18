@@ -170,4 +170,23 @@ export const tk: Record<string, string> = {
   'legend.elevation': 'Beýiklik',
   'readout.elev': 'beýiklik',
   'readout.water': 'suw',
+
+  // Landing + video
+  'landing.headline': 'Güýçli ýagşyň islendik salgyny nähili suw basýandygyny görüň',
+  'landing.tagline': 'Ýeri giriziň, onuň 3D relýefini guruň we güýçli ýagşy modelleşdiriň — janly ýa-da 30 sekuntlyk wideo görnüşinde.',
+  'landing.cta.realtime': 'Janly ▶',
+  'landing.cta.video': 'Wideo ýasa 🎬',
+  'landing.fact.preparing': 'Relýef taýýarlanýar…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Tekiz relýef',
+  'landing.fact.terrainHilly': 'Depeli relýef',
+  'landing.fact.terrainMountain': 'Daglyk',
+  'landing.fact.buildings': '{count} bina',
+  'video.preparing': 'Tupan modelleşdirilýär… {pct}%',
+  'video.recording': 'Wideo ýazgy edilýär… {pct}%',
+  'video.title': 'Siziň sil wideoňyz',
+  'video.download': 'Ýükle ⬇',
+  'video.again': 'Täzeden başla ↻',
+  'video.realtime': 'Janlyny aç ▶',
+  'video.unsupported': 'Bu brauzerde wideo eksporty goldanmaýar. Onuň ýerine janlyny synanyşyň.',
 };

@@ -170,4 +170,23 @@ export const nl: Record<string, string> = {
   'legend.elevation': 'Hoogte',
   'readout.elev': 'hoogte',
   'readout.water': 'water',
+
+  // Landing + video
+  'landing.headline': 'Zie hoe een stortbui elk adres onder water zet',
+  'landing.tagline': 'Voer een plek in om het 3D-terrein te bouwen en een wolkbreuk te simuleren — live of als video van 30 seconden.',
+  'landing.cta.realtime': 'Realtime ▶',
+  'landing.cta.video': 'Video maken 🎬',
+  'landing.fact.preparing': 'Terrein voorbereiden…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Vlak terrein',
+  'landing.fact.terrainHilly': 'Heuvelachtig terrein',
+  'landing.fact.terrainMountain': 'Bergachtig',
+  'landing.fact.buildings': '{count} gebouwen',
+  'video.preparing': 'Storm simuleren… {pct}%',
+  'video.recording': 'Video opnemen… {pct}%',
+  'video.title': 'Jouw overstromingsvideo',
+  'video.download': 'Downloaden ⬇',
+  'video.again': 'Opnieuw beginnen ↻',
+  'video.realtime': 'Realtime openen ▶',
+  'video.unsupported': 'Video exporteren wordt niet ondersteund in deze browser. Probeer in plaats daarvan realtime.',
 };

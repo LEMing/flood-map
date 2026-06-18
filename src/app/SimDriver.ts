@@ -121,8 +121,9 @@ export class SimDriver {
     this.simTime += stepDt;
   }
 
-  /** Begin precomputing the storm into scrubbable frames. */
-  beginPrecompute(): void {
+  /** Begin precomputing the storm into scrubbable frames. `simSeconds` lets the
+   *  video capture stretch the window to include the full drain/evaporate tail. */
+  beginPrecompute(opts: { simSeconds?: number } = {}): void {
     if (!this.sim || !this.timeline) return;
     this.reset();
     this.params.raining = true;
@@ -133,7 +134,24 @@ export class SimDriver {
     this.timelineMode = 'computing';
     const N = this.sim.N;
     this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
-    this.precomputeFrameSec = DEMO_SIM_SECONDS / this.precomputeTargetFrames;
+    this.precomputeFrameSec = (opts.simSeconds ?? DEMO_SIM_SECONDS) / this.precomputeTargetFrames;
+  }
+
+  /** True once the precompute has captured a full scrubbable timeline. */
+  get timelineReady(): boolean { return !!this.timeline?.ready; }
+  /** 0..1 precompute progress (drives the video "simulating…" bar). */
+  get precomputeProgress(): number { return this.timeline?.progress ?? 0; }
+
+  /** Show an interpolated timeline frame at `pos` and return its sim time —
+   *  the video recorder's scrub driver. */
+  seekTimeline(pos: number): number {
+    if (!this.timeline) return 0;
+    this.timelineMode = 'scrub';
+    const f = this.timeline.sampleAt(pos);
+    if (!f) return 0;
+    this.simTime = f.time;
+    this.hooks.syncTextures();
+    return f.time;
   }
 
   /** Per-frame: run the active mode (computing / scrub / live). Returns true if

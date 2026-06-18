@@ -187,4 +187,23 @@ export const ml: Record<string, string> = {
   'legend.elevation': 'ഉയരം',
   'readout.elev': 'ഉയരം',
   'readout.water': 'വെള്ളം',
+
+  // Landing + video
+  'landing.headline': 'പേമാരി ഏതൊരു വിലാസത്തെയും എങ്ങനെ വെള്ളപ്പൊക്കത്തിലാക്കുന്നു എന്ന് കാണുക',
+  'landing.tagline': 'ഒരു സ്ഥലം നൽകി അതിന്റെ 3D ഭൂപ്രദേശം നിർമ്മിച്ച് പേമാരി അനുകരിക്കുക — തത്സമയം അല്ലെങ്കിൽ 30 സെക്കൻഡ് വീഡിയോയായി.',
+  'landing.cta.realtime': 'തത്സമയം ▶',
+  'landing.cta.video': 'വീഡിയോ ഉണ്ടാക്കുക 🎬',
+  'landing.fact.preparing': 'ഭൂപ്രദേശം തയ്യാറാക്കുന്നു…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'പരന്ന ഭൂപ്രദേശം',
+  'landing.fact.terrainHilly': 'കുന്നിൻപ്രദേശം',
+  'landing.fact.terrainMountain': 'പർവതപ്രദേശം',
+  'landing.fact.buildings': '{count} കെട്ടിടങ്ങൾ',
+  'video.preparing': 'കൊടുങ്കാറ്റ് അനുകരിക്കുന്നു… {pct}%',
+  'video.recording': 'വീഡിയോ റെക്കോർഡ് ചെയ്യുന്നു… {pct}%',
+  'video.title': 'നിങ്ങളുടെ വെള്ളപ്പൊക്ക വീഡിയോ',
+  'video.download': 'ഡൗൺലോഡ് ⬇',
+  'video.again': 'വീണ്ടും തുടങ്ങുക ↻',
+  'video.realtime': 'തത്സമയം തുറക്കുക ▶',
+  'video.unsupported': 'ഈ ബ്രൗസറിൽ വീഡിയോ എക്സ്പോർട്ട് പിന്തുണയ്ക്കുന്നില്ല. പകരം തത്സമയം പരീക്ഷിക്കുക.',
 };

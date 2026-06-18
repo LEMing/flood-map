@@ -191,4 +191,23 @@ export const my: Record<string, string> = {
   'legend.elevation': 'အမြင့်',
   'readout.elev': 'အမြင့်',
   'readout.water': 'ရေ',
+
+  // Landing + video
+  'landing.headline': 'မိုးသည်းထန်စွာရွာခြင်းက မည်သည့်လိပ်စာကိုမဆို မည်သို့ရေလွှမ်းမိုးသည်ကို ကြည့်ပါ',
+  'landing.tagline': 'နေရာတစ်ခုထည့်ပြီး ၎င်း၏ 3D မြေမျက်နှာသွင်ပြင်ကို တည်ဆောက်ကာ မိုးသည်းထန်စွာရွာသွန်းမှုကို တုပပါ — တိုက်ရိုက် သို့မဟုတ် ၃၀ စက္ကန့်ဗီဒီယိုအဖြစ်။',
+  'landing.cta.realtime': 'အချိန်နှင့်တပြေးညီ ▶',
+  'landing.cta.video': 'ဗီဒီယိုပြုလုပ်ရန် 🎬',
+  'landing.fact.preparing': 'မြေမျက်နှာသွင်ပြင် ပြင်ဆင်နေသည်…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ညီညာသောမြေ',
+  'landing.fact.terrainHilly': 'တောင်ကုန်းများသောမြေ',
+  'landing.fact.terrainMountain': 'တောင်ထူထပ်သော',
+  'landing.fact.buildings': 'အဆောက်အအုံ {count} ခု',
+  'video.preparing': 'မုန်တိုင်းကို တုပနေသည်… {pct}%',
+  'video.recording': 'ဗီဒီယိုရိုက်ကူးနေသည်… {pct}%',
+  'video.title': 'သင်၏ရေလွှမ်းမိုးမှုဗီဒီယို',
+  'video.download': 'ဒေါင်းလုဒ် ⬇',
+  'video.again': 'အစမှ ပြန်စရန် ↻',
+  'video.realtime': 'အချိန်နှင့်တပြေးညီ ဖွင့်ရန် ▶',
+  'video.unsupported': 'ဤဘရောက်ဇာတွင် ဗီဒီယိုထုတ်ယူခြင်းကို မပံ့ပိုးပါ။ ၎င်းအစား အချိန်နှင့်တပြေးညီကို စမ်းကြည့်ပါ။',
 };

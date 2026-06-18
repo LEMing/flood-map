@@ -182,4 +182,23 @@ export const ja: Record<string, string> = {
   'legend.elevation': '標高',
   'readout.elev': '標高',
   'readout.water': '水位',
+
+  // Landing + video
+  'landing.headline': '豪雨が任意の住所をどう浸水させるか確認',
+  'landing.tagline': '場所を入力して3D地形を作成し、集中豪雨をシミュレーション — ライブ、または30秒の動画で。',
+  'landing.cta.realtime': 'リアルタイム ▶',
+  'landing.cta.video': '動画を作成 🎬',
+  'landing.fact.preparing': '地形を準備中…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': '平坦な地形',
+  'landing.fact.terrainHilly': '丘陵地形',
+  'landing.fact.terrainMountain': '山岳地帯',
+  'landing.fact.buildings': '{count}棟の建物',
+  'video.preparing': '嵐をシミュレーション中… {pct}%',
+  'video.recording': '動画を録画中… {pct}%',
+  'video.title': 'あなたの洪水動画',
+  'video.download': 'ダウンロード ⬇',
+  'video.again': '最初からやり直す ↻',
+  'video.realtime': 'リアルタイムを開く ▶',
+  'video.unsupported': 'このブラウザでは動画の書き出しに対応していません。代わりにリアルタイムをお試しください。',
 };

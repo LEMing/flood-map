@@ -169,4 +169,23 @@ export const ru: Record<string, string> = {
   'legend.elevation': 'Высота',
   'readout.elev': 'высота',
   'readout.water': 'вода',
+
+  // Landing + video
+  'landing.headline': 'Посмотрите, как ливень затапливает любой адрес',
+  'landing.tagline': 'Введите место, чтобы построить его 3D-рельеф и смоделировать ливень — вживую или в виде 30-секундного видео.',
+  'landing.cta.realtime': 'В реальном времени ▶',
+  'landing.cta.video': 'Создать видео 🎬',
+  'landing.fact.preparing': 'Подготовка рельефа…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Равнинный рельеф',
+  'landing.fact.terrainHilly': 'Холмистый рельеф',
+  'landing.fact.terrainMountain': 'Горный',
+  'landing.fact.buildings': '{count} зданий',
+  'video.preparing': 'Моделирование шторма… {pct}%',
+  'video.recording': 'Запись видео… {pct}%',
+  'video.title': 'Ваше видео наводнения',
+  'video.download': 'Скачать ⬇',
+  'video.again': 'Начать заново ↻',
+  'video.realtime': 'Открыть в реальном времени ▶',
+  'video.unsupported': 'Экспорт видео не поддерживается в этом браузере. Попробуйте режим реального времени.',
 };

@@ -170,4 +170,23 @@ export const hy: Record<string, string> = {
   'legend.elevation': 'Բարձրություն',
   'readout.elev': 'բարձրություն',
   'readout.water': 'ջուր',
+
+  // Landing + video
+  'landing.headline': 'Տեսեք, թե ինչպես է հորդառատ անձրևը հեղեղում ցանկացած հասցե',
+  'landing.tagline': 'Մուտքագրեք վայր՝ դրա եռաչափ տեղանքը կառուցելու և տեղատարափ անձրև մոդելավորելու համար — ուղիղ եթերում կամ 30 վայրկյանանոց տեսանյութի տեսքով։',
+  'landing.cta.realtime': 'Իրական ժամանակ ▶',
+  'landing.cta.video': 'Ստեղծել տեսանյութ 🎬',
+  'landing.fact.preparing': 'Տեղանքը պատրաստվում է…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Հարթ տեղանք',
+  'landing.fact.terrainHilly': 'Բլրապատ տեղանք',
+  'landing.fact.terrainMountain': 'Լեռնային',
+  'landing.fact.buildings': '{count} շենք',
+  'video.preparing': 'Փոթորիկը մոդելավորվում է… {pct}%',
+  'video.recording': 'Տեսանյութը ձայնագրվում է… {pct}%',
+  'video.title': 'Ձեր ջրհեղեղի տեսանյութը',
+  'video.download': 'Ներբեռնել ⬇',
+  'video.again': 'Սկսել նորից ↻',
+  'video.realtime': 'Բացել իրական ժամանակ ▶',
+  'video.unsupported': 'Տեսանյութի արտահանումն այս դիտարկիչում չի աջակցվում։ Փոխարենը փորձեք իրական ժամանակը։',
 };

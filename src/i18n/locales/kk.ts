@@ -170,4 +170,23 @@ export const kk: Record<string, string> = {
   'legend.elevation': 'Биіктік',
   'readout.elev': 'биіктік',
   'readout.water': 'су',
+
+  // Landing + video
+  'landing.headline': 'Нөсер кез келген мекенжайды қалай су басатынын көріңіз',
+  'landing.tagline': 'Орынды енгізіп, оның 3D жер бедерін жасап, нөсерді модельдеңіз — тікелей эфирде немесе 30 секундтық видео ретінде.',
+  'landing.cta.realtime': 'Нақты уақыт ▶',
+  'landing.cta.video': 'Видео жасау 🎬',
+  'landing.fact.preparing': 'Жер бедері дайындалуда…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Жазық жер бедері',
+  'landing.fact.terrainHilly': 'Төбелі жер бедері',
+  'landing.fact.terrainMountain': 'Таулы',
+  'landing.fact.buildings': '{count} ғимарат',
+  'video.preparing': 'Дауыл модельденуде… {pct}%',
+  'video.recording': 'Видео жазылуда… {pct}%',
+  'video.title': 'Сіздің су тасқыны видеоңыз',
+  'video.download': 'Жүктеп алу ⬇',
+  'video.again': 'Қайта бастау ↻',
+  'video.realtime': 'Нақты уақытты ашу ▶',
+  'video.unsupported': 'Бұл браузерде видео экспорты қолдау көрсетілмейді. Оның орнына нақты уақытты қолданып көріңіз.',
 };

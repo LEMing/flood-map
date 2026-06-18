@@ -170,4 +170,23 @@ export const pl: Record<string, string> = {
   'legend.elevation': 'Wysokość',
   'readout.elev': 'wys.',
   'readout.water': 'woda',
+
+  // Landing + video
+  'landing.headline': 'Zobacz, jak ulewa zalewa dowolny adres',
+  'landing.tagline': 'Wpisz miejsce, aby zbudować jego teren 3D i zasymulować oberwanie chmury — na żywo lub jako 30-sekundowy film.',
+  'landing.cta.realtime': 'Na żywo ▶',
+  'landing.cta.video': 'Utwórz film 🎬',
+  'landing.fact.preparing': 'Przygotowywanie terenu…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Teren płaski',
+  'landing.fact.terrainHilly': 'Teren pagórkowaty',
+  'landing.fact.terrainMountain': 'Górzysty',
+  'landing.fact.buildings': '{count} budynków',
+  'video.preparing': 'Symulowanie burzy… {pct}%',
+  'video.recording': 'Nagrywanie filmu… {pct}%',
+  'video.title': 'Twój film o powodzi',
+  'video.download': 'Pobierz ⬇',
+  'video.again': 'Zacznij od nowa ↻',
+  'video.realtime': 'Otwórz na żywo ▶',
+  'video.unsupported': 'Eksport wideo nie jest obsługiwany w tej przeglądarce. Spróbuj zamiast tego trybu na żywo.',
 };

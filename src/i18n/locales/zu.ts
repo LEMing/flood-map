@@ -169,4 +169,23 @@ export const zu: Record<string, string> = {
   'legend.elevation': 'Ukuphakama',
   'readout.elev': 'ukuphakama',
   'readout.water': 'amanzi',
+
+  // Landing + video
+  'landing.headline': 'Bona ukuthi isihlambi semvula sigcwalisa kanjani noma iyiphi ikheli',
+  'landing.tagline': 'Faka indawo ukuze wakhe indawo yayo engu-3D futhi ulingise imvula enkulu — ngokuqondile, noma njengevidiyo yemizuzwana engama-30.',
+  'landing.cta.realtime': 'Ngokuqondile ▶',
+  'landing.cta.video': 'Yenza ividiyo 🎬',
+  'landing.fact.preparing': 'Ilungiselela indawo…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Indawo eyisicaba',
+  'landing.fact.terrainHilly': 'Indawo enamagquma',
+  'landing.fact.terrainMountain': 'Enezintaba',
+  'landing.fact.buildings': 'Izakhiwo ezingu-{count}',
+  'video.preparing': 'Ilingisa isiphepho… {pct}%',
+  'video.recording': 'Iqopha ividiyo… {pct}%',
+  'video.title': 'Ividiyo yakho yezikhukhula',
+  'video.download': 'Landa ⬇',
+  'video.again': 'Qala phansi ↻',
+  'video.realtime': 'Vula ngokuqondile ▶',
+  'video.unsupported': 'Ukuthekelisa ividiyo akusekelwa kulesi siphequluli. Zama ngokuqondile esikhundleni salokho.',
 };

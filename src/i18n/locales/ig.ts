@@ -170,4 +170,23 @@ export const ig: Record<string, string> = {
   'legend.elevation': '᫏dị elu',
   'readout.elev': 'ịdị elu',
   'readout.water': 'mmiri',
+
+  // Landing + video
+  'landing.headline': 'Hụ ka nnukwu mmiri ozuzo si erichapụ adreesị ọ bụla',
+  'landing.tagline': 'Tinye ebe iji wuo ala 3D ya ma ṅomie oke mmiri ozuzo — na ndụ, ma ọ bụ dị ka vidiyo nke sekọnd 30.',
+  'landing.cta.realtime': 'Oge ozugbo ▶',
+  'landing.cta.video': 'Mee vidiyo 🎬',
+  'landing.fact.preparing': 'Na-akwado ala…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'Ala dị larịị',
+  'landing.fact.terrainHilly': 'Ala nwere ugwu ugwu',
+  'landing.fact.terrainMountain': 'Nke ugwu ugwu',
+  'landing.fact.buildings': 'Ụlọ {count}',
+  'video.preparing': 'Na-aṅomi oke ifufe… {pct}%',
+  'video.recording': 'Na-ede vidiyo… {pct}%',
+  'video.title': 'Vidiyo idei mmiri gị',
+  'video.download': 'Budata ⬇',
+  'video.again': 'Malite ọzọ ↻',
+  'video.realtime': 'Mepee oge ozugbo ▶',
+  'video.unsupported': 'A naghị akwado mbupụ vidiyo na ihe nchọgharị a. Gbalịa oge ozugbo kama.',
 };

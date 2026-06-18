@@ -187,4 +187,23 @@ export const kn: Record<string, string> = {
   'legend.elevation': 'ಎತ್ತರ',
   'readout.elev': 'ಎತ್ತರ',
   'readout.water': 'ನೀರು',
+
+  // Landing + video
+  'landing.headline': 'ಭಾರೀ ಮಳೆ ಯಾವುದೇ ವಿಳಾಸವನ್ನು ಹೇಗೆ ಪ್ರವಾಹಗೊಳಿಸುತ್ತದೆ ಎಂದು ನೋಡಿ',
+  'landing.tagline': 'ಸ್ಥಳವನ್ನು ನಮೂದಿಸಿ ಅದರ 3D ಭೂಪ್ರದೇಶವನ್ನು ನಿರ್ಮಿಸಿ ಮತ್ತು ಧಾರಾಕಾರ ಮಳೆಯನ್ನು ಅನುಕರಿಸಿ — ನೇರವಾಗಿ ಅಥವಾ 30-ಸೆಕೆಂಡ್ ವೀಡಿಯೊ ಆಗಿ.',
+  'landing.cta.realtime': 'ನೈಜ ಸಮಯ ▶',
+  'landing.cta.video': 'ವೀಡಿಯೊ ಮಾಡಿ 🎬',
+  'landing.fact.preparing': 'ಭೂಪ್ರದೇಶ ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ಸಮತಟ್ಟು ಭೂಪ್ರದೇಶ',
+  'landing.fact.terrainHilly': 'ಗುಡ್ಡಗಾಡು ಭೂಪ್ರದೇಶ',
+  'landing.fact.terrainMountain': 'ಪರ್ವತಮಯ',
+  'landing.fact.buildings': '{count} ಕಟ್ಟಡಗಳು',
+  'video.preparing': 'ಚಂಡಮಾರುತವನ್ನು ಅನುಕರಿಸಲಾಗುತ್ತಿದೆ… {pct}%',
+  'video.recording': 'ವೀಡಿಯೊ ರೆಕಾರ್ಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ… {pct}%',
+  'video.title': 'ನಿಮ್ಮ ಪ್ರವಾಹ ವೀಡಿಯೊ',
+  'video.download': 'ಡೌನ್‌ಲೋಡ್ ⬇',
+  'video.again': 'ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ ↻',
+  'video.realtime': 'ನೈಜ ಸಮಯವನ್ನು ತೆರೆಯಿರಿ ▶',
+  'video.unsupported': 'ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ವೀಡಿಯೊ ರಫ್ತು ಬೆಂಬಲಿತವಾಗಿಲ್ಲ. ಬದಲಿಗೆ ನೈಜ ಸಮಯವನ್ನು ಪ್ರಯತ್ನಿಸಿ.',
 };

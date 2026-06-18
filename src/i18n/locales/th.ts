@@ -182,4 +182,23 @@ export const th: Record<string, string> = {
   'legend.elevation': 'ความสูง',
   'readout.elev': 'ความสูง',
   'readout.water': 'น้ำ',
+
+  // Landing + video
+  'landing.headline': 'ดูว่าฝนตกหนักท่วมที่อยู่ใดก็ตามได้อย่างไร',
+  'landing.tagline': 'ป้อนสถานที่เพื่อสร้างภูมิประเทศ 3 มิติและจำลองฝนกระหน่ำ — แบบเรียลไทม์ หรือเป็นวิดีโอ 30 วินาที',
+  'landing.cta.realtime': 'เรียลไทม์ ▶',
+  'landing.cta.video': 'สร้างวิดีโอ 🎬',
+  'landing.fact.preparing': 'กำลังเตรียมภูมิประเทศ…',
+  'landing.fact.elevation': '{min}–{max} m',
+  'landing.fact.terrainFlat': 'ภูมิประเทศราบ',
+  'landing.fact.terrainHilly': 'ภูมิประเทศเนินเขา',
+  'landing.fact.terrainMountain': 'ภูเขาสูง',
+  'landing.fact.buildings': 'อาคาร {count} หลัง',
+  'video.preparing': 'กำลังจำลองพายุ… {pct}%',
+  'video.recording': 'กำลังบันทึกวิดีโอ… {pct}%',
+  'video.title': 'วิดีโอน้ำท่วมของคุณ',
+  'video.download': 'ดาวน์โหลด ⬇',
+  'video.again': 'เริ่มใหม่ ↻',
+  'video.realtime': 'เปิดเรียลไทม์ ▶',
+  'video.unsupported': 'เบราว์เซอร์นี้ไม่รองรับการส่งออกวิดีโอ ลองใช้เรียลไทม์แทน',
 };
