@@ -4,6 +4,7 @@ import type { Heightmap } from '../geo/heightmap';
 import { loadTerrainInWorker } from '../geo/loadInWorker';
 import { geocode, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
+import { clearDownloadSink, setDownloadSink } from '../geo/cache';
 import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
 import { detectIpLocation } from '../geo/ipLocation';
 import {
@@ -164,7 +165,14 @@ export class WorldBuilder {
         (p) => { this.loadingUi.setStage(p.stage); this.loadingUi.addBytes(p.bytes); },
       );
 
-      this.build(heightmap, surface);
+      const token = this.build(heightmap, surface);
+      this.loadingUi.setStage('imagery');
+      const satelliteError = await this.loadSatellite(
+        token,
+        heightmap,
+        (bytes) => this.loadingUi.addBytes(bytes),
+      );
+      if (token !== this.buildToken) return;
       this.loadingUi.done();
       this.host.setStatsLocation(location.displayName.split(',').slice(0, 3).join(','));
       writeUrlState({
@@ -174,10 +182,11 @@ export class WorldBuilder {
       this.host.addressBar.setValue(displayLabel(location));
       this.host.refreshPanel();
       const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
-      showToast(
-        warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`,
-        !!warning,
-      );
+      const satelliteFailedInSatelliteMode = !!satelliteError && this.host.params.terrainStyle === 'satellite';
+      const message = satelliteFailedInSatelliteMode
+        ? `Satellite imagery unavailable (${satelliteError.message}). Showing elevation tint.`
+        : warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`;
+      showToast(message, satelliteFailedInSatelliteMode || !!warning);
       trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.host.params.mapSizeKm });
     } catch (err) {
       this.loadingUi.fail();
@@ -188,15 +197,15 @@ export class WorldBuilder {
     }
   }
 
-  private build(heightmap: Heightmap, surface: SurfaceResult | null): void {
+  private build(heightmap: Heightmap, surface: SurfaceResult | null): number {
     this.host.disposeWorld();
-    this.buildToken++;
+    const token = ++this.buildToken;
     const world = this.construct(heightmap, surface);
     this.host.setBuiltWorld(world);
     this.host.applyParams();
     const midHeight = ((heightmap.min + heightmap.max) / 2) * this.host.params.verticalExaggeration;
     this.host.scene.fitToTerrain(heightmap.sizeMeters, midHeight);
-    this.loadSatellite(this.buildToken, heightmap);
+    return token;
   }
 
   private construct(heightmap: Heightmap, surface: SurfaceResult | null): BuiltWorld {
@@ -246,23 +255,29 @@ export class WorldBuilder {
     return { heightmap, terrain, water, sea, floodOverlay, maxFlood, velocity, rain, surfaceTexture, surfaceRaw };
   }
 
-  private loadSatellite(token: number, hm: Heightmap): void {
-    fetchSatellite(hm.center, hm.sizeMeters, hm.N)
-      .then(({ texture, uvSat }) => {
-        const terrain = this.host.getTerrain();
-        if (token !== this.buildToken || !terrain) {
-          texture.dispose();
-          return;
-        }
-        terrain.setSatellite(texture, uvSat);
-        this.host.applyParams();
-      })
-      .catch((err) => {
-        if (token !== this.buildToken) return;
-        if (this.host.params.terrainStyle === 'satellite') {
-          showToast(`Satellite imagery unavailable (${(err as Error).message}). Showing elevation tint.`, true);
-        }
-      });
+  private async loadSatellite(
+    token: number,
+    hm: Heightmap,
+    onBytes: (bytes: number) => void,
+  ): Promise<Error | null> {
+    const sink = (bytes: number) => onBytes(bytes);
+    setDownloadSink(sink);
+    try {
+      const { texture, uvSat } = await fetchSatellite(hm.center, hm.sizeMeters, hm.N);
+      const terrain = this.host.getTerrain();
+      if (token !== this.buildToken || !terrain) {
+        texture.dispose();
+        return null;
+      }
+      terrain.setSatellite(texture, uvSat);
+      this.host.applyParams();
+      return null;
+    } catch (err) {
+      if (token !== this.buildToken) return null;
+      return err as Error;
+    } finally {
+      clearDownloadSink(sink);
+    }
   }
 }
 

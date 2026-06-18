@@ -5,7 +5,7 @@
 // back (zero-copy). Wired via src/geo/loadInWorker.ts.
 import { loadTerrainAt } from './load';
 import { buildSurface } from './surface';
-import { setDownloadSink } from './cache';
+import { clearDownloadSink, setDownloadSink } from './cache';
 import type { GeoLoadRequest, GeoLoadResult, GeoStage, GeoWorkerResponse } from './geoWorkerTypes';
 
 interface WorkerCtx {
@@ -22,7 +22,8 @@ async function handle(req: GeoLoadRequest): Promise<void> {
   // loadCenter serializes loads, so a module-level "current stage" is safe and
   // lets the cache's download sink tag each fetched chunk with the right stage.
   let stage: GeoStage = 'elevation';
-  setDownloadSink((bytes) => ctx.postMessage({ id: req.id, progress: { stage, bytes } }));
+  const sink = (bytes: number) => ctx.postMessage({ id: req.id, progress: { stage, bytes } });
+  setDownloadSink(sink);
   try {
     ctx.postMessage({ id: req.id, progress: { stage: 'elevation', bytes: 0 } });
     const load = await loadTerrainAt(req.location, req.mapSizeKm, req.N, req.elevationSource);
@@ -34,7 +35,7 @@ async function handle(req: GeoLoadRequest): Promise<void> {
   } catch (err) {
     ctx.postMessage({ id: req.id, ok: false, error: (err as Error).message });
   } finally {
-    setDownloadSink(null);
+    clearDownloadSink(sink);
   }
 }
 

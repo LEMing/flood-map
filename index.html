@@ -21,6 +21,7 @@
         --pill-border: var(--panel-border);
         --ctl-h: 40px;        /* desktop control height */
         --ctl-h-touch: 48px;  /* mobile touch target (Apple HIG / WCAG 2.5.5) */
+        --search-card-w: 436px;
         --mobile-gutter: 12px;
         --safe-t: env(safe-area-inset-top);
         --safe-b: env(safe-area-inset-bottom);
@@ -42,6 +43,7 @@
         padding: 3px 4px; min-height: var(--ctl-h); border-radius: var(--pill-radius);
         border: 1px solid var(--pill-border);
         box-shadow: var(--panel-shadow);
+        width: min(var(--search-card-w), calc(100vw - 24px));
         max-width: min(560px, calc(100vw - 24px));
         transition: opacity .18s ease, transform .18s ease;
       }
@@ -97,7 +99,7 @@
           top: calc(10px + var(--safe-t));
           left: calc(var(--mobile-gutter) + var(--safe-l));
           right: calc(138px + var(--safe-r));
-          max-width: none; min-height: var(--ctl-h-touch); height: var(--ctl-h-touch);
+          width: auto; max-width: none; min-height: var(--ctl-h-touch); height: var(--ctl-h-touch);
           padding: 4px; gap: 4px;
           background: rgba(10, 14, 19, .74);
           border-color: rgba(255, 255, 255, .13);
@@ -398,7 +400,7 @@
       #loading-card {
         position: fixed; z-index: 11; pointer-events: none;
         top: calc(64px + var(--safe-t)); left: calc(12px + var(--safe-l));
-        width: min(420px, calc(100vw - 24px));
+        width: min(var(--search-card-w), calc(100vw - 24px));
         display: flex; flex-direction: column; gap: 11px;
         padding: 12px 14px; border-radius: 12px; color: #e6edf3;
         background: var(--panel-bg-strong); backdrop-filter: blur(var(--pill-blur));

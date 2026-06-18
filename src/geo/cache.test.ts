@@ -18,6 +18,8 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
   recordBytes,
+  setDownloadSink,
+  clearDownloadSink,
   putArrayBuffer,
   peekArrayBuffer,
   cachedArrayBuffer,
@@ -36,6 +38,7 @@ function bufferOf(...bytes: number[]): ArrayBuffer {
 }
 
 afterEach(() => {
+  setDownloadSink(null);
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -170,6 +173,46 @@ describe('cachedArrayBuffer', () => {
     const got = await cachedArrayBuffer(key);
     expect(new Uint8Array(got)).toEqual(new Uint8Array([3, 3, 3]));
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('download sink', () => {
+  it('reports freshly downloaded body sizes but not cache hits', async () => {
+    const url = freshKey('sink-hit');
+    const payload = bufferOf(1, 2, 3, 4);
+    const sink = vi.fn();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      arrayBuffer: async () => payload,
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    setDownloadSink(sink);
+    await cachedArrayBuffer(url);
+    await cachedArrayBuffer(url);
+
+    expect(sink).toHaveBeenCalledTimes(1);
+    expect(sink).toHaveBeenCalledWith(4);
+  });
+
+  it('only clears the sink that currently owns progress', async () => {
+    const staleSink = vi.fn();
+    const currentSink = vi.fn();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      arrayBuffer: async () => bufferOf(8, 9),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    setDownloadSink(currentSink);
+    clearDownloadSink(staleSink);
+    await cachedArrayBuffer(freshKey('sink-owner'));
+
+    expect(staleSink).not.toHaveBeenCalled();
+    expect(currentSink).toHaveBeenCalledTimes(1);
+    expect(currentSink).toHaveBeenCalledWith(2);
   });
 });
 
