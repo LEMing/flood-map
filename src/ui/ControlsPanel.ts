@@ -47,6 +47,7 @@ export class ControlsPanel {
     storm.addButton({ title: t('demo.live') }).on('click', () => cb.onLive());
 
     const view = this.pane.addFolder({ title: t('viz.title'), expanded: true });
+    view.addBinding(params, 'buildings3D', { label: t('viz.buildings3D') }).on('change', change);
     view.addBinding(params, 'floodOverlay', { label: t('viz.floodOverlay') }).on('change', change);
     view.addBinding(params, 'waterClarity', { min: 0, max: 1, step: 0.01, label: t('viz.clarity') }).on('change', change);
     view.addBinding(params, 'storm', { label: t('rain.clouds') }).on('change', change);

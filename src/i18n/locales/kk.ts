@@ -194,4 +194,5 @@ export const kk: Record<string, string> = {
   'landing.opt.hint': 'Үлкенірек аумақ немесе майдарақ егжей-тегжей құруға көбірек уақыт кетеді.',
   'video.newAddress': 'Жаңа мекенжай 📍',
   'video.exit': 'Шығу',
+  'viz.buildings3D': '3D ғимараттар',
 };

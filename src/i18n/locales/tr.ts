@@ -206,4 +206,5 @@ export const tr: Record<string, string> = {
   'landing.opt.hint': 'Daha geniş alan ya da daha ince ayrıntı oluşturulması daha uzun sürer.',
   'video.newAddress': 'Yeni adres 📍',
   'video.exit': 'Çıkış',
+  'viz.buildings3D': '3D binalar',
 };

@@ -211,4 +211,5 @@ export const ko: Record<string, string> = {
   'landing.opt.hint': '넓은 영역이나 세밀한 디테일일수록 생성에 시간이 더 걸립니다.',
   'video.newAddress': '새 주소 📍',
   'video.exit': '종료',
+  'viz.buildings3D': '3D 건물',
 };

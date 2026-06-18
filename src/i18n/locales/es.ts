@@ -209,4 +209,5 @@ export const es: Record<string, string> = {
   'landing.opt.hint': 'Un área mayor o un detalle más fino tardan más en generarse.',
   'video.newAddress': 'Nueva dirección 📍',
   'video.exit': 'Salir',
+  'viz.buildings3D': 'Edificios 3D',
 };

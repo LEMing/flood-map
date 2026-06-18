@@ -10,7 +10,7 @@ import { detectIpLocation } from '../geo/ipLocation';
 import {
   t, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
 } from '../i18n';
-import type { SurfaceResult } from '../geo/surface';
+import { BUILDING_RAISE_M, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
@@ -21,6 +21,7 @@ import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
 import { SeaMesh } from '../render/SeaMesh';
+import { BuildingsMesh } from '../render/BuildingsMesh';
 import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
 import { SimDriver } from './SimDriver';
@@ -38,6 +39,7 @@ export interface BuiltWorld {
   maxFlood: MaxFloodOverlay;
   velocity: VelocityField;
   rain: Rain;
+  buildings?: BuildingsMesh;
   surfaceTexture?: THREE.DataTexture;
   surfaceRaw?: Pick<SurfaceResult, 'land' | 'osm'>;
 }
@@ -234,6 +236,8 @@ export class WorldBuilder {
     const velocity = new VelocityField(heightmap.sizeMeters, terrain.heightTexture);
     const rain = new Rain(heightmap);
 
+    const buildings = this.buildBuildings(heightmap, surface, group);
+
     group.add(
       terrain.mesh, sea.mesh, water.mesh, water.skirt, floodOverlay.mesh,
       maxFlood.mesh, velocity.mesh, rain.object,
@@ -247,7 +251,27 @@ export class WorldBuilder {
     scene.setRefractionExcludes([floodOverlay.mesh, maxFlood.mesh, velocity.mesh, rain.object, geologyMesh]);
     this.host.markerLayer.build(heightmap);
 
-    return { heightmap, terrain, water, sea, floodOverlay, maxFlood, velocity, rain, surfaceTexture, surfaceRaw };
+    return {
+      heightmap, terrain, water, sea, floodOverlay, maxFlood, velocity, rain, buildings,
+      surfaceTexture, surfaceRaw,
+    };
+  }
+
+  /** Extrude OSM footprints to 3D massing on the true ground (the +5 m sim burn
+   *  is un-done per cell inside BuildingsMesh). Built whenever footprints exist;
+   *  the `buildings3D` param just toggles visibility. */
+  private buildBuildings(
+    heightmap: Heightmap, surface: SurfaceResult | null, group: THREE.Group,
+  ): BuildingsMesh | undefined {
+    const osm = surface?.osm;
+    if (!osm || !osm.buildings.length) return undefined;
+    const { params } = this.host;
+    const mesh = new BuildingsMesh(
+      osm.buildings, heightmap, osm.building, params.burnBuildings ? BUILDING_RAISE_M : 0,
+    );
+    mesh.setVisible(params.buildings3D);
+    group.add(mesh.mesh);
+    return mesh;
   }
 
   /** Background: fetch the satellite overlay, drive the imagery stage + its byte

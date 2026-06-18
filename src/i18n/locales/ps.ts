@@ -211,4 +211,5 @@ export const ps: Record<string, string> = {
   'landing.opt.hint': 'لویه سیمه یا نري تفصیل جوړولو ته ډېر وخت نیسي.',
   'video.newAddress': 'نوی پته 📍',
   'video.exit': 'وتل',
+  'viz.buildings3D': '3D ودانۍ',
 };

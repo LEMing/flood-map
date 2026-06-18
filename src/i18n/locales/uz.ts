@@ -193,4 +193,5 @@ export const uz: Record<string, string> = {
   'landing.opt.hint': 'Kattaroq hudud yoki mayinroq tafsilot qurish koʻproq vaqt oladi.',
   'video.newAddress': 'Yangi manzil 📍',
   'video.exit': 'Chiqish',
+  'viz.buildings3D': '3D binolar',
 };

@@ -194,4 +194,5 @@ export const nl: Record<string, string> = {
   'landing.opt.hint': 'Een groter gebied of fijnere details duren langer om op te bouwen.',
   'video.newAddress': 'Nieuw adres 📍',
   'video.exit': 'Afsluiten',
+  'viz.buildings3D': '3D-gebouwen',
 };

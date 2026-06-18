@@ -193,4 +193,5 @@ export const zu: Record<string, string> = {
   'landing.opt.hint': 'Indawo enkulu noma imininingwane ecolekile ithatha isikhathi eside ukwakhiwa.',
   'video.newAddress': 'Ikheli elisha 📍',
   'video.exit': 'Phuma',
+  'viz.buildings3D': 'Izakhiwo ze-3D',
 };

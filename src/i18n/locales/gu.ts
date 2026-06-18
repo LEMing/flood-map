@@ -214,4 +214,5 @@ export const gu: Record<string, string> = {
   'landing.opt.hint': 'મોટો વિસ્તાર અથવા ઝીણી વિગત બનાવવામાં વધુ સમય લાગે છે.',
   'video.newAddress': 'નવું સરનામું 📍',
   'video.exit': 'બહાર નીકળો',
+  'viz.buildings3D': '3D ઇમારતો',
 };

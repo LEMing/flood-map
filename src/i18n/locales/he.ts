@@ -194,4 +194,5 @@ export const he: Record<string, string> = {
   'landing.opt.hint': 'אזור גדול יותר או פירוט עדין יותר אורכים זמן רב יותר לבנייה.',
   'video.newAddress': 'כתובת חדשה 📍',
   'video.exit': 'יציאה',
+  'viz.buildings3D': 'מבנים תלת-ממדיים 3D',
 };

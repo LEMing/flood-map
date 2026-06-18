@@ -214,4 +214,5 @@ export const pa: Record<string, string> = {
   'landing.opt.hint': 'ਵੱਡਾ ਖੇਤਰ ਜਾਂ ਬਾਰੀਕ ਵੇਰਵਾ ਬਣਾਉਣ ਵਿੱਚ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ।',
   'video.newAddress': 'ਨਵਾਂ ਪਤਾ 📍',
   'video.exit': 'ਬਾਹਰ ਜਾਓ',
+  'viz.buildings3D': '3D ਇਮਾਰਤਾਂ',
 };

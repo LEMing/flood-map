@@ -194,4 +194,5 @@ export const sv: Record<string, string> = {
   'landing.opt.hint': 'Större område eller finare detaljer tar längre tid att bygga.',
   'video.newAddress': 'Ny adress 📍',
   'video.exit': 'Avsluta',
+  'viz.buildings3D': '3D-byggnader',
 };

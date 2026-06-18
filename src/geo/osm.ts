@@ -8,12 +8,31 @@ import { cachedJson } from './cache';
 //  - water    : rivers / lakes (open water)
 //  - green    : parks / grass / farmland (pervious, high infiltration)
 
+/** A building footprint (ring in grid coords) + its extrusion height in metres. */
+export interface BuildingShape {
+  ring: number[][]; // [[gx, gy], …] in grid space
+  height: number;
+}
+
 export interface OsmRasters {
   building: Uint8Array;
   road: Uint8Array;
   water: Uint8Array;
   green: Uint8Array;
+  buildings: BuildingShape[]; // footprints + heights for the 3D extrusion
   counts: { buildings: number; roads: number };
+}
+
+const DEFAULT_BUILDING_M = 9; // ~2–3 storeys when OSM has no height/levels
+const STOREY_M = 3.2;
+
+/** Building height from OSM tags: explicit `height`, else `building:levels`, else default. */
+export function buildingHeight(t: Record<string, string>): number {
+  const h = t.height ? parseFloat(t.height) : NaN; // "18 m" → 18
+  if (isFinite(h) && h > 0) return h;
+  const levels = t['building:levels'] ? parseFloat(t['building:levels']) : NaN;
+  if (isFinite(levels) && levels > 0) return levels * STOREY_M + 1;
+  return DEFAULT_BUILDING_M;
 }
 
 interface OsmWay {
@@ -165,6 +184,7 @@ export async function fetchOsm(
   const road = new Uint8Array(N * N);
   const water = new Uint8Array(N * N);
   const green = new Uint8Array(N * N);
+  const buildingShapes: BuildingShape[] = [];
   let buildings = 0, roads = 0;
 
   for (const el of json.elements) {
@@ -174,6 +194,7 @@ export async function fetchOsm(
 
     if (t.building) {
       fillPolygon(pts, building, N);
+      if (pts.length >= 4) buildingShapes.push({ ring: pts, height: buildingHeight(t) });
       buildings++;
     } else if (t.highway) {
       const r = Math.max(0.4, roadWidthM(t) / 2 / cellSize);
@@ -189,5 +210,5 @@ export async function fetchOsm(
     }
   }
 
-  return { building, road, water, green, counts: { buildings, roads } };
+  return { building, road, water, green, buildings: buildingShapes, counts: { buildings, roads } };
 }

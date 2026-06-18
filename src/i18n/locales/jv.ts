@@ -214,4 +214,5 @@ export const jv: Record<string, string> = {
   'landing.opt.hint': 'Wilayah luwih amba utawa rincian luwih alus mbutuhake wektu luwih suwe kanggo digawe.',
   'video.newAddress': 'Alamat anyar 📍',
   'video.exit': 'Metu',
+  'viz.buildings3D': 'Bangunan 3D',
 };

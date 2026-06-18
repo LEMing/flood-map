@@ -206,4 +206,5 @@ export const ja: Record<string, string> = {
   'landing.opt.hint': '範囲が広いほど、または詳細度が高いほど生成に時間がかかります。',
   'video.newAddress': '新しい住所 📍',
   'video.exit': '終了',
+  'viz.buildings3D': '3D建物',
 };

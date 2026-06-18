@@ -214,4 +214,5 @@ export const fr: Record<string, string> = {
   'landing.opt.hint': 'Une zone plus grande ou un détail plus fin met plus de temps à se construire.',
   'video.newAddress': 'Nouvelle adresse 📍',
   'video.exit': 'Quitter',
+  'viz.buildings3D': 'Bâtiments 3D',
 };

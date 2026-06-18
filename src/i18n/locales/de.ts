@@ -212,4 +212,5 @@ export const de: Record<string, string> = {
   'landing.opt.hint': 'Größere Fläche oder feinere Details brauchen länger zum Erstellen.',
   'video.newAddress': 'Neue Adresse 📍',
   'video.exit': 'Beenden',
+  'viz.buildings3D': '3D-Gebäude',
 };

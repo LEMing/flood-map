@@ -10,7 +10,7 @@ import { lonLatToLocalMeters } from './projection';
 // generic sheet-flow sim into a city flood model.
 
 const MM_S = 1 / 1000 / 3600;
-const BUILDING_RAISE_M = 5; // tall enough that flood depths never overtop
+export const BUILDING_RAISE_M = 5; // tall enough that flood depths never overtop
 const ROAD_LOWER_M = 0.15; // curb-to-crown channel that routes water along streets
 // Above ~8 km the surface detail is sub-grid AND the sources get expensive: the
 // OSM Overpass query (every building/road/water/landuse in the bbox) balloons to

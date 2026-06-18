@@ -206,4 +206,5 @@ export const zh: Record<string, string> = {
   'landing.opt.hint': '范围越大或细节越精细，生成所需时间越长。',
   'video.newAddress': '新地址 📍',
   'video.exit': '退出',
+  'viz.buildings3D': '3D建筑',
 };

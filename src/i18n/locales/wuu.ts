@@ -214,4 +214,5 @@ export const wuu: Record<string, string> = {
   'landing.opt.hint': '范围越大或者细节越精，生成辰光越长。',
   'video.newAddress': '新地址 📍',
   'video.exit': '退出',
+  'viz.buildings3D': '3D建筑',
 };

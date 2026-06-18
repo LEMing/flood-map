@@ -103,6 +103,7 @@ export const en: Record<string, string> = {
   'viz.depthMax': 'depth color max (m)',
   'viz.maxFlood': 'max flood extent',
   'viz.arrows': 'flow arrows',
+  'viz.buildings3D': '3D buildings',
   'viz.wireframe': 'wireframe terrain',
   'viz.language': 'Language',
   'viz.waterQuality': 'water quality',

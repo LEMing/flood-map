@@ -195,4 +195,5 @@ export const fa: Record<string, string> = {
   'landing.opt.hint': 'محدوده بزرگ‌تر یا جزئیات دقیق‌تر زمان بیشتری برای ساخت می‌برد.',
   'video.newAddress': 'نشانی جدید 📍',
   'video.exit': 'خروج',
+  'viz.buildings3D': 'ساختمان‌های 3D',
 };

@@ -16,6 +16,7 @@ import { WaterMesh } from '../render/WaterMesh';
 import { MaxFloodOverlay, VelocityField } from '../render/overlays';
 import { FloodOverlay } from '../render/FloodOverlay';
 import { SeaMesh } from '../render/SeaMesh';
+import { BuildingsMesh } from '../render/BuildingsMesh';
 import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
 import { PointerController } from './PointerController';
@@ -47,6 +48,7 @@ export class App {
   private velocity?: VelocityField;
   private rain?: Rain;
   private sea?: SeaMesh;
+  private buildings?: BuildingsMesh;
   private readonly geology = new GeologyController();
   private heightmap?: Heightmap;
   private surfaceTexture?: THREE.DataTexture;
@@ -357,6 +359,7 @@ export class App {
     this.maxFlood = w.maxFlood;
     this.velocity = w.velocity;
     this.rain = w.rain;
+    this.buildings = w.buildings;
     this.surfaceTexture = w.surfaceTexture;
     this.surfaceRaw = w.surfaceRaw;
   }
@@ -380,6 +383,7 @@ export class App {
     this.scene.applyPostParams(this.params);
     if (this.maxFlood) this.maxFlood.mesh.visible = this.params.showMaxFlood;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity;
+    this.buildings?.setVisible(this.params.buildings3D);
     if (this.credit) {
       const showing = this.params.terrainStyle === 'satellite' && !!this.terrain?.hasSatellite;
       this.credit.style.display = showing ? 'block' : 'none';
@@ -567,6 +571,7 @@ export class App {
     if (this.maxFlood) this.group.remove(this.maxFlood.mesh);
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
+    if (this.buildings) this.group.remove(this.buildings.mesh);
     this.geology.dispose(this.scene.scene);
     this.simDriver.dispose();
     this.water?.dispose();
@@ -574,6 +579,7 @@ export class App {
     this.maxFlood?.dispose();
     this.velocity?.dispose();
     this.rain?.dispose();
+    this.buildings?.dispose();
     this.terrain?.dispose();
     this.surfaceTexture?.dispose();
     this.water = undefined;
@@ -581,6 +587,7 @@ export class App {
     this.maxFlood = undefined;
     this.velocity = undefined;
     this.rain = undefined;
+    this.buildings = undefined;
     this.terrain = undefined;
     this.surfaceTexture = undefined;
     this.surfaceRaw = undefined;

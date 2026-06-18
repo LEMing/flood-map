@@ -211,4 +211,5 @@ export const tl: Record<string, string> = {
   'landing.opt.hint': 'Mas malaking lugar o mas pinong detalye ay mas matagal buuin.',
   'video.newAddress': 'Bagong address 📍',
   'video.exit': 'Lumabas',
+  'viz.buildings3D': 'Mga gusali 3D',
 };

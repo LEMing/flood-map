@@ -193,4 +193,5 @@ export const ro: Record<string, string> = {
   'landing.opt.hint': 'O zonă mai mare sau un detaliu mai fin durează mai mult la generare.',
   'video.newAddress': 'Adresă nouă 📍',
   'video.exit': 'Ieșire',
+  'viz.buildings3D': 'Clădiri 3D',
 };

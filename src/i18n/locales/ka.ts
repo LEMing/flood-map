@@ -193,4 +193,5 @@ export const ka: Record<string, string> = {
   'landing.opt.hint': 'უფრო დიდი არეალის ან უფრო წვრილი დეტალების აგებას მეტი დრო სჭირდება.',
   'video.newAddress': 'ახალი მისამართი 📍',
   'video.exit': 'გასვლა',
+  'viz.buildings3D': '3D შენობები',
 };

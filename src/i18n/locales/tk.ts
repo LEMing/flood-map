@@ -194,4 +194,5 @@ export const tk: Record<string, string> = {
   'landing.opt.hint': 'Has uly meýdan ýa-da has inçe jikme-jiklik gurmak üçin köp wagt alýar.',
   'video.newAddress': 'Täze salgy 📍',
   'video.exit': 'Çykmak',
+  'viz.buildings3D': '3D binalar',
 };

@@ -194,4 +194,5 @@ export const ar: Record<string, string> = {
   'landing.opt.hint': 'المساحة الأكبر أو التفاصيل الأدق تستغرق وقتًا أطول للبناء.',
   'video.newAddress': 'عنوان جديد 📍',
   'video.exit': 'خروج',
+  'viz.buildings3D': 'مباني 3D',
 };

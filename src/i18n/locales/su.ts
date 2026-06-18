@@ -211,4 +211,5 @@ export const su: Record<string, string> = {
   'landing.opt.hint': 'Wewengkon nu leuwih lega atawa rincian nu leuwih lemes butuh waktu leuwih lila pikeun nyieunna.',
   'video.newAddress': 'Alamat anyar 📍',
   'video.exit': 'Kaluar',
+  'viz.buildings3D': 'Wangunan 3D',
 };

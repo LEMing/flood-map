@@ -84,6 +84,7 @@ export interface Params {
 
   // Visualization
   terrainStyle: TerrainStyle;
+  buildings3D: boolean; // extrude OSM building footprints to their real heights
   imageryDarkening: number; // how much deep water darkens the terrain beneath
   waterOpacity: number;
   depthColorMax: number; // m — depth mapped to the deepest color
@@ -169,6 +170,7 @@ export const DEFAULT_PARAMS: Params = {
   timelinePlaying: false,
 
   terrainStyle: 'satellite',
+  buildings3D: true,
   imageryDarkening: 0.8,
   waterOpacity: 0.62,
   depthColorMax: 2.0,

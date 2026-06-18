@@ -194,4 +194,5 @@ export const pt: Record<string, string> = {
   'landing.opt.hint': 'Uma área maior ou um detalhe mais fino demoram mais para serem criados.',
   'video.newAddress': 'Novo endereço 📍',
   'video.exit': 'Sair',
+  'viz.buildings3D': 'Edifícios 3D',
 };

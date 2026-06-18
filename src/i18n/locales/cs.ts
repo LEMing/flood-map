@@ -194,4 +194,5 @@ export const cs: Record<string, string> = {
   'landing.opt.hint': 'Větší oblast nebo jemnější detail trvá déle vykreslit.',
   'video.newAddress': 'Nová adresa 📍',
   'video.exit': 'Konec',
+  'viz.buildings3D': '3D budovy',
 };

@@ -215,4 +215,5 @@ export const mr: Record<string, string> = {
   'landing.opt.hint': 'मोठे क्षेत्र किंवा बारीक तपशील तयार होण्यास जास्त वेळ लागतो.',
   'video.newAddress': 'नवीन पत्ता 📍',
   'video.exit': 'बाहेर पडा',
+  'viz.buildings3D': '3D इमारती',
 };

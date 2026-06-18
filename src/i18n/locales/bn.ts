@@ -194,4 +194,5 @@ export const bn: Record<string, string> = {
   'landing.opt.hint': 'বড় এলাকা বা সূক্ষ্ম বিশদ তৈরি করতে বেশি সময় লাগে।',
   'video.newAddress': 'নতুন ঠিকানা 📍',
   'video.exit': 'প্রস্থান',
+  'viz.buildings3D': '3D ভবন',
 };

@@ -192,4 +192,5 @@ export const ha: Record<string, string> = {
   'landing.opt.hint': 'Babban yanki ko cikakkun bayani na ɗaukar lokaci mai tsawo wajen gina shi.',
   'video.newAddress': 'Sabon adireshi 📍',
   'video.exit': 'Fita',
+  'viz.buildings3D': 'Gine-ginen 3D',
 };

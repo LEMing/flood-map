@@ -211,4 +211,5 @@ export const uk: Record<string, string> = {
   'landing.opt.hint': 'Більша площа або дрібніша деталізація будуються довше.',
   'video.newAddress': 'Нова адреса 📍',
   'video.exit': 'Вихід',
+  'viz.buildings3D': '3D-будівлі',
 };

@@ -215,4 +215,5 @@ export const yue: Record<string, string> = {
   'landing.opt.hint': '範圍越大或者細節越精細，生成需時越耐。',
   'video.newAddress': '新地址 📍',
   'video.exit': '離開',
+  'viz.buildings3D': '3D建築物',
 };

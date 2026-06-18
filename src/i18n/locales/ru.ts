@@ -193,4 +193,5 @@ export const ru: Record<string, string> = {
   'landing.opt.hint': 'Большая площадь или более мелкая детализация строятся дольше.',
   'video.newAddress': 'Новый адрес 📍',
   'video.exit': 'Выход',
+  'viz.buildings3D': '3D-здания',
 };

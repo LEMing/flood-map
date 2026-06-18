@@ -194,4 +194,5 @@ export const am: Record<string, string> = {
   'landing.opt.hint': 'ሰፊ አካባቢ ወይም ጥልቅ ዝርዝር ለመገንባት ረዘም ያለ ጊዜ ይወስዳል።',
   'video.newAddress': 'አዲስ አድራሻ 📍',
   'video.exit': 'ውጣ',
+  'viz.buildings3D': '3D ሕንፃዎች',
 };

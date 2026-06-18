@@ -194,4 +194,5 @@ export const tg: Record<string, string> = {
   'landing.opt.hint': 'Минтақаи калонтар ё тафсилоти нозуктар сохтанаш вақти бештар мегирад.',
   'video.newAddress': 'Суроғаи нав 📍',
   'video.exit': 'Баромад',
+  'viz.buildings3D': '3D биноҳо',
 };

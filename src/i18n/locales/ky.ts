@@ -194,4 +194,5 @@ export const ky: Record<string, string> = {
   'landing.opt.hint': 'Чоңураак аймак же майдараак чоо-жай куруу үчүн көбүрөөк убакыт талап кылат.',
   'video.newAddress': 'Жаңы дарек 📍',
   'video.exit': 'Чыгуу',
+  'viz.buildings3D': '3D имараттар',
 };

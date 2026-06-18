@@ -207,4 +207,5 @@ export const id: Record<string, string> = {
   'landing.opt.hint': 'Area lebih luas atau detail lebih halus butuh waktu lebih lama untuk dibangun.',
   'video.newAddress': 'Alamat baru 📍',
   'video.exit': 'Keluar',
+  'viz.buildings3D': 'Bangunan 3D',
 };

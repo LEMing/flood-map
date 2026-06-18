@@ -53,6 +53,7 @@ function emptyOsm(): OsmRasters {
     road: new Uint8Array(N * N),
     water: new Uint8Array(N * N),
     green: new Uint8Array(N * N),
+    buildings: [],
     counts: { buildings: 0, roads: 0 },
   };
 }

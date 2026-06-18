@@ -194,4 +194,5 @@ export const el: Record<string, string> = {
   'landing.opt.hint': 'Μεγαλύτερη περιοχή ή πιο λεπτομερής ανάλυση χρειάζεται περισσότερο χρόνο.',
   'video.newAddress': 'Νέα διεύθυνση 📍',
   'video.exit': 'Έξοδος',
+  'viz.buildings3D': 'Κτίρια 3D',
 };

@@ -194,4 +194,5 @@ export const az: Record<string, string> = {
   'landing.opt.hint': 'Daha böyük ərazi və ya daha incə detal qurmaq üçün daha çox vaxt aparır.',
   'video.newAddress': 'Yeni ünvan 📍',
   'video.exit': 'Çıxış',
+  'viz.buildings3D': '3D binalar',
 };

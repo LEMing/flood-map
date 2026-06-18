@@ -194,4 +194,5 @@ export const ur: Record<string, string> = {
   'landing.opt.hint': 'بڑا علاقہ یا باریک تفصیل بنانے میں زیادہ وقت لیتی ہے۔',
   'video.newAddress': 'نیا پتہ 📍',
   'video.exit': 'باہر نکلیں',
+  'viz.buildings3D': '3D عمارتیں',
 };

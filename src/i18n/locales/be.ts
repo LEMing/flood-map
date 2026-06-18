@@ -193,4 +193,5 @@ export const be: Record<string, string> = {
   'landing.opt.hint': 'Большая плошча або больш дробныя дэталі будуюцца даўжэй.',
   'video.newAddress': 'Новы адрас 📍',
   'video.exit': 'Выйсці',
+  'viz.buildings3D': '3D будынкі',
 };

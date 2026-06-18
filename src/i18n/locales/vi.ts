@@ -206,4 +206,5 @@ export const vi: Record<string, string> = {
   'landing.opt.hint': 'Khu vực lớn hơn hoặc chi tiết tinh hơn sẽ mất nhiều thời gian dựng hơn.',
   'video.newAddress': 'Địa chỉ mới 📍',
   'video.exit': 'Thoát',
+  'viz.buildings3D': 'Tòa nhà 3D',
 };

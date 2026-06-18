@@ -194,4 +194,5 @@ export const ig: Record<string, string> = {
   'landing.opt.hint': 'Mpaghara buru ibu ma ọ bụ nkọwa zuru ezu na-ewe ogologo oge iji wuo ya.',
   'video.newAddress': 'Adreesị ọhụrụ 📍',
   'video.exit': 'Pụọ',
+  'viz.buildings3D': 'Ụlọ 3D',
 };
