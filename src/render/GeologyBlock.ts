@@ -25,6 +25,7 @@ const NOMINAL_WATER_M = 10; // assumed depth for landcover water lacking real ba
 const WATER_CLASS = 80; // ESA WorldCover permanent-water class
 
 interface RingPoint { x: number; z: number; e: number; water: boolean }
+interface ColumnGeom { top: number; topStrata: number; marine: number; seabed: number; wt: number }
 
 function perimeterRing(hm: Heightmap, waterMask: Uint8Array | null): RingPoint[] {
   const { N, data, sizeMeters: size } = hm;
@@ -41,6 +42,32 @@ function perimeterRing(hm: Heightmap, waterMask: Uint8Array | null): RingPoint[]
   for (let ix = N - 1; ix > 0; ix -= step) ring.push(at(ix, N - 1));
   for (let iy = N - 1; iy > 0; iy -= step) ring.push(at(0, iy));
   return ring;
+}
+
+// The strata reference is measured down from this, NOT the raw edge: the raw edge
+// carries the OSM building/road burn (buildings +5 m), which would stamp the city
+// footprint onto every layer contact. A wide box blur (wrap-around the loop)
+// removes the building-scale steps while keeping the broad topographic dip.
+const STRATA_SMOOTH_M = 130;
+
+function smoothPerimeter(ring: RingPoint[], hm: Heightmap): Float32Array {
+  const n = ring.length;
+  let cur = new Float32Array(n);
+  for (let i = 0; i < n; i++) cur[i] = ring[i].e;
+  if (n < 5) return cur;
+  const step = Math.max(1, Math.floor((4 * (hm.N - 1)) / MAX_PERIMETER));
+  const spacing = (hm.sizeMeters / (hm.N - 1)) * step;
+  const radius = Math.max(1, Math.min(Math.floor((n - 1) / 2), Math.round(STRATA_SMOOTH_M / spacing)));
+  for (let pass = 0; pass < 2; pass++) {
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      for (let j = -radius; j <= radius; j++) sum += cur[(((i + j) % n) + n) % n];
+      out[i] = sum / (2 * radius + 1);
+    }
+    cur = out;
+  }
+  return cur;
 }
 
 function rgb(hex: number, i: number, data: Uint8Array): void {
@@ -70,6 +97,7 @@ export class GeologyBlock {
   private readonly marineData = new Uint8Array(RAMP_H * 4);
   private readonly geometry: THREE.BufferGeometry;
   private readonly ring: RingPoint[];
+  private readonly strataElev: Float32Array; // smoothed edge elevations (no building burn)
   private readonly position: Float32Array;
   private readonly yTop: Float32Array;
   private readonly marineAttr: Float32Array;
@@ -81,6 +109,7 @@ export class GeologyBlock {
 
   constructor(hm: Heightmap, waterMask: Uint8Array | null = null) {
     this.ring = perimeterRing(hm, waterMask);
+    this.strataElev = smoothPerimeter(this.ring, hm);
     const vertCount = this.ring.length * 6 + 6;
     this.position = new Float32Array(vertCount * 3);
     this.yTop = new Float32Array(vertCount);
@@ -178,7 +207,7 @@ export class GeologyBlock {
       pos[o * 3] = x; pos[o * 3 + 1] = y; pos[o * 3 + 2] = z;
       yt[o] = top; mar[o] = marine; sb[o] = seabed; wn[o] = wt; o++;
     };
-    const col = (pt: RingPoint): { top: number; marine: number; seabed: number; wt: number } => {
+    const col = (pt: RingPoint, eStrata: number): ColumnGeom => {
       // Water = land-cover water (canals, harbour, sea) or genuinely deep seabed or
       // an all-ocean map. NOT merely "below sea level": vast dry land sits below sea
       // (Dutch polders, -2..-7 m) and must read as land, not a cyan water band.
@@ -186,6 +215,10 @@ export class GeologyBlock {
       // A water column's surface is the waterline (sea level), never the bed/bank
       // elevation, so the cyan band has a flat top instead of jagged teeth.
       const top = (marine ? sea : topElev(pt.e)) * ve;
+      // Strata depth is measured from the SMOOTHED surface, so the building burn
+      // doesn't step the layer contacts; the wall-top GEOMETRY still uses the raw
+      // edge (top) so it seals against the terrain with no sky gap.
+      const topStrata = (marine ? sea : topElev(eStrata)) * ve;
       const waterDepth = marine
         ? Math.max(sea - pt.e, pt.water ? NOMINAL_WATER_M : 0, p.oceanCell ? p.oceanWaterDepthM : 0)
         : 0;
@@ -194,17 +227,17 @@ export class GeologyBlock {
       // up to waterTableM inland. Kept continuous (no -1 jump) so it doesn't smear
       // across land/marine quad edges; the draw is gated to land fragments.
       const wt = Math.min(Math.max(pt.e - sea, 0), p.waterTableM) / p.depthShownM;
-      return { top, marine, seabed, wt };
+      return { top, topStrata, marine, seabed, wt };
     };
     for (let i = 0; i < n; i++) {
       const a = ring[i]; const b = ring[(i + 1) % n];
-      const ca = col(a); const cb = col(b);
-      put(a.x, ca.top, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
-      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
-      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
-      put(b.x, cb.top, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
-      put(a.x, yFloor, a.z, ca.top, ca.marine, ca.seabed, ca.wt);
-      put(b.x, yFloor, b.z, cb.top, cb.marine, cb.seabed, cb.wt);
+      const ca = col(a, this.strataElev[i]); const cb = col(b, this.strataElev[(i + 1) % n]);
+      put(a.x, ca.top, a.z, ca.topStrata, ca.marine, ca.seabed, ca.wt);
+      put(a.x, yFloor, a.z, ca.topStrata, ca.marine, ca.seabed, ca.wt);
+      put(b.x, cb.top, b.z, cb.topStrata, cb.marine, cb.seabed, cb.wt);
+      put(b.x, cb.top, b.z, cb.topStrata, cb.marine, cb.seabed, cb.wt);
+      put(a.x, yFloor, a.z, ca.topStrata, ca.marine, ca.seabed, ca.wt);
+      put(b.x, yFloor, b.z, cb.topStrata, cb.marine, cb.seabed, cb.wt);
     }
     const s = Math.max(...ring.map((pt) => Math.abs(pt.x)), ...ring.map((pt) => Math.abs(pt.z)));
     const deep = yFloor + H * 2;
