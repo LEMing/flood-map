@@ -133,15 +133,27 @@ export class App {
   /** The ⚙ gear: opens/closes the controls drawer (closed by default — the
    *  production view is a clean game UI; every option lives behind the gear). */
   private setupChromeToggle(): void {
-    const toggle = document.getElementById('chrome-toggle');
+    const toggle = document.getElementById('chrome-toggle') as HTMLButtonElement | null;
+    const panel = document.getElementById('chrome-panel');
     if (!toggle) return;
     const setOpen = (open: boolean): void => {
       document.body.classList.toggle('chrome-open', open);
       toggle.textContent = open ? '✕' : '⚙';
       toggle.setAttribute('aria-expanded', String(open));
+      toggle.title = t('panel.title');
     };
+    setOpen(false);
     toggle.addEventListener('click', () => {
       setOpen(!document.body.classList.contains('chrome-open'));
+    });
+    document.addEventListener('pointerdown', (e) => {
+      if (!document.body.classList.contains('chrome-open')) return;
+      const target = e.target as Node;
+      if (toggle.contains(target) || panel?.contains(target)) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.body.classList.contains('chrome-open')) setOpen(false);
     });
   }
 

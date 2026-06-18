@@ -35,6 +35,7 @@ export class GameUI {
   private launch(): void {
     if (this.started) return;
     this.started = true;
+    document.body.classList.add('game-started');
     this.overlay.hidden = true;
     this.dock.hidden = false;
     this.hud.hidden = false;

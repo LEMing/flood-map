@@ -47,6 +47,7 @@ export class AddressBar {
 
   setBusy(busy: boolean): void {
     this.button.disabled = busy;
+    this.button.toggleAttribute('data-busy', busy);
     this.button.textContent = busy ? t('btn.loading') : t('btn.load');
   }
 
