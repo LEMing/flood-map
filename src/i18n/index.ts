@@ -194,6 +194,13 @@ export function isRTL(lang: Lang = current): boolean {
   return !!LANGUAGES.find((l) => l.code === lang)?.rtl;
 }
 
+/** Reflect the active language onto <html lang/dir> (so RTL mirrors the page). */
+export function applyDocumentLang(): void {
+  if (typeof document === 'undefined') return; // no-op off the main thread (worker)
+  document.documentElement.lang = current;
+  document.documentElement.dir = isRTL() ? 'rtl' : 'ltr';
+}
+
 /** True when the user pinned the language via URL or a prior explicit choice. */
 export function hasExplicitLanguage(): boolean {
   const fromUrl = new URLSearchParams(window.location.search).get('lang');

@@ -104,7 +104,7 @@ export const en: Record<string, string> = {
   'viz.maxFlood': 'max flood extent',
   'viz.arrows': 'flow arrows',
   'viz.wireframe': 'wireframe terrain',
-  'viz.language': 'language',
+  'viz.language': 'Language',
   'viz.waterQuality': 'water quality',
   'viz.qLow': 'Low (fast)',
   'viz.qMedium': 'Medium',

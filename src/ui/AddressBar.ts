@@ -37,6 +37,7 @@ export class AddressBar {
     this.input.placeholder = t('input.placeholder');
     this.input.dir = 'auto'; // RTL for Arabic/Hebrew place names, LTR for coords
     this.button.textContent = this.button.disabled ? t('btn.loading') : t('btn.load');
+    this.button.setAttribute('aria-label', t('btn.load')); // label survives the icon-only mobile button
   }
 
   setValue(value: string): void {
@@ -115,6 +116,7 @@ export class AddressBar {
     this.items.forEach((s, i) => {
       const el = document.createElement('div');
       el.className = 'ac-item' + (i === this.highlight ? ' active' : '');
+      el.dir = 'auto'; // ellipsis truncates the trailing side per the name's own direction
       el.textContent = s.label;
       el.addEventListener('mousedown', (ev) => {
         ev.preventDefault();

@@ -2,67 +2,100 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Flood Map — rain &amp; flood simulation</title>
     <style>
       :root {
         color-scheme: dark;
         --panel-bg: rgba(18, 22, 28, 0.82);
+        /* Floating-chrome design tokens — shared by every glass pill so the
+           top bar, dock and HUD read as one system. */
+        --pill-radius: 10px;
+        --pill-blur: 6px;
+        --pill-border: #2a313b;
+        --ctl-h: 40px;        /* desktop control height */
+        --ctl-h-touch: 44px;  /* mobile touch target (Apple HIG / WCAG 2.5.5) */
+        --safe-t: env(safe-area-inset-top);
+        --safe-b: env(safe-area-inset-bottom);
+        --safe-l: env(safe-area-inset-left);
+        --safe-r: env(safe-area-inset-right);
       }
       * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0e13; }
+      html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; background: #0b0e13; }
       body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #e6edf3; }
-      #scene { position: fixed; inset: 0; display: block; }
+      #scene { position: fixed; inset: 0; display: block; touch-action: none; }
 
       #addressbar {
-        position: fixed; top: 12px; left: 12px; z-index: 10;
+        position: fixed; z-index: 10;
+        top: calc(12px + var(--safe-t)); left: calc(12px + var(--safe-l));
         display: flex; gap: 6px; align-items: center;
-        background: var(--panel-bg); backdrop-filter: blur(6px);
-        padding: 8px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.4);
+        background: var(--panel-bg); backdrop-filter: blur(var(--pill-blur));
+        padding: 0 6px; min-height: var(--ctl-h); border-radius: var(--pill-radius);
+        box-shadow: 0 4px 18px rgba(0,0,0,.4);
         max-width: min(520px, calc(100vw - 24px));
       }
       #ac-wrap { position: relative; flex: 1 1 auto; min-width: 0; }
       #addressbar input {
         width: 320px; max-width: 52vw; padding: 7px 10px; border-radius: 7px;
-        border: 1px solid #2a313b; background: #0e1318; color: #e6edf3; font-size: 14px;
-      }
-      /* Phones: address bar spans the width but yields the top-right corner to
-         the language picker (right: 60px) + the settings gear (right: 12px). */
-      @media (max-width: 767px) {
-        #addressbar {
-          left: 12px; right: 128px; max-width: none;
-        }
-        #ac-wrap { flex: 1 1 auto; }
-        #addressbar input { width: 100%; max-width: none; }
+        border: 1px solid var(--pill-border); background: #0e1318; color: #e6edf3; font-size: 16px;
       }
       #addressbar button {
         padding: 7px 14px; border-radius: 7px; border: 1px solid #2f6feb;
         background: #2f6feb; color: white; font-size: 14px; cursor: pointer;
       }
       #addressbar button:disabled { opacity: .5; cursor: default; }
+      /* Phones: full-width search row at a 44px touch height. The top-right
+         corner is reserved for the language picker (right: 60px) + ⚙ gear
+         (right: 12px); the Load button collapses to a → glyph to free width.
+         (These overrides MUST follow the base button rule above to win source order.) */
+      @media (max-width: 767px) {
+        #addressbar {
+          left: calc(12px + var(--safe-l)); right: calc(136px + var(--safe-r));
+          max-width: none; min-height: var(--ctl-h-touch);
+        }
+        #ac-wrap { flex: 1 1 auto; }
+        #addressbar input { width: 100%; max-width: none; }
+        #addressbar button {
+          width: var(--ctl-h-touch); min-height: var(--ctl-h-touch);
+          padding: 0; font-size: 0;
+        }
+        #addressbar button::after { content: "→"; font-size: 18px; line-height: 1; }
+        [dir="rtl"] #addressbar button::after { content: "←"; }
+        /* 44px touch rows; .lang-item flex-centers, .ac-item centers via padding
+           (it's a block — symmetric padding keeps the text middle without
+           breaking its ellipsis truncation). */
+        .lang-item { min-height: var(--ctl-h-touch); }
+        .ac-item { padding-top: 13px; padding-bottom: 13px; }
+      }
+      /* Neutralize the iOS grey tap-flash + 300ms double-tap delay on chrome. */
+      #addressbar button, #lang-trigger, #chrome-toggle, .ac-item, .lang-item {
+        -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+      }
 
       /* Language picker — top-right, just left of the settings gear. The panel
          is a drawer on every viewport now, so the picker always sits beside it. */
-      #lang-picker { position: fixed; top: 12px; right: 60px; z-index: 13; }
+      #lang-picker { position: fixed; top: calc(12px + var(--safe-t)); right: calc(64px + var(--safe-r)); z-index: 13; }
       #lang-trigger {
         display: flex; align-items: center; gap: 6px; line-height: 1;
-        padding: 7px 10px; border-radius: 8px; cursor: pointer;
-        border: 1px solid #2a313b; background: var(--panel-bg);
-        backdrop-filter: blur(6px); color: #cdd6e0; font-size: 13px;
+        padding: 0 12px; height: var(--ctl-h); border-radius: var(--pill-radius); cursor: pointer;
+        border: 1px solid var(--pill-border); background: var(--panel-bg);
+        backdrop-filter: blur(var(--pill-blur)); color: #cdd6e0; font-size: 13px;
         box-shadow: 0 4px 18px rgba(0,0,0,.4); transition: border-color .15s, color .15s;
       }
+      /* Match the 44px touch height on phones (after the base rule, to win source order). */
+      @media (max-width: 767px) { #lang-trigger { height: var(--ctl-h-touch); } }
       #lang-trigger:hover { border-color: #3a4250; color: #fff; }
       #lang-trigger .globe { font-size: 14px; }
       #lang-trigger .code { font-weight: 600; letter-spacing: .3px; }
       #lang-pop {
-        position: absolute; top: calc(100% + 6px); right: 0; width: 240px;
+        position: absolute; top: calc(100% + 6px); right: 0; width: 240px; max-width: calc(100vw - 24px);
         background: rgba(14, 19, 24, 0.98); border: 1px solid #2a313b; border-radius: 10px;
         box-shadow: 0 12px 32px rgba(0,0,0,.55); overflow: hidden;
       }
       #lang-pop[hidden] { display: none; }
       #lang-search {
         width: 100%; padding: 9px 11px; border: none; border-bottom: 1px solid #1b222c;
-        background: #0e1318; color: #e6edf3; font-size: 13px; outline: none;
+        background: #0e1318; color: #e6edf3; font-size: 16px; outline: none;
       }
       #lang-list { max-height: 340px; overflow-y: auto; }
       #lang-list::-webkit-scrollbar { width: 8px; }
@@ -71,7 +104,8 @@
         display: flex; align-items: center; justify-content: space-between; gap: 10px;
         padding: 8px 11px; font-size: 13px; color: #cdd6e0; cursor: pointer;
       }
-      .lang-item .lc { font-size: 11px; color: #6b7785; text-transform: uppercase; }
+      .lang-item .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .lang-item .lc { flex: 0 0 auto; font-size: 11px; color: #6b7785; text-transform: uppercase; }
       .lang-item.current .name { color: #6cb1ff; }
       .lang-item.active { background: #1f6feb; color: #fff; }
       .lang-item.active .lc { color: #cfe0ff; }
@@ -91,9 +125,12 @@
       .ac-item.active, .ac-item:hover { background: #1f6feb; color: #fff; }
 
       /* ── Game UI ──────────────────────────────────────────────── */
-      /* Center launch overlay — shown until the first run, then hidden. */
+      /* Center launch overlay — shown until the first run, then hidden. Sits
+         below the top-bar popups (lang z13, ac-list z20) so an opened menu
+         covers it instead of the Play button poking through; the gear drawer
+         (z10) additionally hides it via body.chrome-open below. */
       #start-overlay {
-        position: fixed; inset: 0; z-index: 14; pointer-events: none;
+        position: fixed; inset: 0; z-index: 12; pointer-events: none;
         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
       }
       #start-overlay[hidden] { display: none; }
@@ -111,14 +148,15 @@
       #start-btn:active { transform: scale(.97); }
       #start-overlay .sub {
         color: rgba(230,237,243,.72); font-size: 13px; letter-spacing: .4px;
+        max-width: min(90vw, 520px); padding: 0 16px; text-align: center; text-wrap: balance;
         text-shadow: 0 1px 4px rgba(0,0,0,.6);
       }
 
       /* Bottom-center dock — pause/resume + restart, shown after start. */
       #game-dock {
-        position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+        position: fixed; bottom: calc(18px + var(--safe-b)); left: 50%; transform: translateX(-50%);
         z-index: 12; display: flex; gap: 8px; align-items: center; padding: 6px;
-        border-radius: 999px; background: var(--panel-bg); backdrop-filter: blur(8px);
+        border-radius: 999px; background: var(--panel-bg); backdrop-filter: blur(var(--pill-blur));
         box-shadow: 0 4px 18px rgba(0,0,0,.45);
       }
       #game-dock[hidden] { display: none; }
@@ -138,7 +176,8 @@
 
       /* Bottom-left flood readout HUD. */
       #hud-stats {
-        position: fixed; bottom: 26px; left: 14px; z-index: 11; pointer-events: none;
+        position: fixed; bottom: calc(26px + var(--safe-b)); left: calc(14px + var(--safe-l));
+        z-index: 11; pointer-events: none;
         display: flex; align-items: center; gap: 7px;
         background: rgba(12,16,22,.62); backdrop-filter: blur(6px);
         padding: 7px 13px; border-radius: 999px; font-size: 13px; color: #e6edf3;
@@ -151,9 +190,12 @@
       #hud-stats .v { font-weight: 600; }
 
       @media (max-width: 767px) {
-        #game-dock { bottom: 14px; }
+        #game-dock { bottom: calc(14px + var(--safe-b)); }
         #game-dock button { width: 50px; height: 50px; }
-        #hud-stats { bottom: 72px; left: 12px; }
+        #hud-stats {
+          bottom: calc(72px + var(--safe-b)); left: calc(12px + var(--safe-l));
+          max-width: calc(50vw - 16px);
+        }
         #start-btn { font-size: 18px; padding: 16px 26px; }
       }
 
@@ -210,7 +252,7 @@
       }
 
       #fps-meter {
-        position: fixed; bottom: 14px; right: 14px;
+        position: fixed; bottom: calc(14px + var(--safe-b)); right: calc(14px + var(--safe-r));
         z-index: 11; pointer-events: none;
         font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
         letter-spacing: .3px; color: #86e08a;
@@ -219,7 +261,7 @@
         border: 1px solid rgba(255,255,255,.07);
       }
       @media (max-width: 767px) {
-        #fps-meter { bottom: 72px; right: 12px; }
+        #fps-meter { bottom: calc(72px + var(--safe-b)); right: calc(12px + var(--safe-r)); }
       }
 
       #readout {
@@ -287,6 +329,10 @@
       #tp-mount .tp-rotv { width: 100%; }
 
       body:not(.chrome-open) #chrome-panel { display: none; }
+      /* Opening any top-bar menu (gear drawer or language popup) hides the
+         pre-launch Play CTA so it can't show through the menu. */
+      body.chrome-open #start-overlay:not([hidden]),
+      body.lang-open #start-overlay:not([hidden]) { display: none; }
 
     </style>
   </head>
@@ -334,7 +380,8 @@
       type="button"
       aria-label="Toggle controls"
       aria-expanded="false"
-      class="fixed top-3 right-3 z-[13] flex h-10 w-10 items-center justify-center
+      class="fixed top-[calc(0.75rem+env(safe-area-inset-top))] right-[calc(0.75rem+env(safe-area-inset-right))]
+             z-[13] flex h-10 w-10 max-md:h-11 max-md:w-11 items-center justify-center
              rounded-[10px] border border-[#2a313b] bg-[var(--panel-bg)] text-[18px]
              leading-none text-[#e6edf3] backdrop-blur-[6px] shadow-[0_4px_18px_rgba(0,0,0,.4)]
              cursor-pointer hover:border-[#3a4250]"
@@ -342,8 +389,8 @@
     <!-- Right-side controls drawer: Tweakpane mounts in #tp-mount, geology legend docks below it. -->
     <aside
       id="chrome-panel"
-      class="fixed top-[60px] right-3 z-10 flex w-64 flex-col gap-2.5 overflow-y-auto
-             max-h-[calc(100vh-72px)]
+      class="fixed top-[calc(60px+env(safe-area-inset-top))] right-3 z-10 flex w-64 flex-col gap-2.5 overflow-y-auto
+             max-h-[calc(100dvh-72px)]
              max-md:w-[min(320px,calc(100vw-24px))]
              max-md:rounded-xl max-md:p-1
              max-md:bg-[rgba(11,14,19,0.55)] max-md:backdrop-blur-sm"

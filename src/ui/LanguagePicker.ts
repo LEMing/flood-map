@@ -70,6 +70,7 @@ export class LanguagePicker {
   private openPop(): void {
     this.open = true;
     this.pop.hidden = false;
+    document.body.classList.add('lang-open'); // hides the pre-launch Play CTA underneath
     this.search.value = '';
     this.applyFilter();
     this.search.focus();
@@ -79,6 +80,7 @@ export class LanguagePicker {
     if (!this.open) return;
     this.open = false;
     this.pop.hidden = true;
+    document.body.classList.remove('lang-open');
   }
 
   private applyFilter(): void {

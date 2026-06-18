@@ -1,7 +1,7 @@
 import './styles.css';
 import { App } from './app/App';
 import { initAnalytics } from './analytics';
-import { getLanguage, loadLanguage } from './i18n';
+import { getLanguage, loadLanguage, applyDocumentLang } from './i18n';
 import { showToast } from './ui/toast';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement | null;
@@ -15,6 +15,7 @@ try {
   // Pull the active locale's lazy chunk in before the first render so the UI
   // builds translated (not an English flash). English is bundled as the fallback.
   await loadLanguage(getLanguage());
+  applyDocumentLang(); // set <html lang/dir> up front so an RTL locale mirrors on first paint
   const app = new App(canvas);
   app.start();
   if (import.meta.env.DEV) (window as unknown as { app: App }).app = app;

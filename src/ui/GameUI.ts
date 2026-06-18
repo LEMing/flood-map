@@ -59,9 +59,11 @@ export class GameUI {
   /** Place name under the launch button (a proper noun — language-independent). */
   setSubtitle(text: string): void {
     this.sub.textContent = text;
+    this.sub.dir = 'auto'; // RTL place names stay correctly ordered
   }
 
   retranslate(): void {
+    this.startLabel.dir = 'auto'; // keep the ▶ glyph on the leading side in RTL
     this.startLabel.textContent = t('sim.play');
     this.restartBtn.title = t('sim.reset');
     this.restartBtn.setAttribute('aria-label', t('sim.reset'));

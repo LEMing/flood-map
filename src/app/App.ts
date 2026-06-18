@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import { readUrlState, writeUrlState } from '../url';
-import { t, setLanguage, getLanguage, loadLanguage, type Lang } from '../i18n';
+import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
 import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
@@ -247,7 +247,7 @@ export class App {
     this.addressBar.retranslate();
     this.languagePicker.retranslate();
     this.gameUI.retranslate();
-    document.documentElement.lang = getLanguage();
+    applyDocumentLang();
     this.rebuildPanel();
     this.applyParams(); // re-translate legend labels etc.
   }
