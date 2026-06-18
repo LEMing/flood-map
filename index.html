@@ -51,15 +51,17 @@
       @media (max-width: 767px) {
         #addressbar {
           left: calc(12px + var(--safe-l)); right: calc(136px + var(--safe-r));
-          max-width: none; min-height: var(--ctl-h-touch);
+          max-width: none; min-height: var(--ctl-h-touch); padding: 0 4px 0 6px;
         }
         #ac-wrap { flex: 1 1 auto; }
         #addressbar input { width: 100%; max-width: none; }
+        /* A circular send button floating with a uniform 4px frame inside the
+           pill (echoes the round dock buttons) — no asymmetric trailing gap. */
         #addressbar button {
-          width: var(--ctl-h-touch); min-height: var(--ctl-h-touch);
-          padding: 0; font-size: 0;
+          width: 36px; height: 36px; min-height: 0; flex: 0 0 auto;
+          border-radius: 50%; padding: 0; font-size: 0;
         }
-        #addressbar button::after { content: "→"; font-size: 18px; line-height: 1; }
+        #addressbar button::after { content: "→"; font-size: 17px; line-height: 1; }
         [dir="rtl"] #addressbar button::after { content: "←"; }
         /* 44px touch rows; .lang-item flex-centers, .ac-item centers via padding
            (it's a block — symmetric padding keeps the text middle without
@@ -190,11 +192,13 @@
       #hud-stats .v { font-weight: 600; }
 
       @media (max-width: 767px) {
-        #game-dock { bottom: calc(14px + var(--safe-b)); }
+        #game-dock { bottom: calc(16px + var(--safe-b)); }
         #game-dock button { width: 50px; height: 50px; }
+        /* HUD + FPS form one row clearly ABOVE the dock (not merged at its
+           shoulder), so the bottom reads as two clean tiers. */
         #hud-stats {
-          bottom: calc(72px + var(--safe-b)); left: calc(12px + var(--safe-l));
-          max-width: calc(50vw - 16px);
+          bottom: calc(86px + var(--safe-b)); left: calc(12px + var(--safe-l));
+          max-width: calc(100vw - 120px);
         }
         #start-btn { font-size: 18px; padding: 16px 26px; }
       }
@@ -261,7 +265,7 @@
         border: 1px solid rgba(255,255,255,.07);
       }
       @media (max-width: 767px) {
-        #fps-meter { bottom: calc(72px + var(--safe-b)); right: calc(12px + var(--safe-r)); }
+        #fps-meter { bottom: calc(86px + var(--safe-b)); right: calc(12px + var(--safe-r)); }
       }
 
       #readout {
