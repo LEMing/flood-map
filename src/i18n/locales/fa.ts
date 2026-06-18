@@ -193,4 +193,6 @@ export const fa: Record<string, string> = {
   'landing.opt.size': 'اندازه نقشه',
   'landing.opt.detail': 'جزئیات',
   'landing.opt.hint': 'محدوده بزرگ‌تر یا جزئیات دقیق‌تر زمان بیشتری برای ساخت می‌برد.',
+  'video.newAddress': 'نشانی جدید 📍',
+  'video.exit': 'خروج',
 };

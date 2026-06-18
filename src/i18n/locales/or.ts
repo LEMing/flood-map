@@ -212,4 +212,6 @@ export const or: Record<string, string> = {
   'landing.opt.size': 'ମାନଚିତ୍ର ଆକାର',
   'landing.opt.detail': 'ବିବରଣୀ',
   'landing.opt.hint': 'ବଡ଼ ଅଞ୍ଚଳ କିମ୍ବା ସୂକ୍ଷ୍ମ ବିବରଣୀ ତିଆରି କରିବାକୁ ଅଧିକ ସମୟ ଲାଗେ।',
+  'video.newAddress': 'ନୂତନ ଠିକଣା 📍',
+  'video.exit': 'ବାହାରନ୍ତୁ',
 };

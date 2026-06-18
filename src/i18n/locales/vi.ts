@@ -204,4 +204,6 @@ export const vi: Record<string, string> = {
   'landing.opt.size': 'Kích thước bản đồ',
   'landing.opt.detail': 'Chi tiết',
   'landing.opt.hint': 'Khu vực lớn hơn hoặc chi tiết tinh hơn sẽ mất nhiều thời gian dựng hơn.',
+  'video.newAddress': 'Địa chỉ mới 📍',
+  'video.exit': 'Thoát',
 };

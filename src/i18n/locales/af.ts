@@ -192,4 +192,6 @@ export const af: Record<string, string> = {
   'landing.opt.size': 'Kaartgrootte',
   'landing.opt.detail': 'Detail',
   'landing.opt.hint': "'n Groter gebied of fyner detail neem langer om te bou.",
+  'video.newAddress': 'Nuwe adres 📍',
+  'video.exit': 'Sluit af',
 };

@@ -190,4 +190,6 @@ export const ha: Record<string, string> = {
   'landing.opt.size': 'Girman taswira',
   'landing.opt.detail': 'Cikakkun bayani',
   'landing.opt.hint': 'Babban yanki ko cikakkun bayani na ɗaukar lokaci mai tsawo wajen gina shi.',
+  'video.newAddress': 'Sabon adireshi 📍',
+  'video.exit': 'Fita',
 };

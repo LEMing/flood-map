@@ -191,4 +191,6 @@ export const ro: Record<string, string> = {
   'landing.opt.size': 'Dimensiunea hărții',
   'landing.opt.detail': 'Detaliu',
   'landing.opt.hint': 'O zonă mai mare sau un detaliu mai fin durează mai mult la generare.',
+  'video.newAddress': 'Adresă nouă 📍',
+  'video.exit': 'Ieșire',
 };

@@ -191,4 +191,6 @@ export const zu: Record<string, string> = {
   'landing.opt.size': 'Usayizi webalazwe',
   'landing.opt.detail': 'Imininingwane',
   'landing.opt.hint': 'Indawo enkulu noma imininingwane ecolekile ithatha isikhathi eside ukwakhiwa.',
+  'video.newAddress': 'Ikheli elisha 📍',
+  'video.exit': 'Phuma',
 };

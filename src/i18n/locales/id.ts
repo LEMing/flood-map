@@ -205,4 +205,6 @@ export const id: Record<string, string> = {
   'landing.opt.size': 'Ukuran peta',
   'landing.opt.detail': 'Detail',
   'landing.opt.hint': 'Area lebih luas atau detail lebih halus butuh waktu lebih lama untuk dibangun.',
+  'video.newAddress': 'Alamat baru 📍',
+  'video.exit': 'Keluar',
 };

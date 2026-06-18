@@ -193,4 +193,6 @@ export const ta: Record<string, string> = {
   'landing.opt.size': 'வரைபட அளவு',
   'landing.opt.detail': 'விவரம்',
   'landing.opt.hint': 'பெரிய பகுதி அல்லது நுணுக்கமான விவரம் உருவாக்க அதிக நேரம் எடுக்கும்.',
+  'video.newAddress': 'புதிய முகவரி 📍',
+  'video.exit': 'வெளியேறு',
 };

@@ -192,4 +192,6 @@ export const hy: Record<string, string> = {
   'landing.opt.size': 'Քարտեզի չափ',
   'landing.opt.detail': 'Մանրամասն',
   'landing.opt.hint': 'Ավելի մեծ տարածքը կամ ավելի մանր մանրամասնությունն ավելի երկար է կառուցվում։',
+  'video.newAddress': 'Նոր հասցե 📍',
+  'video.exit': 'Ելք',
 };

@@ -192,4 +192,6 @@ export const sv: Record<string, string> = {
   'landing.opt.size': 'Kartstorlek',
   'landing.opt.detail': 'Detalj',
   'landing.opt.hint': 'Större område eller finare detaljer tar längre tid att bygga.',
+  'video.newAddress': 'Ny adress 📍',
+  'video.exit': 'Avsluta',
 };

@@ -192,4 +192,6 @@ export const so: Record<string, string> = {
   'landing.opt.size': 'Cabbirka khariidadda',
   'landing.opt.detail': 'Faahfaahin',
   'landing.opt.hint': 'Aag weyn ama faahfaahin sii fiican waxay qaadanaysaa waqti dheer in la dhiso.',
+  'video.newAddress': 'Cinwaan cusub 📍',
+  'video.exit': 'Ka bax',
 };

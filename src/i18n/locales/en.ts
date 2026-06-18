@@ -213,5 +213,7 @@ export const en: Record<string, string> = {
   'video.download': 'Download ⬇',
   'video.again': 'Start over ↻',
   'video.realtime': 'Open realtime ▶',
+  'video.newAddress': 'New address 📍',
+  'video.exit': 'Exit',
   'video.unsupported': 'Video export is not supported in this browser. Try realtime instead.',
 };

@@ -191,4 +191,6 @@ export const ru: Record<string, string> = {
   'landing.opt.size': 'Размер карты',
   'landing.opt.detail': 'Детализация',
   'landing.opt.hint': 'Большая площадь или более мелкая детализация строятся дольше.',
+  'video.newAddress': 'Новый адрес 📍',
+  'video.exit': 'Выход',
 };

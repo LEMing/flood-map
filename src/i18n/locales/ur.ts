@@ -192,4 +192,6 @@ export const ur: Record<string, string> = {
   'landing.opt.size': 'نقشے کا سائز',
   'landing.opt.detail': 'تفصیل',
   'landing.opt.hint': 'بڑا علاقہ یا باریک تفصیل بنانے میں زیادہ وقت لیتی ہے۔',
+  'video.newAddress': 'نیا پتہ 📍',
+  'video.exit': 'باہر نکلیں',
 };

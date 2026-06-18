@@ -192,4 +192,6 @@ export const tg: Record<string, string> = {
   'landing.opt.size': 'Андозаи харита',
   'landing.opt.detail': 'Тафсилот',
   'landing.opt.hint': 'Минтақаи калонтар ё тафсилоти нозуктар сохтанаш вақти бештар мегирад.',
+  'video.newAddress': 'Суроғаи нав 📍',
+  'video.exit': 'Баромад',
 };

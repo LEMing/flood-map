@@ -212,4 +212,6 @@ export const gu: Record<string, string> = {
   'landing.opt.size': 'નકશાનું કદ',
   'landing.opt.detail': 'વિગત',
   'landing.opt.hint': 'મોટો વિસ્તાર અથવા ઝીણી વિગત બનાવવામાં વધુ સમય લાગે છે.',
+  'video.newAddress': 'નવું સરનામું 📍',
+  'video.exit': 'બહાર નીકળો',
 };

@@ -209,4 +209,6 @@ export const hi: Record<string, string> = {
   'landing.opt.size': 'मानचित्र आकार',
   'landing.opt.detail': 'विवरण',
   'landing.opt.hint': 'बड़ा क्षेत्र या बारीक विवरण बनाने में अधिक समय लगता है।',
+  'video.newAddress': 'नया पता 📍',
+  'video.exit': 'बाहर निकलें',
 };

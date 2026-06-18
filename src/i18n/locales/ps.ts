@@ -209,4 +209,6 @@ export const ps: Record<string, string> = {
   'landing.opt.size': 'د نقشې اندازه',
   'landing.opt.detail': 'تفصیل',
   'landing.opt.hint': 'لویه سیمه یا نري تفصیل جوړولو ته ډېر وخت نیسي.',
+  'video.newAddress': 'نوی پته 📍',
+  'video.exit': 'وتل',
 };

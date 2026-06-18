@@ -192,4 +192,6 @@ export const ar: Record<string, string> = {
   'landing.opt.size': 'حجم الخريطة',
   'landing.opt.detail': 'التفاصيل',
   'landing.opt.hint': 'المساحة الأكبر أو التفاصيل الأدق تستغرق وقتًا أطول للبناء.',
+  'video.newAddress': 'عنوان جديد 📍',
+  'video.exit': 'خروج',
 };

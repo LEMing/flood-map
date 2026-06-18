@@ -59,7 +59,8 @@ export class VideoMode {
     this.barFill = el('div', 'vm-bar-fill');
     bar.appendChild(this.barFill);
     const cancel = button('vm-cancel', '✕');
-    cancel.addEventListener('click', () => { this.aborted = true; });
+    cancel.title = t('video.exit');
+    cancel.addEventListener('click', () => this.goHome());
     panel.append(this.title, bar, cancel);
     this.overlay.appendChild(panel);
     document.body.appendChild(this.overlay);
@@ -201,6 +202,8 @@ export class VideoMode {
     download.href = url;
     download.download = `flood-${slug(this.host.placeName())}.${this.outputExt}`;
 
+    const newAddress = button('vm-btn vm-btn-ghost', t('video.newAddress'));
+    newAddress.addEventListener('click', () => { URL.revokeObjectURL(url); this.goHome(); });
     const realtime = button('vm-btn vm-btn-ghost', t('video.realtime'));
     realtime.addEventListener('click', () => {
       URL.revokeObjectURL(url);
@@ -216,7 +219,7 @@ export class VideoMode {
       void next.run();
     });
 
-    actions.append(download, realtime, again);
+    actions.append(download, newAddress, realtime, again);
     panel.append(heading, video, actions);
     this.overlay.appendChild(panel);
   }
@@ -224,6 +227,13 @@ export class VideoMode {
   private dispose(): void {
     this.overlay.remove();
     this.host.onExit();
+  }
+
+  /** The way out of the /video flow → back to the landing to pick another place. */
+  private goHome(): void {
+    this.aborted = true;
+    this.dispose();
+    window.dispatchEvent(new CustomEvent('app:navigate', { detail: 'landing' }));
   }
 
   /** Tear down immediately (router left /video, or a new capture is starting). */

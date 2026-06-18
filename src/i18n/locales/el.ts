@@ -192,4 +192,6 @@ export const el: Record<string, string> = {
   'landing.opt.size': 'Μέγεθος χάρτη',
   'landing.opt.detail': 'Λεπτομέρεια',
   'landing.opt.hint': 'Μεγαλύτερη περιοχή ή πιο λεπτομερής ανάλυση χρειάζεται περισσότερο χρόνο.',
+  'video.newAddress': 'Νέα διεύθυνση 📍',
+  'video.exit': 'Έξοδος',
 };

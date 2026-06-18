@@ -213,4 +213,6 @@ export const mr: Record<string, string> = {
   'landing.opt.size': 'नकाशा आकार',
   'landing.opt.detail': 'तपशील',
   'landing.opt.hint': 'मोठे क्षेत्र किंवा बारीक तपशील तयार होण्यास जास्त वेळ लागतो.',
+  'video.newAddress': 'नवीन पत्ता 📍',
+  'video.exit': 'बाहेर पडा',
 };

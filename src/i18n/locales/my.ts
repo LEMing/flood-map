@@ -213,4 +213,6 @@ export const my: Record<string, string> = {
   'landing.opt.size': 'မြေပုံအရွယ်အစား',
   'landing.opt.detail': 'အသေးစိတ်',
   'landing.opt.hint': 'ဧရိယာ ပိုကြီးခြင်း သို့မဟုတ် အသေးစိတ် ပိုများခြင်းသည် တည်ဆောက်ရန် အချိန်ပိုကြာသည်။',
+  'video.newAddress': 'လိပ်စာအသစ် 📍',
+  'video.exit': 'ထွက်ရန်',
 };

@@ -192,4 +192,6 @@ export const sw: Record<string, string> = {
   'landing.opt.size': 'Ukubwa wa ramani',
   'landing.opt.detail': 'Maelezo',
   'landing.opt.hint': 'Eneo kubwa zaidi au maelezo ya kina zaidi huchukua muda mrefu kujengwa.',
+  'video.newAddress': 'Anwani mpya 📍',
+  'video.exit': 'Ondoka',
 };

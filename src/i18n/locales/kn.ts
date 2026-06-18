@@ -209,4 +209,6 @@ export const kn: Record<string, string> = {
   'landing.opt.size': 'ನಕ್ಷೆ ಗಾತ್ರ',
   'landing.opt.detail': 'ವಿವರ',
   'landing.opt.hint': 'ದೊಡ್ಡ ಪ್ರದೇಶ ಅಥವಾ ಸೂಕ್ಷ್ಮ ವಿವರವನ್ನು ನಿರ್ಮಿಸಲು ಹೆಚ್ಚು ಸಮಯ ಬೇಕಾಗುತ್ತದೆ.',
+  'video.newAddress': 'ಹೊಸ ವಿಳಾಸ 📍',
+  'video.exit': 'ನಿರ್ಗಮಿಸಿ',
 };

@@ -209,4 +209,6 @@ export const uk: Record<string, string> = {
   'landing.opt.size': 'Розмір карти',
   'landing.opt.detail': 'Деталізація',
   'landing.opt.hint': 'Більша площа або дрібніша деталізація будуються довше.',
+  'video.newAddress': 'Нова адреса 📍',
+  'video.exit': 'Вихід',
 };

@@ -192,4 +192,6 @@ export const pl: Record<string, string> = {
   'landing.opt.size': 'Rozmiar mapy',
   'landing.opt.detail': 'Szczegóły',
   'landing.opt.hint': 'Większy obszar lub drobniejsze szczegóły dłużej się generują.',
+  'video.newAddress': 'Nowy adres 📍',
+  'video.exit': 'Zakończ',
 };

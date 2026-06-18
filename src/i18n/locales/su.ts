@@ -209,4 +209,6 @@ export const su: Record<string, string> = {
   'landing.opt.size': 'Ukuran peta',
   'landing.opt.detail': 'Rincian',
   'landing.opt.hint': 'Wewengkon nu leuwih lega atawa rincian nu leuwih lemes butuh waktu leuwih lila pikeun nyieunna.',
+  'video.newAddress': 'Alamat anyar 📍',
+  'video.exit': 'Kaluar',
 };

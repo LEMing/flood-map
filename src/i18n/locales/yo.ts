@@ -192,4 +192,6 @@ export const yo: Record<string, string> = {
   'landing.opt.size': 'Ìwọ̀n máàpù',
   'landing.opt.detail': 'Àlàyé',
   'landing.opt.hint': 'Àgbègbè tó tóbi tàbí àlàyé tó kúnná máa ń gba àkókò gígùn láti kọ́.',
+  'video.newAddress': 'Àdírẹ́sì tuntun 📍',
+  'video.exit': 'Jáde',
 };

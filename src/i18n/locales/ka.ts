@@ -191,4 +191,6 @@ export const ka: Record<string, string> = {
   'landing.opt.size': 'რუკის ზომა',
   'landing.opt.detail': 'დეტალები',
   'landing.opt.hint': 'უფრო დიდი არეალის ან უფრო წვრილი დეტალების აგებას მეტი დრო სჭირდება.',
+  'video.newAddress': 'ახალი მისამართი 📍',
+  'video.exit': 'გასვლა',
 };

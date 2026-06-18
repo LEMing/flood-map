@@ -209,4 +209,6 @@ export const te: Record<string, string> = {
   'landing.opt.size': 'మ్యాప్ పరిమాణం',
   'landing.opt.detail': 'వివరం',
   'landing.opt.hint': 'పెద్ద ప్రాంతం లేదా సూక్ష్మ వివరం నిర్మించడానికి ఎక్కువ సమయం పడుతుంది.',
+  'video.newAddress': 'కొత్త చిరునామా 📍',
+  'video.exit': 'నిష్క్రమించు',
 };

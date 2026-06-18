@@ -213,4 +213,6 @@ export const yue: Record<string, string> = {
   'landing.opt.size': '地圖大小',
   'landing.opt.detail': '細節',
   'landing.opt.hint': '範圍越大或者細節越精細，生成需時越耐。',
+  'video.newAddress': '新地址 📍',
+  'video.exit': '離開',
 };

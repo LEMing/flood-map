@@ -192,4 +192,6 @@ export const ky: Record<string, string> = {
   'landing.opt.size': 'Картанын өлчөмү',
   'landing.opt.detail': 'Чоо-жайы',
   'landing.opt.hint': 'Чоңураак аймак же майдараак чоо-жай куруу үчүн көбүрөөк убакыт талап кылат.',
+  'video.newAddress': 'Жаңы дарек 📍',
+  'video.exit': 'Чыгуу',
 };

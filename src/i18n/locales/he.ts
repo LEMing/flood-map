@@ -192,4 +192,6 @@ export const he: Record<string, string> = {
   'landing.opt.size': 'גודל המפה',
   'landing.opt.detail': 'פירוט',
   'landing.opt.hint': 'אזור גדול יותר או פירוט עדין יותר אורכים זמן רב יותר לבנייה.',
+  'video.newAddress': 'כתובת חדשה 📍',
+  'video.exit': 'יציאה',
 };

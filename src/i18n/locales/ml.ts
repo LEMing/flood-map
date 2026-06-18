@@ -209,4 +209,6 @@ export const ml: Record<string, string> = {
   'landing.opt.size': 'ഭൂപട വലുപ്പം',
   'landing.opt.detail': 'വിശദാംശം',
   'landing.opt.hint': 'വലിയ പ്രദേശമോ സൂക്ഷ്മമായ വിശദാംശമോ നിർമ്മിക്കാൻ കൂടുതൽ സമയം എടുക്കും.',
+  'video.newAddress': 'പുതിയ വിലാസം 📍',
+  'video.exit': 'പുറത്തുകടക്കുക',
 };

@@ -191,4 +191,6 @@ export const uz: Record<string, string> = {
   'landing.opt.size': 'Xarita oʻlchami',
   'landing.opt.detail': 'Tafsilot',
   'landing.opt.hint': 'Kattaroq hudud yoki mayinroq tafsilot qurish koʻproq vaqt oladi.',
+  'video.newAddress': 'Yangi manzil 📍',
+  'video.exit': 'Chiqish',
 };

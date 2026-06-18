@@ -204,4 +204,6 @@ export const th: Record<string, string> = {
   'landing.opt.size': 'ขนาดแผนที่',
   'landing.opt.detail': 'รายละเอียด',
   'landing.opt.hint': 'พื้นที่ใหญ่ขึ้นหรือรายละเอียดที่ละเอียดขึ้นจะใช้เวลาสร้างนานขึ้น',
+  'video.newAddress': 'ที่อยู่ใหม่ 📍',
+  'video.exit': 'ออก',
 };

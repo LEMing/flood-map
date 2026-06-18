@@ -192,4 +192,6 @@ export const nl: Record<string, string> = {
   'landing.opt.size': 'Kaartgrootte',
   'landing.opt.detail': 'Detail',
   'landing.opt.hint': 'Een groter gebied of fijnere details duren langer om op te bouwen.',
+  'video.newAddress': 'Nieuw adres 📍',
+  'video.exit': 'Afsluiten',
 };

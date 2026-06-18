@@ -192,4 +192,6 @@ export const it: Record<string, string> = {
   'landing.opt.size': 'Dimensione mappa',
   'landing.opt.detail': 'Dettaglio',
   'landing.opt.hint': "Un'area più grande o un dettaglio più fine richiedono più tempo per la creazione.",
+  'video.newAddress': 'Nuovo indirizzo 📍',
+  'video.exit': 'Esci',
 };

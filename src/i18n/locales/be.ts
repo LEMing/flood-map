@@ -191,4 +191,6 @@ export const be: Record<string, string> = {
   'landing.opt.size': 'Памер карты',
   'landing.opt.detail': 'Дэталізацыя',
   'landing.opt.hint': 'Большая плошча або больш дробныя дэталі будуюцца даўжэй.',
+  'video.newAddress': 'Новы адрас 📍',
+  'video.exit': 'Выйсці',
 };

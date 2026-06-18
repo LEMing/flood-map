@@ -212,4 +212,6 @@ export const fr: Record<string, string> = {
   'landing.opt.size': 'Taille de la carte',
   'landing.opt.detail': 'Détail',
   'landing.opt.hint': 'Une zone plus grande ou un détail plus fin met plus de temps à se construire.',
+  'video.newAddress': 'Nouvelle adresse 📍',
+  'video.exit': 'Quitter',
 };

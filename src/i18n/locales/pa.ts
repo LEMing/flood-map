@@ -212,4 +212,6 @@ export const pa: Record<string, string> = {
   'landing.opt.size': 'ਨਕਸ਼ੇ ਦਾ ਆਕਾਰ',
   'landing.opt.detail': 'ਵੇਰਵਾ',
   'landing.opt.hint': 'ਵੱਡਾ ਖੇਤਰ ਜਾਂ ਬਾਰੀਕ ਵੇਰਵਾ ਬਣਾਉਣ ਵਿੱਚ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ।',
+  'video.newAddress': 'ਨਵਾਂ ਪਤਾ 📍',
+  'video.exit': 'ਬਾਹਰ ਜਾਓ',
 };

@@ -192,4 +192,6 @@ export const kk: Record<string, string> = {
   'landing.opt.size': 'Карта өлшемі',
   'landing.opt.detail': 'Егжей-тегжей',
   'landing.opt.hint': 'Үлкенірек аумақ немесе майдарақ егжей-тегжей құруға көбірек уақыт кетеді.',
+  'video.newAddress': 'Жаңа мекенжай 📍',
+  'video.exit': 'Шығу',
 };

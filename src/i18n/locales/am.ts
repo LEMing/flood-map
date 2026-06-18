@@ -192,4 +192,6 @@ export const am: Record<string, string> = {
   'landing.opt.size': 'የካርታ መጠን',
   'landing.opt.detail': 'ዝርዝር',
   'landing.opt.hint': 'ሰፊ አካባቢ ወይም ጥልቅ ዝርዝር ለመገንባት ረዘም ያለ ጊዜ ይወስዳል።',
+  'video.newAddress': 'አዲስ አድራሻ 📍',
+  'video.exit': 'ውጣ',
 };

@@ -192,4 +192,6 @@ export const az: Record<string, string> = {
   'landing.opt.size': 'Xəritə ölçüsü',
   'landing.opt.detail': 'Detal',
   'landing.opt.hint': 'Daha böyük ərazi və ya daha incə detal qurmaq üçün daha çox vaxt aparır.',
+  'video.newAddress': 'Yeni ünvan 📍',
+  'video.exit': 'Çıxış',
 };

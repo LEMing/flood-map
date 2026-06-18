@@ -204,4 +204,6 @@ export const tr: Record<string, string> = {
   'landing.opt.size': 'Harita boyutu',
   'landing.opt.detail': 'Ayrıntı',
   'landing.opt.hint': 'Daha geniş alan ya da daha ince ayrıntı oluşturulması daha uzun sürer.',
+  'video.newAddress': 'Yeni adres 📍',
+  'video.exit': 'Çıkış',
 };

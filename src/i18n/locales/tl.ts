@@ -209,4 +209,6 @@ export const tl: Record<string, string> = {
   'landing.opt.size': 'Laki ng mapa',
   'landing.opt.detail': 'Detalye',
   'landing.opt.hint': 'Mas malaking lugar o mas pinong detalye ay mas matagal buuin.',
+  'video.newAddress': 'Bagong address 📍',
+  'video.exit': 'Lumabas',
 };

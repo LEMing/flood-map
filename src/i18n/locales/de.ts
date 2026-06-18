@@ -210,4 +210,6 @@ export const de: Record<string, string> = {
   'landing.opt.size': 'Kartengröße',
   'landing.opt.detail': 'Detail',
   'landing.opt.hint': 'Größere Fläche oder feinere Details brauchen länger zum Erstellen.',
+  'video.newAddress': 'Neue Adresse 📍',
+  'video.exit': 'Beenden',
 };

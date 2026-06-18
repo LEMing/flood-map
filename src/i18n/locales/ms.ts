@@ -192,4 +192,6 @@ export const ms: Record<string, string> = {
   'landing.opt.size': 'Saiz peta',
   'landing.opt.detail': 'Perincian',
   'landing.opt.hint': 'Kawasan lebih besar atau perincian lebih halus mengambil masa lebih lama untuk dibina.',
+  'video.newAddress': 'Alamat baharu 📍',
+  'video.exit': 'Keluar',
 };

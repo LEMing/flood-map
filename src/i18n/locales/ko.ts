@@ -209,4 +209,6 @@ export const ko: Record<string, string> = {
   'landing.opt.size': '지도 크기',
   'landing.opt.detail': '디테일',
   'landing.opt.hint': '넓은 영역이나 세밀한 디테일일수록 생성에 시간이 더 걸립니다.',
+  'video.newAddress': '새 주소 📍',
+  'video.exit': '종료',
 };

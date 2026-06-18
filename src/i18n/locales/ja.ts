@@ -204,4 +204,6 @@ export const ja: Record<string, string> = {
   'landing.opt.size': 'マップサイズ',
   'landing.opt.detail': '詳細度',
   'landing.opt.hint': '範囲が広いほど、または詳細度が高いほど生成に時間がかかります。',
+  'video.newAddress': '新しい住所 📍',
+  'video.exit': '終了',
 };
