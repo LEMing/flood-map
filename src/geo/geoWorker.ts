@@ -5,7 +5,8 @@
 // back (zero-copy). Wired via src/geo/loadInWorker.ts.
 import { loadTerrainAt } from './load';
 import { buildSurface } from './surface';
-import type { GeoLoadRequest, GeoLoadResult, GeoWorkerResponse } from './geoWorkerTypes';
+import { setDownloadSink } from './cache';
+import type { GeoLoadRequest, GeoLoadResult, GeoStage, GeoWorkerResponse } from './geoWorkerTypes';
 
 interface WorkerCtx {
   onmessage: ((e: MessageEvent<GeoLoadRequest>) => void) | null;
@@ -18,13 +19,22 @@ ctx.onmessage = (e) => {
 };
 
 async function handle(req: GeoLoadRequest): Promise<void> {
+  // loadCenter serializes loads, so a module-level "current stage" is safe and
+  // lets the cache's download sink tag each fetched chunk with the right stage.
+  let stage: GeoStage = 'elevation';
+  setDownloadSink((bytes) => ctx.postMessage({ id: req.id, progress: { stage, bytes } }));
   try {
+    ctx.postMessage({ id: req.id, progress: { stage: 'elevation', bytes: 0 } });
     const load = await loadTerrainAt(req.location, req.mapSizeKm, req.N, req.elevationSource);
+    stage = 'features';
+    ctx.postMessage({ id: req.id, progress: { stage: 'features', bytes: 0 } });
     const surface = req.useSurface ? await buildSurface(load.heightmap, req.params) : null;
     const result: GeoLoadResult = { ...load, surface };
     ctx.postMessage({ id: req.id, ok: true, result }, transferablesOf(result));
   } catch (err) {
     ctx.postMessage({ id: req.id, ok: false, error: (err as Error).message });
+  } finally {
+    setDownloadSink(null);
   }
 }
 

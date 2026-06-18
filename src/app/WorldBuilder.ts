@@ -24,6 +24,7 @@ import { GeologyController } from './GeologyController';
 import { MarkerLayer } from './MarkerLayer';
 import { SimDriver } from './SimDriver';
 import { showToast } from '../ui/toast';
+import { LoadingPanel } from '../ui/LoadingPanel';
 import { AddressBar } from '../ui/AddressBar';
 
 /** The freshly constructed world objects handed back to the app to hold + render. */
@@ -69,6 +70,7 @@ export class WorldBuilder {
   private currentLocation?: GeocodeResult;
   private loading = false;
   private buildToken = 0;
+  private readonly loadingUi = new LoadingPanel();
 
   constructor(private readonly host: WorldBuilderHost) {}
 
@@ -145,21 +147,25 @@ export class WorldBuilder {
     this.currentLocation = location;
     this.host.addressBar.setBusy(true);
     const place = location.displayName.split(',')[0];
-    showToast(t('toast.loadingPlace', { q: place }), false, 0);
+    this.loadingUi.start(place);
     try {
       const N = this.host.params.gridResolution;
       // DEM fetch/decode/inpaint + ocean bathymetry + OSM rasterize + surface
       // fields all run off the main thread; the meshes are built here (WebGL).
-      const { heightmap, warning, sourceUsed, surface } = await loadTerrainInWorker({
-        location,
-        mapSizeKm: this.host.params.mapSizeKm,
-        N,
-        elevationSource: this.host.params.elevationSource,
-        useSurface: this.host.params.useSurface,
-        params: this.host.params,
-      });
+      const { heightmap, warning, sourceUsed, surface } = await loadTerrainInWorker(
+        {
+          location,
+          mapSizeKm: this.host.params.mapSizeKm,
+          N,
+          elevationSource: this.host.params.elevationSource,
+          useSurface: this.host.params.useSurface,
+          params: this.host.params,
+        },
+        (p) => { this.loadingUi.setStage(p.stage); this.loadingUi.addBytes(p.bytes); },
+      );
 
       this.build(heightmap, surface);
+      this.loadingUi.done();
       this.host.setStatsLocation(location.displayName.split(',').slice(0, 3).join(','));
       writeUrlState({
         lat: location.lat, lon: location.lon,
@@ -174,6 +180,7 @@ export class WorldBuilder {
       );
       trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.host.params.mapSizeKm });
     } catch (err) {
+      this.loadingUi.fail();
       showToast((err as Error).message, true);
     } finally {
       this.loading = false;

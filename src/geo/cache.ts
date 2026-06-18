@@ -161,9 +161,18 @@ async function readCache(key: string): Promise<CacheRecord | undefined> {
   return record;
 }
 
+// Notified with the byte size of each freshly *downloaded* body (cache hits do
+// not fire it), so the loader can show "N MB downloaded". One sink per JS
+// context — the worker and the main thread each set their own.
+let downloadSink: ((bytes: number) => void) | null = null;
+export function setDownloadSink(fn: ((bytes: number) => void) | null): void {
+  downloadSink = fn;
+}
+
 function writeCache(key: string, kind: StoredKind, body: ArrayBuffer | Blob | unknown): void {
   const record: CacheRecord = { key, kind, body, bytes: recordBytes(kind, body), lastUsed: now() };
   memorySet(record);
+  downloadSink?.(record.bytes);
   void dbPut(record);
 }
 
