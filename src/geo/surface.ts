@@ -12,6 +12,12 @@ import { lonLatToLocalMeters } from './projection';
 const MM_S = 1 / 1000 / 3600;
 const BUILDING_RAISE_M = 5; // tall enough that flood depths never overtop
 const ROAD_LOWER_M = 0.15; // curb-to-crown channel that routes water along streets
+// Above ~8 km the surface detail is sub-grid AND the sources get expensive: the
+// OSM Overpass query (every building/road/water/landuse in the bbox) balloons to
+// tens of seconds, and the land-cover COG decode gets heavy. Past this we skip
+// both and the sim falls back to default soil, so big maps load fast. (On prod
+// land cover is off regardless — its S3 has no CORS.)
+const SURFACE_MAX_METERS = 8000;
 
 // Музыкальный микрорайон was built on a drained marsh with essentially no storm
 // sewer — model it (and its surrounds) as a no-drainage zone.
@@ -95,13 +101,14 @@ export async function buildSurface(hm: Heightmap, params: Params): Promise<Surfa
   let osm: OsmRasters | null = null;
   // ESA WorldCover's S3 has no CORS, so it only works via the dev proxy; in a
   // static production build we skip it and rely on OSM land use instead.
-  const landPromise = import.meta.env.PROD
+  const detailed = hm.sizeMeters <= SURFACE_MAX_METERS;
+  const landPromise = (import.meta.env.PROD || !detailed)
     ? Promise.resolve()
     : fetchLandCover(hm.center, hm.sizeMeters, hm.N).then((l) => { land = l; }).catch(() => {});
-  await Promise.all([
-    landPromise,
-    fetchOsm(hm.center, hm.sizeMeters, hm.N).then((o) => { osm = o; }).catch(() => {}),
-  ]);
+  const osmPromise = !detailed
+    ? Promise.resolve()
+    : fetchOsm(hm.center, hm.sizeMeters, hm.N).then((o) => { osm = o; }).catch(() => {});
+  await Promise.all([landPromise, osmPromise]);
   if (!land && !osm) return null;
   if (osm) burnHeights(hm, osm, params.burnBuildings);
   return {

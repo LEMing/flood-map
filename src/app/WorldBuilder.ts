@@ -166,14 +166,6 @@ export class WorldBuilder {
       );
 
       const token = this.build(heightmap, surface);
-      this.loadingUi.setStage('imagery');
-      const satelliteError = await this.loadSatellite(
-        token,
-        heightmap,
-        (bytes) => this.loadingUi.addBytes(bytes),
-      );
-      if (token !== this.buildToken) return;
-      this.loadingUi.done();
       this.host.setStatsLocation(location.displayName.split(',').slice(0, 3).join(','));
       writeUrlState({
         lat: location.lat, lon: location.lon,
@@ -182,12 +174,14 @@ export class WorldBuilder {
       this.host.addressBar.setValue(displayLabel(location));
       this.host.refreshPanel();
       const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
-      const satelliteFailedInSatelliteMode = !!satelliteError && this.host.params.terrainStyle === 'satellite';
-      const message = satelliteFailedInSatelliteMode
-        ? `Satellite imagery unavailable (${satelliteError.message}). Showing elevation tint.`
-        : warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`;
-      showToast(message, satelliteFailedInSatelliteMode || !!warning);
+      const message = warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`;
       trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.host.params.mapSizeKm });
+      // The terrain is on screen — the load is "done" (the finally frees the
+      // address bar so a new location can load right away). Satellite is a
+      // non-blocking enhancement: it pops in, drives the imagery stage, then
+      // fades the card and surfaces the result toast.
+      this.loadingUi.setStage('imagery');
+      void this.loadSatellite(token, heightmap, message, !!warning);
     } catch (err) {
       this.loadingUi.fail();
       showToast((err as Error).message, true);
@@ -255,28 +249,39 @@ export class WorldBuilder {
     return { heightmap, terrain, water, sea, floodOverlay, maxFlood, velocity, rain, surfaceTexture, surfaceRaw };
   }
 
+  /** Background: fetch the satellite overlay, drive the imagery stage + its byte
+   *  count, then fade the card and surface the result toast. Token-guarded so a
+   *  newer load (which owns the card now) is never clobbered by a stale fetch. */
   private async loadSatellite(
     token: number,
     hm: Heightmap,
-    onBytes: (bytes: number) => void,
-  ): Promise<Error | null> {
-    const sink = (bytes: number) => onBytes(bytes);
+    message: string,
+    isWarning: boolean,
+  ): Promise<void> {
+    const sink = (bytes: number) => this.loadingUi.addBytes(bytes);
     setDownloadSink(sink);
+    let toastMessage = message;
+    let toastIsError = isWarning;
     try {
       const { texture, uvSat } = await fetchSatellite(hm.center, hm.sizeMeters, hm.N);
       const terrain = this.host.getTerrain();
-      if (token !== this.buildToken || !terrain) {
+      if (token === this.buildToken && terrain) {
+        terrain.setSatellite(texture, uvSat);
+        this.host.applyParams();
+      } else {
         texture.dispose();
-        return null;
       }
-      terrain.setSatellite(texture, uvSat);
-      this.host.applyParams();
-      return null;
     } catch (err) {
-      if (token !== this.buildToken) return null;
-      return err as Error;
+      if (token === this.buildToken && this.host.params.terrainStyle === 'satellite') {
+        toastMessage = `Satellite imagery unavailable (${(err as Error).message}). Showing elevation tint.`;
+        toastIsError = true;
+      }
     } finally {
       clearDownloadSink(sink);
+      if (token === this.buildToken) {
+        this.loadingUi.done();
+        showToast(toastMessage, toastIsError);
+      }
     }
   }
 }

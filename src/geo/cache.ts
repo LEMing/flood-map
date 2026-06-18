@@ -7,7 +7,7 @@
 const CACHE_VERSION = 'v1'; // bump to invalidate every cached entry
 const DB_NAME = `flood-map-cache-${CACHE_VERSION}`;
 const STORE = 'entries';
-const SIZE_BUDGET_BYTES = 250 * 1024 * 1024;
+const SIZE_BUDGET_BYTES = 1024 * 1024 * 1024; // 1 GB persistent (IndexedDB) — fits many areas' tiles
 // The in-RAM mirror is bounded separately and much tighter than IndexedDB: it
 // holds decoded DEM ArrayBuffers + satellite tile Blobs, which otherwise pile up
 // in the JS heap for every location loaded in a session (a slow leak).
