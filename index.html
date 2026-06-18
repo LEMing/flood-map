@@ -686,7 +686,8 @@
       body.landing #lang-picker { right: calc(12px + var(--safe-r)); z-index: 51; }
 
       /* Dedicated video page ("/video"): keep the 3D canvas (the clip needs it)
-         but hide all the live-sim chrome so the cinematic overlay stands alone. */
+         plus the loading card + toast (so a cold build shows progress, not a
+         blank sky) but hide the interactive live-sim chrome. */
       body.video #addressbar,
       body.video #lang-picker,
       body.video #chrome-toggle,
@@ -695,9 +696,7 @@
       body.video #game-dock,
       body.video #hud-stats,
       body.video #fps-meter,
-      body.video #credit,
-      body.video #toast,
-      body.video #loading-card { display: none !important; }
+      body.video #credit { display: none !important; }
 
       .lp-bg {
         position: absolute; inset: 0; z-index: 0;
