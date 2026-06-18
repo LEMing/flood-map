@@ -256,11 +256,13 @@ export class SceneManager {
     this.cloudDome.uniforms.uCamPos.value.copy(this.camera.position);
     const target = this.stormEnabled ? 1 : 0;
     this.weather.uStorm.value += (target - this.weather.uStorm.value) * Math.min(1, dt * 0.6);
+    if (Math.abs(target - this.weather.uStorm.value) < 1e-3) this.weather.uStorm.value = target;
     this.cloudDome.uniforms.uStorm.value = this.weather.uStorm.value;
 
     // wet-lens droplets ease in/out with the rain; uTime is frozen on pause so
     // they hold still, and the pass is skipped entirely when dry.
     this.wetCurrent += (this.wetTarget - this.wetCurrent) * Math.min(1, dt * 2.5);
+    if (Math.abs(this.wetTarget - this.wetCurrent) < 1e-3) this.wetCurrent = this.wetTarget;
     this.postFx.setWet(this.wetCurrent, this.weather.uTime.value);
 
     // sun screen position + visibility for god rays
@@ -286,9 +288,25 @@ export class SceneManager {
     this.cloudDome.uniforms.uFlash.value = flash * 1.3;
   }
 
+  /** Advance OrbitControls (damping). Returns true while the camera is still
+   *  moving (input or inertia glide) — drives render-on-demand so the loop keeps
+   *  drawing through the damping tail and stops once the camera is at rest. */
+  tickControls(): boolean {
+    return this.controls.update();
+  }
+
+  /** True while a storm/wet-lens ease is still in flight, so the loop keeps
+   *  rendering the transition until it settles (then idle stops repainting). */
+  isSettling(): boolean {
+    const stormTarget = this.stormEnabled ? 1 : 0;
+    return (
+      Math.abs(stormTarget - this.weather.uStorm.value) > 1e-3 ||
+      Math.abs(this.wetTarget - this.wetCurrent) > 1e-3
+    );
+  }
+
   /** Two-pass render: no-water scene → RT (refraction source), then full scene (+post). */
   render(water?: WaterMesh, sea?: SeaMesh): void {
-    this.controls.update();
     // Raymarch the cloud dome once, at half resolution, into its own HDR target.
     if (this.domeBlit.visible) {
       this.renderer.setRenderTarget(this.domeRT);

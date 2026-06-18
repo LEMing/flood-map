@@ -104,6 +104,7 @@ export class SimDriver {
     this.timelineMode = 'scrub';
     this.params.timelinePlaying = false;
     this.showTimelineFrame();
+    this.hooks.syncTextures(); // wire the scrubbed frame now; tick idles when not playing
   }
 
   reset(): void {
@@ -135,31 +136,38 @@ export class SimDriver {
     this.precomputeFrameSec = DEMO_SIM_SECONDS / this.precomputeTargetFrames;
   }
 
-  /** Per-frame: run the active mode (computing / scrub / live) and refresh output. */
-  tick(dt: number): void {
-    if (!this.sim) return;
+  /** Per-frame: run the active mode (computing / scrub / live). Returns true if
+   *  the displayed water could have changed this frame (drives render-on-demand);
+   *  the expensive GPU readback is skipped while the sim is frozen. */
+  tick(dt: number): boolean {
+    if (!this.sim) return false;
     if (this.timelineMode === 'computing') {
       this.tickPrecompute(); // fills the readback synchronously + captures
       this.computeStats(this.simTime);
       this.hooks.syncTextures();
-    } else if (this.timelineMode === 'scrub') {
-      if (this.params.timelinePlaying) {
-        this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
-        if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
-        this.hooks.refreshPanel();
-      }
+      return true;
+    }
+    if (this.timelineMode === 'scrub') {
+      if (!this.params.timelinePlaying) return false; // static frame already wired by scrub()
+      this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
+      if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
+      this.hooks.refreshPanel();
       this.showTimelineFrame();
       this.hooks.syncTextures();
-    } else {
-      if (this.params.floodLevelLive && this.heightmap) {
-        this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
-        this.sim.step(0); // set water exactly to the level, no dynamics
-      } else if (this.params.running) {
-        this.advance(dt);
-      }
-      this.hooks.syncTextures();
-      this.pumpStatsReadback(dt);
+      return true;
     }
+    let stepped = false;
+    if (this.params.floodLevelLive && this.heightmap) {
+      this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
+      this.sim.step(0); // set water exactly to the level, no dynamics
+      stepped = true;
+    } else if (this.params.running) {
+      this.advance(dt);
+      stepped = true;
+    }
+    this.hooks.syncTextures(); // cheap: keeps mesh depth-texture refs valid (incl. first frame after build)
+    if (stepped) this.pumpStatsReadback(dt); // skip the gl.readPixels stall + O(N²) scan on a frozen sim
+    return stepped;
   }
 
   private advance(dtReal: number): void {

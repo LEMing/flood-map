@@ -64,7 +64,16 @@ export class App {
   private lowFpsTime = 0;
   private fpsEma = 60;
   private lastTime = 0;
+  // Render-on-demand: a static paused/idle scene must not re-render every frame
+  // (that pins the GPU → fan/heat). The loop only draws when this is set or
+  // something is genuinely moving (sim, camera, an ease). framesRendered is a
+  // diagnostic counter (read via the dev `window.app`).
+  private needsRender = true;
+  private framesRendered = 0;
   private readonly credit = document.getElementById('credit');
+
+  /** Total GPU frames actually drawn — should plateau when the scene is idle. */
+  get rendered(): number { return this.framesRendered; }
 
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new SceneManager(canvas);
@@ -128,6 +137,15 @@ export class App {
     // world once the browser restores the context (a clean known-good state).
     this.scene.onLost = () => { this.params.running = false; };
     this.scene.onRestored = () => { this.worldBuilder.reloadCurrent(); };
+
+    // Repaint once after a resize; resume cleanly when the tab becomes visible
+    // again (reset the clock so dt doesn't spike after a long hidden stretch).
+    window.addEventListener('resize', () => { this.needsRender = true; });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      this.lastTime = performance.now();
+      this.needsRender = true;
+    });
   }
 
   /** The ⚙ gear: opens/closes the controls drawer (closed by default — the
@@ -169,6 +187,7 @@ export class App {
 
   private togglePause(): void {
     this.params.running = !this.params.running;
+    this.needsRender = true; // render the transition frame (then the wet/rain ease carries it)
     this.gameUI.setRunning(this.params.running);
     this.panel.refresh();
   }
@@ -176,6 +195,7 @@ export class App {
   private restartSimulation(): void {
     this.simDriver.reset();
     this.params.running = true;
+    this.needsRender = true;
     this.gameUI.setRunning(true);
     this.panel.refresh();
   }
@@ -190,10 +210,11 @@ export class App {
     return {
       onParamChange: () => this.applyParams(),
       onRebuild: () => this.worldBuilder.reloadCurrent(),
-      onReset: () => this.simDriver.reset(),
-      onStep: () => this.simDriver.stepOnce(),
+      onReset: () => { this.simDriver.reset(); this.needsRender = true; },
+      onStep: () => { this.simDriver.stepOnce(); this.needsRender = true; },
       onTogglePlay: () => {
         this.params.running = !this.params.running;
+        this.needsRender = true;
       },
       onDump: () => {
         this.simDriver.requestInject(this.params.releaseDepthM);
@@ -215,8 +236,8 @@ export class App {
         this.applyParams();
         this.panel.refresh();
       },
-      onScrub: () => this.simDriver.scrub(),
-      onTimelinePlay: () => this.simDriver.toScrubIfReady(),
+      onScrub: () => { this.simDriver.scrub(); this.needsRender = true; },
+      onTimelinePlay: () => { this.simDriver.toScrubIfReady(); this.needsRender = true; },
       onLive: () => {
         this.simDriver.setLive();
         this.params.timelinePlaying = false;
@@ -279,6 +300,7 @@ export class App {
   }
 
   private applyParams(): void {
+    this.needsRender = true; // single choke point for every param/viz/world change
     this.group.scale.y = this.params.verticalExaggeration;
     this.simDriver.updateParams(this.params);
     this.refreshSurface();
@@ -339,31 +361,39 @@ export class App {
   }
 
   private loop = (now: number): void => {
+    requestAnimationFrame(this.loop);
     const dt = Math.min(0.05, (now - this.lastTime) / 1000) || 0;
     this.lastTime = now;
-    if (this.scene.contextLost) { // GPU gone: skip stepping/rendering until restored
-      requestAnimationFrame(this.loop);
-      return;
-    }
+    // GPU gone, or tab hidden: don't step or render (saves the battery/fan when
+    // backgrounded — browsers don't throttle occluded-but-visible windows).
+    if (this.scene.contextLost || document.hidden) return;
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
-    this.simDriver.tick(dt);
-
-    // Pause freezes the weather too: the rain/storm clock only advances while
-    // running, and lightning/drift are gated, so Pause gives a still scene.
+    const stepped = this.simDriver.tick(dt);
+    const cameraMoved = this.scene.tickControls(); // advances damping every frame; true while moving
     if (this.params.running) this.weatherClock += dt;
+
+    // Cheap DOM-only readouts run every frame (hover info + FPS), independent of
+    // the GPU render gate below.
+    this.showFps(now);
+    this.pointer.update(dt);
+
+    // Render-on-demand: skip the whole two-pass + post pipeline when the frame
+    // can't differ from the last (paused, idle, camera at rest, eases settled).
+    const animating = this.params.running || this.scene.isSettling();
+    if (!(this.needsRender || stepped || cameraMoved || animating)) return;
+    this.needsRender = false;
+
     this.rain?.update(this.params, this.weatherClock);
     if (this.rain) this.rain.object.visible = this.params.raining && this.params.running;
     this.scene.setWetness(this.params.raining && this.params.running ? 0.9 : 0);
     this.scene.updateStorm(dt, this.params.running);
-    this.showFps(now);
     this.updateWaterLook(dt);
-    this.pointer.update(dt);
     this.updateDrainArrows();
     this.markerLayer.update(this.scene.camera);
     if (this.simDriver.mode === 'live') this.autoQualityCheck(dt);
     this.scene.render(this.water, this.sea);
-    requestAnimationFrame(this.loop);
+    this.framesRendered++;
   };
 
   /** Always-visible FPS badge (the panel's stat is collapsible/buried). */

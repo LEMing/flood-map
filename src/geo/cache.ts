@@ -8,6 +8,10 @@ const CACHE_VERSION = 'v1'; // bump to invalidate every cached entry
 const DB_NAME = `flood-map-cache-${CACHE_VERSION}`;
 const STORE = 'entries';
 const SIZE_BUDGET_BYTES = 250 * 1024 * 1024;
+// The in-RAM mirror is bounded separately and much tighter than IndexedDB: it
+// holds decoded DEM ArrayBuffers + satellite tile Blobs, which otherwise pile up
+// in the JS heap for every location loaded in a session (a slow leak).
+const MEMORY_BUDGET_BYTES = 64 * 1024 * 1024;
 
 type StoredKind = 'arraybuffer' | 'blob' | 'json';
 
@@ -109,6 +113,23 @@ async function evictIfNeeded(db: IDBDatabase): Promise<void> {
 }
 
 const memory = new Map<string, CacheRecord>();
+let memoryBytes = 0;
+
+// Insert/replace into the RAM mirror, tracking total bytes and evicting the
+// least-recently-used entries once over budget (the IndexedDB copy survives, so
+// an evicted entry just costs one re-read instead of a re-download).
+function memorySet(record: CacheRecord): void {
+  const prev = memory.get(record.key);
+  if (prev) memoryBytes -= prev.bytes;
+  memory.set(record.key, record);
+  memoryBytes += record.bytes;
+  if (memoryBytes <= MEMORY_BUDGET_BYTES) return;
+  for (const r of [...memory.values()].sort((a, b) => a.lastUsed - b.lastUsed)) {
+    if (memoryBytes <= MEMORY_BUDGET_BYTES || r.key === record.key) continue;
+    memory.delete(r.key);
+    memoryBytes -= r.bytes;
+  }
+}
 
 function now(): number {
   return Date.now();
@@ -134,7 +155,7 @@ async function readCache(key: string): Promise<CacheRecord | undefined> {
   const record = await dbGet(key);
   if (record) {
     record.lastUsed = now();
-    memory.set(key, record);
+    memorySet(record);
     void dbTouch(key, record.lastUsed);
   }
   return record;
@@ -142,7 +163,7 @@ async function readCache(key: string): Promise<CacheRecord | undefined> {
 
 function writeCache(key: string, kind: StoredKind, body: ArrayBuffer | Blob | unknown): void {
   const record: CacheRecord = { key, kind, body, bytes: recordBytes(kind, body), lastUsed: now() };
-  memory.set(key, record);
+  memorySet(record);
   void dbPut(record);
 }
 
