@@ -206,4 +206,7 @@ export const ps: Record<string, string> = {
   'video.again': 'بیا پیل کړئ ↻',
   'video.realtime': 'ریښتیني وخت پرانیزئ ▶',
   'video.unsupported': 'په دې براوزر کې د ویډیو صادرول ملاتړ نه کیږي. د دې پرځای ریښتیني وخت هڅه وکړئ.',
+  'landing.opt.size': 'د نقشې اندازه',
+  'landing.opt.detail': 'تفصیل',
+  'landing.opt.hint': 'لویه سیمه یا نري تفصیل جوړولو ته ډېر وخت نیسي.',
 };

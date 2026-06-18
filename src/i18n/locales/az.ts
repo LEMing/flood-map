@@ -189,4 +189,7 @@ export const az: Record<string, string> = {
   'video.again': 'Yenidən başla ↻',
   'video.realtime': 'Canlını aç ▶',
   'video.unsupported': 'Bu brauzerdə video ixracı dəstəklənmir. Bunun əvəzinə canlı rejimi sınayın.',
+  'landing.opt.size': 'Xəritə ölçüsü',
+  'landing.opt.detail': 'Detal',
+  'landing.opt.hint': 'Daha böyük ərazi və ya daha incə detal qurmaq üçün daha çox vaxt aparır.',
 };

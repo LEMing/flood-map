@@ -188,4 +188,7 @@ export const uz: Record<string, string> = {
   'video.again': 'Qaytadan boshlash ↻',
   'video.realtime': 'Jonlini ochish ▶',
   'video.unsupported': 'Bu brauzerda video eksporti qoʻllab-quvvatlanmaydi. Buning oʻrniga jonlini sinab koʻring.',
+  'landing.opt.size': 'Xarita oʻlchami',
+  'landing.opt.detail': 'Tafsilot',
+  'landing.opt.hint': 'Kattaroq hudud yoki mayinroq tafsilot qurish koʻproq vaqt oladi.',
 };

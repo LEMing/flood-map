@@ -189,4 +189,7 @@ export const he: Record<string, string> = {
   'video.again': 'התחל מחדש ↻',
   'video.realtime': 'פתח זמן אמת ▶',
   'video.unsupported': 'ייצוא וידאו אינו נתמך בדפדפן זה. נסה במקום זאת זמן אמת.',
+  'landing.opt.size': 'גודל המפה',
+  'landing.opt.detail': 'פירוט',
+  'landing.opt.hint': 'אזור גדול יותר או פירוט עדין יותר אורכים זמן רב יותר לבנייה.',
 };

@@ -189,4 +189,7 @@ export const so: Record<string, string> = {
   'video.again': 'Dib u bilow ↻',
   'video.realtime': 'Fur waqti dhab ah ▶',
   'video.unsupported': 'Dhoofinta muuqaalka laguma taageero browser-kan. Halkii isku day waqti dhab ah.',
+  'landing.opt.size': 'Cabbirka khariidadda',
+  'landing.opt.detail': 'Faahfaahin',
+  'landing.opt.hint': 'Aag weyn ama faahfaahin sii fiican waxay qaadanaysaa waqti dheer in la dhiso.',
 };

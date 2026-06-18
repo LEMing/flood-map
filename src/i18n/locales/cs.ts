@@ -189,4 +189,7 @@ export const cs: Record<string, string> = {
   'video.again': 'Začít znovu ↻',
   'video.realtime': 'Otevřít v reálném čase ▶',
   'video.unsupported': 'Export videa není v tomto prohlížeči podporován. Zkuste místo toho režim v reálném čase.',
+  'landing.opt.size': 'Velikost mapy',
+  'landing.opt.detail': 'Detail',
+  'landing.opt.hint': 'Větší oblast nebo jemnější detail trvá déle vykreslit.',
 };

@@ -202,4 +202,7 @@ export const id: Record<string, string> = {
   'video.again': 'Mulai lagi ↻',
   'video.realtime': 'Buka waktu nyata ▶',
   'video.unsupported': 'Ekspor video tidak didukung di browser ini. Coba waktu nyata sebagai gantinya.',
+  'landing.opt.size': 'Ukuran peta',
+  'landing.opt.detail': 'Detail',
+  'landing.opt.hint': 'Area lebih luas atau detail lebih halus butuh waktu lebih lama untuk dibangun.',
 };

@@ -201,4 +201,7 @@ export const vi: Record<string, string> = {
   'video.again': 'Bắt đầu lại ↻',
   'video.realtime': 'Mở trực tiếp ▶',
   'video.unsupported': 'Trình duyệt này không hỗ trợ xuất video. Hãy thử chế độ trực tiếp.',
+  'landing.opt.size': 'Kích thước bản đồ',
+  'landing.opt.detail': 'Chi tiết',
+  'landing.opt.hint': 'Khu vực lớn hơn hoặc chi tiết tinh hơn sẽ mất nhiều thời gian dựng hơn.',
 };

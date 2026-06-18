@@ -189,4 +189,7 @@ export const ur: Record<string, string> = {
   'video.again': 'دوبارہ شروع کریں ↻',
   'video.realtime': 'براہِ راست کھولیں ▶',
   'video.unsupported': 'اس براؤزر میں ویڈیو ایکسپورٹ کی معاونت نہیں ہے۔ اس کے بجائے براہِ راست آزمائیں۔',
+  'landing.opt.size': 'نقشے کا سائز',
+  'landing.opt.detail': 'تفصیل',
+  'landing.opt.hint': 'بڑا علاقہ یا باریک تفصیل بنانے میں زیادہ وقت لیتی ہے۔',
 };

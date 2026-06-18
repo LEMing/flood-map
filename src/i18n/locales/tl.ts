@@ -206,4 +206,7 @@ export const tl: Record<string, string> = {
   'video.again': 'Magsimula muli ↻',
   'video.realtime': 'Buksan ang real-time ▶',
   'video.unsupported': 'Hindi suportado ang pag-export ng video sa browser na ito. Subukan ang real-time sa halip.',
+  'landing.opt.size': 'Laki ng mapa',
+  'landing.opt.detail': 'Detalye',
+  'landing.opt.hint': 'Mas malaking lugar o mas pinong detalye ay mas matagal buuin.',
 };

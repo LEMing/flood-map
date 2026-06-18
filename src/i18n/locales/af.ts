@@ -189,4 +189,7 @@ export const af: Record<string, string> = {
   'video.again': 'Begin oor ↻',
   'video.realtime': 'Maak intyds oop ▶',
   'video.unsupported': 'Video-uitvoer word nie in hierdie blaaier ondersteun nie. Probeer eerder intyds.',
+  'landing.opt.size': 'Kaartgrootte',
+  'landing.opt.detail': 'Detail',
+  'landing.opt.hint': "'n Groter gebied of fyner detail neem langer om te bou.",
 };

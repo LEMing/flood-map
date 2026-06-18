@@ -209,4 +209,7 @@ export const jv: Record<string, string> = {
   'video.again': 'Wiwiti maneh ↻',
   'video.realtime': 'Bukak wektu nyata ▶',
   'video.unsupported': 'Ekspor video ora didhukung ing browser iki. Coba wektu nyata wae.',
+  'landing.opt.size': 'Ukuran peta',
+  'landing.opt.detail': 'Rinci',
+  'landing.opt.hint': 'Wilayah luwih amba utawa rincian luwih alus mbutuhake wektu luwih suwe kanggo digawe.',
 };

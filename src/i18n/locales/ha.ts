@@ -187,4 +187,7 @@ export const ha: Record<string, string> = {
   'video.again': 'Fara daga farko ↻',
   'video.realtime': 'Buɗe lokaci na ainihi ▶',
   'video.unsupported': 'Wannan burauza ba ta goyon bayan fitar da bidiyo ba. Gwada lokaci na ainihi maimakon haka.',
+  'landing.opt.size': 'Girman taswira',
+  'landing.opt.detail': 'Cikakkun bayani',
+  'landing.opt.hint': 'Babban yanki ko cikakkun bayani na ɗaukar lokaci mai tsawo wajen gina shi.',
 };

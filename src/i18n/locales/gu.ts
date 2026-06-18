@@ -209,4 +209,7 @@ export const gu: Record<string, string> = {
   'video.again': 'ફરી શરૂ કરો ↻',
   'video.realtime': 'રિયલટાઇમ ખોલો ▶',
   'video.unsupported': 'આ બ્રાઉઝરમાં વિડિયો નિકાસ સમર્થિત નથી. તેના બદલે રિયલટાઇમ અજમાવો.',
+  'landing.opt.size': 'નકશાનું કદ',
+  'landing.opt.detail': 'વિગત',
+  'landing.opt.hint': 'મોટો વિસ્તાર અથવા ઝીણી વિગત બનાવવામાં વધુ સમય લાગે છે.',
 };

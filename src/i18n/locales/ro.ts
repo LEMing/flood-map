@@ -188,4 +188,7 @@ export const ro: Record<string, string> = {
   'video.again': 'Începe din nou ↻',
   'video.realtime': 'Deschide timp real ▶',
   'video.unsupported': 'Exportul video nu este acceptat în acest browser. Încearcă în schimb timpul real.',
+  'landing.opt.size': 'Dimensiunea hărții',
+  'landing.opt.detail': 'Detaliu',
+  'landing.opt.hint': 'O zonă mai mare sau un detaliu mai fin durează mai mult la generare.',
 };

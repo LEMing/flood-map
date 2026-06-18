@@ -189,4 +189,7 @@ export const ar: Record<string, string> = {
   'video.again': 'ابدأ من جديد ↻',
   'video.realtime': 'فتح البث المباشر ▶',
   'video.unsupported': 'تصدير الفيديو غير مدعوم في هذا المتصفح. جرّب الوضع المباشر بدلاً من ذلك.',
+  'landing.opt.size': 'حجم الخريطة',
+  'landing.opt.detail': 'التفاصيل',
+  'landing.opt.hint': 'المساحة الأكبر أو التفاصيل الأدق تستغرق وقتًا أطول للبناء.',
 };

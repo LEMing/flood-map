@@ -22,7 +22,6 @@ import { PointerController } from './PointerController';
 import { SimDriver } from './SimDriver';
 import { WorldBuilder, type BuiltWorld } from './WorldBuilder';
 import { AddressBar } from '../ui/AddressBar';
-import { LanguagePicker } from '../ui/LanguagePicker';
 import { GameUI } from '../ui/GameUI';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, type StatsData } from '../ui/stats';
@@ -35,7 +34,6 @@ export class App {
   private readonly group = new THREE.Group();
   private readonly markerLayer = new MarkerLayer(this.group);
   private readonly addressBar: AddressBar;
-  private readonly languagePicker: LanguagePicker;
   private readonly gameUI: GameUI;
   private panel: ControlsPanel;
   private readonly pointer: PointerController;
@@ -91,7 +89,7 @@ export class App {
    *  re-bootstrapping a kept-alive App on a Forward navigation to /sim). */
   get isStarted(): boolean { return this.started; }
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, private readonly onLanguageChange?: (lang: Lang) => void) {
     this.scene = new SceneManager(canvas);
     this.scene.scene.add(this.group);
 
@@ -106,7 +104,6 @@ export class App {
       onSubmit: (text) => this.worldBuilder.loadAddress(text),
       onSelect: (lat, lon, label) => this.worldBuilder.loadCenter({ lat, lon, displayName: label }),
     });
-    this.languagePicker = new LanguagePicker((lang) => void this.setLang(lang));
     this.gameUI = new GameUI({
       onStart: () => this.startSimulation(),
       onTogglePause: () => this.togglePause(),
@@ -216,11 +213,12 @@ export class App {
     this.panel.refresh();
   }
 
-  /** Deep-link / refresh entry: pick the center from URL/IP and run live. */
-  start(): void {
+  /** Deep-link / refresh entry: pick the center from URL/IP, then run live (or go
+   *  straight into the video capture for a /video deep-link). */
+  start(opts: { cinematic?: boolean } = {}): void {
     this.active = true;
     this.ensureLoop();
-    void this.worldBuilder.bootstrap();
+    void this.worldBuilder.bootstrap().then(() => { if (opts.cinematic) this.enterVideoMode(); });
   }
 
   /** Entry from the landing page: load an already-resolved place, optionally
@@ -249,6 +247,12 @@ export class App {
     this.started = true;
     this.lastTime = performance.now();
     requestAnimationFrame(this.loop);
+  }
+
+  /** Stop and tear down an in-progress video capture (router left /video). */
+  exitVideoMode(): void {
+    this.videoMode?.cancel();
+    this.videoMode = undefined;
   }
 
   /** Record an accelerated storm over the current world to a downloadable clip. */
@@ -326,22 +330,17 @@ export class App {
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
   }
 
-  private async setLang(lang: Lang): Promise<void> {
-    await loadLanguage(lang); // lazy locale chunk — fetch before re-rendering
-    setLanguage(lang); // explicit user choice → persisted
-    writeUrlState({ lang });
-    this.rebuildForLanguage();
-  }
-
   private async applyDetectedLanguage(lang: Lang): Promise<void> {
     await loadLanguage(lang);
     setLanguage(lang, false); // auto-detected → stays re-detectable on next visit
-    this.rebuildForLanguage();
+    this.retranslateForLanguage();
+    this.onLanguageChange?.(lang); // let the router refresh the shared language picker
   }
 
-  private rebuildForLanguage(): void {
+  /** Re-render every translated piece of the sim UI in the current language.
+   *  The language picker lives in the router now, so it isn't touched here. */
+  retranslateForLanguage(): void {
     this.addressBar.retranslate();
-    this.languagePicker.retranslate();
     this.gameUI.retranslate();
     applyDocumentLang();
     this.rebuildPanel();

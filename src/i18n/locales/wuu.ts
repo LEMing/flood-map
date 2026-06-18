@@ -209,4 +209,7 @@ export const wuu: Record<string, string> = {
   'video.again': '重新开始 ↻',
   'video.realtime': '打开实时 ▶',
   'video.unsupported': '搿只浏览器勿支持视频导出。可以试试实时。',
+  'landing.opt.size': '地图大小',
+  'landing.opt.detail': '细节',
+  'landing.opt.hint': '范围越大或者细节越精，生成辰光越长。',
 };

@@ -206,4 +206,7 @@ export const ml: Record<string, string> = {
   'video.again': 'വീണ്ടും തുടങ്ങുക ↻',
   'video.realtime': 'തത്സമയം തുറക്കുക ▶',
   'video.unsupported': 'ഈ ബ്രൗസറിൽ വീഡിയോ എക്സ്പോർട്ട് പിന്തുണയ്ക്കുന്നില്ല. പകരം തത്സമയം പരീക്ഷിക്കുക.',
+  'landing.opt.size': 'ഭൂപട വലുപ്പം',
+  'landing.opt.detail': 'വിശദാംശം',
+  'landing.opt.hint': 'വലിയ പ്രദേശമോ സൂക്ഷ്മമായ വിശദാംശമോ നിർമ്മിക്കാൻ കൂടുതൽ സമയം എടുക്കും.',
 };

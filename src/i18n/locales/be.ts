@@ -188,4 +188,7 @@ export const be: Record<string, string> = {
   'video.again': 'Пачаць спачатку ↻',
   'video.realtime': 'Адкрыць рэальны час ▶',
   'video.unsupported': 'Экспарт відэа не падтрымліваецца ў гэтым браўзеры. Паспрабуйце рэжым рэальнага часу.',
+  'landing.opt.size': 'Памер карты',
+  'landing.opt.detail': 'Дэталізацыя',
+  'landing.opt.hint': 'Большая плошча або больш дробныя дэталі будуюцца даўжэй.',
 };

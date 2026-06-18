@@ -190,4 +190,7 @@ export const ta: Record<string, string> = {
   'video.again': 'மீண்டும் தொடங்கு ↻',
   'video.realtime': 'நேரலையைத் திற ▶',
   'video.unsupported': 'இந்த உலாவியில் வீடியோ ஏற்றுமதி ஆதரிக்கப்படவில்லை. அதற்குப் பதிலாக நேரலையை முயற்சிக்கவும்.',
+  'landing.opt.size': 'வரைபட அளவு',
+  'landing.opt.detail': 'விவரம்',
+  'landing.opt.hint': 'பெரிய பகுதி அல்லது நுணுக்கமான விவரம் உருவாக்க அதிக நேரம் எடுக்கும்.',
 };

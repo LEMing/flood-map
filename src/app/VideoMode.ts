@@ -20,13 +20,14 @@ export interface VideoModeHost {
 
 const VIDEO_DURATION_SEC = 30;
 const VIDEO_FPS = 30;
-const VIDEO_SIM_SECONDS = 6 * 3600; // cloudburst + the full drain/evaporate tail
 const ORBIT_RAD = Math.PI / 9; // ~20° gentle cinematic sweep over the clip
 const RAIN_VISUAL_CUTOFF_MMHR = 0.5;
 // Keep the world's real drainage so the cloudburst (~25 mm/hr peak) actually
-// pools and floods; lean on evaporation + the long window to recede it by the
-// end (works even where drainage is zero, e.g. подтопление zones).
-const CAPTURE_EVAP_PER_HR = 0.3;
+// pools and floods, but bump evaporation so the water fully recedes within the
+// capture window — the clip must run all the way to dry (works even where
+// drainage is zero, e.g. подтопление zones). 0.8/hr clears the worst basin in
+// ~4.4 h after the peak (the precompute self-terminates at dryness).
+const CAPTURE_EVAP_PER_HR = 0.8;
 
 // Params the capture profile mutates; snapshotted so the live sim is restored after.
 const TOUCHED: Array<keyof Params> = [
@@ -47,6 +48,7 @@ export class VideoMode {
   private readonly title: HTMLDivElement;
   private readonly barFill: HTMLDivElement;
   private readonly startOffset = new THREE.Vector3();
+  private outputExt = 'mp4';
   private aborted = false;
 
   constructor(private readonly host: VideoModeHost) {
@@ -68,7 +70,7 @@ export class VideoMode {
     this.applyCaptureProfile();
     this.host.applyParams();
 
-    this.host.simDriver.beginPrecompute({ simSeconds: VIDEO_SIM_SECONDS });
+    this.host.simDriver.beginPrecompute({ untilDry: true });
     this.host.applyParams();
     await this.awaitPrecompute();
 
@@ -111,6 +113,7 @@ export class VideoMode {
     this.startOffset.copy(this.host.scene.camera.position).sub(this.host.scene.controls.target);
 
     const recorder = new Recorder(this.host.scene.renderer.domElement, VIDEO_FPS);
+    this.outputExt = recorder.fileExt;
     recorder.start();
 
     const t0 = performance.now();
@@ -196,10 +199,14 @@ export class VideoMode {
     download.className = 'vm-btn vm-btn-primary';
     download.textContent = t('video.download');
     download.href = url;
-    download.download = `flood-${slug(this.host.placeName())}.webm`;
+    download.download = `flood-${slug(this.host.placeName())}.${this.outputExt}`;
 
     const realtime = button('vm-btn vm-btn-ghost', t('video.realtime'));
-    realtime.addEventListener('click', () => { URL.revokeObjectURL(url); this.dispose(); });
+    realtime.addEventListener('click', () => {
+      URL.revokeObjectURL(url);
+      this.dispose();
+      window.dispatchEvent(new CustomEvent('app:navigate', { detail: 'sim' }));
+    });
     const again = button('vm-btn vm-btn-ghost', t('video.again'));
     again.addEventListener('click', () => {
       URL.revokeObjectURL(url);
@@ -217,6 +224,12 @@ export class VideoMode {
   private dispose(): void {
     this.overlay.remove();
     this.host.onExit();
+  }
+
+  /** Tear down immediately (router left /video, or a new capture is starting). */
+  cancel(): void {
+    this.aborted = true;
+    this.dispose();
   }
 }
 

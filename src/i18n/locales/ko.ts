@@ -206,4 +206,7 @@ export const ko: Record<string, string> = {
   'video.again': '다시 시작 ↻',
   'video.realtime': '실시간 열기 ▶',
   'video.unsupported': '이 브라우저에서는 영상 내보내기를 지원하지 않습니다. 대신 실시간을 사용해 보세요.',
+  'landing.opt.size': '지도 크기',
+  'landing.opt.detail': '디테일',
+  'landing.opt.hint': '넓은 영역이나 세밀한 디테일일수록 생성에 시간이 더 걸립니다.',
 };

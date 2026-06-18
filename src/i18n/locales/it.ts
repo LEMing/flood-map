@@ -189,4 +189,7 @@ export const it: Record<string, string> = {
   'video.again': 'Ricomincia ↻',
   'video.realtime': 'Apri tempo reale ▶',
   'video.unsupported': "L'esportazione video non è supportata in questo browser. Prova invece il tempo reale.",
+  'landing.opt.size': 'Dimensione mappa',
+  'landing.opt.detail': 'Dettaglio',
+  'landing.opt.hint': "Un'area più grande o un dettaglio più fine richiedono più tempo per la creazione.",
 };

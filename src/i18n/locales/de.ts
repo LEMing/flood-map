@@ -207,4 +207,7 @@ export const de: Record<string, string> = {
   'video.again': 'Neu starten ↻',
   'video.realtime': 'Echtzeit öffnen ▶',
   'video.unsupported': 'Der Videoexport wird in diesem Browser nicht unterstützt. Versuchen Sie stattdessen die Echtzeit-Ansicht.',
+  'landing.opt.size': 'Kartengröße',
+  'landing.opt.detail': 'Detail',
+  'landing.opt.hint': 'Größere Fläche oder feinere Details brauchen länger zum Erstellen.',
 };

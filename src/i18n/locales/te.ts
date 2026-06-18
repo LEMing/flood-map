@@ -206,4 +206,7 @@ export const te: Record<string, string> = {
   'video.again': 'మళ్లీ ప్రారంభించు ↻',
   'video.realtime': 'ప్రత్యక్షం తెరువు ▶',
   'video.unsupported': 'ఈ బ్రౌజర్‌లో వీడియో ఎగుమతి మద్దతు లేదు. బదులుగా ప్రత్యక్షాన్ని ప్రయత్నించండి.',
+  'landing.opt.size': 'మ్యాప్ పరిమాణం',
+  'landing.opt.detail': 'వివరం',
+  'landing.opt.hint': 'పెద్ద ప్రాంతం లేదా సూక్ష్మ వివరం నిర్మించడానికి ఎక్కువ సమయం పడుతుంది.',
 };

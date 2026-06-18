@@ -189,4 +189,7 @@ export const pl: Record<string, string> = {
   'video.again': 'Zacznij od nowa ↻',
   'video.realtime': 'Otwórz na żywo ▶',
   'video.unsupported': 'Eksport wideo nie jest obsługiwany w tej przeglądarce. Spróbuj zamiast tego trybu na żywo.',
+  'landing.opt.size': 'Rozmiar mapy',
+  'landing.opt.detail': 'Szczegóły',
+  'landing.opt.hint': 'Większy obszar lub drobniejsze szczegóły dłużej się generują.',
 };

@@ -189,4 +189,7 @@ export const tg: Record<string, string> = {
   'video.again': 'Аз нав оғоз кунед ↻',
   'video.realtime': 'Кушодани зинда ▶',
   'video.unsupported': 'Содироти видео дар ин браузер дастгирӣ намешавад. Ба ҷои он зиндаро санҷед.',
+  'landing.opt.size': 'Андозаи харита',
+  'landing.opt.detail': 'Тафсилот',
+  'landing.opt.hint': 'Минтақаи калонтар ё тафсилоти нозуктар сохтанаш вақти бештар мегирад.',
 };

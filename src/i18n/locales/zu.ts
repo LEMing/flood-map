@@ -188,4 +188,7 @@ export const zu: Record<string, string> = {
   'video.again': 'Qala phansi ↻',
   'video.realtime': 'Vula ngokuqondile ▶',
   'video.unsupported': 'Ukuthekelisa ividiyo akusekelwa kulesi siphequluli. Zama ngokuqondile esikhundleni salokho.',
+  'landing.opt.size': 'Usayizi webalazwe',
+  'landing.opt.detail': 'Imininingwane',
+  'landing.opt.hint': 'Indawo enkulu noma imininingwane ecolekile ithatha isikhathi eside ukwakhiwa.',
 };

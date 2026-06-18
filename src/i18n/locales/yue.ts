@@ -210,4 +210,7 @@ export const yue: Record<string, string> = {
   'video.again': '重新開始 ↻',
   'video.realtime': '打開即時 ▶',
   'video.unsupported': '呢個瀏覽器唔支援影片匯出。試吓即時啦。',
+  'landing.opt.size': '地圖大小',
+  'landing.opt.detail': '細節',
+  'landing.opt.hint': '範圍越大或者細節越精細，生成需時越耐。',
 };

@@ -204,4 +204,7 @@ export const es: Record<string, string> = {
   'video.again': 'Empezar de nuevo ↻',
   'video.realtime': 'Abrir tiempo real ▶',
   'video.unsupported': 'La exportación de vídeo no es compatible con este navegador. Prueba el tiempo real en su lugar.',
+  'landing.opt.size': 'Tamaño del mapa',
+  'landing.opt.detail': 'Detalle',
+  'landing.opt.hint': 'Un área mayor o un detalle más fino tardan más en generarse.',
 };

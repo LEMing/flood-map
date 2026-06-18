@@ -189,4 +189,7 @@ export const bn: Record<string, string> = {
   'video.again': 'আবার শুরু করুন ↻',
   'video.realtime': 'রিয়েলটাইম খুলুন ▶',
   'video.unsupported': 'এই ব্রাউজারে ভিডিও এক্সপোর্ট সমর্থিত নয়। পরিবর্তে রিয়েলটাইম চেষ্টা করুন।',
+  'landing.opt.size': 'মানচিত্রের আকার',
+  'landing.opt.detail': 'বিশদ',
+  'landing.opt.hint': 'বড় এলাকা বা সূক্ষ্ম বিশদ তৈরি করতে বেশি সময় লাগে।',
 };

@@ -190,4 +190,7 @@ export const fa: Record<string, string> = {
   'video.again': 'شروع دوباره ↻',
   'video.realtime': 'باز کردن زمان واقعی ▶',
   'video.unsupported': 'خروجی ویدیو در این مرورگر پشتیبانی نمی‌شود. به‌جای آن حالت زمان واقعی را امتحان کنید.',
+  'landing.opt.size': 'اندازه نقشه',
+  'landing.opt.detail': 'جزئیات',
+  'landing.opt.hint': 'محدوده بزرگ‌تر یا جزئیات دقیق‌تر زمان بیشتری برای ساخت می‌برد.',
 };

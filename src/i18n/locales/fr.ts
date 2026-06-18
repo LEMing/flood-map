@@ -209,4 +209,7 @@ export const fr: Record<string, string> = {
   'video.again': 'Recommencer ↻',
   'video.realtime': 'Ouvrir en temps réel ▶',
   'video.unsupported': "L'exportation vidéo n'est pas prise en charge par ce navigateur. Essayez plutôt le temps réel.",
+  'landing.opt.size': 'Taille de la carte',
+  'landing.opt.detail': 'Détail',
+  'landing.opt.hint': 'Une zone plus grande ou un détail plus fin met plus de temps à se construire.',
 };

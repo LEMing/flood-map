@@ -189,4 +189,7 @@ export const ig: Record<string, string> = {
   'video.again': 'Malite ọzọ ↻',
   'video.realtime': 'Mepee oge ozugbo ▶',
   'video.unsupported': 'A naghị akwado mbupụ vidiyo na ihe nchọgharị a. Gbalịa oge ozugbo kama.',
+  'landing.opt.size': 'Nha map',
+  'landing.opt.detail': 'Nkọwa',
+  'landing.opt.hint': 'Mpaghara buru ibu ma ọ bụ nkọwa zuru ezu na-ewe ogologo oge iji wuo ya.',
 };

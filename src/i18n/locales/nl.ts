@@ -189,4 +189,7 @@ export const nl: Record<string, string> = {
   'video.again': 'Opnieuw beginnen ↻',
   'video.realtime': 'Realtime openen ▶',
   'video.unsupported': 'Video exporteren wordt niet ondersteund in deze browser. Probeer in plaats daarvan realtime.',
+  'landing.opt.size': 'Kaartgrootte',
+  'landing.opt.detail': 'Detail',
+  'landing.opt.hint': 'Een groter gebied of fijnere details duren langer om op te bouwen.',
 };

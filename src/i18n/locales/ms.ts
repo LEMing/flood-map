@@ -189,4 +189,7 @@ export const ms: Record<string, string> = {
   'video.again': 'Mula semula ↻',
   'video.realtime': 'Buka masa nyata ▶',
   'video.unsupported': 'Eksport video tidak disokong dalam pelayar ini. Cuba masa nyata sebagai gantinya.',
+  'landing.opt.size': 'Saiz peta',
+  'landing.opt.detail': 'Perincian',
+  'landing.opt.hint': 'Kawasan lebih besar atau perincian lebih halus mengambil masa lebih lama untuk dibina.',
 };

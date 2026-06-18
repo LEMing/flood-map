@@ -189,4 +189,7 @@ export const tk: Record<string, string> = {
   'video.again': 'Täzeden başla ↻',
   'video.realtime': 'Janlyny aç ▶',
   'video.unsupported': 'Bu brauzerde wideo eksporty goldanmaýar. Onuň ýerine janlyny synanyşyň.',
+  'landing.opt.size': 'Karta ölçegi',
+  'landing.opt.detail': 'Jikme-jik',
+  'landing.opt.hint': 'Has uly meýdan ýa-da has inçe jikme-jiklik gurmak üçin köp wagt alýar.',
 };

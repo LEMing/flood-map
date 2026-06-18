@@ -189,4 +189,7 @@ export const sw: Record<string, string> = {
   'video.again': 'Anza upya ↻',
   'video.realtime': 'Fungua moja kwa moja ▶',
   'video.unsupported': 'Usafirishaji wa video hauungwi mkono katika kivinjari hiki. Jaribu moja kwa moja badala yake.',
+  'landing.opt.size': 'Ukubwa wa ramani',
+  'landing.opt.detail': 'Maelezo',
+  'landing.opt.hint': 'Eneo kubwa zaidi au maelezo ya kina zaidi huchukua muda mrefu kujengwa.',
 };

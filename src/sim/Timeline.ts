@@ -6,17 +6,19 @@ import * as THREE from 'three';
 export class Timeline {
   private frames: Float32Array[] = [];
   private times: number[] = []; // simulated seconds per frame
-  readonly tex: THREE.DataTexture;
+  tex: THREE.DataTexture;
   computing = false;
   progress = 0; // 0..1 while precomputing
 
   constructor(N: number) {
-    this.tex = new THREE.DataTexture(
-      new Float32Array(N * N * 4), N, N, THREE.RGBAFormat, THREE.FloatType,
-    );
-    this.tex.minFilter = THREE.NearestFilter;
-    this.tex.magFilter = THREE.NearestFilter;
-    this.tex.needsUpdate = true;
+    this.tex = makeTex(N);
+  }
+
+  /** Resize the scrub texture to the capture grid (video downsamples to <N). */
+  configure(captureN: number): void {
+    if (this.tex.image.width === captureN) return;
+    this.tex.dispose();
+    this.tex = makeTex(captureN);
   }
 
   begin(): void {
@@ -87,4 +89,14 @@ export class Timeline {
     this.frames = [];
     this.times = [];
   }
+}
+
+function makeTex(n: number): THREE.DataTexture {
+  const tex = new THREE.DataTexture(
+    new Float32Array(n * n * 4), n, n, THREE.RGBAFormat, THREE.FloatType,
+  );
+  tex.minFilter = THREE.NearestFilter;
+  tex.magFilter = THREE.NearestFilter;
+  tex.needsUpdate = true;
+  return tex;
 }

@@ -210,4 +210,7 @@ export const mr: Record<string, string> = {
   'video.again': 'पुन्हा सुरू करा ↻',
   'video.realtime': 'रिअल टाइम उघडा ▶',
   'video.unsupported': 'या ब्राउझरमध्ये व्हिडिओ निर्यात समर्थित नाही. त्याऐवजी रिअल टाइम वापरून पहा.',
+  'landing.opt.size': 'नकाशा आकार',
+  'landing.opt.detail': 'तपशील',
+  'landing.opt.hint': 'मोठे क्षेत्र किंवा बारीक तपशील तयार होण्यास जास्त वेळ लागतो.',
 };

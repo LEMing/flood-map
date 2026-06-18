@@ -209,4 +209,7 @@ export const pa: Record<string, string> = {
   'video.again': 'ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ ↻',
   'video.realtime': 'ਰੀਅਲ ਟਾਈਮ ਖੋਲ੍ਹੋ ▶',
   'video.unsupported': 'ਇਸ ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਵੀਡੀਓ ਨਿਰਯਾਤ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ। ਇਸਦੀ ਬਜਾਏ ਰੀਅਲ ਟਾਈਮ ਅਜ਼ਮਾਓ।',
+  'landing.opt.size': 'ਨਕਸ਼ੇ ਦਾ ਆਕਾਰ',
+  'landing.opt.detail': 'ਵੇਰਵਾ',
+  'landing.opt.hint': 'ਵੱਡਾ ਖੇਤਰ ਜਾਂ ਬਾਰੀਕ ਵੇਰਵਾ ਬਣਾਉਣ ਵਿੱਚ ਵੱਧ ਸਮਾਂ ਲੱਗਦਾ ਹੈ।',
 };

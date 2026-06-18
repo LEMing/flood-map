@@ -189,4 +189,7 @@ export const hy: Record<string, string> = {
   'video.again': 'Սկսել նորից ↻',
   'video.realtime': 'Բացել իրական ժամանակ ▶',
   'video.unsupported': 'Տեսանյութի արտահանումն այս դիտարկիչում չի աջակցվում։ Փոխարենը փորձեք իրական ժամանակը։',
+  'landing.opt.size': 'Քարտեզի չափ',
+  'landing.opt.detail': 'Մանրամասն',
+  'landing.opt.hint': 'Ավելի մեծ տարածքը կամ ավելի մանր մանրամասնությունն ավելի երկար է կառուցվում։',
 };

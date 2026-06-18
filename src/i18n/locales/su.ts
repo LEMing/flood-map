@@ -206,4 +206,7 @@ export const su: Record<string, string> = {
   'video.again': 'Mimitian deui ↻',
   'video.realtime': 'Buka langsung ▶',
   'video.unsupported': 'Ékspor pidéo henteu didukung dina panyungsi ieu. Cobian langsung waé.',
+  'landing.opt.size': 'Ukuran peta',
+  'landing.opt.detail': 'Rincian',
+  'landing.opt.hint': 'Wewengkon nu leuwih lega atawa rincian nu leuwih lemes butuh waktu leuwih lila pikeun nyieunna.',
 };

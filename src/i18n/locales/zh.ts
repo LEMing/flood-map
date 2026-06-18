@@ -201,4 +201,7 @@ export const zh: Record<string, string> = {
   'video.again': '重新开始 ↻',
   'video.realtime': '打开实时 ▶',
   'video.unsupported': '此浏览器不支持视频导出。请改用实时模式。',
+  'landing.opt.size': '地图大小',
+  'landing.opt.detail': '细节',
+  'landing.opt.hint': '范围越大或细节越精细，生成所需时间越长。',
 };

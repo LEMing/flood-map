@@ -201,4 +201,7 @@ export const th: Record<string, string> = {
   'video.again': 'เริ่มใหม่ ↻',
   'video.realtime': 'เปิดเรียลไทม์ ▶',
   'video.unsupported': 'เบราว์เซอร์นี้ไม่รองรับการส่งออกวิดีโอ ลองใช้เรียลไทม์แทน',
+  'landing.opt.size': 'ขนาดแผนที่',
+  'landing.opt.detail': 'รายละเอียด',
+  'landing.opt.hint': 'พื้นที่ใหญ่ขึ้นหรือรายละเอียดที่ละเอียดขึ้นจะใช้เวลาสร้างนานขึ้น',
 };

@@ -188,4 +188,7 @@ export const ka: Record<string, string> = {
   'video.again': 'თავიდან დაწყება ↻',
   'video.realtime': 'რეალურ დროში გახსნა ▶',
   'video.unsupported': 'ვიდეოს ექსპორტი ამ ბრაუზერში არ არის მხარდაჭერილი. სცადეთ რეალურ დროში.',
+  'landing.opt.size': 'რუკის ზომა',
+  'landing.opt.detail': 'დეტალები',
+  'landing.opt.hint': 'უფრო დიდი არეალის ან უფრო წვრილი დეტალების აგებას მეტი დრო სჭირდება.',
 };

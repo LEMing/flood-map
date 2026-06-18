@@ -206,4 +206,7 @@ export const uk: Record<string, string> = {
   'video.again': 'Почати спочатку ↻',
   'video.realtime': 'Відкрити наживо ▶',
   'video.unsupported': 'Експорт відео не підтримується в цьому браузері. Спробуйте натомість режим наживо.',
+  'landing.opt.size': 'Розмір карти',
+  'landing.opt.detail': 'Деталізація',
+  'landing.opt.hint': 'Більша площа або дрібніша деталізація будуються довше.',
 };

@@ -672,7 +672,6 @@
       }
       body.landing #scene,
       body.landing #addressbar,
-      body.landing #lang-picker,
       body.landing #chrome-toggle,
       body.landing #chrome-panel,
       body.landing #start-overlay,
@@ -682,6 +681,23 @@
       body.landing #credit,
       body.landing #toast,
       body.landing #loading-card { display: none !important; }
+      /* The language picker stays available on the landing; no gear there, so it
+         sits in the top-right corner and above the immersive overlay. */
+      body.landing #lang-picker { right: calc(12px + var(--safe-r)); z-index: 51; }
+
+      /* Dedicated video page ("/video"): keep the 3D canvas (the clip needs it)
+         but hide all the live-sim chrome so the cinematic overlay stands alone. */
+      body.video #addressbar,
+      body.video #lang-picker,
+      body.video #chrome-toggle,
+      body.video #chrome-panel,
+      body.video #start-overlay,
+      body.video #game-dock,
+      body.video #hud-stats,
+      body.video #fps-meter,
+      body.video #credit,
+      body.video #toast,
+      body.video #loading-card { display: none !important; }
 
       .lp-bg {
         position: absolute; inset: 0; z-index: 0;
@@ -763,6 +779,35 @@
         border: 2px solid rgba(255,255,255,.2); border-top-color: var(--accent);
         animation: spin .8s linear infinite;
       }
+
+      /* Map size + grid-detail pickers: a labelled segmented row each + a hint. */
+      .lp-opts { display: flex; flex-direction: column; gap: 11px; }
+      .lp-opt-row { display: flex; flex-direction: column; gap: 5px; }
+      .lp-opt-label {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 12px; font-weight: 600; color: rgba(222,232,244,.86); letter-spacing: .2px;
+      }
+      .lp-opt-ic { font-size: 13px; opacity: .85; }
+      .lp-opt-hint { font-size: 11.5px; line-height: 1.4; color: rgba(206,219,235,.6); }
+      .lp-seg {
+        display: flex; align-items: center; gap: 4px;
+        padding: 4px; border-radius: 11px;
+        background: rgba(255,255,255,.05); border: 1px solid var(--panel-border);
+      }
+      .lp-seg-btn {
+        flex: 1 1 0; min-width: 0; min-height: 34px; padding: 0 6px;
+        border-radius: 7px; border: 1px solid transparent; background: transparent;
+        color: #cdd8e6; font-size: 13px; font-weight: 640; cursor: pointer;
+        font-variant-numeric: tabular-nums;
+        transition: background .14s ease, color .14s ease, border-color .14s ease;
+        touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      }
+      .lp-seg-btn:hover { background: rgba(255,255,255,.07); color: #fff; }
+      .lp-seg-btn.on {
+        background: var(--accent); color: #fff;
+        border-color: rgba(122,170,255,.5); box-shadow: 0 4px 12px rgba(47,111,235,.3);
+      }
+      .lp-seg-unit { flex: 0 0 auto; padding: 0 9px 0 5px; font-size: 12px; color: rgba(214,226,240,.6); }
 
       .lp-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
       .lp-btn {

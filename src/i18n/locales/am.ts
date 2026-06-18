@@ -189,4 +189,7 @@ export const am: Record<string, string> = {
   'video.again': 'እንደገና ጀምር ↻',
   'video.realtime': 'በቀጥታ ክፈት ▶',
   'video.unsupported': 'በዚህ አሳሽ ውስጥ ቪዲዮ ወደ ውጭ መላክ አይደገፍም። በምትኩ በቀጥታ ይሞክሩ።',
+  'landing.opt.size': 'የካርታ መጠን',
+  'landing.opt.detail': 'ዝርዝር',
+  'landing.opt.hint': 'ሰፊ አካባቢ ወይም ጥልቅ ዝርዝር ለመገንባት ረዘም ያለ ጊዜ ይወስዳል።',
 };

@@ -189,4 +189,7 @@ export const yo: Record<string, string> = {
   'video.again': 'Bẹ̀rẹ̀ láti ìbẹ̀rẹ̀ ↻',
   'video.realtime': 'Ṣí tààrà ▶',
   'video.unsupported': 'Atẹ̀wé yìí kò ní ìtìlẹ́yìn fún àkójáde fídíò. Gbìyànjú tààrà dípò.',
+  'landing.opt.size': 'Ìwọ̀n máàpù',
+  'landing.opt.detail': 'Àlàyé',
+  'landing.opt.hint': 'Àgbègbè tó tóbi tàbí àlàyé tó kúnná máa ń gba àkókò gígùn láti kọ́.',
 };

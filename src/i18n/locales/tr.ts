@@ -201,4 +201,7 @@ export const tr: Record<string, string> = {
   'video.again': 'Baştan başla ↻',
   'video.realtime': 'Gerçek zamanlıyı aç ▶',
   'video.unsupported': 'Bu tarayıcıda video dışa aktarma desteklenmiyor. Bunun yerine gerçek zamanlıyı deneyin.',
+  'landing.opt.size': 'Harita boyutu',
+  'landing.opt.detail': 'Ayrıntı',
+  'landing.opt.hint': 'Daha geniş alan ya da daha ince ayrıntı oluşturulması daha uzun sürer.',
 };

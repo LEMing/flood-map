@@ -209,4 +209,7 @@ export const or: Record<string, string> = {
   'video.again': 'ପୁନର୍ବାର ଆରମ୍ଭ କରନ୍ତୁ ↻',
   'video.realtime': 'ରିଅଲ ଟାଇମ ଖୋଲନ୍ତୁ ▶',
   'video.unsupported': 'ଏହି ବ୍ରାଉଜରରେ ଭିଡିଓ ରପ୍ତାନି ସମର୍ଥିତ ନୁହେଁ। ଏହା ବଦଳରେ ରିଅଲ ଟାଇମ ଚେଷ୍ଟା କରନ୍ତୁ।',
+  'landing.opt.size': 'ମାନଚିତ୍ର ଆକାର',
+  'landing.opt.detail': 'ବିବରଣୀ',
+  'landing.opt.hint': 'ବଡ଼ ଅଞ୍ଚଳ କିମ୍ବା ସୂକ୍ଷ୍ମ ବିବରଣୀ ତିଆରି କରିବାକୁ ଅଧିକ ସମୟ ଲାଗେ।',
 };

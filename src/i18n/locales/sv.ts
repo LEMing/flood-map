@@ -189,4 +189,7 @@ export const sv: Record<string, string> = {
   'video.again': 'Börja om ↻',
   'video.realtime': 'Öppna realtid ▶',
   'video.unsupported': 'Videoexport stöds inte i den här webbläsaren. Prova realtid i stället.',
+  'landing.opt.size': 'Kartstorlek',
+  'landing.opt.detail': 'Detalj',
+  'landing.opt.hint': 'Större område eller finare detaljer tar längre tid att bygga.',
 };

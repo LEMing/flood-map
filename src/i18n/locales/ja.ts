@@ -201,4 +201,7 @@ export const ja: Record<string, string> = {
   'video.again': '最初からやり直す ↻',
   'video.realtime': 'リアルタイムを開く ▶',
   'video.unsupported': 'このブラウザでは動画の書き出しに対応していません。代わりにリアルタイムをお試しください。',
+  'landing.opt.size': 'マップサイズ',
+  'landing.opt.detail': '詳細度',
+  'landing.opt.hint': '範囲が広いほど、または詳細度が高いほど生成に時間がかかります。',
 };

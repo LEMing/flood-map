@@ -188,4 +188,7 @@ export const ru: Record<string, string> = {
   'video.again': 'Начать заново ↻',
   'video.realtime': 'Открыть в реальном времени ▶',
   'video.unsupported': 'Экспорт видео не поддерживается в этом браузере. Попробуйте режим реального времени.',
+  'landing.opt.size': 'Размер карты',
+  'landing.opt.detail': 'Детализация',
+  'landing.opt.hint': 'Большая площадь или более мелкая детализация строятся дольше.',
 };

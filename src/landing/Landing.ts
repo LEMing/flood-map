@@ -3,41 +3,53 @@ import { suggest, type Suggestion } from '../geo/autocomplete';
 import { landingBackdrop } from '../geo/landingSatellite';
 import { detectIpLocation } from '../geo/ipLocation';
 import { prefetchWorld, type WorldRequest } from '../geo/worldDataCache';
-import type { GeoLoadResult } from '../geo/geoWorkerTypes';
-import { DEFAULT_PARAMS, GRID_RESOLUTIONS } from '../config';
+import { pickVideoMime } from '../video/Recorder';
+import { DEFAULT_PARAMS } from '../config';
 import { formatCoords, parseCoords, readUrlState } from '../url';
 import { getLanguage, t } from '../i18n';
+import { el, button, shortLabel } from './dom';
+import { renderPreparing, renderFacts, renderFactError } from './landingFacts';
+
+export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number }
 
 export interface LandingCallbacks {
-  /** Leave the landing and enter the sim for `location` (cinematic = video flow). */
-  onEnter(location: GeocodeResult, opts: { cinematic?: boolean }): void;
+  /** Leave the landing and enter the sim/video for `location` with the chosen scale. */
+  onEnter(location: GeocodeResult, opts: EnterOptions): void;
 }
 
-/** Best-effort feature gate: Safari has no webm MediaRecorder, so hide the video CTA. */
+// Map scale + grid density offered on the landing card.
+const SIZE_OPTIONS = [1, 2.5, 5, 10, 20]; // km on a side
+const GRID_OPTIONS = [256, 512, 1024, 2048]; // sim grid N×N (2048 = sharpest)
+
+interface OptionSpec {
+  icon: string;
+  label: string;
+  values: number[];
+  current: () => number;
+  set: (v: number) => void;
+  unit: string;
+}
+
+/** Whether the browser can record video at all (mp4 preferred, webm fallback). */
 export function videoExportSupported(): boolean {
-  return (
-    typeof MediaRecorder !== 'undefined' &&
-    typeof MediaRecorder.isTypeSupported === 'function' &&
-    (MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ||
-      MediaRecorder.isTypeSupported('video/webm;codecs=vp8') ||
-      MediaRecorder.isTypeSupported('video/webm'))
-  );
+  return pickVideoMime() !== null;
 }
 
 /**
  * The "/" entry surface: an immersive satellite backdrop with a glass card that
  * geocodes an address, prefetches its world in the background, shows a few facts,
- * and hands off to the sim (realtime or cinematic video) via `onEnter`.
+ * and hands off to the sim (realtime or cinematic video) via `onEnter`. The card
+ * is fully rebuilt by render() so a language change just re-renders it.
  */
 export class Landing {
   private readonly cb: LandingCallbacks;
   private readonly root: HTMLElement;
-  private readonly bg: HTMLDivElement;
-  private readonly input: HTMLInputElement;
-  private readonly acList: HTMLDivElement;
-  private readonly facts: HTMLDivElement;
-  private readonly btnRealtime: HTMLButtonElement;
-  private readonly btnVideo: HTMLButtonElement;
+  private bg!: HTMLDivElement;
+  private input!: HTMLInputElement;
+  private acList!: HTMLDivElement;
+  private facts!: HTMLDivElement;
+  private btnRealtime!: HTMLButtonElement;
+  private btnVideo!: HTMLButtonElement;
 
   private selected?: GeocodeResult;
   private items: Suggestion[] = [];
@@ -47,12 +59,39 @@ export class Landing {
   private bgToken = 0;
   private selectToken = 0;
   private touchedInput = false;
+  private km: number;
+  private grid: number;
 
   constructor(cb: LandingCallbacks) {
     this.cb = cb;
+    const url = readUrlState();
+    this.km = url.km && SIZE_OPTIONS.includes(url.km) ? url.km : DEFAULT_PARAMS.mapSizeKm;
+    this.grid = url.grid && GRID_OPTIONS.includes(url.grid) ? url.grid : DEFAULT_PARAMS.gridResolution;
     this.root = document.getElementById('landing') as HTMLElement;
-    this.root.innerHTML = '';
 
+    // Close the autocomplete on any outside click (added once; reads live refs).
+    document.addEventListener('click', (e) => {
+      if (e.target !== this.input && !this.acList?.contains(e.target as Node)) this.closeAc();
+    });
+
+    this.render();
+    void this.bootstrapFromIp();
+  }
+
+  /** Re-entry (e.g. browser Back): the DOM persists, just make sure it's visible. */
+  show(): void {
+    this.input.focus({ preventScroll: true });
+  }
+
+  /** Rebuild the card in the current language; keeps the chosen place + scale. */
+  retranslate(): void {
+    this.render();
+    if (this.selected) this.select(this.selected);
+  }
+
+  /** Build (or rebuild) the entire card DOM and wire its events. */
+  private render(): void {
+    this.root.innerHTML = '';
     this.bg = el('div', 'lp-bg');
     const scrim = el('div', 'lp-scrim');
     const card = el('div', 'lp-card');
@@ -80,38 +119,82 @@ export class Landing {
     const cta = el('div', 'lp-cta');
     this.btnRealtime = button('lp-btn lp-btn-primary', t('landing.cta.realtime'));
     this.btnVideo = button('lp-btn lp-btn-ghost', t('landing.cta.video'));
-    this.btnRealtime.disabled = true;
-    this.btnVideo.disabled = true;
+    this.btnRealtime.disabled = !this.selected;
+    this.btnVideo.disabled = !this.selected;
     if (!videoExportSupported()) {
       this.btnVideo.hidden = true;
       cta.classList.add('single');
     }
     cta.append(this.btnRealtime, this.btnVideo);
 
-    card.append(brand, search, this.facts, cta);
+    card.append(brand, search, this.buildOptions(), this.facts, cta);
     this.root.append(this.bg, scrim, card);
 
-    this.wireEvents();
-    void this.bootstrapFromIp();
+    this.wireCard();
+    if (this.selected) this.input.value = shortLabel(this.selected);
   }
 
-  /** Re-entry (e.g. browser Back): the DOM persists, just make sure it's visible. */
-  show(): void {
-    this.input.focus({ preventScroll: true });
-  }
-
-  private wireEvents(): void {
+  private wireCard(): void {
     this.btnRealtime.addEventListener('click', () => {
-      if (this.selected) this.cb.onEnter(this.selected, {});
+      if (this.selected) this.cb.onEnter(this.selected, { km: this.km, grid: this.grid });
     });
     this.btnVideo.addEventListener('click', () => {
-      if (this.selected) this.cb.onEnter(this.selected, { cinematic: true });
+      if (this.selected) this.cb.onEnter(this.selected, { cinematic: true, km: this.km, grid: this.grid });
     });
     this.input.addEventListener('input', () => { this.touchedInput = true; this.onInput(); });
     this.input.addEventListener('keydown', (e) => this.onKey(e));
-    document.addEventListener('click', (e) => {
-      if (e.target !== this.input && !this.acList.contains(e.target as Node)) this.closeAc();
-    });
+  }
+
+  /** Two labelled pickers — map size (km) and grid detail (N) — with a hint. */
+  private buildOptions(): HTMLElement {
+    const wrap = el('div', 'lp-opts');
+    wrap.append(
+      this.optionRow({
+        icon: '🗺', label: t('landing.opt.size'), values: SIZE_OPTIONS,
+        current: () => this.km, set: (v) => { this.km = v; }, unit: 'km',
+      }),
+      this.optionRow({
+        icon: '▦', label: t('landing.opt.detail'), values: GRID_OPTIONS,
+        current: () => this.grid, set: (v) => { this.grid = v; }, unit: '',
+      }),
+    );
+    const hint = el('div', 'lp-opt-hint');
+    hint.textContent = t('landing.opt.hint');
+    wrap.appendChild(hint);
+    return wrap;
+  }
+
+  private optionRow(o: OptionSpec): HTMLElement {
+    const row = el('div', 'lp-opt-row');
+    const lab = el('div', 'lp-opt-label');
+    const ic = el('span', 'lp-opt-ic');
+    ic.textContent = o.icon;
+    const text = document.createElement('span');
+    text.textContent = o.label;
+    lab.append(ic, text);
+
+    const seg = el('div', 'lp-seg');
+    for (const v of o.values) {
+      const b = button('lp-seg-btn' + (v === o.current() ? ' on' : ''), String(v));
+      b.addEventListener('click', () => {
+        o.set(v);
+        seg.querySelectorAll('.lp-seg-btn').forEach((other) => other.classList.toggle('on', other === b));
+        this.onScaleChange();
+      });
+      seg.appendChild(b);
+    }
+    if (o.unit) {
+      const u = el('span', 'lp-seg-unit');
+      u.textContent = o.unit;
+      seg.appendChild(u);
+    }
+    row.append(lab, seg);
+    return row;
+  }
+
+  /** Size/density changed → re-prefetch + refresh facts for the chosen scale. */
+  private onScaleChange(): void {
+    if (this.selected) this.select(this.selected);
   }
 
   private async bootstrapFromIp(): Promise<void> {
@@ -175,7 +258,7 @@ export class Landing {
     try {
       this.select(await geocode(text));
     } catch {
-      this.showFactError();
+      renderFactError(this.facts, text);
     }
   }
 
@@ -201,7 +284,7 @@ export class Landing {
   }
 
   private closeAc(): void {
-    this.acList.classList.remove('show');
+    this.acList?.classList.remove('show');
     this.items = [];
     this.highlight = -1;
   }
@@ -214,26 +297,22 @@ export class Landing {
     this.btnRealtime.disabled = false;
     this.btnVideo.disabled = false;
     const token = ++this.selectToken;
-    this.renderFacts(location);
+    renderPreparing(this.facts, location);
     void this.swapBackdrop(location);
     prefetchWorld(this.worldRequest(location)).then(
-      (res) => { if (token === this.selectToken) this.setFacts(location, res); },
-      () => { if (token === this.selectToken) this.showFactError(); },
+      (res) => { if (token === this.selectToken) renderFacts(this.facts, location, res); },
+      () => { if (token === this.selectToken) renderFactError(this.facts, this.input.value.trim()); },
     );
   }
 
   private worldRequest(location: GeocodeResult): WorldRequest {
-    const url = readUrlState();
-    const km = url.km ?? DEFAULT_PARAMS.mapSizeKm;
-    const grid = url.grid && (GRID_RESOLUTIONS as readonly number[]).includes(url.grid)
-      ? url.grid : DEFAULT_PARAMS.gridResolution;
     return {
       location,
-      mapSizeKm: km,
-      N: grid,
+      mapSizeKm: this.km,
+      N: this.grid,
       elevationSource: DEFAULT_PARAMS.elevationSource,
       useSurface: DEFAULT_PARAMS.useSurface,
-      params: { ...DEFAULT_PARAMS, mapSizeKm: km, gridResolution: grid },
+      params: { ...DEFAULT_PARAMS, mapSizeKm: this.km, gridResolution: this.grid },
     };
   }
 
@@ -245,77 +324,4 @@ export class Landing {
     this.bg.classList.add('show');
   }
 
-  /** Render the facts row in its "preparing" state; populated by setFacts later. */
-  private renderFacts(location: GeocodeResult): void {
-    this.facts.innerHTML = '';
-    const place = chip('📍', shortLabel(location));
-    const preparing = chip('', t('landing.fact.preparing'), 'loading');
-    preparing.prepend(spinner());
-    this.facts.append(place, preparing);
-    requestAnimationFrame(() => { place.classList.add('show'); preparing.classList.add('show'); });
-  }
-
-  /** Replace the "preparing" row with the place's real facts once it's built. */
-  private setFacts(location: GeocodeResult, res: GeoLoadResult): void {
-    const hm = res.heightmap;
-    const relief = hm.max - hm.min;
-    const chips = [
-      chip('📍', shortLabel(location)),
-      chip('⛰', t('landing.fact.elevation', { min: Math.round(hm.min), max: Math.round(hm.max) })),
-      chip('', this.terrainLabel(relief)),
-    ];
-    const buildings = res.surface?.counts.buildings ?? 0;
-    if (buildings > 0) {
-      chips.push(chip('🏙', t('landing.fact.buildings', { count: buildings.toLocaleString() })));
-    }
-    this.facts.innerHTML = '';
-    this.facts.append(...chips);
-    chips.forEach((c, i) => window.setTimeout(() => c.classList.add('show'), 40 + i * 55));
-  }
-
-  private terrainLabel(relief: number): string {
-    if (relief < 20) return t('landing.fact.terrainFlat');
-    if (relief < 120) return t('landing.fact.terrainHilly');
-    return t('landing.fact.terrainMountain');
-  }
-
-  private showFactError(): void {
-    this.facts.innerHTML = '';
-    const c = chip('⚠️', t('toast.notFound', { q: this.input.value.trim() }));
-    this.facts.append(c);
-    requestAnimationFrame(() => c.classList.add('show'));
-  }
-}
-
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
-  const node = document.createElement(tag);
-  node.className = className;
-  return node;
-}
-
-function button(className: string, label: string): HTMLButtonElement {
-  const b = el('button', className);
-  b.type = 'button';
-  b.textContent = label;
-  return b;
-}
-
-function chip(icon: string, text: string, extra = ''): HTMLSpanElement {
-  const c = el('span', 'lp-chip' + (extra ? ` ${extra}` : ''));
-  if (icon) {
-    const i = el('span', 'ic');
-    i.textContent = icon;
-    c.appendChild(i);
-  }
-  c.appendChild(document.createTextNode(text));
-  return c;
-}
-
-function spinner(): HTMLSpanElement {
-  return el('span', 'spin');
-}
-
-function shortLabel(location: GeocodeResult): string {
-  if (parseCoords(location.displayName)) return location.displayName;
-  return location.displayName.split(',').slice(0, 2).map((s) => s.trim()).join(', ');
 }

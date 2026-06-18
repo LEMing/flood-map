@@ -2,9 +2,14 @@ import * as THREE from 'three';
 import type { Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import { type StatsData, formatDuration, formatVolume } from '../ui/stats';
-import { stormIntensityMmHr } from '../sim/storm';
+import { stormIntensityMmHr, stormDurationSec } from '../sim/storm';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
+import { StatsReadback } from '../sim/StatsReadback';
+import {
+  STORM_FRAMES, STEP_TAIL_SEC, MAX_CAPTURE_SIM_SECONDS,
+  captureGrid, videoFrameBudget, scanWater, isFullyDrained, downsample,
+} from '../sim/videoPrecompute';
 import { t } from '../i18n';
 
 const MAX_STEPS_PER_FRAME = 48;
@@ -39,14 +44,24 @@ export class SimDriver {
   private timelineMode: TimelineMode = 'live';
   private precomputeTargetFrames = 0;
   private precomputeFrameSec = 0;
+  // Until-dry video capture state (unused on the legacy fixed-window demo path).
+  private untilDry = false;
+  private maxFrames = 0;
+  private stepStorm = 0;
+  private peakStored = 0;
+  private peakFlooded = 0;
+  private timeOfPeak = 0;
+  private dryStreak = 0;
+  private captureN = 0;
+  private captureFactor = 1;
+  private captureBuf?: Float32Array;
   private simTime = 0;
   private rainedVolume = 0;
   private observedMaxDepth = 1;
   private stored = 0;
   private floodedFrac = 0;
   private peakDepthNow = 0;
-  private sinceReadback = 0;
-  private readbackPending = false;
+  private readonly statsReadback = new StatsReadback(READBACK_INTERVAL);
 
   constructor(
     private readonly params: Params,
@@ -72,8 +87,7 @@ export class SimDriver {
     this.rainedVolume = 0;
     this.observedMaxDepth = 1;
     this.stored = 0;
-    this.sinceReadback = 0;
-    this.readbackPending = false;
+    this.statsReadback.reset();
   }
 
   dispose(): void {
@@ -121,9 +135,10 @@ export class SimDriver {
     this.simTime += stepDt;
   }
 
-  /** Begin precomputing the storm into scrubbable frames. `simSeconds` lets the
-   *  video capture stretch the window to include the full drain/evaporate tail. */
-  beginPrecompute(opts: { simSeconds?: number } = {}): void {
+  /** Begin precomputing the storm into scrubbable frames. `untilDry` (video)
+   *  captures the full rain→flood→drained arc and self-terminates at dryness;
+   *  otherwise a fixed `simSeconds` window is sampled (the demo timeline). */
+  beginPrecompute(opts: { simSeconds?: number; untilDry?: boolean } = {}): void {
     if (!this.sim || !this.timeline) return;
     this.reset();
     this.params.raining = true;
@@ -133,8 +148,26 @@ export class SimDriver {
     this.timeline.begin();
     this.timelineMode = 'computing';
     const N = this.sim.N;
-    this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
-    this.precomputeFrameSec = (opts.simSeconds ?? DEMO_SIM_SECONDS) / this.precomputeTargetFrames;
+    this.untilDry = !!opts.untilDry;
+    // Snapshots are downsampled to the capture grid so a 1024/2048 sim doesn't
+    // blow the timeline RAM (a full 2048² float frame is ~67 MB).
+    const { captureN, factor } = this.untilDry ? captureGrid(N) : { captureN: N, factor: 1 };
+    this.captureN = captureN;
+    this.captureFactor = factor;
+    this.timeline.configure(captureN);
+    this.captureBuf = factor > 1 ? new Float32Array(captureN * captureN * 4) : undefined;
+
+    if (this.untilDry) {
+      this.maxFrames = videoFrameBudget(captureN);
+      this.stepStorm = stormDurationSec(this.params.stormType) / STORM_FRAMES;
+      this.peakStored = 0;
+      this.peakFlooded = 0;
+      this.timeOfPeak = 0;
+      this.dryStreak = 0;
+    } else {
+      this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
+      this.precomputeFrameSec = (opts.simSeconds ?? DEMO_SIM_SECONDS) / this.precomputeTargetFrames;
+    }
   }
 
   /** True once the precompute has captured a full scrubbable timeline. */
@@ -160,20 +193,26 @@ export class SimDriver {
   tick(dt: number): boolean {
     if (!this.sim) return false;
     if (this.timelineMode === 'computing') {
-      this.tickPrecompute(); // fills the readback synchronously + captures
-      this.computeStats(this.simTime);
+      this.tickPrecompute(); // steps, captures, computes stats + checks dryness
       this.hooks.syncTextures();
       return true;
     }
-    if (this.timelineMode === 'scrub') {
-      if (!this.params.timelinePlaying) return false; // static frame already wired by scrub()
-      this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
-      if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
-      this.hooks.refreshPanel();
-      this.showTimelineFrame();
-      this.hooks.syncTextures();
-      return true;
-    }
+    if (this.timelineMode === 'scrub') return this.tickScrub(dt);
+    return this.tickLive(dt);
+  }
+
+  private tickScrub(dt: number): boolean {
+    if (!this.params.timelinePlaying) return false; // static frame already wired by scrub()
+    this.params.timelinePos += dt / TIMELINE_PLAY_SECONDS;
+    if (this.params.timelinePos > 1) this.params.timelinePos = 0; // loop
+    this.hooks.refreshPanel();
+    this.showTimelineFrame();
+    this.hooks.syncTextures();
+    return true;
+  }
+
+  private tickLive(dt: number): boolean {
+    if (!this.sim) return false;
     let stepped = false;
     if (this.params.floodLevelLive && this.heightmap) {
       this.sim.requestFill(this.heightmap.min + this.params.fillLevelM, true);
@@ -184,7 +223,10 @@ export class SimDriver {
       stepped = true;
     }
     this.hooks.syncTextures(); // cheap: keeps mesh depth-texture refs valid (incl. first frame after build)
-    if (stepped) this.pumpStatsReadback(dt); // skip the gl.readPixels stall + O(N²) scan on a frozen sim
+    // Skip the gl.readPixels stall + O(N²) scan on a frozen sim.
+    if (stepped && this.buf) {
+      this.statsReadback.pump(dt, this.sim, this.buf, () => this.computeStats(this.simTime));
+    }
     return stepped;
   }
 
@@ -222,31 +264,72 @@ export class SimDriver {
 
   private tickPrecompute(): void {
     if (!this.sim || !this.timeline || !this.buf) return;
-    this.stepSimSeconds(this.precomputeFrameSec, MAX_PRECOMPUTE_STEPS);
+    const stormDur = stormDurationSec(this.params.stormType);
+    const stepSec = this.untilDry
+      ? (this.simTime < stormDur ? this.stepStorm : STEP_TAIL_SEC)
+      : this.precomputeFrameSec;
+    this.stepSimSeconds(stepSec, MAX_PRECOMPUTE_STEPS);
     this.sim.readWater(this.buf);
-    let maxEver = 1;
-    for (let i = 1; i < this.buf.length; i += 4) {
-      if (this.buf[i] > maxEver) maxEver = this.buf[i];
+    this.computeStats(this.simTime); // stored / floodedFrac / observedMaxDepth for THIS frame
+    this.timeline.capture(this.captureFrame(), this.simTime);
+    if (this.untilDry) this.advanceUntilDry(stormDur);
+    else this.advanceLegacy();
+  }
+
+  /** Until-dry (video) capture: track peaks, drive the monotonic bar, and finish
+   *  once the water has receded to dryness (or a hard cap binds). */
+  private advanceUntilDry(stormDur: number): void {
+    if (!this.timeline) return;
+    if (this.stored > this.peakStored) { this.peakStored = this.stored; this.timeOfPeak = this.simTime; }
+    this.peakFlooded = Math.max(this.peakFlooded, this.floodedFrac);
+    this.timeline.progress = Math.min(1, this.simTime / MAX_CAPTURE_SIM_SECONDS);
+    const dry = this.simTime >= stormDur && this.simTime >= this.timeOfPeak
+      && isFullyDrained(this.stored, this.peakStored, this.floodedFrac, this.peakFlooded);
+    this.dryStreak = dry ? this.dryStreak + 1 : 0;
+    if (this.dryStreak >= 2 || this.timeline.count >= this.maxFrames || this.simTime >= MAX_CAPTURE_SIM_SECONDS) {
+      this.finishPrecompute();
     }
-    this.observedMaxDepth = maxEver;
-    this.timeline.capture(this.buf, this.simTime);
+  }
+
+  /** Fixed-window (demo) capture: stop at a fixed frame count. */
+  private advanceLegacy(): void {
+    if (!this.timeline) return;
     this.timeline.progress = this.timeline.count / this.precomputeTargetFrames;
-    if (this.timeline.count >= this.precomputeTargetFrames) {
-      this.timeline.finish();
-      this.timelineMode = 'scrub';
-      this.params.timelinePos = 0;
-      this.params.timelinePlaying = true; // auto-play the finished scene once
-      this.showTimelineFrame();
-      this.hooks.refreshPanel();
-    }
+    if (this.timeline.count >= this.precomputeTargetFrames) this.finishPrecompute();
+  }
+
+  /** The snapshot to store: downsampled to the capture grid when the sim grid is
+   *  large (keeps the timeline RAM bounded), else the full readback. */
+  private captureFrame(): Float32Array {
+    const src = this.buf as Float32Array; // tickPrecompute guards buf
+    if (this.captureFactor <= 1 || !this.captureBuf) return src;
+    downsample(src, this.captureBuf, this.captureN, this.captureFactor);
+    return this.captureBuf;
+  }
+
+  private finishPrecompute(): void {
+    if (!this.timeline) return;
+    this.timeline.finish();
+    this.timelineMode = 'scrub';
+    this.params.timelinePos = 0;
+    this.params.timelinePlaying = true; // auto-play the finished scene once
+    this.showTimelineFrame();
+    this.hooks.refreshPanel();
   }
 
   private showTimelineFrame(): void {
     if (!this.timeline || !this.buf) return;
     const f = this.timeline.showAt(this.params.timelinePos);
     if (!f) return;
-    this.buf.set(f.rgba);
-    this.computeStats(f.time);
+    // Downsampled (video) frames don't fit the full-res buf — the visuals come
+    // from the timeline texture (already uploaded by showAt); just sync the clock.
+    if (this.captureFactor <= 1) {
+      this.buf.set(f.rgba);
+      this.computeStats(f.time);
+    } else {
+      this.stats.simTime = formatDuration(f.time);
+      this.hooks.refreshPanel();
+    }
   }
 
   status(): string {
@@ -264,44 +347,11 @@ export class SimDriver {
     return size * size * frac;
   }
 
-  private updateStats(): void {
-    if (!this.sim || !this.buf) return;
-    this.sim.readWater(this.buf);
-    this.computeStats(this.simTime);
-  }
-
-  /** Non-blocking stats: poll a finished async readback, then kick the next one.
-   * Avoids the ~26ms gl.readPixels stall (at 1024) every refresh interval. */
-  private pumpStatsReadback(dt: number): void {
-    if (!this.sim || !this.buf) return;
-    if (this.readbackPending && this.sim.pollReadback(this.buf)) {
-      this.readbackPending = false;
-      this.computeStats(this.simTime);
-    }
-    this.sinceReadback += dt;
-    if (!this.readbackPending && this.sinceReadback >= READBACK_INTERVAL) {
-      this.sinceReadback = 0;
-      if (this.sim.requestReadback()) this.readbackPending = true;
-      else this.updateStats(); // no WebGL2 fence support → sync fallback
-    }
-  }
-
   private computeStats(simTime: number): void {
     if (!this.sim || !this.buf) return;
     const N = this.sim.N;
     const cellArea = this.sim.cellSize * this.sim.cellSize;
-    let stored = 0;
-    let flooded = 0;
-    let maxNow = 0;
-    let maxEver = 0;
-    for (let i = 0; i < N * N; i++) {
-      const d = this.buf[i * 4];
-      const m = this.buf[i * 4 + 1];
-      stored += d;
-      if (d > 0.05) flooded++;
-      if (d > maxNow) maxNow = d;
-      if (m > maxEver) maxEver = m;
-    }
+    const { stored, flooded, maxNow, maxEver } = scanWater(this.buf, N * N);
     if (this.timelineMode !== 'scrub') this.observedMaxDepth = Math.max(1, maxEver);
     this.stored = stored * cellArea;
     this.floodedFrac = flooded / (N * N);

@@ -206,4 +206,7 @@ export const kn: Record<string, string> = {
   'video.again': 'ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ ↻',
   'video.realtime': 'ನೈಜ ಸಮಯವನ್ನು ತೆರೆಯಿರಿ ▶',
   'video.unsupported': 'ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ವೀಡಿಯೊ ರಫ್ತು ಬೆಂಬಲಿತವಾಗಿಲ್ಲ. ಬದಲಿಗೆ ನೈಜ ಸಮಯವನ್ನು ಪ್ರಯತ್ನಿಸಿ.',
+  'landing.opt.size': 'ನಕ್ಷೆ ಗಾತ್ರ',
+  'landing.opt.detail': 'ವಿವರ',
+  'landing.opt.hint': 'ದೊಡ್ಡ ಪ್ರದೇಶ ಅಥವಾ ಸೂಕ್ಷ್ಮ ವಿವರವನ್ನು ನಿರ್ಮಿಸಲು ಹೆಚ್ಚು ಸಮಯ ಬೇಕಾಗುತ್ತದೆ.',
 };

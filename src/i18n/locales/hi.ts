@@ -206,4 +206,7 @@ export const hi: Record<string, string> = {
   'video.again': 'फिर से शुरू करें ↻',
   'video.realtime': 'रियलटाइम खोलें ▶',
   'video.unsupported': 'इस ब्राउज़र में वीडियो निर्यात समर्थित नहीं है। इसके बजाय रियलटाइम आज़माएं।',
+  'landing.opt.size': 'मानचित्र आकार',
+  'landing.opt.detail': 'विवरण',
+  'landing.opt.hint': 'बड़ा क्षेत्र या बारीक विवरण बनाने में अधिक समय लगता है।',
 };
