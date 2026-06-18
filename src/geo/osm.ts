@@ -29,6 +29,7 @@ const OVERPASS_MIRRORS = [
   'https://overpass.osm.ch/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
+const OVERPASS_TIMEOUT_MS = 12000; // a stalled mirror must fail over, not hang the load
 
 type OverpassResponse = { elements: OsmWay[] };
 
@@ -40,7 +41,12 @@ async function overpassFetch(query: string): Promise<OverpassResponse> {
   for (const mirror of OVERPASS_MIRRORS) {
     const url = `${mirror}?data=${encodeURIComponent(query)}`;
     try {
-      return await cachedJson<OverpassResponse>(url, { key: cacheKey });
+      // Cap each mirror: a stall (no response, no error) would otherwise hang the
+      // whole "features" stage; on timeout we fall through to the next mirror.
+      return await cachedJson<OverpassResponse>(url, {
+        key: cacheKey,
+        init: { signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS) },
+      });
     } catch (e) {
       lastError = e;
     }
