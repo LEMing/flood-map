@@ -331,6 +331,15 @@ export class SceneManager {
     this.postFx.render(this.weather.uSunScreen.value, this.weather.uSunVisible.value, this.weather.uStorm.value);
   }
 
+  /** Draw an overlay scene on top of the current frame (the video corner label),
+   *  without clearing — call right after render() so it composites into the clip. */
+  renderOverlay(scene: THREE.Scene, camera: THREE.Camera): void {
+    this.renderer.setRenderTarget(null);
+    this.renderer.autoClear = false;
+    this.renderer.render(scene, camera);
+    this.renderer.autoClear = true;
+  }
+
   /** Scale the 3D render resolution (backing store) without touching the HTML UI. */
   setRenderScale(scale: number): void {
     const s = THREE.MathUtils.clamp(scale, 0.4, 1);

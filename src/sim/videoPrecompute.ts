@@ -2,9 +2,14 @@
 // hold its line/complexity budget): capture-grid sizing, frame downsampling, the
 // per-frame water scan, and the dryness predicate.
 
-export const STORM_FRAMES = 48; // dense samples over the storm/peak (always smooth)
-export const STEP_TAIL_SEC = 900; // 15 sim-min per recession frame
+export const STORM_FRAMES = 30; // samples over the storm/flood build (≈ first half)
+export const STEP_TAIL_SEC = 300; // 5 sim-min per recession frame (drying gets ≈ half)
 export const MAX_CAPTURE_SIM_SECONDS = 6 * 3600; // hard sim-time backstop
+// Phased evaporation: ~0 while it's raining so the flood actually pools, then high
+// during the recession so the city dries fully + fast within the 30 s clip (the
+// user wants flood → bone-dry in 30 s). Capture-only; the live sim is unaffected.
+export const STORM_EVAP_PER_HR = 0.05;
+export const TAIL_EVAP_PER_HR = 1.5;
 const DRY_FRACTION = 0.03; // "essentially gone" = 3% of the peak
 const VIDEO_CAPTURE_N = 512; // downsample snapshots to this so RAM stays bounded
 
@@ -39,6 +44,15 @@ export function scanWater(buf: Float32Array, count: number): WaterScan {
 export function isFullyDrained(stored: number, peakStored: number, floodedFrac: number, peakFlooded: number): boolean {
   return stored <= DRY_FRACTION * peakStored
     && floodedFrac <= DRY_FRACTION * Math.max(peakFlooded, 1e-6);
+}
+
+/** The snapshot to store: downsampled when the sim grid is large (RAM bound), else the readback. */
+export function captureFrame(
+  buf: Float32Array, captureBuf: Float32Array | undefined, captureN: number, factor: number,
+): Float32Array {
+  if (factor <= 1 || !captureBuf) return buf;
+  downsample(buf, captureBuf, captureN, factor);
+  return captureBuf;
 }
 
 /** Box-average an (M·factor)² ×4 float frame down to M² ×4. */

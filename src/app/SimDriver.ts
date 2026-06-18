@@ -7,8 +7,8 @@ import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
 import { StatsReadback } from '../sim/StatsReadback';
 import {
-  STORM_FRAMES, STEP_TAIL_SEC, MAX_CAPTURE_SIM_SECONDS,
-  captureGrid, videoFrameBudget, scanWater, isFullyDrained, downsample,
+  STORM_FRAMES, STEP_TAIL_SEC, MAX_CAPTURE_SIM_SECONDS, STORM_EVAP_PER_HR, TAIL_EVAP_PER_HR,
+  captureGrid, videoFrameBudget, scanWater, isFullyDrained, captureFrame,
 } from '../sim/videoPrecompute';
 import { t } from '../i18n';
 
@@ -265,15 +265,24 @@ export class SimDriver {
   private tickPrecompute(): void {
     if (!this.sim || !this.timeline || !this.buf) return;
     const stormDur = stormDurationSec(this.params.stormType);
-    const stepSec = this.untilDry
-      ? (this.simTime < stormDur ? this.stepStorm : STEP_TAIL_SEC)
-      : this.precomputeFrameSec;
+    let stepSec = this.precomputeFrameSec;
+    if (this.untilDry) {
+      const inStorm = this.simTime < stormDur;
+      stepSec = inStorm ? this.stepStorm : STEP_TAIL_SEC;
+      // Low evap while raining (flood pools), high after (city dries fully + fast).
+      this.params.evaporationPerHr = inStorm ? STORM_EVAP_PER_HR : TAIL_EVAP_PER_HR;
+      this.sim.updateParams(this.params);
+    }
     this.stepSimSeconds(stepSec, MAX_PRECOMPUTE_STEPS);
     this.sim.readWater(this.buf);
     this.computeStats(this.simTime); // stored / floodedFrac / observedMaxDepth for THIS frame
-    this.timeline.capture(this.captureFrame(), this.simTime);
-    if (this.untilDry) this.advanceUntilDry(stormDur);
-    else this.advanceLegacy();
+    this.timeline.capture(captureFrame(this.buf, this.captureBuf, this.captureN, this.captureFactor), this.simTime);
+    if (this.untilDry) {
+      this.advanceUntilDry(stormDur);
+    } else {
+      this.timeline.progress = this.timeline.count / this.precomputeTargetFrames;
+      if (this.timeline.count >= this.precomputeTargetFrames) this.finishPrecompute();
+    }
   }
 
   /** Until-dry (video) capture: track peaks, drive the monotonic bar, and finish
@@ -289,22 +298,6 @@ export class SimDriver {
     if (this.dryStreak >= 2 || this.timeline.count >= this.maxFrames || this.simTime >= MAX_CAPTURE_SIM_SECONDS) {
       this.finishPrecompute();
     }
-  }
-
-  /** Fixed-window (demo) capture: stop at a fixed frame count. */
-  private advanceLegacy(): void {
-    if (!this.timeline) return;
-    this.timeline.progress = this.timeline.count / this.precomputeTargetFrames;
-    if (this.timeline.count >= this.precomputeTargetFrames) this.finishPrecompute();
-  }
-
-  /** The snapshot to store: downsampled to the capture grid when the sim grid is
-   *  large (keeps the timeline RAM bounded), else the full readback. */
-  private captureFrame(): Float32Array {
-    const src = this.buf as Float32Array; // tickPrecompute guards buf
-    if (this.captureFactor <= 1 || !this.captureBuf) return src;
-    downsample(src, this.captureBuf, this.captureN, this.captureFactor);
-    return this.captureBuf;
   }
 
   private finishPrecompute(): void {
@@ -323,21 +316,19 @@ export class SimDriver {
     if (!f) return;
     // Downsampled (video) frames don't fit the full-res buf — the visuals come
     // from the timeline texture (already uploaded by showAt); just sync the clock.
-    if (this.captureFactor <= 1) {
-      this.buf.set(f.rgba);
-      this.computeStats(f.time);
-    } else {
+    if (this.captureFactor > 1) {
       this.stats.simTime = formatDuration(f.time);
       this.hooks.refreshPanel();
+      return;
     }
+    this.buf.set(f.rgba);
+    this.computeStats(f.time);
   }
 
   status(): string {
-    if (this.timelineMode === 'computing' && this.timeline) {
-      return t('demo.stComputing', { pct: Math.round(this.timeline.progress * 100) });
-    }
-    if (this.timelineMode === 'scrub') return t('demo.stReady');
-    return t('demo.stLive');
+    const tl = this.timeline;
+    if (this.timelineMode === 'computing' && tl) return t('demo.stComputing', { pct: Math.round(tl.progress * 100) });
+    return this.timelineMode === 'scrub' ? t('demo.stReady') : t('demo.stLive');
   }
 
   private rainArea(): number {

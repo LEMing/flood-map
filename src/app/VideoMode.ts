@@ -4,6 +4,7 @@ import type { SimDriver } from './SimDriver';
 import type { SceneManager } from '../render/SceneManager';
 import { stormIntensityMmHr } from '../sim/storm';
 import { Recorder } from '../video/Recorder';
+import { buildVideoLabel } from '../video/videoLabel';
 import { t } from '../i18n';
 
 export interface VideoModeHost {
@@ -22,12 +23,6 @@ const VIDEO_DURATION_SEC = 30;
 const VIDEO_FPS = 30;
 const ORBIT_RAD = Math.PI / 9; // ~20° gentle cinematic sweep over the clip
 const RAIN_VISUAL_CUTOFF_MMHR = 0.5;
-// Keep the world's real drainage so the cloudburst (~25 mm/hr peak) actually
-// pools and floods, but bump evaporation so the water fully recedes within the
-// capture window — the clip must run all the way to dry (works even where
-// drainage is zero, e.g. подтопление zones). 0.8/hr clears the worst basin in
-// ~4.4 h after the peak (the precompute self-terminates at dryness).
-const CAPTURE_EVAP_PER_HR = 0.8;
 
 // Params the capture profile mutates; snapshotted so the live sim is restored after.
 const TOUCHED: Array<keyof Params> = [
@@ -113,7 +108,9 @@ export class VideoMode {
     this.host.setCapturing(true);
     this.startOffset.copy(this.host.scene.camera.position).sub(this.host.scene.controls.target);
 
-    const recorder = new Recorder(this.host.scene.renderer.domElement, VIDEO_FPS);
+    const canvas = this.host.scene.renderer.domElement;
+    const label = buildVideoLabel(this.host.placeName(), canvas.width, canvas.height);
+    const recorder = new Recorder(canvas, VIDEO_FPS);
     this.outputExt = recorder.fileExt;
     recorder.start();
 
@@ -130,6 +127,7 @@ export class VideoMode {
         this.updateCaptureVisuals(time);
         this.orbit(pos);
         this.host.renderCaptureFrame(dt);
+        this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
         this.setProgress(t('video.recording', { pct: pctOf(pos) }), pos);
         if (elapsed >= VIDEO_DURATION_SEC) { resolve(); return; }
         requestAnimationFrame(frame);
@@ -137,7 +135,9 @@ export class VideoMode {
       requestAnimationFrame(frame);
     });
 
-    return recorder.stop();
+    const blob = await recorder.stop();
+    label.dispose();
+    return blob;
   }
 
   private updateCaptureVisuals(simTimeSec: number): void {
@@ -159,7 +159,8 @@ export class VideoMode {
     p.storm = true;
     p.raining = true;
     p.rainFootprint = 'uniform';
-    p.evaporationPerHr = CAPTURE_EVAP_PER_HR;
+    // evaporationPerHr is driven per-phase by the precompute (low → high); it's in
+    // TOUCHED so the live sim value is restored afterwards.
   }
 
   private snapshot(): Partial<Params> {
