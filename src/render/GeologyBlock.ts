@@ -224,9 +224,10 @@ export class GeologyBlock {
         : 0;
       const seabed = Math.min(1, Math.max(0, waterDepth / p.depthShownM));
       // water-table depth below this column's surface: 0 at the coast (= sea level),
-      // up to waterTableM inland. Kept continuous (no -1 jump) so it doesn't smear
-      // across land/marine quad edges; the draw is gated to land fragments.
-      const wt = Math.min(Math.max(pt.e - sea, 0), p.waterTableM) / p.depthShownM;
+      // up to waterTableM inland. Uses the SMOOTHED surface (like the strata) so the
+      // phreatic band doesn't spike down at every building. Kept continuous (no -1
+      // jump) so it doesn't smear across land/marine quad edges; gated to land.
+      const wt = Math.min(Math.max(eStrata - sea, 0), p.waterTableM) / p.depthShownM;
       return { top, topStrata, marine, seabed, wt };
     };
     for (let i = 0; i < n; i++) {
