@@ -13,6 +13,7 @@ import { peekArrayBuffer, putArrayBuffer } from './cache';
 const NATIVE_DEG = 1 / 3600; // ~1 arc-second
 const MAX_TILES = 9; // a ≤20 km area can straddle a 1° boundary on both axes
 const NODATA_FLOOR = -1000;
+const FABDEM_TIMEOUT_MS = 12000; // per-attempt cap on the flaky HF download
 
 const pad2 = (n: number) => String(Math.abs(n)).padStart(2, '0');
 const pad3 = (n: number) => String(Math.abs(n)).padStart(3, '0');
@@ -44,7 +45,11 @@ async function openTiff(source: ElevationSource, url: string): Promise<GeoTIFF> 
   if (source === 'fabdem') {
     const cached = await peekArrayBuffer(url);
     if (cached) return fromArrayBuffer(cached);
-    const resp = await fetch(url);
+    // HF's Xet redirect backend is flaky/slow; without a timeout a stalled
+    // connection hangs the whole load for MINUTES (net::ERR_TIMED_OUT). Bail at
+    // 12s so the retry below — or the terrarium source-fallback in load.ts —
+    // takes over in seconds.
+    const resp = await fetch(url, { signal: AbortSignal.timeout(FABDEM_TIMEOUT_MS) });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const buf = await resp.arrayBuffer();
     // The HF/Xet signed-redirect backend occasionally serves a tiny error body
@@ -169,7 +174,11 @@ export async function fetchElevationCog(
       ];
       const w = Math.min(2048, Math.max(8, Math.ceil((bbox[2] - bbox[0]) / NATIVE_DEG) + 2));
       const h = Math.min(2048, Math.max(8, Math.ceil((bbox[3] - bbox[1]) / NATIVE_DEG) + 2));
-      for (let attempt = 0; attempt < 3; attempt++) {
+      // Two attempts: one retry covers a flaky read or a single timed-out fetch
+      // (the timeout makes each attempt fail in ≤12s instead of hanging). If both
+      // fail the tile is left as a hole (inpainted), or — if NO tile reads at all
+      // — fetchElevationCog throws and load.ts falls back to terrarium.
+      for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const tiff = await openTiff(source, tileUrl(source, latI, lonI));
           const raster = await tiff.readRasters({
@@ -185,7 +194,7 @@ export async function fetchElevationCog(
           patches.push({ minLon: bbox[0], maxLon: bbox[2], minLat: bbox[1], maxLat: bbox[3], w, h, data: band });
           return;
         } catch {
-          if (attempt < 2) await sleep(300 * (attempt + 1));
+          if (attempt < 1) await sleep(400);
           // else: give up on this tile — inpainting fills the gap from neighbours.
         }
       }
