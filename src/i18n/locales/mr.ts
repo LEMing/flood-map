@@ -223,4 +223,6 @@ export const mr: Record<string, string> = {
   'toast.loadFailed': 'नकाशा लोड करताना काहीतरी चूक झाली. कृपया पुन्हा लोड करा.',
   'toast.linkCopied': 'दुवा क्लिपबोर्डवर कॉपी केला',
   'share.title': 'हे परिदृश्य शेअर करा',
+  'waterlevel.title': 'पाण्याची पातळी 🌊',
+  'waterlevel.off': 'बंद',
 };

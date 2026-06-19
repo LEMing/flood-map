@@ -219,4 +219,6 @@ export const su: Record<string, string> = {
   'toast.loadFailed': 'Aya nu lepat nalika ngamuat peta. Mangga muat deui.',
   'toast.linkCopied': 'Tautan disalin ka papan klip',
   'share.title': 'Bagikeun skenario ieu',
+  'waterlevel.title': 'Tingkat cai 🌊',
+  'waterlevel.off': 'Pareum',
 };

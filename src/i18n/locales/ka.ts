@@ -201,4 +201,6 @@ export const ka: Record<string, string> = {
   'toast.loadFailed': 'რუკის ჩატვირთვისას რაღაც შეცდომა მოხდა. გთხოვთ, ხელახლა ჩატვირთოთ.',
   'toast.linkCopied': 'ბმული დაკოპირდა ბუფერში',
   'share.title': 'ამ სცენარის გაზიარება',
+  'waterlevel.title': 'წყლის დონე 🌊',
+  'waterlevel.off': 'გამორთ',
 };

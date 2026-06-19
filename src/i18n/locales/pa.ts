@@ -222,4 +222,6 @@ export const pa: Record<string, string> = {
   'toast.loadFailed': 'ਨਕਸ਼ਾ ਲੋਡ ਕਰਨ ਵੇਲੇ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਲੋਡ ਕਰੋ।',
   'toast.linkCopied': 'ਲਿੰਕ ਕਲਿੱਪਬੋਰਡ ਉੱਤੇ ਕਾਪੀ ਹੋਇਆ',
   'share.title': 'ਇਹ ਦ੍ਰਿਸ਼ ਸਾਂਝਾ ਕਰੋ',
+  'waterlevel.title': 'ਪਾਣੀ ਦਾ ਪੱਧਰ 🌊',
+  'waterlevel.off': 'ਬੰਦ',
 };

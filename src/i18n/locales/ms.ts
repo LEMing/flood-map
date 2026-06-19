@@ -202,4 +202,6 @@ export const ms: Record<string, string> = {
   'toast.loadFailed': 'Sesuatu telah berlaku semasa memuatkan peta. Sila muat semula.',
   'toast.linkCopied': 'Pautan disalin ke papan keratan',
   'share.title': 'Kongsi senario ini',
+  'waterlevel.title': 'Paras air 🌊',
+  'waterlevel.off': 'Mati',
 };

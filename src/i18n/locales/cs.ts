@@ -202,4 +202,6 @@ export const cs: Record<string, string> = {
   'toast.loadFailed': 'Při načítání mapy se něco pokazilo. Načtěte prosím znovu.',
   'toast.linkCopied': 'Odkaz zkopírován do schránky',
   'share.title': 'Sdílet tento scénář',
+  'waterlevel.title': 'Hladina vody 🌊',
+  'waterlevel.off': 'Vyp',
 };

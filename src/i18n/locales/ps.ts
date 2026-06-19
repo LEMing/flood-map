@@ -219,4 +219,6 @@ export const ps: Record<string, string> = {
   'toast.loadFailed': 'د نقشې په بارولو کې یو څه غلط شو. مهرباني وکړئ بیا یې بار کړئ.',
   'toast.linkCopied': 'لینک کلیپ بورډ ته کاپي شو',
   'share.title': 'دا سناریو شریک کړئ',
+  'waterlevel.title': 'د اوبو کچه 🌊',
+  'waterlevel.off': 'بند',
 };

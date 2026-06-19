@@ -43,11 +43,12 @@ afterEach(() => {
 });
 
 describe('ScenarioUrl.applyFromUrl', () => {
-  it('maps water to fillLevelM and turns on the live flood level', () => {
-    const p = params({ floodLevelLive: false, fillLevelM: 5 });
+  it('maps water to fillLevelM, turns on the live flood level, and stops the rain', () => {
+    const p = params({ floodLevelLive: false, fillLevelM: 5, raining: true });
     make(p).applyFromUrl({ water: 1.5 });
     expect(p.fillLevelM).toBe(1.5);
     expect(p.floodLevelLive).toBe(true);
+    expect(p.raining).toBe(false); // clean static-flood snapshot
   });
 
   it('round-trips water=0 (still enables the live flood level)', () => {

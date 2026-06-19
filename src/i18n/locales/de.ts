@@ -220,4 +220,6 @@ export const de: Record<string, string> = {
   'toast.loadFailed': 'Beim Laden der Karte ist etwas schiefgelaufen. Bitte lade neu.',
   'toast.linkCopied': 'Link in die Zwischenablage kopiert',
   'share.title': 'Dieses Szenario teilen',
+  'waterlevel.title': 'Wasserstand 🌊',
+  'waterlevel.off': 'Aus',
 };

@@ -203,4 +203,6 @@ export const ta: Record<string, string> = {
   'toast.loadFailed': 'வரைபடத்தை ஏற்றும்போது ஏதோ தவறு நடந்தது. மீண்டும் ஏற்றவும்.',
   'toast.linkCopied': 'இணைப்பு கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது',
   'share.title': 'இந்தக் காட்சியைப் பகிரவும்',
+  'waterlevel.title': 'நீர் மட்டம் 🌊',
+  'waterlevel.off': 'ஆஃப்',
 };

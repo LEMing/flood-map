@@ -202,4 +202,6 @@ export const pl: Record<string, string> = {
   'toast.loadFailed': 'Coś poszło nie tak podczas ładowania mapy. Załaduj ponownie.',
   'toast.linkCopied': 'Link skopiowany do schowka',
   'share.title': 'Udostępnij ten scenariusz',
+  'waterlevel.title': 'Poziom wody 🌊',
+  'waterlevel.off': 'Wył',
 };

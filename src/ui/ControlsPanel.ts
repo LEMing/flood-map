@@ -17,6 +17,7 @@ export interface ControlCallbacks {
   onTogglePlay(): void;
   onDump(): void; // dump a one-shot batch of water (flash flood)
   onFill(): void; // flood ground up to a chosen level
+  onWaterLevel(level: number | null): void; // hold a static +N m water level (sea-level rise); null = off
   onPrecompute(): void; // demo: precompute the storm into a scrubbable timeline
   onScrub(): void; // demo: timeline slider moved
   onTimelinePlay(): void; // demo: timeline play toggled
@@ -35,6 +36,17 @@ export class ControlsPanel {
     else this.buildFull(params, stats, cb);
   }
 
+  // A friendly "how much is underwater at +N m" card: preset buttons that hold a
+  // static flood level (floodLevelLive). Shown in both panel layouts; the +N m
+  // faces are literal so they need no translation.
+  private buildWaterLevel(cb: ControlCallbacks): void {
+    const card = this.pane.addFolder({ title: t('waterlevel.title'), expanded: true });
+    for (const m of [0.5, 1, 2, 5, 10]) {
+      card.addButton({ title: `+${m} m` }).on('click', () => { cb.onWaterLevel(m); this.refresh(); });
+    }
+    card.addButton({ title: t('waterlevel.off') }).on('click', () => { cb.onWaterLevel(null); this.refresh(); });
+  }
+
   private buildDemo(params: Params, stats: StatsData, cb: ControlCallbacks): void {
     const change = () => cb.onParamChange();
 
@@ -45,6 +57,8 @@ export class ControlsPanel {
     storm.addBinding(params, 'timelinePos', { min: 0, max: 1, step: 0.001, label: t('demo.timeline') }).on('change', () => cb.onScrub());
     storm.addBinding(params, 'timelinePlaying', { label: t('demo.play') }).on('change', () => cb.onTimelinePlay());
     storm.addButton({ title: t('demo.live') }).on('click', () => cb.onLive());
+
+    this.buildWaterLevel(cb);
 
     const view = this.pane.addFolder({ title: t('viz.title'), expanded: true });
     view.addBinding(params, 'buildings3D', { label: t('viz.buildings3D') }).on('change', change);
@@ -84,6 +98,9 @@ export class ControlsPanel {
     sim.addButton({ title: t('sim.fill') }).on('click', () => cb.onFill());
     sim.addBinding(params, 'timeScale', { min: 1, max: 3000, step: 1, label: t('sim.timescale') }).on('change', change);
     sim.addBinding(params, 'substeps', { min: 1, max: 12, step: 1, label: t('sim.substeps') }).on('change', change);
+
+    // --- Water level (sea-level rise / flood presets) ---
+    this.buildWaterLevel(cb);
 
     // --- Rain ---
     const rain = this.pane.addFolder({ title: t('rain.title'), expanded: false });

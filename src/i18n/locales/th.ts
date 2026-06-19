@@ -214,4 +214,6 @@ export const th: Record<string, string> = {
   'toast.loadFailed': 'เกิดข้อผิดพลาดขณะโหลดแผนที่ โปรดโหลดใหม่',
   'toast.linkCopied': 'คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว',
   'share.title': 'แชร์สถานการณ์นี้',
+  'waterlevel.title': 'ระดับน้ำ 🌊',
+  'waterlevel.off': 'ปิด',
 };

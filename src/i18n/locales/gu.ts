@@ -222,4 +222,6 @@ export const gu: Record<string, string> = {
   'toast.loadFailed': 'નકશો લોડ કરતી વખતે કંઈક ખોટું થયું. કૃપા કરીને ફરી લોડ કરો.',
   'toast.linkCopied': 'લિંક ક્લિપબોર્ડ પર કૉપિ થઈ',
   'share.title': 'આ દૃશ્ય શેર કરો',
+  'waterlevel.title': 'પાણીનું સ્તર 🌊',
+  'waterlevel.off': 'બંધ',
 };

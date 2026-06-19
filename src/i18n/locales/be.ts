@@ -201,4 +201,6 @@ export const be: Record<string, string> = {
   'toast.loadFailed': 'Нешта пайшло не так пры загрузцы карты. Калі ласка, перазагрузіце.',
   'toast.linkCopied': 'Спасылка скапіравана ў буфер абмену',
   'share.title': 'Падзяліцца гэтым сцэнарыем',
+  'waterlevel.title': 'Узровень вады 🌊',
+  'waterlevel.off': 'Выкл',
 };

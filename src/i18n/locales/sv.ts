@@ -202,4 +202,6 @@ export const sv: Record<string, string> = {
   'toast.loadFailed': 'Något gick fel när kartan laddades. Ladda om.',
   'toast.linkCopied': 'Länk kopierad till urklipp',
   'share.title': 'Dela det här scenariot',
+  'waterlevel.title': 'Vattennivå 🌊',
+  'waterlevel.off': 'Av',
 };

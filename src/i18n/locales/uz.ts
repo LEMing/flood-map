@@ -201,4 +201,6 @@ export const uz: Record<string, string> = {
   'toast.loadFailed': 'Xaritani yuklashda nimadir xato ketdi. Iltimos, qayta yuklang.',
   'toast.linkCopied': 'Havola vaqtinchalik xotiraga nusxalandi',
   'share.title': 'Ushbu stsenariyni ulashing',
+  'waterlevel.title': 'Suv sathi 🌊',
+  'waterlevel.off': 'Oʻchirish',
 };

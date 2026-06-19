@@ -48,6 +48,10 @@ export const en: Record<string, string> = {
   'rain.cellY': 'cell y',
   'rain.cellRadius': 'cell radius',
 
+  // Water-level / sea-level-rise presets (the +N m button faces are literal)
+  'waterlevel.title': 'Water level 🌊',
+  'waterlevel.off': 'Off',
+
   // Storm hyetograph presets
   'storm.constant': 'Constant (manual mm/hr)',
   'storm.cloudburst': 'Cloudburst (~50 mm / 2 h)',

@@ -223,4 +223,6 @@ export const yue: Record<string, string> = {
   'toast.loadFailed': '載入地圖嗰陣出咗問題。請重新載入。',
   'toast.linkCopied': '連結已複製到剪貼簿',
   'share.title': '分享呢個情景',
+  'waterlevel.title': '水位 🌊',
+  'waterlevel.off': '關',
 };

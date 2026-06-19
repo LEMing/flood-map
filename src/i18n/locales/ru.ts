@@ -201,4 +201,6 @@ export const ru: Record<string, string> = {
   'toast.loadFailed': 'Что-то пошло не так при загрузке карты. Пожалуйста, перезагрузите.',
   'toast.linkCopied': 'Ссылка скопирована в буфер обмена',
   'share.title': 'Поделиться этим сценарием',
+  'waterlevel.title': 'Уровень воды 🌊',
+  'waterlevel.off': 'Выкл',
 };

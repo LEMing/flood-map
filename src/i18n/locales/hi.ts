@@ -219,4 +219,6 @@ export const hi: Record<string, string> = {
   'toast.loadFailed': 'मानचित्र लोड करते समय कुछ गलत हो गया। कृपया फिर से लोड करें।',
   'toast.linkCopied': 'लिंक क्लिपबोर्ड पर कॉपी किया गया',
   'share.title': 'यह परिदृश्य साझा करें',
+  'waterlevel.title': 'जल स्तर 🌊',
+  'waterlevel.off': 'बंद',
 };

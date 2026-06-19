@@ -219,4 +219,6 @@ export const ml: Record<string, string> = {
   'toast.loadFailed': 'മാപ്പ് ലോഡുചെയ്യുമ്പോൾ എന്തോ കുഴപ്പം സംഭവിച്ചു. വീണ്ടും ലോഡുചെയ്യുക.',
   'toast.linkCopied': 'ലിങ്ക് ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി',
   'share.title': 'ഈ സാഹചര്യം പങ്കിടുക',
+  'waterlevel.title': 'ജലനിരപ്പ് 🌊',
+  'waterlevel.off': 'ഓഫ്',
 };

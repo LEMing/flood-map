@@ -202,4 +202,6 @@ export const ky: Record<string, string> = {
   'toast.loadFailed': 'Картаны жүктөөдө бир нерсе туура эмес болду. Кайра жүктөңүз.',
   'toast.linkCopied': 'Шилтеме алмашуу буферине көчүрүлдү',
   'share.title': 'Бул сценарийди бөлүшүү',
+  'waterlevel.title': 'Суу деңгээли 🌊',
+  'waterlevel.off': 'Өчүрүү',
 };

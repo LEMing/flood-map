@@ -214,4 +214,6 @@ export const vi: Record<string, string> = {
   'toast.loadFailed': 'Đã xảy ra lỗi khi tải bản đồ. Vui lòng tải lại.',
   'toast.linkCopied': 'Đã sao chép liên kết vào bảng nhớ tạm',
   'share.title': 'Chia sẻ kịch bản này',
+  'waterlevel.title': 'Mực nước 🌊',
+  'waterlevel.off': 'Tắt',
 };

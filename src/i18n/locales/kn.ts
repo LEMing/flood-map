@@ -219,4 +219,6 @@ export const kn: Record<string, string> = {
   'toast.loadFailed': 'ನಕ್ಷೆಯನ್ನು ಲೋಡ್ ಮಾಡುವಾಗ ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಲೋಡ್ ಮಾಡಿ.',
   'toast.linkCopied': 'ಲಿಂಕ್ ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ',
   'share.title': 'ಈ ಸನ್ನಿವೇಶವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ',
+  'waterlevel.title': 'ನೀರಿನ ಮಟ್ಟ 🌊',
+  'waterlevel.off': 'ಆಫ್',
 };

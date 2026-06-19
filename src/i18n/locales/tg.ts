@@ -202,4 +202,6 @@ export const tg: Record<string, string> = {
   'toast.loadFailed': 'Ҳангоми боргузории харита чизе нодуруст шуд. Лутфан аз нав бор кунед.',
   'toast.linkCopied': 'Истинод ба ҳофизаи муваққатӣ нусхабардорӣ шуд',
   'share.title': 'Ин сенарияро мубодила кунед',
+  'waterlevel.title': 'Сатҳи об 🌊',
+  'waterlevel.off': 'Хомӯш',
 };

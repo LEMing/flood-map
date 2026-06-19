@@ -223,4 +223,6 @@ export const my: Record<string, string> = {
   'toast.loadFailed': 'မြေပုံ ဖွင့်နေစဉ် တစ်ခုခု မှားယွင်းသွားပါသည်။ ကျေးဇူးပြု၍ ပြန်ဖွင့်ပါ။',
   'toast.linkCopied': 'လင့်ခ်ကို ကလစ်ဘုတ်သို့ ကူးယူပြီးပါပြီ',
   'share.title': 'ဤအခြေအနေကို မျှဝေပါ',
+  'waterlevel.title': 'ရေမျက်နှာပြင် 🌊',
+  'waterlevel.off': 'ပိတ်',
 };

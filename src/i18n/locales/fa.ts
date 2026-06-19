@@ -203,4 +203,6 @@ export const fa: Record<string, string> = {
   'toast.loadFailed': 'هنگام بارگیری نقشه مشکلی پیش آمد. لطفاً دوباره بارگیری کنید.',
   'toast.linkCopied': 'پیوند در کلیپ‌بورد کپی شد',
   'share.title': 'این سناریو را به اشتراک بگذارید',
+  'waterlevel.title': 'سطح آب 🌊',
+  'waterlevel.off': 'خاموش',
 };

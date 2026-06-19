@@ -222,4 +222,6 @@ export const jv: Record<string, string> = {
   'toast.loadFailed': 'Ana sing salah nalika ngemot peta. Mangga muat ulang.',
   'toast.linkCopied': 'Link disalin menyang clipboard',
   'share.title': 'Bagikan skenario iki',
+  'waterlevel.title': 'Dhuwure banyu 🌊',
+  'waterlevel.off': 'Mati',
 };

@@ -222,4 +222,6 @@ export const or: Record<string, string> = {
   'toast.loadFailed': 'ମାନଚିତ୍ର ଲୋଡ୍ କରିବାବେଳେ କିଛି ଭୁଲ୍ ହୋଇଗଲା। ଦୟାକରି ପୁଣି ଲୋଡ୍ କରନ୍ତୁ।',
   'toast.linkCopied': 'ଲିଙ୍କ କ୍ଲିପବୋର୍ଡକୁ କପି ହେଲା',
   'share.title': 'ଏହି ପରିସ୍ଥିତି ସେୟାର କରନ୍ତୁ',
+  'waterlevel.title': 'ଜଳ ସ୍ତର 🌊',
+  'waterlevel.off': 'ବନ୍ଦ',
 };

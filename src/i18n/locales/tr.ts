@@ -214,4 +214,6 @@ export const tr: Record<string, string> = {
   'toast.loadFailed': 'Harita yüklenirken bir sorun oluştu. Lütfen yeniden yükleyin.',
   'toast.linkCopied': 'Bağlantı panoya kopyalandı',
   'share.title': 'Bu senaryoyu paylaş',
+  'waterlevel.title': 'Su seviyesi 🌊',
+  'waterlevel.off': 'Kapalı',
 };

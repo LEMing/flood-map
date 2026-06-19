@@ -200,4 +200,6 @@ export const ha: Record<string, string> = {
   'toast.loadFailed': 'Wani abu ya yi kuskure wajen loda taswira. Da fatan za a sake lodi.',
   'toast.linkCopied': 'An kwafi mahaɗin zuwa allo',
   'share.title': 'Raba wannan yanayin',
+  'waterlevel.title': 'Matakin ruwa 🌊',
+  'waterlevel.off': 'Kashe',
 };

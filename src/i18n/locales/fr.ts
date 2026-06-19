@@ -222,4 +222,6 @@ export const fr: Record<string, string> = {
   'toast.loadFailed': 'Un problème est survenu lors du chargement de la carte. Veuillez recharger.',
   'toast.linkCopied': 'Lien copié dans le presse-papiers',
   'share.title': 'Partager ce scénario',
+  'waterlevel.title': 'Niveau d’eau 🌊',
+  'waterlevel.off': 'Désactivé',
 };

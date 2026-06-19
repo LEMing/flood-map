@@ -202,4 +202,6 @@ export const yo: Record<string, string> = {
   'toast.loadFailed': 'Nǹkan kan kùnà nígbà tí à ń ṣe àgbéwọlé máàpù. Jọ̀wọ́ tún un kì.',
   'toast.linkCopied': 'A ti daako ọna asopọ sí àgbékalẹ̀',
   'share.title': 'Pín ìṣẹ̀lẹ̀ yìí',
+  'waterlevel.title': 'Ìpele omi 🌊',
+  'waterlevel.off': 'Pa',
 };

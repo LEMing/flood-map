@@ -202,4 +202,6 @@ export const ur: Record<string, string> = {
   'toast.loadFailed': 'نقشہ لوڈ کرتے وقت کچھ غلط ہو گیا۔ براہ کرم دوبارہ لوڈ کریں۔',
   'toast.linkCopied': 'لنک کلپ بورڈ پر کاپی ہو گیا',
   'share.title': 'یہ منظرنامہ شیئر کریں',
+  'waterlevel.title': 'پانی کی سطح 🌊',
+  'waterlevel.off': 'بند',
 };

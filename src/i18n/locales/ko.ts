@@ -219,4 +219,6 @@ export const ko: Record<string, string> = {
   'toast.loadFailed': '지도를 불러오는 중 문제가 발생했습니다. 다시 로드해 주세요.',
   'toast.linkCopied': '링크가 클립보드에 복사되었습니다',
   'share.title': '이 시나리오 공유',
+  'waterlevel.title': '수위 🌊',
+  'waterlevel.off': '끄기',
 };

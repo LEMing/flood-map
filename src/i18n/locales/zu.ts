@@ -201,4 +201,6 @@ export const zu: Record<string, string> = {
   'toast.loadFailed': 'Kukhona okuhambe kabi ngenkathi kulayishwa imephu. Sicela ulayishe kabusha.',
   'toast.linkCopied': 'Isixhumanisi sikopishelwe ku-clipboard',
   'share.title': 'Yabelana ngalesi simo',
+  'waterlevel.title': 'Izinga lamanzi 🌊',
+  'waterlevel.off': 'Vala',
 };

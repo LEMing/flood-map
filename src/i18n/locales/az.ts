@@ -202,4 +202,6 @@ export const az: Record<string, string> = {
   'toast.loadFailed': 'Xəritə yüklənərkən nəsə səhv getdi. Zəhmət olmasa yenidən yükləyin.',
   'toast.linkCopied': 'Keçid mübadilə buferinə kopyalandı',
   'share.title': 'Bu ssenarini paylaşın',
+  'waterlevel.title': 'Su səviyyəsi 🌊',
+  'waterlevel.off': 'Söndür',
 };

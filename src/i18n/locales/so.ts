@@ -202,4 +202,6 @@ export const so: Record<string, string> = {
   'toast.loadFailed': 'Wax baa khaldamay markii la rarayay khariidadda. Fadlan dib u soo rar.',
   'toast.linkCopied': 'Xiriirka waxaa lagu koobiyeeyay sabuuradda',
   'share.title': 'La wadaag xaaladdan',
+  'waterlevel.title': 'Heerka biyaha 🌊',
+  'waterlevel.off': 'Dami',
 };

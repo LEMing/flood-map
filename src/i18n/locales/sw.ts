@@ -202,4 +202,6 @@ export const sw: Record<string, string> = {
   'toast.loadFailed': 'Hitilafu fulani imetokea wakati wa kupakia ramani. Tafadhali pakia upya.',
   'toast.linkCopied': 'Kiungo kimenakiliwa kwenye ubao wa kunakili',
   'share.title': 'Shiriki hali hii',
+  'waterlevel.title': 'Kiwango cha maji 🌊',
+  'waterlevel.off': 'Zima',
 };

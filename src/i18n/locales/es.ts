@@ -217,4 +217,6 @@ export const es: Record<string, string> = {
   'toast.loadFailed': 'Algo salió mal al cargar el mapa. Vuelve a cargar.',
   'toast.linkCopied': 'Enlace copiado al portapapeles',
   'share.title': 'Compartir este escenario',
+  'waterlevel.title': 'Nivel del agua 🌊',
+  'waterlevel.off': 'Apagado',
 };

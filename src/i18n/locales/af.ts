@@ -202,4 +202,6 @@ export const af: Record<string, string> = {
   'toast.loadFailed': 'Iets het verkeerd geloop met die laai van die kaart. Herlaai asseblief.',
   'toast.linkCopied': 'Skakel na knipbord gekopieer',
   'share.title': 'Deel hierdie scenario',
+  'waterlevel.title': 'Watervlak 🌊',
+  'waterlevel.off': 'Af',
 };

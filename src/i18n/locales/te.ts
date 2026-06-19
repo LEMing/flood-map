@@ -219,4 +219,6 @@ export const te: Record<string, string> = {
   'toast.loadFailed': 'మ్యాప్ లోడ్ చేస్తున్నప్పుడు ఏదో తప్పు జరిగింది. దయచేసి మళ్లీ లోడ్ చేయండి.',
   'toast.linkCopied': 'లింక్ క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది',
   'share.title': 'ఈ దృశ్యాన్ని భాగస్వామ్యం చేయండి',
+  'waterlevel.title': 'నీటి మట్టం 🌊',
+  'waterlevel.off': 'ఆఫ్',
 };

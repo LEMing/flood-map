@@ -202,4 +202,6 @@ export const he: Record<string, string> = {
   'toast.loadFailed': 'משהו השתבש בטעינת המפה. אנא טען מחדש.',
   'toast.linkCopied': 'הקישור הועתק ללוח',
   'share.title': 'שתף את התרחיש הזה',
+  'waterlevel.title': 'מפלס המים 🌊',
+  'waterlevel.off': 'כבוי',
 };

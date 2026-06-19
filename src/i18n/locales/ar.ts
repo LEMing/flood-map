@@ -202,4 +202,6 @@ export const ar: Record<string, string> = {
   'toast.loadFailed': 'حدث خطأ ما أثناء تحميل الخريطة. يرجى إعادة التحميل.',
   'toast.linkCopied': 'تم نسخ الرابط إلى الحافظة',
   'share.title': 'شارك هذا السيناريو',
+  'waterlevel.title': 'منسوب المياه 🌊',
+  'waterlevel.off': 'إيقاف',
 };

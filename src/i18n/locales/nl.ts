@@ -202,4 +202,6 @@ export const nl: Record<string, string> = {
   'toast.loadFailed': 'Er ging iets mis bij het laden van de kaart. Herlaad alstublieft.',
   'toast.linkCopied': 'Link gekopieerd naar klembord',
   'share.title': 'Deel dit scenario',
+  'waterlevel.title': 'Waterpeil 🌊',
+  'waterlevel.off': 'Uit',
 };

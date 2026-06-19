@@ -202,4 +202,6 @@ export const tk: Record<string, string> = {
   'toast.loadFailed': 'Karta ýüklenende bir zat ýalňyş boldy. Haýyş, täzeden ýükläň.',
   'toast.linkCopied': 'Salgy alyş-çalyş tagtasyna göçürildi',
   'share.title': 'Bu ssenarini paýlaş',
+  'waterlevel.title': 'Suw derejesi 🌊',
+  'waterlevel.off': 'Öçür',
 };

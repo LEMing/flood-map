@@ -215,4 +215,6 @@ export const id: Record<string, string> = {
   'toast.loadFailed': 'Terjadi kesalahan saat memuat peta. Silakan muat ulang.',
   'toast.linkCopied': 'Tautan disalin ke papan klip',
   'share.title': 'Bagikan skenario ini',
+  'waterlevel.title': 'Ketinggian air 🌊',
+  'waterlevel.off': 'Mati',
 };

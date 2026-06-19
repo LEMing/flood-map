@@ -202,4 +202,6 @@ export const am: Record<string, string> = {
   'toast.loadFailed': 'ካርታውን በመጫን ላይ የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይጫኑ።',
   'toast.linkCopied': 'አገናኝ ወደ ቅንጥብ ሰሌዳ ተቀድቷል',
   'share.title': 'ይህን ሁኔታ አጋራ',
+  'waterlevel.title': 'የውሃ ደረጃ 🌊',
+  'waterlevel.off': 'አጥፋ',
 };

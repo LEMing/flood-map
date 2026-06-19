@@ -219,4 +219,6 @@ export const uk: Record<string, string> = {
   'toast.loadFailed': 'Щось пішло не так під час завантаження карти. Будь ласка, перезавантажте.',
   'toast.linkCopied': 'Посилання скопійовано в буфер обміну',
   'share.title': 'Поділитися цим сценарієм',
+  'waterlevel.title': 'Рівень води 🌊',
+  'waterlevel.off': 'Вимк',
 };

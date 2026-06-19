@@ -202,4 +202,6 @@ export const bn: Record<string, string> = {
   'toast.loadFailed': 'মানচিত্র লোড করার সময় কিছু ভুল হয়েছে। অনুগ্রহ করে পুনরায় লোড করুন।',
   'toast.linkCopied': 'লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে',
   'share.title': 'এই দৃশ্যটি শেয়ার করুন',
+  'waterlevel.title': 'পানির স্তর 🌊',
+  'waterlevel.off': 'বন্ধ',
 };

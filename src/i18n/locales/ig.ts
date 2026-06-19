@@ -202,4 +202,6 @@ export const ig: Record<string, string> = {
   'toast.loadFailed': 'Ihe adịghị mma mere mgbe a na-ebu maapụ. Biko bugharịa.',
   'toast.linkCopied': 'Edebanyela njikọ na clipboard',
   'share.title': 'Kesaa ọnọdụ a',
+  'waterlevel.title': 'Ọkwa mmiri 🌊',
+  'waterlevel.off': 'Gbanyụọ',
 };

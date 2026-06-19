@@ -214,4 +214,6 @@ export const zh: Record<string, string> = {
   'toast.loadFailed': '加载地图时出了点问题。请重新加载。',
   'toast.linkCopied': '链接已复制到剪贴板',
   'share.title': '分享此场景',
+  'waterlevel.title': '水位 🌊',
+  'waterlevel.off': '关闭',
 };

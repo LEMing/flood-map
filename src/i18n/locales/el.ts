@@ -202,4 +202,6 @@ export const el: Record<string, string> = {
   'toast.loadFailed': 'Κάτι πήγε στραβά κατά τη φόρτωση του χάρτη. Φορτώστε ξανά.',
   'toast.linkCopied': 'Ο σύνδεσμος αντιγράφηκε στο πρόχειρο',
   'share.title': 'Κοινοποίηση αυτού του σεναρίου',
+  'waterlevel.title': 'Στάθμη νερού 🌊',
+  'waterlevel.off': 'Ανενεργό',
 };

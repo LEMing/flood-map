@@ -202,4 +202,6 @@ export const hy: Record<string, string> = {
   'toast.loadFailed': 'Քարտեզը բեռնելիս ինչ-որ բան սխալ գնաց։ Խնդրում ենք վերաբեռնել։',
   'toast.linkCopied': 'Հղումը պատճենվեց սեղմատախտակին',
   'share.title': 'Կիսվել այս սցենարով',
+  'waterlevel.title': 'Ջրի մակարդակ 🌊',
+  'waterlevel.off': 'Անջատ',
 };

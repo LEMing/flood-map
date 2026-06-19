@@ -23,7 +23,7 @@ export class ScenarioUrl {
     if (url.storm) p.stormType = url.storm;
     if (url.style) p.terrainStyle = url.style;
     if (url.src) p.elevationSource = url.src;
-    if (url.water !== undefined) { p.fillLevelM = url.water; p.floodLevelLive = true; }
+    if (url.water !== undefined) { p.fillLevelM = url.water; p.floodLevelLive = true; p.raining = false; }
     if (url.ve !== undefined) p.verticalExaggeration = url.ve;
     if (url.b3d !== undefined) p.buildings3D = url.b3d;
     if (url.overlay !== undefined) p.floodOverlay = url.overlay;

@@ -307,6 +307,18 @@ export class App {
         this.applyParams();
         this.panel.refresh();
       },
+      onWaterLevel: (level) => {
+        // Hold a static "+N m underwater" view: floodLevelLive pins the bathtub
+        // level every frame (overriding the storm), rain off for a clean snapshot.
+        // Off (null) drains back to dry ground rather than leaving a frozen flood.
+        this.simDriver.setLive();
+        this.params.timelinePlaying = false;
+        this.params.floodLevelLive = level !== null;
+        if (level === null) { this.simDriver.reset(); this.params.running = false; }
+        else { this.params.fillLevelM = level; this.params.raining = false; }
+        this.applyParams();
+        this.panel.refresh();
+      },
       onPrecompute: () => {
         this.simDriver.beginPrecompute();
         this.applyParams();

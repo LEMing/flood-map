@@ -219,4 +219,6 @@ export const tl: Record<string, string> = {
   'toast.loadFailed': 'May nangyaring mali habang nilo-load ang mapa. Mangyaring i-reload.',
   'toast.linkCopied': 'Kinopya ang link sa clipboard',
   'share.title': 'Ibahagi ang sitwasyong ito',
+  'waterlevel.title': 'Antas ng tubig 🌊',
+  'waterlevel.off': 'Patay',
 };

@@ -222,4 +222,6 @@ export const wuu: Record<string, string> = {
   'toast.loadFailed': '加载地图个辰光出问题哉。请重新加载。',
   'toast.linkCopied': '链接已经复制到剪贴板哉',
   'share.title': '分享搿个场景',
+  'waterlevel.title': '水位 🌊',
+  'waterlevel.off': '关脱',
 };

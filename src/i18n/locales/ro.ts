@@ -201,4 +201,6 @@ export const ro: Record<string, string> = {
   'toast.loadFailed': 'Ceva nu a mers bine la încărcarea hărții. Reîncarcă.',
   'toast.linkCopied': 'Link copiat în clipboard',
   'share.title': 'Distribuie acest scenariu',
+  'waterlevel.title': 'Nivelul apei 🌊',
+  'waterlevel.off': 'Oprit',
 };
