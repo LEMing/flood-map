@@ -197,4 +197,7 @@ export const yo: Record<string, string> = {
   'viz.buildings3D': 'Àwọn ilé 3D',
   'toast.osmBusy': 'A ti ṣe àgbéwọlé {place} — ṣùgbọ́n dátà ilé/ọ̀nà ti dí. Tún un kì láti gbìyànjú lẹ́ẹ̀kan si (ìwọ̀n máàpù kékeré máa ń gbé wọlé ní ọ̀nà tí a lè gbẹ́kẹ̀lé sí i).',
   'video.failed': 'Àgbéjáde fídíò kùnà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan si.',
+  'toast.webglUnsupported': 'Ẹrọ yìí kò lè ṣe àfarawé omi 3D — ó nílò WebGL2 pẹ̀lú àwọn awọ̀ float.',
+  'toast.loadTimeout': 'Àkókò ìkójọpọ̀ ti tán. Ṣàyẹ̀wò ìsopọ̀ rẹ kí o sì tún un kì.',
+  'toast.loadFailed': 'Nǹkan kan kùnà nígbà tí à ń ṣe àgbéwọlé máàpù. Jọ̀wọ́ tún un kì.',
 };

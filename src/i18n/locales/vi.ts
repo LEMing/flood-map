@@ -209,4 +209,7 @@ export const vi: Record<string, string> = {
   'viz.buildings3D': 'Tòa nhà 3D',
   'toast.osmBusy': 'Đã tải {place} — nhưng dữ liệu tòa nhà/đường phố đang bận. Tải lại để thử lại (kích thước bản đồ nhỏ hơn tải đáng tin cậy hơn).',
   'video.failed': 'Xuất video không thành công. Vui lòng thử lại.',
+  'toast.webglUnsupported': 'Thiết bị này không thể chạy mô phỏng nước 3D — cần WebGL2 với kết cấu float.',
+  'toast.loadTimeout': 'Đã hết thời gian tải. Kiểm tra kết nối của bạn và tải lại.',
+  'toast.loadFailed': 'Đã xảy ra lỗi khi tải bản đồ. Vui lòng tải lại.',
 };

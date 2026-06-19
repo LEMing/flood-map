@@ -197,4 +197,7 @@ export const az: Record<string, string> = {
   'viz.buildings3D': '3D binalar',
   'toast.osmBusy': '{place} yükləndi — lakin bina/yol məlumatları məşğul idi. Yenidən cəhd etmək üçün yenidən yükləyin (daha kiçik xəritə ölçüsü daha etibarlı yüklənir).',
   'video.failed': 'Videonun ixracı alınmadı. Zəhmət olmasa yenidən cəhd edin.',
+  'toast.webglUnsupported': 'Bu cihaz 3D su simulyasiyasını işlədə bilmir — float teksturaları olan WebGL2 tələb edir.',
+  'toast.loadTimeout': 'Yükləmənin vaxtı bitdi. Bağlantınızı yoxlayın və yenidən yükləyin.',
+  'toast.loadFailed': 'Xəritə yüklənərkən nəsə səhv getdi. Zəhmət olmasa yenidən yükləyin.',
 };

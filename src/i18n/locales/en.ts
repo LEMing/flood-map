@@ -187,6 +187,9 @@ export const en: Record<string, string> = {
   'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Detecting your location…',
   'toast.osmBusy': 'Loaded {place} — but the building/road data was busy. Reload to try again (smaller map size loads more reliably).',
+  'toast.webglUnsupported': 'This device can’t run the 3D water simulation — it needs WebGL2 with float textures.',
+  'toast.loadTimeout': 'Loading timed out. Check your connection and reload.',
+  'toast.loadFailed': 'Something went wrong loading the map. Please reload.',
 
   // Misc
   'legend.elevation': 'Elevation',

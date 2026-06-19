@@ -197,4 +197,7 @@ export const tk: Record<string, string> = {
   'viz.buildings3D': '3D binalar',
   'toast.osmBusy': '{place} ýüklendi — ýöne bina/ýol maglumatlary meşguldy. Täzeden synanyşmak üçin gaýtadan ýükläň (kiçiräk karta ölçegi has ygtybarly ýüklenýär).',
   'video.failed': 'Wideony eksport etmek şowsuz boldy. Haýyş, täzeden synanyşyň.',
+  'toast.webglUnsupported': 'Bu enjam 3D suw simulýasiýasyny işledip bilmeýär — float tekstura bilen WebGL2 gerek.',
+  'toast.loadTimeout': 'Ýüklemegiň wagty gutardy. Birikmäňizi barlaň we täzeden ýükläň.',
+  'toast.loadFailed': 'Karta ýüklenende bir zat ýalňyş boldy. Haýyş, täzeden ýükläň.',
 };

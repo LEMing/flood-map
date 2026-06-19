@@ -197,4 +197,7 @@ export const so: Record<string, string> = {
   'viz.buildings3D': 'Dhismayaal 3D',
   'toast.osmBusy': '{place} waa la soo raray — laakiin xogta dhismaha/wadooyinka way mashquul ahayd. Dib u soo raray si aad mar kale u isku daydo (cabbir khariidad yar ayaa si la isku halleyn karo u soo raraya).',
   'video.failed': 'Soo saaridda fiidiyowga way fashilantay. Fadlan mar kale isku day.',
+  'toast.webglUnsupported': 'Qalabkani ma awoodo inuu socodsiiyo jilitaanka biyaha 3D — wuxuu u baahan yahay WebGL2 oo leh float textures.',
+  'toast.loadTimeout': 'Wakhtigii rarista wuu dhammaaday. Hubi xiriirkaaga oo dib u soo rar.',
+  'toast.loadFailed': 'Wax baa khaldamay markii la rarayay khariidadda. Fadlan dib u soo rar.',
 };

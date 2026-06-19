@@ -197,4 +197,7 @@ export const af: Record<string, string> = {
   'viz.buildings3D': '3D-geboue',
   'toast.osmBusy': '{place} gelaai — maar die gebou-/paddata was besig. Herlaai om weer te probeer (’n kleiner kaartgrootte laai betroubaarder).',
   'video.failed': 'Video-uitvoer het misluk. Probeer asseblief weer.',
+  'toast.webglUnsupported': 'Hierdie toestel kan nie die 3D-watersimulasie laat loop nie — dit benodig WebGL2 met float-teksture.',
+  'toast.loadTimeout': 'Laai het uitgetel. Gaan jou verbinding na en herlaai.',
+  'toast.loadFailed': 'Iets het verkeerd geloop met die laai van die kaart. Herlaai asseblief.',
 };

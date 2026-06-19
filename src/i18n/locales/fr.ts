@@ -217,4 +217,7 @@ export const fr: Record<string, string> = {
   'viz.buildings3D': 'Bâtiments 3D',
   'toast.osmBusy': '{place} chargé — mais les données de bâtiments/routes étaient occupées. Rechargez pour réessayer (une carte plus petite se charge plus facilement).',
   'video.failed': 'Échec de l’export vidéo. Veuillez réessayer.',
+  'toast.webglUnsupported': 'Cet appareil ne peut pas exécuter la simulation d’eau 3D — il lui faut WebGL2 avec des textures flottantes.',
+  'toast.loadTimeout': 'Délai de chargement dépassé. Vérifiez votre connexion et rechargez.',
+  'toast.loadFailed': 'Un problème est survenu lors du chargement de la carte. Veuillez recharger.',
 };

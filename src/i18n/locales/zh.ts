@@ -209,4 +209,7 @@ export const zh: Record<string, string> = {
   'viz.buildings3D': '3D建筑',
   'toast.osmBusy': '已加载 {place} — 但建筑/道路数据正忙。重新加载以重试（较小的地图尺寸加载更可靠）。',
   'video.failed': '视频导出失败。请重试。',
+  'toast.webglUnsupported': '此设备无法运行 3D 水体模拟 — 需要支持 float 纹理的 WebGL2。',
+  'toast.loadTimeout': '加载超时。请检查网络连接后重新加载。',
+  'toast.loadFailed': '加载地图时出了点问题。请重新加载。',
 };

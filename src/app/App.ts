@@ -156,7 +156,9 @@ export class App {
 
     // GPU context loss (driver reset, OOM): freeze, then rebuild the current
     // world once the browser restores the context (a clean known-good state).
-    this.scene.onLost = () => { this.params.running = false; };
+    // Freeze and re-gate Play (the world is gone until the rebuild) on context loss;
+    // the restore rebuild calls setReady(true) again via setBuiltWorld.
+    this.scene.onLost = () => { this.params.running = false; this.gameUI.setReady(false); };
     this.scene.onRestored = () => { this.worldBuilder.reloadCurrent(); };
 
     // Repaint once after a resize; resume cleanly when the tab becomes visible
@@ -364,6 +366,7 @@ export class App {
     this.buildings = w.buildings;
     this.surfaceTexture = w.surfaceTexture;
     this.surfaceRaw = w.surfaceRaw;
+    this.gameUI.setReady(true); // world exists — the launch button is now safe to press
   }
 
   private applyParams(): void {

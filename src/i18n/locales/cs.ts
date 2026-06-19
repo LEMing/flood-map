@@ -197,4 +197,7 @@ export const cs: Record<string, string> = {
   'viz.buildings3D': '3D budovy',
   'toast.osmBusy': '{place} načteno — ale data o budovách/silnicích byla zaneprázdněná. Načtěte znovu a zkuste to (menší velikost mapy se načítá spolehlivěji).',
   'video.failed': 'Export videa selhal. Zkuste to prosím znovu.',
+  'toast.webglUnsupported': 'Toto zařízení nedokáže spustit 3D simulaci vody — vyžaduje WebGL2 s plovoucími (float) texturami.',
+  'toast.loadTimeout': 'Vypršel časový limit načítání. Zkontrolujte připojení a načtěte znovu.',
+  'toast.loadFailed': 'Při načítání mapy se něco pokazilo. Načtěte prosím znovu.',
 };

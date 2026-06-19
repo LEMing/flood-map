@@ -197,4 +197,7 @@ export const pl: Record<string, string> = {
   'viz.buildings3D': 'Budynki 3D',
   'toast.osmBusy': 'Załadowano {place} — ale dane o budynkach/drogach były zajęte. Załaduj ponownie, aby spróbować jeszcze raz (mniejszy rozmiar mapy ładuje się bardziej niezawodnie).',
   'video.failed': 'Eksport wideo nie powiódł się. Spróbuj ponownie.',
+  'toast.webglUnsupported': 'To urządzenie nie może uruchomić symulacji wody 3D — wymaga WebGL2 z teksturami zmiennoprzecinkowymi (float).',
+  'toast.loadTimeout': 'Upłynął limit czasu ładowania. Sprawdź połączenie i załaduj ponownie.',
+  'toast.loadFailed': 'Coś poszło nie tak podczas ładowania mapy. Załaduj ponownie.',
 };

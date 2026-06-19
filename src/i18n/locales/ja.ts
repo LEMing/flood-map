@@ -209,4 +209,7 @@ export const ja: Record<string, string> = {
   'viz.buildings3D': '3D建物',
   'toast.osmBusy': '{place} を読み込みました — ただし建物/道路データが混雑していました。再読み込みしてもう一度お試しください（マップサイズを小さくするとより確実に読み込めます）。',
   'video.failed': '動画の書き出しに失敗しました。もう一度お試しください。',
+  'toast.webglUnsupported': 'このデバイスでは3D水シミュレーションを実行できません — float テクスチャ対応の WebGL2 が必要です。',
+  'toast.loadTimeout': '読み込みがタイムアウトしました。接続を確認して再読み込みしてください。',
+  'toast.loadFailed': '地図の読み込み中に問題が発生しました。再読み込みしてください。',
 };

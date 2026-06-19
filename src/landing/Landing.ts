@@ -4,6 +4,7 @@ import { landingBackdrop } from '../geo/landingSatellite';
 import { detectIpLocation } from '../geo/ipLocation';
 import { prefetchWorld, type WorldRequest } from '../geo/worldDataCache';
 import { pickVideoMime } from '../video/Recorder';
+import { detectWebGLSupport } from '../render/webglSupport';
 import { DEFAULT_PARAMS } from '../config';
 import { formatCoords, parseCoords, readUrlState } from '../url';
 import { getLanguage, t } from '../i18n';
@@ -50,6 +51,7 @@ export class Landing {
   private facts!: HTMLDivElement;
   private btnRealtime!: HTMLButtonElement;
   private btnVideo!: HTMLButtonElement;
+  private readonly webglOk = detectWebGLSupport().ok;
 
   private selected?: GeocodeResult;
   private items: Suggestion[] = [];
@@ -119,8 +121,8 @@ export class Landing {
     const cta = el('div', 'lp-cta');
     this.btnRealtime = button('lp-btn lp-btn-primary', t('landing.cta.realtime'));
     this.btnVideo = button('lp-btn lp-btn-ghost', t('landing.cta.video'));
-    this.btnRealtime.disabled = !this.selected;
-    this.btnVideo.disabled = !this.selected;
+    this.btnRealtime.disabled = !this.selected || !this.webglOk;
+    this.btnVideo.disabled = !this.selected || !this.webglOk;
     if (!videoExportSupported()) {
       this.btnVideo.hidden = true;
       cta.classList.add('single');
@@ -128,6 +130,14 @@ export class Landing {
     cta.append(this.btnRealtime, this.btnVideo);
 
     card.append(brand, search, this.buildOptions(), this.facts, cta);
+    if (!this.webglOk) {
+      this.btnRealtime.title = t('toast.webglUnsupported');
+      this.btnVideo.title = t('toast.webglUnsupported');
+      const note = el('div', 'lp-opt-hint');
+      note.textContent = t('toast.webglUnsupported');
+      note.dir = 'auto';
+      card.appendChild(note);
+    }
     this.root.append(this.bg, scrim, card);
 
     this.wireCard();
@@ -294,8 +304,8 @@ export class Landing {
     this.selected = location;
     this.input.value = shortLabel(location);
     this.closeAc();
-    this.btnRealtime.disabled = false;
-    this.btnVideo.disabled = false;
+    this.btnRealtime.disabled = !this.webglOk;
+    this.btnVideo.disabled = !this.webglOk;
     const token = ++this.selectToken;
     renderPreparing(this.facts, location);
     void this.swapBackdrop(location);

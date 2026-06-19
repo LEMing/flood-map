@@ -214,4 +214,7 @@ export const tl: Record<string, string> = {
   'viz.buildings3D': 'Mga gusali 3D',
   'toast.osmBusy': 'Na-load ang {place} — ngunit abala ang data ng gusali/kalsada. I-reload para subukan muli (mas maaasahang nilo-load ang mas maliit na laki ng mapa).',
   'video.failed': 'Nabigo ang pag-export ng video. Pakisubukang muli.',
+  'toast.webglUnsupported': 'Hindi kayang patakbuhin ng device na ito ang 3D water simulation — kailangan nito ng WebGL2 na may float textures.',
+  'toast.loadTimeout': 'Nag-time out ang pag-load. Suriin ang iyong koneksyon at i-reload.',
+  'toast.loadFailed': 'May nangyaring mali habang nilo-load ang mapa. Mangyaring i-reload.',
 };

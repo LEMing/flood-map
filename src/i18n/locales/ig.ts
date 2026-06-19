@@ -197,4 +197,7 @@ export const ig: Record<string, string> = {
   'viz.buildings3D': 'Ụlọ 3D',
   'toast.osmBusy': 'Ebugoro {place} — mana data ụlọ/okporo ụzọ nọ na-arụsi ọrụ ike. Bugharịa iji nwaa ọzọ (obere nha maapụ na-ebu n’ụzọ a pụrụ ịdabere na ya).',
   'video.failed': 'Mbupụ vidiyo dara. Biko nwaa ọzọ.',
+  'toast.webglUnsupported': 'Ngwaọrụ a enweghị ike ịgba ụ̀ụ̀ mmiri 3D — ọ chọrọ WebGL2 nwere float textures.',
+  'toast.loadTimeout': 'Oge ndataba agwụla. Lelee njikọ gị wee bugharịa.',
+  'toast.loadFailed': 'Ihe adịghị mma mere mgbe a na-ebu maapụ. Biko bugharịa.',
 };

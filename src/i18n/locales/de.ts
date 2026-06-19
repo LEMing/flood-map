@@ -215,4 +215,7 @@ export const de: Record<string, string> = {
   'viz.buildings3D': '3D-Gebäude',
   'toast.osmBusy': '{place} geladen — aber die Gebäude-/Straßendaten waren ausgelastet. Neu laden, um es erneut zu versuchen (eine kleinere Kartengröße lädt zuverlässiger).',
   'video.failed': 'Videoexport fehlgeschlagen. Bitte versuche es erneut.',
+  'toast.webglUnsupported': 'Dieses Gerät kann die 3D-Wassersimulation nicht ausführen — es benötigt WebGL2 mit Float-Texturen.',
+  'toast.loadTimeout': 'Zeitüberschreitung beim Laden. Prüfe deine Verbindung und lade neu.',
+  'toast.loadFailed': 'Beim Laden der Karte ist etwas schiefgelaufen. Bitte lade neu.',
 };

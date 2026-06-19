@@ -217,4 +217,7 @@ export const jv: Record<string, string> = {
   'viz.buildings3D': 'Bangunan 3D',
   'toast.osmBusy': '{place} dimuat — nanging data bangunan/dalan lagi sibuk. Muat maneh kanggo nyoba maneh (ukuran peta sing luwih cilik dimuat luwih andal).',
   'video.failed': 'Ekspor video gagal. Mangga coba maneh.',
+  'toast.webglUnsupported': 'Piranti iki ora bisa njalanké simulasi banyu 3D — butuh WebGL2 kanthi tekstur float.',
+  'toast.loadTimeout': 'Wektu pamuatan entek. Priksa sambungan sampeyan lan muat ulang.',
+  'toast.loadFailed': 'Ana sing salah nalika ngemot peta. Mangga muat ulang.',
 };

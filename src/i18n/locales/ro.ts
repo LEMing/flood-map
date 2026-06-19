@@ -196,4 +196,7 @@ export const ro: Record<string, string> = {
   'viz.buildings3D': 'Clădiri 3D',
   'toast.osmBusy': '{place} încărcat — dar datele despre clădiri/străzi erau ocupate. Reîncarcă pentru a încerca din nou (o hartă mai mică se încarcă mai fiabil).',
   'video.failed': 'Exportul videoclipului a eșuat. Încearcă din nou.',
+  'toast.webglUnsupported': 'Acest dispozitiv nu poate rula simularea apei 3D — necesită WebGL2 cu texturi float.',
+  'toast.loadTimeout': 'Timpul de încărcare a expirat. Verifică conexiunea și reîncarcă.',
+  'toast.loadFailed': 'Ceva nu a mers bine la încărcarea hărții. Reîncarcă.',
 };

@@ -3,7 +3,8 @@ import { App } from './app/App';
 import { Landing } from './landing/Landing';
 import { LanguagePicker } from './ui/LanguagePicker';
 import { initAnalytics } from './analytics';
-import { getLanguage, loadLanguage, setLanguage, applyDocumentLang, type Lang } from './i18n';
+import { detectWebGLSupport } from './render/webglSupport';
+import { getLanguage, loadLanguage, setLanguage, applyDocumentLang, t, type Lang } from './i18n';
 import { showToast } from './ui/toast';
 import { writeUrlState } from './url';
 import type { GeocodeResult } from './geo/geocode';
@@ -49,7 +50,32 @@ function onLanguageChange(lang: Lang): void {
   })();
 }
 
+// The whole 3D sim renders to float targets; on a device without WebGL2 +
+// EXT_color_buffer_float, constructing the App throws (or renders nothing). Fail
+// soft to the landing with a clear message instead of an uncaught exception.
+function ensureWebGL(): boolean {
+  if (detectWebGLSupport().ok) return true;
+  showToast(t('toast.webglUnsupported'), true); // the landing also shows an inline note → don't make this persistent
+  mountLanding();
+  return false;
+}
+
+// A sim/video mount can still throw at renderer construction (a GPU crash that
+// slips past the WebGL probe). Funnel BOTH the router and the landing CTAs through
+// here so such a failure falls back softly to the landing instead of becoming an
+// uncaught exception (popstate/Back-Forward in particular runs outside startup).
+function safeMount(fn: () => void): void {
+  try {
+    fn();
+  } catch (err) {
+    console.error(err);
+    showToast(t('toast.loadFailed'), true);
+    if (!document.body.classList.contains('landing')) mountLanding();
+  }
+}
+
 function mountSim(location?: GeocodeResult): void {
+  if (!ensureWebGL()) return;
   document.body.classList.remove('landing', 'video');
   const a = ensureApp();
   a.exitVideoMode();
@@ -59,6 +85,7 @@ function mountSim(location?: GeocodeResult): void {
 }
 
 function mountVideo(location?: GeocodeResult): void {
+  if (!ensureWebGL()) return;
   document.body.classList.remove('landing');
   document.body.classList.add('video');
   const a = ensureApp();
@@ -81,15 +108,15 @@ function onEnter(location: GeocodeResult, opts: EnterOpts): void {
   writeUrlState({ lat: location.lat, lon: location.lon, km: opts.km, grid: opts.grid });
   const path = opts.cinematic ? '/video' : '/sim';
   history.pushState({}, '', `${path}${window.location.search}`);
-  if (opts.cinematic) mountVideo(location);
-  else mountSim(location);
+  safeMount(() => (opts.cinematic ? mountVideo(location) : mountSim(location)));
 }
 
 function route(): void {
+  // popstate / app:navigate land here too, OUTSIDE the startup try/catch.
   const p = window.location.pathname;
-  if (p.startsWith('/video')) mountVideo();
-  else if (p.startsWith('/sim')) mountSim();
-  else mountLanding();
+  if (p.startsWith('/video')) safeMount(mountVideo);
+  else if (p.startsWith('/sim')) safeMount(mountSim);
+  else mountLanding(); // the landing never constructs WebGL, so it can't throw here
 }
 
 window.addEventListener('popstate', route);

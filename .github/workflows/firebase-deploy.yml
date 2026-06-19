@@ -2,6 +2,8 @@ name: Deploy to Firebase Hosting
 
 # Push / merge to main  -> deploys to the live (production) site.
 # Push / merge to develop -> deploys to the "develop" staging channel (separate URL).
+# Deploy is GATED on a green quality gate (the `checks` job below): a red build
+# never reaches the live site, independent of GitHub branch-protection settings.
 on:
   push:
     branches: [main, develop]
@@ -15,7 +17,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run check-arch
+
   build_and_deploy:
+    needs: checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

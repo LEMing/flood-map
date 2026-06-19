@@ -195,7 +195,9 @@ export class WorldBuilder {
       void this.loadSatellite(token, heightmap, message, !!warning || osmBusy);
     } catch (err) {
       this.loadingUi.fail();
-      showToast((err as Error).message, true);
+      // A hung fetch is aborted by the cache's default deadline; surface that as a
+      // friendly, retryable message rather than the raw "signal timed out".
+      showToast(looksLikeTimeout(err) ? t('toast.loadTimeout') : (err as Error).message, true);
     } finally {
       this.loading = false;
       this.host.addressBar.setBusy(false);
@@ -313,4 +315,12 @@ export class WorldBuilder {
       }
     }
   }
+}
+
+// A hung fetch is aborted by cache.ts's default deadline (AbortSignal.timeout),
+// which rejects the worker's own promise chain cleanly — no racing/orphaning here.
+// The aborted fetch surfaces as a timeout/abort error; recognise it so the catch
+// can show the localized retry message instead of "signal timed out".
+function looksLikeTimeout(err: unknown): boolean {
+  return /tim(e|ed) ?out|abort/i.test((err as Error)?.message ?? '');
 }

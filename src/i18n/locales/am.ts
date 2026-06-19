@@ -197,4 +197,7 @@ export const am: Record<string, string> = {
   'viz.buildings3D': '3D ሕንፃዎች',
   'toast.osmBusy': '{place} ተጭኗል — ነገር ግን የህንፃ/መንገድ ውሂብ ተጠምዶ ነበር። እንደገና ለመሞከር ዳግም ይጫኑ (አነስተኛ የካርታ መጠን በተሻለ በአስተማማኝ ሁኔታ ይጫናል)።',
   'video.failed': 'ቪዲዮ ወደ ውጭ መላክ አልተሳካም። እባክዎ እንደገና ይሞክሩ።',
+  'toast.webglUnsupported': 'ይህ መሣሪያ የ3D የውሃ ማስመሰልን ማስኬድ አይችልም — WebGL2 ከ float ሸካራዎች ጋር ይፈልጋል።',
+  'toast.loadTimeout': 'መጫን ጊዜው አልፎበታል። ግንኙነትዎን ያረጋግጡ እና እንደገና ይጫኑ።',
+  'toast.loadFailed': 'ካርታውን በመጫን ላይ የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይጫኑ።',
 };

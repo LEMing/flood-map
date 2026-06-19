@@ -196,4 +196,7 @@ export const zu: Record<string, string> = {
   'viz.buildings3D': 'Izakhiwo ze-3D',
   'toast.osmBusy': 'Kulayishwe i-{place} — kodwa idatha yezakhiwo/yemigwaqo ibimatasa. Layisha kabusha ukuze uzame futhi (usayizi omncane wemephu uyalayisha ngokuthembeka okwengeziwe).',
   'video.failed': 'Ukukhipha ividiyo kuhlulekile. Sicela uzame futhi.',
+  'toast.webglUnsupported': 'Le divayisi ayikwazi ukusebenzisa isilinganiso samanzi se-3D — idinga i-WebGL2 ene-float textures.',
+  'toast.loadTimeout': 'Isikhathi sokulayisha siphelelwe yisikhathi. Hlola uxhumano lwakho bese ulayisha kabusha.',
+  'toast.loadFailed': 'Kukhona okuhambe kabi ngenkathi kulayishwa imephu. Sicela ulayishe kabusha.',
 };

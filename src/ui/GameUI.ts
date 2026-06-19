@@ -24,16 +24,26 @@ export class GameUI {
   private readonly hudArea = document.getElementById('hud-area') as HTMLElement;
   private started = false;
   private running = false;
+  private ready = false;
 
   constructor(private readonly cb: GameUICallbacks) {
+    this.startBtn.disabled = true; // no world yet — enabled by setReady() once it builds
     this.startBtn.addEventListener('click', () => this.launch());
     this.pauseBtn.addEventListener('click', () => this.cb.onTogglePause());
     this.restartBtn.addEventListener('click', () => this.cb.onRestart());
     this.retranslate();
   }
 
+  /** Enable the launch button once the world has actually built — pressing Play
+   *  before then would start the sim against a non-existent world (dead button,
+   *  empty sky, 0.00 m / 0%). */
+  setReady(ready: boolean): void {
+    this.ready = ready;
+    this.startBtn.disabled = !ready || this.started;
+  }
+
   private launch(): void {
-    if (this.started) return;
+    if (this.started || !this.ready) return;
     this.started = true;
     document.body.classList.add('game-started');
     this.overlay.hidden = true;

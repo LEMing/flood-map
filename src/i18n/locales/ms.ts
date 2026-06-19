@@ -197,4 +197,7 @@ export const ms: Record<string, string> = {
   'viz.buildings3D': 'Bangunan 3D',
   'toast.osmBusy': '{place} dimuatkan — tetapi data bangunan/jalan sedang sibuk. Muat semula untuk cuba lagi (saiz peta yang lebih kecil dimuatkan dengan lebih dipercayai).',
   'video.failed': 'Eksport video gagal. Sila cuba lagi.',
+  'toast.webglUnsupported': 'Peranti ini tidak dapat menjalankan simulasi air 3D — ia memerlukan WebGL2 dengan tekstur float.',
+  'toast.loadTimeout': 'Masa muat tamat. Semak sambungan anda dan muat semula.',
+  'toast.loadFailed': 'Sesuatu telah berlaku semasa memuatkan peta. Sila muat semula.',
 };

@@ -132,7 +132,7 @@ describe('cachedArrayBuffer', () => {
     await expect(peekArrayBuffer(url)).resolves.toBeUndefined();
   });
 
-  it('passes opts.init through to fetch', async () => {
+  it('passes opts.init through and adds a default timeout signal', async () => {
     const url = freshKey('cab-init');
     const init: RequestInit = { headers: { Range: 'bytes=0-1' } };
     const fetchMock = vi.fn().mockResolvedValue({
@@ -143,7 +143,24 @@ describe('cachedArrayBuffer', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await cachedArrayBuffer(url, { init });
-    expect(fetchMock).toHaveBeenCalledWith(url, init);
+    const [calledUrl, calledInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(calledUrl).toBe(url);
+    expect(calledInit.headers).toEqual(init.headers); // caller's init still applied
+    expect(calledInit.signal).toBeInstanceOf(AbortSignal); // hung-fetch deadline added
+  });
+
+  it('leaves a caller-provided signal untouched (no default timeout override)', async () => {
+    const url = freshKey('cab-signal');
+    const init: RequestInit = { signal: new AbortController().signal };
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      arrayBuffer: async () => bufferOf(1),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await cachedArrayBuffer(url, { init });
+    expect(fetchMock).toHaveBeenCalledWith(url, init); // same object — caller owns cancellation
   });
 
   it('uses opts.key as the cache key so two URLs share one entry', async () => {

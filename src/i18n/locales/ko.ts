@@ -214,4 +214,7 @@ export const ko: Record<string, string> = {
   'viz.buildings3D': '3D 건물',
   'toast.osmBusy': '{place}을(를) 불러왔습니다 — 하지만 건물/도로 데이터가 사용 중이었습니다. 다시 시도하려면 새로고침하세요(지도 크기가 작을수록 더 안정적으로 로드됩니다).',
   'video.failed': '동영상 내보내기에 실패했습니다. 다시 시도해 주세요.',
+  'toast.webglUnsupported': '이 기기에서는 3D 물 시뮬레이션을 실행할 수 없습니다 — float 텍스처를 지원하는 WebGL2가 필요합니다.',
+  'toast.loadTimeout': '로딩 시간이 초과되었습니다. 연결을 확인하고 다시 로드하세요.',
+  'toast.loadFailed': '지도를 불러오는 중 문제가 발생했습니다. 다시 로드해 주세요.',
 };

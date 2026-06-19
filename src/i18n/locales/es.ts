@@ -212,4 +212,7 @@ export const es: Record<string, string> = {
   'viz.buildings3D': 'Edificios 3D',
   'toast.osmBusy': '{place} cargado — pero los datos de edificios/calles estaban ocupados. Vuelve a cargar para intentarlo de nuevo (un tamaño de mapa menor carga de forma más fiable).',
   'video.failed': 'La exportación del vídeo falló. Inténtalo de nuevo.',
+  'toast.webglUnsupported': 'Este dispositivo no puede ejecutar la simulación de agua en 3D: necesita WebGL2 con texturas de coma flotante.',
+  'toast.loadTimeout': 'Se agotó el tiempo de carga. Comprueba tu conexión y vuelve a cargar.',
+  'toast.loadFailed': 'Algo salió mal al cargar el mapa. Vuelve a cargar.',
 };

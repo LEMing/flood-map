@@ -245,6 +245,9 @@
       }
       #start-btn:hover { filter: brightness(1.08); box-shadow: 0 14px 50px rgba(47,111,235,.62); }
       #start-btn:active { transform: scale(.97); }
+      #start-btn:disabled { opacity: .55; cursor: not-allowed; filter: saturate(.6); box-shadow: 0 6px 22px rgba(47,111,235,.25); }
+      #start-btn:disabled:hover { filter: saturate(.6); box-shadow: 0 6px 22px rgba(47,111,235,.25); }
+      #start-btn:disabled:active { transform: none; }
       #start-overlay .sub {
         color: rgba(230,237,243,.72); font-size: 13px; letter-spacing: .4px;
         max-width: min(90vw, 520px); padding: 0 16px; text-align: center; text-wrap: balance;

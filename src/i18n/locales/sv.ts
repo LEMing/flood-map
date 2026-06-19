@@ -197,4 +197,7 @@ export const sv: Record<string, string> = {
   'viz.buildings3D': '3D-byggnader',
   'toast.osmBusy': '{place} laddat — men byggnads-/vägdata var upptagna. Ladda om för att försöka igen (en mindre kartstorlek laddas mer tillförlitligt).',
   'video.failed': 'Videoexporten misslyckades. Försök igen.',
+  'toast.webglUnsupported': 'Den här enheten kan inte köra 3D-vattensimuleringen — den kräver WebGL2 med flyttalstexturer.',
+  'toast.loadTimeout': 'Tidsgränsen för inläsning överskreds. Kontrollera anslutningen och ladda om.',
+  'toast.loadFailed': 'Något gick fel när kartan laddades. Ladda om.',
 };

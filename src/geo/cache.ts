@@ -191,12 +191,26 @@ export interface CacheOpts {
   accept?: (body: unknown) => boolean;
 }
 
+// A half-open socket (server accepts then never responds) leaves fetch pending
+// forever, stranding a world load with no error. Tile/satellite/DEM fetches here
+// carry no signal of their own, so give them a generous default deadline. Callers
+// that already pass a signal (OSM Overpass) own their own timeout and are left
+// untouched; environments without AbortSignal.timeout (Safari < 16) keep today's
+// no-timeout behavior rather than throwing.
+const DEFAULT_FETCH_TIMEOUT_MS = 60000;
+
+function fetchInit(init?: RequestInit): RequestInit | undefined {
+  if (init?.signal) return init;
+  if (typeof AbortSignal === 'undefined' || typeof AbortSignal.timeout !== 'function') return init;
+  return { ...init, signal: AbortSignal.timeout(DEFAULT_FETCH_TIMEOUT_MS) };
+}
+
 export async function cachedArrayBuffer(url: string, opts: CacheOpts = {}): Promise<ArrayBuffer> {
   const key = opts.key ?? url;
   const hit = await readCache(key);
   if (hit && hit.kind === 'arraybuffer') return hit.body as ArrayBuffer;
 
-  const resp = await fetch(url, opts.init);
+  const resp = await fetch(url, fetchInit(opts.init));
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const buf = await resp.arrayBuffer();
   writeCache(key, 'arraybuffer', buf);
@@ -210,7 +224,7 @@ export async function cachedJson<T = unknown>(url: string, opts: CacheOpts = {})
   // Overpass result cached before this guard existed).
   if (hit && hit.kind === 'json' && (!opts.accept || opts.accept(hit.body))) return hit.body as T;
 
-  const resp = await fetch(url, opts.init);
+  const resp = await fetch(url, fetchInit(opts.init));
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const json = (await resp.json()) as T;
   if (opts.accept && !opts.accept(json)) throw new Error('response rejected (empty/invalid)');
@@ -223,7 +237,7 @@ export async function cachedBlob(url: string, opts: CacheOpts = {}): Promise<Blo
   const hit = await readCache(key);
   if (hit && hit.kind === 'blob') return hit.body as Blob;
 
-  const resp = await fetch(url, opts.init);
+  const resp = await fetch(url, fetchInit(opts.init));
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const blob = await resp.blob();
   writeCache(key, 'blob', blob);

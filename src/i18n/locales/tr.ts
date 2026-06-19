@@ -209,4 +209,7 @@ export const tr: Record<string, string> = {
   'viz.buildings3D': '3D binalar',
   'toast.osmBusy': '{place} yüklendi — ancak bina/yol verileri meşguldü. Tekrar denemek için yeniden yükleyin (daha küçük harita boyutu daha güvenilir yüklenir).',
   'video.failed': 'Video dışa aktarımı başarısız oldu. Lütfen tekrar deneyin.',
+  'toast.webglUnsupported': 'Bu cihaz 3D su simülasyonunu çalıştıramıyor — float dokulara sahip WebGL2 gerektiriyor.',
+  'toast.loadTimeout': 'Yükleme zaman aşımına uğradı. Bağlantınızı kontrol edip yeniden yükleyin.',
+  'toast.loadFailed': 'Harita yüklenirken bir sorun oluştu. Lütfen yeniden yükleyin.',
 };

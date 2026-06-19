@@ -197,4 +197,7 @@ export const sw: Record<string, string> = {
   'viz.buildings3D': 'Majengo ya 3D',
   'toast.osmBusy': '{place} imepakiwa — lakini data ya majengo/barabara ilikuwa na shughuli nyingi. Pakia upya ili ujaribu tena (ukubwa mdogo wa ramani hupakia kwa uhakika zaidi).',
   'video.failed': 'Kuhamisha video kumeshindwa. Tafadhali jaribu tena.',
+  'toast.webglUnsupported': 'Kifaa hiki hakiwezi kuendesha uigaji wa maji wa 3D — kinahitaji WebGL2 yenye texture za float.',
+  'toast.loadTimeout': 'Muda wa kupakia umeisha. Angalia muunganisho wako na upakie upya.',
+  'toast.loadFailed': 'Hitilafu fulani imetokea wakati wa kupakia ramani. Tafadhali pakia upya.',
 };

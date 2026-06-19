@@ -214,4 +214,7 @@ export const su: Record<string, string> = {
   'viz.buildings3D': 'Wangunan 3D',
   'toast.osmBusy': '{place} dimuat — tapi data wangunan/jalan keur sibuk. Muat deui pikeun nyobian deui (ukuran peta nu leuwih leutik dimuat leuwih bisa diandelkeun).',
   'video.failed': 'Ékspor video gagal. Mangga cobian deui.',
+  'toast.webglUnsupported': 'Alat ieu teu tiasa ngajalankeun simulasi cai 3D — peryogi WebGL2 sareng tékstur float.',
+  'toast.loadTimeout': 'Waktos ngamuat béak. Pariksa sambungan anjeun teras muat deui.',
+  'toast.loadFailed': 'Aya nu lepat nalika ngamuat peta. Mangga muat deui.',
 };

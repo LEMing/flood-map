@@ -218,4 +218,7 @@ export const yue: Record<string, string> = {
   'viz.buildings3D': '3D建築物',
   'toast.osmBusy': '已經載入 {place} — 但係建築物/道路數據繁忙。重新載入再試一次（地圖尺寸細啲會載入得更可靠）。',
   'video.failed': '影片匯出失敗。請再試一次。',
+  'toast.webglUnsupported': '呢部裝置運行唔到 3D 水模擬 — 需要支援 float 紋理嘅 WebGL2。',
+  'toast.loadTimeout': '載入逾時。請檢查你嘅連線再重新載入。',
+  'toast.loadFailed': '載入地圖嗰陣出咗問題。請重新載入。',
 };

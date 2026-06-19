@@ -197,4 +197,7 @@ export const nl: Record<string, string> = {
   'viz.buildings3D': '3D-gebouwen',
   'toast.osmBusy': '{place} geladen — maar de gebouw-/wegdata waren bezet. Herlaad om het opnieuw te proberen (een kleinere kaartgrootte laadt betrouwbaarder).',
   'video.failed': 'Video-export mislukt. Probeer het opnieuw.',
+  'toast.webglUnsupported': 'Dit apparaat kan de 3D-watersimulatie niet uitvoeren — het heeft WebGL2 met float-textures nodig.',
+  'toast.loadTimeout': 'Time-out bij het laden. Controleer je verbinding en herlaad.',
+  'toast.loadFailed': 'Er ging iets mis bij het laden van de kaart. Herlaad alstublieft.',
 };
