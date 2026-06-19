@@ -1,5 +1,5 @@
 import './styles.css';
-import { App } from './app/App';
+import type { App } from './app/App';
 import { Landing } from './landing/Landing';
 import { LanguagePicker } from './ui/LanguagePicker';
 import { initAnalytics } from './analytics';
@@ -23,17 +23,29 @@ initAnalytics();
 // warm GPU context survive Back/Forward); the landing just pauses it
 // (setActive(false)) and hides the canvas via body.landing.
 let app: App | null = null;
+let appPromise: Promise<App> | null = null;
 let landing: Landing | null = null;
 let languagePicker: LanguagePicker;
 
 interface EnterOpts { cinematic?: boolean; km?: number; grid?: number }
 
-function ensureApp(): App {
-  if (!app) {
-    app = new App(sceneCanvas, () => languagePicker.retranslate());
-    if (import.meta.env.DEV) (window as unknown as { app: App }).app = app;
+// App pulls in three.js + the post-FX + tweakpane graph (~300 KB gzip), none of
+// which the landing needs — so load it lazily on first sim/video entry. The
+// promise dedups concurrent mounts (rapid popstate) so only ONE App is built.
+function ensureApp(): Promise<App> {
+  if (!appPromise) {
+    appPromise = import('./app/App')
+      .then(({ App }) => {
+        app = new App(sceneCanvas, () => languagePicker.retranslate());
+        if (import.meta.env.DEV) (window as unknown as { app: App }).app = app;
+        return app;
+      })
+      .catch((err) => {
+        appPromise = null; // a transient failure (flaky net, redeploy re-hashed the chunk) → let a later mount retry
+        throw err;
+      });
   }
-  return app;
+  return appPromise;
 }
 
 // Language is a surface-wide concern, so the picker is owned here (shared by the
@@ -64,31 +76,37 @@ function ensureWebGL(): boolean {
 // slips past the WebGL probe). Funnel BOTH the router and the landing CTAs through
 // here so such a failure falls back softly to the landing instead of becoming an
 // uncaught exception (popstate/Back-Forward in particular runs outside startup).
-function safeMount(fn: () => void): void {
+function safeMount(fn: () => void | Promise<void>): void {
   try {
-    fn();
+    void Promise.resolve(fn()).catch(onMountError);
   } catch (err) {
-    console.error(err);
-    showToast(t('toast.loadFailed'), true);
-    if (!document.body.classList.contains('landing')) mountLanding();
+    onMountError(err);
   }
 }
 
-function mountSim(location?: GeocodeResult): void {
+function onMountError(err: unknown): void {
+  console.error(err);
+  showToast(t('toast.loadFailed'), true);
+  if (!document.body.classList.contains('landing')) mountLanding();
+}
+
+async function mountSim(location?: GeocodeResult): Promise<void> {
   if (!ensureWebGL()) return;
   document.body.classList.remove('landing', 'video');
-  const a = ensureApp();
+  const a = await ensureApp();
+  if (!window.location.pathname.startsWith('/sim')) return; // route changed during the chunk load
   a.exitVideoMode();
   a.setActive(true);
   if (location) a.startAt(location, {});
   else if (!a.isStarted) a.start();
 }
 
-function mountVideo(location?: GeocodeResult): void {
+async function mountVideo(location?: GeocodeResult): Promise<void> {
   if (!ensureWebGL()) return;
   document.body.classList.remove('landing');
   document.body.classList.add('video');
-  const a = ensureApp();
+  const a = await ensureApp();
+  if (!window.location.pathname.startsWith('/video')) return; // route changed during the chunk load
   a.setActive(true);
   if (location) a.startAt(location, { cinematic: true });
   else if (!a.isStarted) a.start({ cinematic: true });

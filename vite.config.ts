@@ -6,6 +6,21 @@ import tailwindcss from '@tailwindcss/vite';
 // Nominatim usage policy requires (stock browser UA is rejected).
 export default defineConfig({
   plugins: [tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the heavy, rarely-changing libraries into their own chunks so a
+        // one-line app edit doesn't bust their (immutable-cached) download for
+        // returning visitors. three + tweakpane are only pulled by the lazily
+        // imported App, so they also stay off the landing's critical path.
+        manualChunks(id: string): string | undefined {
+          if (id.includes('node_modules/three')) return 'three';
+          if (id.includes('node_modules/tweakpane') || id.includes('node_modules/@tweakpane')) return 'tweakpane';
+          return undefined;
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api/geocode': {
