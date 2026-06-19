@@ -48,31 +48,30 @@ const OVERPASS_MIRRORS = [
   'https://overpass.osm.ch/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
-const OVERPASS_TIMEOUT_MS = 28000; // generous cap: a big bbox can take ~20 s server-side
+const OVERPASS_TIMEOUT_MS = 18000; // per mirror; the lighter big-map query fits comfortably
 const OSM_GREEN_MAX_METERS = 3500; // above this, skip land-use/leisure/green (too heavy)
 
 type OverpassResponse = { elements: OsmWay[] };
 
-// Race ALL CORS mirrors and take the first to respond, instead of trying them
-// one-by-one — a single slow/rate-limited mirror used to stack 12 s timeouts and
-// make a big (km≥5) query feel like a hang. The winner cancels the losers.
-// Cache is keyed by the query (not the mirror) so a re-query hits regardless.
+// Try the CORS mirrors ONE AT A TIME (maps.mail.ru first — fast for Russia). NOT
+// in parallel: free mirrors rate-limit/reject concurrent big queries, which made
+// km≥5 come back empty (no buildings/roads at all). Cache is keyed by the query
+// (not the mirror) so a re-query hits regardless of which mirror served it.
 async function overpassFetch(query: string): Promise<OverpassResponse> {
   const cacheKey = `overpass:${query}`;
-  const controllers = OVERPASS_MIRRORS.map(() => new AbortController());
-  const timers = controllers.map((c) => setTimeout(() => c.abort(), OVERPASS_TIMEOUT_MS));
-  const attempts = OVERPASS_MIRRORS.map((mirror, i) => {
+  let lastError: unknown;
+  for (const mirror of OVERPASS_MIRRORS) {
     const url = `${mirror}?data=${encodeURIComponent(query)}`;
-    return cachedJson<OverpassResponse>(url, { key: cacheKey, init: { signal: controllers[i].signal } });
-  });
-  try {
-    return await Promise.any(attempts);
-  } catch {
-    throw new Error('All Overpass mirrors failed');
-  } finally {
-    timers.forEach(clearTimeout);
-    controllers.forEach((c) => c.abort()); // cancel the slower mirrors (no-op for the winner)
+    try {
+      return await cachedJson<OverpassResponse>(url, {
+        key: cacheKey,
+        init: { signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS) },
+      });
+    } catch (e) {
+      lastError = e;
+    }
   }
+  throw lastError ?? new Error('All Overpass mirrors failed');
 }
 
 const ROAD_WIDTH: Record<string, number> = {
