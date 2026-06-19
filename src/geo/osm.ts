@@ -48,29 +48,31 @@ const OVERPASS_MIRRORS = [
   'https://overpass.osm.ch/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
-const OVERPASS_TIMEOUT_MS = 12000; // a stalled mirror must fail over, not hang the load
+const OVERPASS_TIMEOUT_MS = 28000; // generous cap: a big bbox can take ~20 s server-side
+const OSM_GREEN_MAX_METERS = 3500; // above this, skip land-use/leisure/green (too heavy)
 
 type OverpassResponse = { elements: OsmWay[] };
 
-// Cache keyed by the query (not the mirror URL) so a re-query hits cache
-// regardless of which mirror served the original response.
+// Race ALL CORS mirrors and take the first to respond, instead of trying them
+// one-by-one — a single slow/rate-limited mirror used to stack 12 s timeouts and
+// make a big (km≥5) query feel like a hang. The winner cancels the losers.
+// Cache is keyed by the query (not the mirror) so a re-query hits regardless.
 async function overpassFetch(query: string): Promise<OverpassResponse> {
   const cacheKey = `overpass:${query}`;
-  let lastError: unknown;
-  for (const mirror of OVERPASS_MIRRORS) {
+  const controllers = OVERPASS_MIRRORS.map(() => new AbortController());
+  const timers = controllers.map((c) => setTimeout(() => c.abort(), OVERPASS_TIMEOUT_MS));
+  const attempts = OVERPASS_MIRRORS.map((mirror, i) => {
     const url = `${mirror}?data=${encodeURIComponent(query)}`;
-    try {
-      // Cap each mirror: a stall (no response, no error) would otherwise hang the
-      // whole "features" stage; on timeout we fall through to the next mirror.
-      return await cachedJson<OverpassResponse>(url, {
-        key: cacheKey,
-        init: { signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS) },
-      });
-    } catch (e) {
-      lastError = e;
-    }
+    return cachedJson<OverpassResponse>(url, { key: cacheKey, init: { signal: controllers[i].signal } });
+  });
+  try {
+    return await Promise.any(attempts);
+  } catch {
+    throw new Error('All Overpass mirrors failed');
+  } finally {
+    timers.forEach(clearTimeout);
+    controllers.forEach((c) => c.abort()); // cancel the slower mirrors (no-op for the winner)
   }
-  throw lastError ?? new Error('All Overpass mirrors failed');
 }
 
 const ROAD_WIDTH: Record<string, number> = {
@@ -161,16 +163,25 @@ export async function fetchOsm(
 ): Promise<OsmRasters> {
   const [s, w, n, e] = bbox(center, sizeMeters);
   const box = `${s},${w},${n},${e}`;
-  const query = `[out:json][timeout:60];(
-    way["building"](${box});
-    way["highway"](${box});
-    way["natural"="water"](${box});
-    way["water"](${box});
-    way["waterway"](${box});
-    way["landuse"](${box});
-    way["leisure"](${box});
-    way["natural"~"wood|scrub|grassland|heath|wetland"](${box});
-  );out geom;`;
+  // Above ~3.5 km the bbox covers a lot of ground and the land-use / leisure /
+  // natural-green polygons (farmland etc.) dominate the Overpass payload + parse
+  // time. They only feed the pervious-soil fallback, so for big maps we drop them
+  // and keep the essentials (buildings + roads + water) — much faster to load.
+  const clauses = [
+    `way["building"](${box});`,
+    `way["highway"](${box});`,
+    `way["natural"="water"](${box});`,
+    `way["water"](${box});`,
+    `way["waterway"](${box});`,
+  ];
+  if (sizeMeters <= OSM_GREEN_MAX_METERS) {
+    clauses.push(
+      `way["landuse"](${box});`,
+      `way["leisure"](${box});`,
+      `way["natural"~"wood|scrub|grassland|heath|wetland"](${box});`,
+    );
+  }
+  const query = `[out:json][timeout:60];(${clauses.join('')});out geom;`;
 
   const json = await overpassFetch(query);
 
