@@ -48,15 +48,20 @@ const OVERPASS_MIRRORS = [
   'https://overpass.osm.ch/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
-const OVERPASS_TIMEOUT_MS = 20000; // per mirror; a big (km≥5) bbox can take ~15 s server-side
-
 type OverpassResponse = { elements: OsmWay[] };
+
+// Per-mirror cap scales with the bbox: a small map responds in a few seconds
+// (12 s is plenty), but a km≥5 query of a dense city legitimately needs ~30-40 s
+// server-side — don't false-timeout it into a needless failover. Caps at 40 s.
+function overpassTimeoutMs(sizeMeters: number): number {
+  return Math.min(40000, Math.max(12000, Math.round(sizeMeters * 8)));
+}
 
 // Try the CORS mirrors ONE AT A TIME (maps.mail.ru first — fast for Russia). NOT
 // in parallel: free mirrors rate-limit/reject concurrent big queries, which made
 // km≥5 come back empty (no buildings/roads at all). Cache is keyed by the query
 // (not the mirror) so a re-query hits regardless of which mirror served it.
-async function overpassFetch(query: string): Promise<OverpassResponse> {
+async function overpassFetch(query: string, timeoutMs: number): Promise<OverpassResponse> {
   const cacheKey = `overpass:${query}`;
   let lastError: unknown;
   for (const mirror of OVERPASS_MIRRORS) {
@@ -64,7 +69,7 @@ async function overpassFetch(query: string): Promise<OverpassResponse> {
     try {
       return await cachedJson<OverpassResponse>(url, {
         key: cacheKey,
-        init: { signal: AbortSignal.timeout(OVERPASS_TIMEOUT_MS) },
+        init: { signal: AbortSignal.timeout(timeoutMs) },
       });
     } catch (e) {
       lastError = e;
@@ -172,7 +177,7 @@ export async function fetchOsm(
     way["natural"~"wood|scrub|grassland|heath|wetland"](${box});
   );out geom;`;
 
-  const json = await overpassFetch(query);
+  const json = await overpassFetch(query, overpassTimeoutMs(sizeMeters));
 
   const cellSize = sizeMeters / (N - 1);
   const toGrid = (lon: number, lat: number): number[] => {
