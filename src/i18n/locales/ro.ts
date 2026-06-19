@@ -194,4 +194,6 @@ export const ro: Record<string, string> = {
   'video.newAddress': 'Adresă nouă 📍',
   'video.exit': 'Ieșire',
   'viz.buildings3D': 'Clădiri 3D',
+  'toast.osmBusy': '{place} încărcat — dar datele despre clădiri/străzi erau ocupate. Reîncarcă pentru a încerca din nou (o hartă mai mică se încarcă mai fiabil).',
+  'video.failed': 'Exportul videoclipului a eșuat. Încearcă din nou.',
 };

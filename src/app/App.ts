@@ -27,6 +27,9 @@ import { GameUI } from '../ui/GameUI';
 import { ControlsPanel, type ControlCallbacks } from '../ui/ControlsPanel';
 import { INITIAL_STATS, type StatsData } from '../ui/stats';
 import { showToast } from '../ui/toast';
+import { setupChromeToggle } from '../ui/chromeToggle';
+import { FpsBadge } from '../ui/FpsBadge';
+import { HeatLegend } from '../ui/HeatLegend';
 
 export class App {
   private readonly params: Params = { ...DEFAULT_PARAMS };
@@ -57,13 +60,10 @@ export class App {
   private readonly resBuf = new THREE.Vector2();
   private readonly spotBuf = new THREE.Vector2();
   private readonly seaCloudColor = new THREE.Color(0.34, 0.36, 0.42);
-  private readonly legend = document.getElementById('legend') as HTMLDivElement | null;
-  private readonly legendMin = document.getElementById('legend-min');
-  private readonly legendMax = document.getElementById('legend-max');
+  private readonly heatLegend = new HeatLegend();
+  private readonly fpsBadge = new FpsBadge();
 
   private weatherClock = 0; // advances only while running, so rain/storm freeze on pause
-  private fpsEl: HTMLDivElement | null = null;
-  private lastFpsShown = 0;
   private lowFpsTime = 0;
   private fpsEma = 60;
   private lastTime = 0;
@@ -83,6 +83,12 @@ export class App {
   private active = false;
   private capturing = false;
   private videoMode?: VideoMode;
+  // Bumped on every route change (setActive); an async build captures it and bails
+  // its post-build enterVideoMode() if the user navigated away meanwhile.
+  private navToken = 0;
+  // Set when video capture was requested before the world finished building; the
+  // render loop starts it once the build completes.
+  private pendingVideo = false;
 
   /** Total GPU frames actually drawn — should plateau when the scene is idle. */
   get rendered(): number { return this.framesRendered; }
@@ -115,7 +121,7 @@ export class App {
     // / geocode), so a default place never flashes for out-of-region visitors.
 
     this.panel = new ControlsPanel(this.params, this.stats, this.panelCallbacks());
-    this.setupChromeToggle();
+    setupChromeToggle();
 
     this.simDriver = new SimDriver(this.params, this.stats, {
       refreshPanel: () => this.panel.refresh(),
@@ -163,33 +169,6 @@ export class App {
     });
   }
 
-  /** The ⚙ gear: opens/closes the controls drawer (closed by default — the
-   *  production view is a clean game UI; every option lives behind the gear). */
-  private setupChromeToggle(): void {
-    const toggle = document.getElementById('chrome-toggle') as HTMLButtonElement | null;
-    const panel = document.getElementById('chrome-panel');
-    if (!toggle) return;
-    const setOpen = (open: boolean): void => {
-      document.body.classList.toggle('chrome-open', open);
-      toggle.textContent = open ? '✕' : '⚙';
-      toggle.setAttribute('aria-expanded', String(open));
-      toggle.title = t('panel.title');
-    };
-    setOpen(false);
-    toggle.addEventListener('click', () => {
-      setOpen(!document.body.classList.contains('chrome-open'));
-    });
-    document.addEventListener('pointerdown', (e) => {
-      if (!document.body.classList.contains('chrome-open')) return;
-      const target = e.target as Node;
-      if (toggle.contains(target) || panel?.contains(target)) return;
-      setOpen(false);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.body.classList.contains('chrome-open')) setOpen(false);
-    });
-  }
-
   /** Launch button: start the rain and run the sim from dry ground. */
   private startSimulation(): void {
     this.params.raining = true;
@@ -219,8 +198,11 @@ export class App {
    *  straight into the video capture for a /video deep-link). */
   start(opts: { cinematic?: boolean } = {}): void {
     this.active = true;
+    const gen = this.navToken;
     this.ensureLoop();
-    void this.worldBuilder.bootstrap().then(() => { if (opts.cinematic) this.enterVideoMode(); });
+    void this.worldBuilder.bootstrap().then(() => {
+      if (opts.cinematic && gen === this.navToken) this.enterVideoMode();
+    });
   }
 
   /** Entry from the landing page: load an already-resolved place, optionally
@@ -233,13 +215,15 @@ export class App {
   }
 
   private async enterLocation(location: GeocodeResult, opts: { cinematic?: boolean }): Promise<void> {
+    const gen = this.navToken;
     await this.worldBuilder.loadCenter(location);
-    if (opts.cinematic) this.enterVideoMode();
+    if (opts.cinematic && gen === this.navToken) this.enterVideoMode();
   }
 
   /** Show/hide this view: while the landing is up the sim is paused (no step,
    *  no render) so a backgrounded 3D scene never burns the GPU. */
   setActive(active: boolean): void {
+    this.navToken++;
     this.active = active;
     if (active) this.lastTime = performance.now();
   }
@@ -253,14 +237,23 @@ export class App {
 
   /** Stop and tear down an in-progress video capture (router left /video). */
   exitVideoMode(): void {
+    this.pendingVideo = false;
     this.videoMode?.cancel();
     this.videoMode = undefined;
   }
 
-  /** Record an accelerated storm over the current world to a downloadable clip. */
+  /** Record an accelerated storm over the current world to a downloadable clip.
+   *  If the world is still building (deep-link/Back to /video mid-load), defer:
+   *  the render loop retries this once `worldBuilder.isLoading` clears, so the
+   *  precompute never starts against a half-built sim (which would stall at 0%). */
   enterVideoMode(): void {
-    if (this.videoMode) return;
+    if (this.videoMode || !this.active) return;
     if (!pickVideoMime()) { showToast(t('video.unsupported'), true); return; }
+    if (!this.simDriver.hasSim || this.worldBuilder.isLoading) {
+      this.pendingVideo = true;
+      return;
+    }
+    this.pendingVideo = false;
     this.videoMode = new VideoMode({
       params: this.params,
       simDriver: this.simDriver,
@@ -271,8 +264,17 @@ export class App {
       renderCaptureFrame: (dt) => this.renderCaptureFrame(dt),
       setCapturing: (on) => this.setCapturing(on),
       onExit: () => { this.videoMode = undefined; },
+      replay: () => this.enterVideoMode(),
     });
     void this.videoMode.run();
+  }
+
+  /** Start a capture that was deferred until the world finished building. */
+  private startDeferredVideoIfReady(): boolean {
+    if (!this.pendingVideo || this.videoMode) return false;
+    if (!this.simDriver.hasSim || this.worldBuilder.isLoading) return false;
+    this.enterVideoMode();
+    return true;
   }
 
   private panelCallbacks(): ControlCallbacks {
@@ -367,6 +369,7 @@ export class App {
   private applyParams(): void {
     this.needsRender = true; // single choke point for every param/viz/world change
     this.group.scale.y = this.params.verticalExaggeration;
+    this.buildings?.setVerticalExaggeration(this.params.verticalExaggeration);
     this.simDriver.updateParams(this.params);
     this.refreshSurface();
     this.water?.update(this.params);
@@ -381,6 +384,13 @@ export class App {
     this.scene.setStorm(this.params.storm);
     this.terrain?.setSkyTint(this.scene.skyTopColor);
     this.scene.applyPostParams(this.params);
+    this.applyOverlayVisibility();
+    this.heatLegend.update(this.params.terrainStyle, this.heightmap);
+    this.geology.update(this.params, this.heightmap, this.surfaceRaw?.land ?? null);
+  }
+
+  /** Toggle the optional overlay meshes + the satellite credit per the viz flags. */
+  private applyOverlayVisibility(): void {
     if (this.maxFlood) this.maxFlood.mesh.visible = this.params.showMaxFlood;
     if (this.velocity) this.velocity.mesh.visible = this.params.showVelocity;
     this.buildings?.setVisible(this.params.buildings3D);
@@ -388,17 +398,6 @@ export class App {
       const showing = this.params.terrainStyle === 'satellite' && !!this.terrain?.hasSatellite;
       this.credit.style.display = showing ? 'block' : 'none';
     }
-    if (this.legend) {
-      const heat = this.params.terrainStyle === 'heatmap' && !!this.heightmap;
-      this.legend.style.display = heat ? 'block' : 'none';
-      if (heat && this.heightmap) {
-        const title = this.legend.querySelector('.title');
-        if (title) title.textContent = t('legend.elevation');
-        if (this.legendMin) this.legendMin.textContent = `${this.heightmap.min.toFixed(0)} m`;
-        if (this.legendMax) this.legendMax.textContent = `${this.heightmap.max.toFixed(0)} m`;
-      }
-    }
-    this.geology.update(this.params, this.heightmap, this.surfaceRaw?.land ?? null);
   }
 
   /** Recompute the per-cell drainage/infiltration/roughness fields live (no re-fetch). */
@@ -434,6 +433,7 @@ export class App {
     // frames itself: don't step or render (saves the battery/fan when
     // backgrounded — browsers don't throttle occluded-but-visible windows).
     if (this.scene.contextLost || document.hidden || !this.active || this.capturing) return;
+    if (this.startDeferredVideoIfReady()) return; // VideoMode now drives frames itself
     if (dt > 0) this.fpsEma = this.fpsEma * 0.9 + (1 / dt) * 0.1;
 
     const stepped = this.simDriver.tick(dt);
@@ -483,18 +483,9 @@ export class App {
     if (!on) this.lastTime = performance.now();
   }
 
-  /** Always-visible FPS badge (the panel's stat is collapsible/buried). */
+  /** Refresh the FPS badge and (on the same throttled cadence) the HUD stats. */
   private showFps(now: number): void {
-    if (now - this.lastFpsShown < 200) return;
-    this.lastFpsShown = now;
-    if (!this.fpsEl) {
-      this.fpsEl = document.createElement('div');
-      this.fpsEl.id = 'fps-meter';
-      document.body.appendChild(this.fpsEl);
-    }
-    const f = Math.round(this.fpsEma);
-    this.fpsEl.textContent = `${f} fps`;
-    this.fpsEl.style.color = f >= 50 ? '#86e08a' : f >= 30 ? '#e0cf86' : '#e08a86';
+    if (!this.fpsBadge.update(now, this.fpsEma)) return;
     this.gameUI.setStats(this.simDriver.peakDepth, this.simDriver.floodedFraction * 100);
   }
 
@@ -523,25 +514,10 @@ export class App {
     // it follows the flood (and persists after the rain stops) — just pass intensity.
     this.terrain?.setWetness(this.params.wetness);
 
-    this.sea?.setFrame({
-      resolution: this.scene.getResolution(this.resBuf),
-      cameraNear: this.scene.camera.near,
-      cameraFar: this.scene.camera.far,
-      sunDir: this.scene.sunDirection,
-      sunColor: this.scene.sunColorLinear,
-      skyTop: this.scene.skyTopColor,
-      skyHorizon: this.scene.skyHorizonColor,
-      cloudColor: this.seaCloudColor,
-    });
+    this.sea?.setFrame({ ...this.scene.frameBasis(this.resBuf), cloudColor: this.seaCloudColor });
     if (!this.water) return;
     this.water.setFrame({
-      resolution: this.scene.getResolution(this.resBuf),
-      cameraNear: this.scene.camera.near,
-      cameraFar: this.scene.camera.far,
-      sunDir: this.scene.sunDirection,
-      sunColor: this.scene.sunColorLinear,
-      skyTop: this.scene.skyTopColor,
-      skyHorizon: this.scene.skyHorizonColor,
+      ...this.scene.frameBasis(this.resBuf),
       cloudReflect: this.params.storm ? 0.5 : 0.15,
     });
 
@@ -564,6 +540,15 @@ export class App {
 
   private disposeWorld(): void {
     this.markerLayer.clear();
+    this.detachWorldMeshes();
+    this.geology.dispose(this.scene.scene);
+    this.simDriver.dispose();
+    this.freeWorldMeshes();
+  }
+
+  /** Remove every world mesh from the render group (sea is removed + freed here
+   *  since it has no separate field reset below). */
+  private detachWorldMeshes(): void {
     if (this.terrain) this.group.remove(this.terrain.mesh);
     if (this.water) this.group.remove(this.water.mesh, this.water.skirt);
     if (this.sea) { this.group.remove(this.sea.mesh); this.sea.dispose(); this.sea = undefined; }
@@ -572,8 +557,10 @@ export class App {
     if (this.velocity) this.group.remove(this.velocity.mesh);
     if (this.rain) this.group.remove(this.rain.object);
     if (this.buildings) this.group.remove(this.buildings.mesh);
-    this.geology.dispose(this.scene.scene);
-    this.simDriver.dispose();
+  }
+
+  /** Free GPU resources for the detached meshes and drop the references. */
+  private freeWorldMeshes(): void {
     this.water?.dispose();
     this.floodOverlay?.dispose();
     this.maxFlood?.dispose();

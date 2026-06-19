@@ -195,4 +195,6 @@ export const it: Record<string, string> = {
   'video.newAddress': 'Nuovo indirizzo 📍',
   'video.exit': 'Esci',
   'viz.buildings3D': 'Edifici 3D',
+  'toast.osmBusy': '{place} caricato — ma i dati di edifici/strade erano occupati. Ricarica per riprovare (una mappa più piccola si carica in modo più affidabile).',
+  'video.failed': 'Esportazione del video non riuscita. Riprova.',
 };

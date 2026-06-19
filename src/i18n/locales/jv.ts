@@ -215,4 +215,6 @@ export const jv: Record<string, string> = {
   'video.newAddress': 'Alamat anyar 📍',
   'video.exit': 'Metu',
   'viz.buildings3D': 'Bangunan 3D',
+  'toast.osmBusy': '{place} dimuat — nanging data bangunan/dalan lagi sibuk. Muat maneh kanggo nyoba maneh (ukuran peta sing luwih cilik dimuat luwih andal).',
+  'video.failed': 'Ekspor video gagal. Mangga coba maneh.',
 };

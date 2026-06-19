@@ -1,20 +1,6 @@
-import type { GeocodeResult } from '../geo/geocode';
-import { parseCoords } from '../url';
+import { el } from '../ui/dom';
 
-// Small DOM builders shared by the landing card.
-
-export function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
-  const node = document.createElement(tag);
-  node.className = className;
-  return node;
-}
-
-export function button(className: string, label: string): HTMLButtonElement {
-  const b = el('button', className);
-  b.type = 'button';
-  b.textContent = label;
-  return b;
-}
+// Landing-card-specific DOM builders (the generic el()/button() live in ui/dom).
 
 export function chip(icon: string, text: string, extra = ''): HTMLSpanElement {
   const c = el('span', 'lp-chip' + (extra ? ` ${extra}` : ''));
@@ -29,10 +15,4 @@ export function chip(icon: string, text: string, extra = ''): HTMLSpanElement {
 
 export function spinner(): HTMLSpanElement {
   return el('span', 'spin');
-}
-
-/** Trim a geocode display name to its two most specific parts (or raw coords). */
-export function shortLabel(location: GeocodeResult): string {
-  if (parseCoords(location.displayName)) return location.displayName;
-  return location.displayName.split(',').slice(0, 2).map((s) => s.trim()).join(', ');
 }

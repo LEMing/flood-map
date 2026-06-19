@@ -207,4 +207,6 @@ export const vi: Record<string, string> = {
   'video.newAddress': 'Địa chỉ mới 📍',
   'video.exit': 'Thoát',
   'viz.buildings3D': 'Tòa nhà 3D',
+  'toast.osmBusy': 'Đã tải {place} — nhưng dữ liệu tòa nhà/đường phố đang bận. Tải lại để thử lại (kích thước bản đồ nhỏ hơn tải đáng tin cậy hơn).',
+  'video.failed': 'Xuất video không thành công. Vui lòng thử lại.',
 };

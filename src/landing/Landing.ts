@@ -1,4 +1,4 @@
-import { geocode, type GeocodeResult } from '../geo/geocode';
+import { geocode, shortLabel, type GeocodeResult } from '../geo/geocode';
 import { suggest, type Suggestion } from '../geo/autocomplete';
 import { landingBackdrop } from '../geo/landingSatellite';
 import { detectIpLocation } from '../geo/ipLocation';
@@ -7,7 +7,7 @@ import { pickVideoMime } from '../video/Recorder';
 import { DEFAULT_PARAMS } from '../config';
 import { formatCoords, parseCoords, readUrlState } from '../url';
 import { getLanguage, t } from '../i18n';
-import { el, button, shortLabel } from './dom';
+import { el, button } from '../ui/dom';
 import { renderPreparing, renderFacts, renderFactError } from './landingFacts';
 
 export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number }

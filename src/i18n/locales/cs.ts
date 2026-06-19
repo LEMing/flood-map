@@ -195,4 +195,6 @@ export const cs: Record<string, string> = {
   'video.newAddress': 'Nová adresa 📍',
   'video.exit': 'Konec',
   'viz.buildings3D': '3D budovy',
+  'toast.osmBusy': '{place} načteno — ale data o budovách/silnicích byla zaneprázdněná. Načtěte znovu a zkuste to (menší velikost mapy se načítá spolehlivěji).',
+  'video.failed': 'Export videa selhal. Zkuste to prosím znovu.',
 };

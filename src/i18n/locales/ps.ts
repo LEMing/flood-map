@@ -212,4 +212,6 @@ export const ps: Record<string, string> = {
   'video.newAddress': 'نوی پته 📍',
   'video.exit': 'وتل',
   'viz.buildings3D': '3D ودانۍ',
+  'toast.osmBusy': '{place} بار شو — خو د ودانیو/سړکونو معلومات بوخت وو. بیا هڅې لپاره بیا بار کړئ (د نقشې کوچنۍ اندازه ډېره باوري بار کیږي).',
+  'video.failed': 'د ویډیو صادرول ناکام شو. مهرباني وکړئ بیا هڅه وکړئ.',
 };

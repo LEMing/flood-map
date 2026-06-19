@@ -213,4 +213,6 @@ export const de: Record<string, string> = {
   'video.newAddress': 'Neue Adresse 📍',
   'video.exit': 'Beenden',
   'viz.buildings3D': '3D-Gebäude',
+  'toast.osmBusy': '{place} geladen — aber die Gebäude-/Straßendaten waren ausgelastet. Neu laden, um es erneut zu versuchen (eine kleinere Kartengröße lädt zuverlässiger).',
+  'video.failed': 'Videoexport fehlgeschlagen. Bitte versuche es erneut.',
 };

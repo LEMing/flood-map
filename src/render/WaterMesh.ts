@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { Params } from '../config';
+import type { FrameBasis } from './frameBasis';
 import { GLSL_FBM } from './glslNoise';
 import { WATER_VERT, WATER_FRAG_HEAD, WATER_FRAG_BODY } from './WaterMesh.glsl';
 
@@ -11,14 +12,7 @@ const vertexShader = WATER_VERT;
 
 const fragmentShader = `${WATER_FRAG_HEAD}${GLSL_FBM}${WATER_FRAG_BODY}`;
 
-export interface WaterFrame {
-  resolution: THREE.Vector2;
-  cameraNear: number;
-  cameraFar: number;
-  sunDir: THREE.Vector3;
-  sunColor: THREE.Color;
-  skyTop: THREE.Color;
-  skyHorizon: THREE.Color;
+export interface WaterFrame extends FrameBasis {
   cloudReflect: number;
 }
 

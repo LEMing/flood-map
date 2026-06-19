@@ -208,4 +208,6 @@ export const id: Record<string, string> = {
   'video.newAddress': 'Alamat baru 📍',
   'video.exit': 'Keluar',
   'viz.buildings3D': 'Bangunan 3D',
+  'toast.osmBusy': '{place} dimuat — tetapi data bangunan/jalan sedang sibuk. Muat ulang untuk mencoba lagi (ukuran peta yang lebih kecil dimuat lebih andal).',
+  'video.failed': 'Ekspor video gagal. Silakan coba lagi.',
 };

@@ -5,6 +5,8 @@ import type { SceneManager } from '../render/SceneManager';
 import { stormIntensityMmHr } from '../sim/storm';
 import { Recorder } from '../video/Recorder';
 import { buildVideoLabel } from '../video/videoLabel';
+import { el, button } from '../ui/dom';
+import { showToast } from '../ui/toast';
 import { t } from '../i18n';
 
 export interface VideoModeHost {
@@ -17,6 +19,7 @@ export interface VideoModeHost {
   renderCaptureFrame(dt: number): void;
   setCapturing(on: boolean): void;
   onExit(): void;
+  replay(): void;
 }
 
 const VIDEO_DURATION_SEC = 30;
@@ -45,6 +48,7 @@ export class VideoMode {
   private readonly startOffset = new THREE.Vector3();
   private outputExt = 'mp4';
   private aborted = false;
+  private resultUrl?: string;
 
   constructor(private readonly host: VideoModeHost) {
     this.overlay = el('div', 'vm-overlay');
@@ -66,17 +70,15 @@ export class VideoMode {
     this.applyCaptureProfile();
     this.host.applyParams();
 
-    this.host.simDriver.beginPrecompute({ untilDry: true });
-    this.host.applyParams();
-    await this.awaitPrecompute();
-
     let blob: Blob | null = null;
-    if (!this.aborted) {
-      try {
-        blob = await this.record();
-      } catch {
-        blob = null;
-      }
+    let failed = false;
+    try {
+      this.host.simDriver.beginPrecompute({ untilDry: true });
+      this.host.applyParams();
+      await this.awaitPrecompute();
+      if (!this.aborted) blob = await this.record();
+    } catch {
+      failed = true;
     }
 
     this.host.setCapturing(false);
@@ -86,8 +88,12 @@ export class VideoMode {
     this.host.applyParams();
     this.host.refreshPanel();
 
-    if (blob && !this.aborted) this.showResult(blob);
-    else this.dispose();
+    if (blob && blob.size > 0 && !this.aborted) {
+      this.showResult(blob);
+    } else {
+      if ((failed || !blob) && !this.aborted) showToast(t('video.failed'), true);
+      this.dispose();
+    }
   }
 
   private awaitPrecompute(): Promise<void> {
@@ -180,6 +186,7 @@ export class VideoMode {
 
   private showResult(blob: Blob): void {
     const url = URL.createObjectURL(blob);
+    this.resultUrl = url;
     this.overlay.classList.add('result');
     this.overlay.innerHTML = '';
 
@@ -204,20 +211,16 @@ export class VideoMode {
     download.download = `flood-${slug(this.host.placeName())}.${this.outputExt}`;
 
     const newAddress = button('vm-btn vm-btn-ghost', t('video.newAddress'));
-    newAddress.addEventListener('click', () => { URL.revokeObjectURL(url); this.goHome(); });
+    newAddress.addEventListener('click', () => this.goHome());
     const realtime = button('vm-btn vm-btn-ghost', t('video.realtime'));
     realtime.addEventListener('click', () => {
-      URL.revokeObjectURL(url);
       this.dispose();
       window.dispatchEvent(new CustomEvent('app:navigate', { detail: 'sim' }));
     });
     const again = button('vm-btn vm-btn-ghost', t('video.again'));
     again.addEventListener('click', () => {
-      URL.revokeObjectURL(url);
-      this.overlay.remove();
-      this.host.onExit();
-      const next = new VideoMode(this.host);
-      void next.run();
+      this.dispose();
+      this.host.replay();
     });
 
     actions.append(download, newAddress, realtime, again);
@@ -226,6 +229,7 @@ export class VideoMode {
   }
 
   private dispose(): void {
+    if (this.resultUrl) { URL.revokeObjectURL(this.resultUrl); this.resultUrl = undefined; }
     this.overlay.remove();
     this.host.onExit();
   }
@@ -242,19 +246,6 @@ export class VideoMode {
     this.aborted = true;
     this.dispose();
   }
-}
-
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] {
-  const node = document.createElement(tag);
-  node.className = className;
-  return node;
-}
-
-function button(className: string, label: string): HTMLButtonElement {
-  const b = el('button', className);
-  b.type = 'button';
-  b.textContent = label;
-  return b;
 }
 
 function pctOf(frac: number): number {

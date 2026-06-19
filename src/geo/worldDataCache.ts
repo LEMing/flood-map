@@ -1,26 +1,18 @@
-import type { GeoLoadRequest, GeoLoadResult, GeoProgress } from './geoWorkerTypes';
+import type { GeoLoadResult, GeoProgress } from './geoWorkerTypes';
+import { worldKey, type WorldRequest } from './worldKey';
 import { loadTerrainInWorker } from './loadInWorker';
 
 // In-memory handoff between the landing prefetch and the sim build: the landing
 // warms a place's world the moment it's chosen, and the sim consumes it instead
-// of re-running the (expensive) off-thread DEM + OSM + surface build.
-//
-// The key intentionally omits `params` — the landing and the initial sim build
-// both use the default-ish params (only km/grid, which ARE in the key, vary via
-// URL), so a fresh visit always hits. A divergent param set just misses and
-// re-fetches (correct, only slower).
+// of re-running the (expensive) off-thread DEM + OSM + surface build. The handoff
+// key (see worldKey.ts) omits params so a fresh visit always hits.
 
-export type WorldRequest = Omit<GeoLoadRequest, 'id'>;
+export type { WorldRequest };
 
 const READY_MAX = 2; // bound the retained results (each is several MB)
 
 const inflight = new Map<string, Promise<GeoLoadResult>>();
 const ready = new Map<string, GeoLoadResult>();
-
-function worldKey(r: WorldRequest): string {
-  const { location: loc } = r;
-  return `${loc.lat.toFixed(4)},${loc.lon.toFixed(4)}|${r.mapSizeKm}|${r.N}|${r.elevationSource}|${r.useSurface}`;
-}
 
 function remember(key: string, res: GeoLoadResult): void {
   ready.set(key, res);

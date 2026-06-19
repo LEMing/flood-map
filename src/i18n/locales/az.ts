@@ -195,4 +195,6 @@ export const az: Record<string, string> = {
   'video.newAddress': 'Yeni ünvan 📍',
   'video.exit': 'Çıxış',
   'viz.buildings3D': '3D binalar',
+  'toast.osmBusy': '{place} yükləndi — lakin bina/yol məlumatları məşğul idi. Yenidən cəhd etmək üçün yenidən yükləyin (daha kiçik xəritə ölçüsü daha etibarlı yüklənir).',
+  'video.failed': 'Videonun ixracı alınmadı. Zəhmət olmasa yenidən cəhd edin.',
 };

@@ -212,4 +212,6 @@ export const su: Record<string, string> = {
   'video.newAddress': 'Alamat anyar 📍',
   'video.exit': 'Kaluar',
   'viz.buildings3D': 'Wangunan 3D',
+  'toast.osmBusy': '{place} dimuat — tapi data wangunan/jalan keur sibuk. Muat deui pikeun nyobian deui (ukuran peta nu leuwih leutik dimuat leuwih bisa diandelkeun).',
+  'video.failed': 'Ékspor video gagal. Mangga cobian deui.',
 };

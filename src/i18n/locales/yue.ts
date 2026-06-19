@@ -216,4 +216,6 @@ export const yue: Record<string, string> = {
   'video.newAddress': '新地址 📍',
   'video.exit': '離開',
   'viz.buildings3D': '3D建築物',
+  'toast.osmBusy': '已經載入 {place} — 但係建築物/道路數據繁忙。重新載入再試一次（地圖尺寸細啲會載入得更可靠）。',
+  'video.failed': '影片匯出失敗。請再試一次。',
 };

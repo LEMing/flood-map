@@ -194,4 +194,6 @@ export const zu: Record<string, string> = {
   'video.newAddress': 'Ikheli elisha 📍',
   'video.exit': 'Phuma',
   'viz.buildings3D': 'Izakhiwo ze-3D',
+  'toast.osmBusy': 'Kulayishwe i-{place} — kodwa idatha yezakhiwo/yemigwaqo ibimatasa. Layisha kabusha ukuze uzame futhi (usayizi omncane wemephu uyalayisha ngokuthembeka okwengeziwe).',
+  'video.failed': 'Ukukhipha ividiyo kuhlulekile. Sicela uzame futhi.',
 };

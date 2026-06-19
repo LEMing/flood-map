@@ -195,4 +195,6 @@ export const am: Record<string, string> = {
   'video.newAddress': 'አዲስ አድራሻ 📍',
   'video.exit': 'ውጣ',
   'viz.buildings3D': '3D ሕንፃዎች',
+  'toast.osmBusy': '{place} ተጭኗል — ነገር ግን የህንፃ/መንገድ ውሂብ ተጠምዶ ነበር። እንደገና ለመሞከር ዳግም ይጫኑ (አነስተኛ የካርታ መጠን በተሻለ በአስተማማኝ ሁኔታ ይጫናል)።',
+  'video.failed': 'ቪዲዮ ወደ ውጭ መላክ አልተሳካም። እባክዎ እንደገና ይሞክሩ።',
 };

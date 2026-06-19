@@ -47,6 +47,8 @@ function transferablesOf(r: GeoLoadResult): Transferable[] {
     t.push(s.surface.buffer);
     if (s.land) t.push(s.land.buffer);
     if (s.osm) t.push(s.osm.building.buffer, s.osm.road.buffer, s.osm.water.buffer, s.osm.green.buffer);
+    const bg = s.buildingGeometry;
+    if (bg) t.push(bg.position.buffer, bg.color.buffer, bg.ground.buffer);
   }
   return t;
 }

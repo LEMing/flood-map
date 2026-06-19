@@ -185,6 +185,10 @@ function writeCache(key: string, kind: StoredKind, body: ArrayBuffer | Blob | un
 export interface CacheOpts {
   key?: string;
   init?: RequestInit;
+  /** Reject (throw, and DON'T cache) a 2xx body that fails this test — e.g. an
+   *  empty Overpass result from a rate-limited mirror, so it fails over instead
+   *  of being cached as a permanent "success". */
+  accept?: (body: unknown) => boolean;
 }
 
 export async function cachedArrayBuffer(url: string, opts: CacheOpts = {}): Promise<ArrayBuffer> {
@@ -202,11 +206,14 @@ export async function cachedArrayBuffer(url: string, opts: CacheOpts = {}): Prom
 export async function cachedJson<T = unknown>(url: string, opts: CacheOpts = {}): Promise<T> {
   const key = opts.key ?? url;
   const hit = await readCache(key);
-  if (hit && hit.kind === 'json') return hit.body as T;
+  // Re-fetch a cached body that no longer passes `accept` (self-heals an empty
+  // Overpass result cached before this guard existed).
+  if (hit && hit.kind === 'json' && (!opts.accept || opts.accept(hit.body))) return hit.body as T;
 
   const resp = await fetch(url, opts.init);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const json = (await resp.json()) as T;
+  if (opts.accept && !opts.accept(json)) throw new Error('response rejected (empty/invalid)');
   writeCache(key, 'json', json);
   return json;
 }

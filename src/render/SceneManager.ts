@@ -7,6 +7,7 @@ import { PostFx } from './PostFx';
 import { type WeatherUniformBlock, makeSkyGradient, makeHaze, makeDomeBlit } from './skyMaterials';
 import type { WaterMesh } from './WaterMesh';
 import type { SeaMesh } from './SeaMesh';
+import type { FrameBasis } from './frameBasis';
 
 export type { WeatherUniformBlock };
 
@@ -173,6 +174,16 @@ export class SceneManager {
 
   getResolution(out: THREE.Vector2): THREE.Vector2 {
     return this.renderer.getDrawingBufferSize(out);
+  }
+
+  /** The sun / sky / camera fields shared by every per-frame water + sea update. */
+  frameBasis(out: THREE.Vector2): FrameBasis {
+    return {
+      resolution: this.getResolution(out),
+      cameraNear: this.camera.near, cameraFar: this.camera.far,
+      sunDir: this.sunDirection, sunColor: this.sunColorLinear,
+      skyTop: this.skyTopColor, skyHorizon: this.skyHorizonColor,
+    };
   }
 
   /** Above-water overlays to hide while rendering the refraction source (so they

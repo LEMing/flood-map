@@ -215,4 +215,6 @@ export const wuu: Record<string, string> = {
   'video.newAddress': '新地址 📍',
   'video.exit': '退出',
   'viz.buildings3D': '3D建筑',
+  'toast.osmBusy': '{place} 已经加载好哉 — 不过房屋/道路数据忙煞哉。重新加载再试一趟（地图尺寸小点加载会更可靠）。',
+  'video.failed': '视频导出失败哉。请重新试一趟。',
 };

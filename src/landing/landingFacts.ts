@@ -1,7 +1,7 @@
-import type { GeocodeResult } from '../geo/geocode';
+import { type GeocodeResult, shortLabel } from '../geo/geocode';
 import type { GeoLoadResult } from '../geo/geoWorkerTypes';
 import { t } from '../i18n';
-import { chip, spinner, shortLabel } from './dom';
+import { chip, spinner } from './dom';
 
 // Renders the landing's facts row in its various states.
 

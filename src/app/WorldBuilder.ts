@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import { acquireWorld } from '../geo/worldDataCache';
-import { geocode, type GeocodeResult } from '../geo/geocode';
+import { geocode, shortLabel, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
 import { clearDownloadSink, setDownloadSink } from '../geo/cache';
 import { readUrlState, writeUrlState, parseCoords, formatCoords } from '../url';
@@ -10,7 +10,7 @@ import { detectIpLocation } from '../geo/ipLocation';
 import {
   t, getLanguage, hasExplicitLanguage, resolveSmartLanguage, type Lang,
 } from '../i18n';
-import { BUILDING_RAISE_M, type SurfaceResult } from '../geo/surface';
+import type { SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
@@ -76,6 +76,10 @@ export class WorldBuilder {
   private readonly loadingUi = new LoadingPanel();
 
   constructor(private readonly host: WorldBuilderHost) {}
+
+  /** True while a center is being fetched/built — the cinematic video defers its
+   *  precompute until this clears so it never records a half-built world. */
+  get isLoading(): boolean { return this.loading; }
 
   /**
    * Decide the initial center and UI language. Explicit URL state wins; whatever
@@ -174,17 +178,21 @@ export class WorldBuilder {
         lat: location.lat, lon: location.lon,
         km: this.host.params.mapSizeKm, grid: this.host.params.gridResolution,
       });
-      this.host.addressBar.setValue(displayLabel(location));
+      this.host.addressBar.setValue(shortLabel(location));
       this.host.refreshPanel();
-      const surfNote = surface ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
-      const message = warning ?? `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`;
+      const osmBusy = !!surface?.osmFailed;
+      const surfNote = surface && !osmBusy ? ` · ${surface.counts.buildings} bld / ${surface.counts.roads} roads` : '';
+      const loaded = `${t('toast.loaded', { place })} — ${heightmap.min.toFixed(0)}–${heightmap.max.toFixed(0)} m (${SOURCE_LABELS[sourceUsed]})${surfNote}`;
+      // Distinguish "this area has no buildings" from "the OSM mirrors were busy"
+      // (the latter is retryable) instead of silently showing 0 buildings.
+      const message = osmBusy ? t('toast.osmBusy', { place }) : (warning ?? loaded);
       trackEvent('location_loaded', { place, source: sourceUsed, size_km: this.host.params.mapSizeKm });
       // The terrain is on screen — the load is "done" (the finally frees the
       // address bar so a new location can load right away). Satellite is a
       // non-blocking enhancement: it pops in, drives the imagery stage, then
       // fades the card and surfaces the result toast.
       this.loadingUi.setStage('imagery');
-      void this.loadSatellite(token, heightmap, message, !!warning);
+      void this.loadSatellite(token, heightmap, message, !!warning || osmBusy);
     } catch (err) {
       this.loadingUi.fail();
       showToast((err as Error).message, true);
@@ -236,7 +244,7 @@ export class WorldBuilder {
     const velocity = new VelocityField(heightmap.sizeMeters, terrain.heightTexture);
     const rain = new Rain(heightmap);
 
-    const buildings = this.buildBuildings(heightmap, surface, group);
+    const buildings = this.buildBuildings(surface, group);
 
     group.add(
       terrain.mesh, sea.mesh, water.mesh, water.skirt, floodOverlay.mesh,
@@ -257,19 +265,15 @@ export class WorldBuilder {
     };
   }
 
-  /** Extrude OSM footprints to 3D massing on the true ground (the +5 m sim burn
-   *  is un-done per cell inside BuildingsMesh). Built whenever footprints exist;
-   *  the `buildings3D` param just toggles visibility. */
-  private buildBuildings(
-    heightmap: Heightmap, surface: SurfaceResult | null, group: THREE.Group,
-  ): BuildingsMesh | undefined {
-    const osm = surface?.osm;
-    if (!osm || !osm.buildings.length) return undefined;
+  /** Render the worker-extruded OSM footprints as 3D massing. Built whenever
+   *  footprints exist; the `buildings3D` param just toggles visibility. */
+  private buildBuildings(surface: SurfaceResult | null, group: THREE.Group): BuildingsMesh | undefined {
+    const geometry = surface?.buildingGeometry;
+    if (!geometry || geometry.position.length === 0) return undefined;
     const { params } = this.host;
-    const mesh = new BuildingsMesh(
-      osm.buildings, heightmap, osm.building, params.burnBuildings ? BUILDING_RAISE_M : 0,
-    );
+    const mesh = new BuildingsMesh(geometry);
     mesh.setVisible(params.buildings3D);
+    mesh.setVerticalExaggeration(params.verticalExaggeration);
     group.add(mesh.mesh);
     return mesh;
   }
@@ -309,9 +313,4 @@ export class WorldBuilder {
       }
     }
   }
-}
-
-function displayLabel(location: GeocodeResult): string {
-  if (parseCoords(location.displayName)) return location.displayName;
-  return location.displayName.split(',').slice(0, 2).map((s) => s.trim()).join(', ');
 }

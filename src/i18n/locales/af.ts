@@ -195,4 +195,6 @@ export const af: Record<string, string> = {
   'video.newAddress': 'Nuwe adres 📍',
   'video.exit': 'Sluit af',
   'viz.buildings3D': '3D-geboue',
+  'toast.osmBusy': '{place} gelaai — maar die gebou-/paddata was besig. Herlaai om weer te probeer (’n kleiner kaartgrootte laai betroubaarder).',
+  'video.failed': 'Video-uitvoer het misluk. Probeer asseblief weer.',
 };

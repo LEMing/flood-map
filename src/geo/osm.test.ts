@@ -13,6 +13,8 @@ import {
   isGreen,
   isWater,
   bbox,
+  buildingHeight,
+  overpassTimeoutMs,
 } from './osm';
 import { lonLatToLocalMeters } from './projection';
 import type { LatLon } from './heightmap';
@@ -318,6 +320,44 @@ describe('bbox — geographic bounding box around a centre', () => {
     const [s2, w2, n2, e2] = bbox(center, 4000);
     expect(n2 - s2).toBeGreaterThan(n1 - s1);
     expect(e2 - w2).toBeGreaterThan(e1 - w1);
+  });
+
+  it('quantizes corners to 5 decimal places (canonical Overpass cache key)', () => {
+    for (const v of bbox(center, sizeMeters)) {
+      expect(Number(v.toFixed(5))).toBe(v);
+    }
+  });
+});
+
+describe('buildingHeight — OSM tags → metres', () => {
+  it('uses an explicit height tag (with or without a unit suffix)', () => {
+    expect(buildingHeight({ height: '18' })).toBe(18);
+    expect(buildingHeight({ height: '18 m' })).toBe(18);
+  });
+
+  it('derives from building:levels when height is absent', () => {
+    expect(buildingHeight({ 'building:levels': '3' })).toBeCloseTo(3 * 3.2 + 1, 5);
+  });
+
+  it('falls back to a default for untagged or non-positive heights', () => {
+    expect(buildingHeight({})).toBe(9);
+    expect(buildingHeight({ height: '0' })).toBe(9);
+  });
+});
+
+describe('overpassTimeoutMs — per-mirror cap scales with bbox', () => {
+  it('floors small maps at 12 s', () => {
+    expect(overpassTimeoutMs(500)).toBe(12000);
+    expect(overpassTimeoutMs(0)).toBe(12000);
+  });
+
+  it('scales linearly through the mid range', () => {
+    expect(overpassTimeoutMs(4000)).toBe(32000);
+  });
+
+  it('caps large dense-city maps at 40 s', () => {
+    expect(overpassTimeoutMs(6000)).toBe(40000);
+    expect(overpassTimeoutMs(20000)).toBe(40000);
   });
 });
 

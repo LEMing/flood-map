@@ -1,9 +1,21 @@
 import type { LatLon } from './heightmap';
 import { ENDPOINTS } from './endpoints';
+import { parseCoords } from '../url';
 import { t } from '../i18n';
 
 export interface GeocodeResult extends LatLon {
   displayName: string;
+}
+
+/** Trim a display-name string to its two most specific parts ("City, Region"). */
+export function shortPlaceName(name: string): string {
+  return name.split(',').slice(0, 2).map((s) => s.trim()).filter(Boolean).join(', ');
+}
+
+/** Short label for a geocode result — raw coords pass through unshortened. */
+export function shortLabel(location: GeocodeResult): string {
+  if (parseCoords(location.displayName)) return location.displayName;
+  return shortPlaceName(location.displayName);
 }
 
 interface NominatimEntry {

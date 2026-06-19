@@ -195,4 +195,6 @@ export const nl: Record<string, string> = {
   'video.newAddress': 'Nieuw adres 📍',
   'video.exit': 'Afsluiten',
   'viz.buildings3D': '3D-gebouwen',
+  'toast.osmBusy': '{place} geladen — maar de gebouw-/wegdata waren bezet. Herlaad om het opnieuw te proberen (een kleinere kaartgrootte laadt betrouwbaarder).',
+  'video.failed': 'Video-export mislukt. Probeer het opnieuw.',
 };

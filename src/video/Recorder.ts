@@ -28,11 +28,14 @@ export function videoExt(mime: string): string {
   return mime.startsWith('video/mp4') ? 'mp4' : 'webm';
 }
 
+const STOP_WATCHDOG_MS = 4000; // some browsers never fire onstop — don't hang the flow
+
 export class Recorder {
   readonly mimeType: string;
   private recorder?: MediaRecorder;
   private stream?: MediaStream;
   private readonly chunks: Blob[] = [];
+  private errored = false;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
@@ -56,18 +59,33 @@ export class Recorder {
       videoBitsPerSecond: this.bitsPerSecond,
     });
     this.recorder.ondataavailable = (e) => { if (e.data.size > 0) this.chunks.push(e.data); };
+    this.recorder.onerror = () => { this.errored = true; };
     this.recorder.start();
   }
 
   async stop(): Promise<Blob> {
     const rec = this.recorder;
     if (!rec) return new Blob([], { type: this.mimeType });
-    return new Promise<Blob>((resolve) => {
-      rec.onstop = () => {
+    const blob = await new Promise<Blob>((resolve) => {
+      let settled = false;
+      let timer = 0;
+      const finish = (): void => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
         this.stream?.getTracks().forEach((tr) => tr.stop());
         resolve(new Blob(this.chunks, { type: this.mimeType }));
       };
-      rec.stop();
+      rec.onstop = finish;
+      timer = window.setTimeout(finish, STOP_WATCHDOG_MS);
+      try {
+        rec.stop();
+      } catch {
+        this.errored = true;
+        finish();
+      }
     });
+    if (this.errored) throw new Error('recording failed');
+    return blob;
   }
 }

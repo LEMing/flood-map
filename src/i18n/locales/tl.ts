@@ -212,4 +212,6 @@ export const tl: Record<string, string> = {
   'video.newAddress': 'Bagong address 📍',
   'video.exit': 'Lumabas',
   'viz.buildings3D': 'Mga gusali 3D',
+  'toast.osmBusy': 'Na-load ang {place} — ngunit abala ang data ng gusali/kalsada. I-reload para subukan muli (mas maaasahang nilo-load ang mas maliit na laki ng mapa).',
+  'video.failed': 'Nabigo ang pag-export ng video. Pakisubukang muli.',
 };

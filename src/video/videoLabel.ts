@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { readUrlState } from '../url';
+import { shortPlaceName } from '../geo/geocode';
 
 // A minimalist corner label baked into the recorded clip: the place name + a
 // short link back to where it was generated. Drawn on a 2D canvas, shown as a
@@ -15,7 +16,7 @@ export interface VideoLabel {
 
 /** Build the label overlay sized to the capture buffer (W×H drawing-buffer px). */
 export function buildVideoLabel(placeName: string, bufferW: number, bufferH: number): VideoLabel {
-  const card = drawLabelCard(shortPlace(placeName), shareUrl(), bufferH);
+  const card = drawLabelCard(shortPlaceName(placeName), shareUrl(), bufferH);
 
   const tex = new THREE.CanvasTexture(card);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -47,10 +48,6 @@ function shareUrl(): string {
   if (u.lon !== undefined) p.set('lon', u.lon.toFixed(4));
   if (u.km !== undefined) p.set('km', String(u.km));
   return `${SHARE_HOST}/sim?${p.toString()}`;
-}
-
-function shortPlace(name: string): string {
-  return name.split(',').slice(0, 2).map((s) => s.trim()).filter(Boolean).join(', ');
 }
 
 function drawLabelCard(place: string, url: string, bufferH: number): HTMLCanvasElement {

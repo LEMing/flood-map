@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { Heightmap } from '../geo/heightmap';
 import type { Params } from '../config';
+import type { FrameBasis } from './frameBasis';
 import { GLSL_FBM } from './glslNoise';
 
 // A static body of sea water at sea level, separate from the pluvial flood
@@ -106,14 +107,7 @@ const fragmentShader = /* glsl */ `
 
 type WeatherUniforms = Record<'uTime', THREE.IUniform>;
 
-export interface SeaFrame {
-  resolution: THREE.Vector2;
-  cameraNear: number;
-  cameraFar: number;
-  sunDir: THREE.Vector3;
-  sunColor: THREE.Color;
-  skyTop: THREE.Color;
-  skyHorizon: THREE.Color;
+export interface SeaFrame extends FrameBasis {
   cloudColor: THREE.Color;
 }
 

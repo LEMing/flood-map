@@ -186,6 +186,7 @@ export const en: Record<string, string> = {
   'toast.enterAddress': 'Please enter an address.',
   'toast.autoQuality': 'Lowered graphics quality to keep it smooth.',
   'toast.detecting': 'Detecting your location…',
+  'toast.osmBusy': 'Loaded {place} — but the building/road data was busy. Reload to try again (smaller map size loads more reliably).',
 
   // Misc
   'legend.elevation': 'Elevation',
@@ -217,4 +218,5 @@ export const en: Record<string, string> = {
   'video.newAddress': 'New address 📍',
   'video.exit': 'Exit',
   'video.unsupported': 'Video export is not supported in this browser. Try realtime instead.',
+  'video.failed': 'Video export failed. Please try again.',
 };

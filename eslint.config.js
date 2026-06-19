@@ -72,16 +72,20 @@ export default tseslint.config(
   // without a paydown plan. (Mirrors site-plan-engine's per-area relaxations
   // for ported/algorithmic code.)
 
-  // App.ts: the composition root / orchestrator. The heavy subsystems are now
-  // their own modules (GeologyController, MarkerLayer, PointerController,
-  // SimDriver, WorldBuilder); what remains wires scene-post + world meshes +
-  // sim + UI + geology together each frame and on a param change. applyParams
-  // is an inherent param fan-out. Kept off the line/complexity budget by design
-  // — splitting the orchestration further would only create feature-envy
-  // classes that reach straight back into the app.
+  // App.ts: the composition root / orchestrator. The heavy subsystems are their
+  // own modules (GeologyController, MarkerLayer, PointerController, SimDriver,
+  // WorldBuilder) and the standalone widgets (FpsBadge, HeatLegend, chromeToggle)
+  // are extracted; what remains wires scene-post + world meshes + sim + UI +
+  // geology together each frame and on a param change. applyParams is an inherent
+  // param fan-out, so the budgets are raised (not off) to ratchet against
+  // unbounded regrowth — splitting further would only create feature-envy classes
+  // that reach straight back into the app.
   {
     files: ['src/app/App.ts'],
-    rules: { 'max-lines': 'off', complexity: 'off' },
+    rules: {
+      'max-lines': ['error', { max: 480, skipBlankLines: true, skipComments: true }],
+      complexity: ['error', 14],
+    },
   },
 
   // render/*: three.js wiring constructors take many deps and a couple of hot

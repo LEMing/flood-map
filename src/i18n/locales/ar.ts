@@ -195,4 +195,6 @@ export const ar: Record<string, string> = {
   'video.newAddress': 'عنوان جديد 📍',
   'video.exit': 'خروج',
   'viz.buildings3D': 'مباني 3D',
+  'toast.osmBusy': 'تم تحميل {place} — لكن بيانات المباني/الطرق كانت مشغولة. أعد التحميل للمحاولة مرة أخرى (يتم تحميل حجم خريطة أصغر بموثوقية أكبر).',
+  'video.failed': 'فشل تصدير الفيديو. يرجى المحاولة مرة أخرى.',
 };

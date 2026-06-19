@@ -193,4 +193,6 @@ export const ha: Record<string, string> = {
   'video.newAddress': 'Sabon adireshi 📍',
   'video.exit': 'Fita',
   'viz.buildings3D': 'Gine-ginen 3D',
+  'toast.osmBusy': 'An loda {place} — amma bayanan gini/hanya suna aiki. Sake loda don sake gwadawa (ƙaramin girman taswira yana lodawa da kyau).',
+  'video.failed': 'Fitar da bidiyo ya gaza. Da fatan za a sake gwadawa.',
 };

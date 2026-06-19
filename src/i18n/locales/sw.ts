@@ -195,4 +195,6 @@ export const sw: Record<string, string> = {
   'video.newAddress': 'Anwani mpya 📍',
   'video.exit': 'Ondoka',
   'viz.buildings3D': 'Majengo ya 3D',
+  'toast.osmBusy': '{place} imepakiwa — lakini data ya majengo/barabara ilikuwa na shughuli nyingi. Pakia upya ili ujaribu tena (ukubwa mdogo wa ramani hupakia kwa uhakika zaidi).',
+  'video.failed': 'Kuhamisha video kumeshindwa. Tafadhali jaribu tena.',
 };

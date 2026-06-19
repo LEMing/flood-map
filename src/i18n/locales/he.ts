@@ -195,4 +195,6 @@ export const he: Record<string, string> = {
   'video.newAddress': 'כתובת חדשה 📍',
   'video.exit': 'יציאה',
   'viz.buildings3D': 'מבנים תלת-ממדיים 3D',
+  'toast.osmBusy': '{place} נטען — אך נתוני המבנים/הכבישים היו עמוסים. טען מחדש כדי לנסות שוב (מפה בגודל קטן יותר נטענת באמינות רבה יותר).',
+  'video.failed': 'ייצוא הווידאו נכשל. אנא נסה שוב.',
 };

@@ -207,4 +207,6 @@ export const tr: Record<string, string> = {
   'video.newAddress': 'Yeni adres 📍',
   'video.exit': 'Çıkış',
   'viz.buildings3D': '3D binalar',
+  'toast.osmBusy': '{place} yüklendi — ancak bina/yol verileri meşguldü. Tekrar denemek için yeniden yükleyin (daha küçük harita boyutu daha güvenilir yüklenir).',
+  'video.failed': 'Video dışa aktarımı başarısız oldu. Lütfen tekrar deneyin.',
 };

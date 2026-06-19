@@ -195,4 +195,6 @@ export const sv: Record<string, string> = {
   'video.newAddress': 'Ny adress 📍',
   'video.exit': 'Avsluta',
   'viz.buildings3D': '3D-byggnader',
+  'toast.osmBusy': '{place} laddat — men byggnads-/vägdata var upptagna. Ladda om för att försöka igen (en mindre kartstorlek laddas mer tillförlitligt).',
+  'video.failed': 'Videoexporten misslyckades. Försök igen.',
 };

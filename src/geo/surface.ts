@@ -1,5 +1,6 @@
 import type { Params } from '../config';
 import type { Heightmap } from './heightmap';
+import { extrudeBuildings, BUILDING_RAISE_M, type BuildingGeometryData } from './buildingsGeometry';
 import { fetchLandCover, type LandClass } from './landcover';
 import { fetchOsm, type OsmRasters } from './osm';
 import { lonLatToLocalMeters } from './projection';
@@ -10,7 +11,6 @@ import { lonLatToLocalMeters } from './projection';
 // generic sheet-flow sim into a city flood model.
 
 const MM_S = 1 / 1000 / 3600;
-export const BUILDING_RAISE_M = 5; // tall enough that flood depths never overtop
 const ROAD_LOWER_M = 0.15; // curb-to-crown channel that routes water along streets
 // Above ~8 km the surface detail is sub-grid AND the sources get expensive: the
 // OSM Overpass query (every building/road/water/landuse in the bbox) balloons to
@@ -28,7 +28,9 @@ export interface SurfaceResult {
   surface: Float32Array; // N*N*4: r=infil m/s, g=drain m/s, b=roughness, a=building flag
   land: LandClass | null;
   osm: OsmRasters | null;
+  buildingGeometry: BuildingGeometryData | null; // extruded in-worker; rings dropped
   counts: { buildings: number; roads: number };
+  osmFailed: boolean; // OSM was expected (≤8 km) but every mirror failed/returned empty
 }
 
 export function classifyInfilRoughness(
@@ -99,6 +101,7 @@ export function burnHeights(hm: Heightmap, osm: OsmRasters, burnBuildings: boole
 export async function buildSurface(hm: Heightmap, params: Params): Promise<SurfaceResult | null> {
   let land: LandClass | null = null;
   let osm: OsmRasters | null = null;
+  let osmFailed = false;
   // ESA WorldCover's S3 has no CORS, so it only works via the dev proxy; in a
   // static production build we skip it and rely on OSM land use instead.
   const detailed = hm.sizeMeters <= SURFACE_MAX_METERS;
@@ -107,14 +110,30 @@ export async function buildSurface(hm: Heightmap, params: Params): Promise<Surfa
     : fetchLandCover(hm.center, hm.sizeMeters, hm.N).then((l) => { land = l; }).catch(() => {});
   const osmPromise = !detailed
     ? Promise.resolve()
-    : fetchOsm(hm.center, hm.sizeMeters, hm.N).then((o) => { osm = o; }).catch(() => {});
+    : fetchOsm(hm.center, hm.sizeMeters, hm.N).then((o) => { osm = o; }).catch(() => { osmFailed = true; });
   await Promise.all([landPromise, osmPromise]);
-  if (!land && !osm) return null;
+  if (!land && !osm && !osmFailed) return null; // nothing requested/loaded (e.g. >8 km)
   if (osm) burnHeights(hm, osm, params.burnBuildings);
+  const buildingGeometry = extrudeBuildingsFrom(hm, osm, params);
   return {
     surface: computeSurfaceFields(hm, land, osm, params),
     land,
     osm,
+    buildingGeometry,
     counts: (osm as OsmRasters | null)?.counts ?? { buildings: 0, roads: 0 },
+    osmFailed,
   };
+}
+
+// Extrude footprints to mesh data on the (now-burned) heightmap, then drop the
+// raw rings so they aren't structure-cloned to the main thread — the compact
+// Float32Arrays are transferred zero-copy instead.
+function extrudeBuildingsFrom(
+  hm: Heightmap, osm: OsmRasters | null, params: Params,
+): BuildingGeometryData | null {
+  if (!osm || !osm.buildings.length) return null;
+  const burnM = params.burnBuildings ? BUILDING_RAISE_M : 0;
+  const geometry = extrudeBuildings(osm.buildings, hm, osm.building, burnM);
+  osm.buildings = [];
+  return geometry;
 }

@@ -207,4 +207,6 @@ export const ja: Record<string, string> = {
   'video.newAddress': '新しい住所 📍',
   'video.exit': '終了',
   'viz.buildings3D': '3D建物',
+  'toast.osmBusy': '{place} を読み込みました — ただし建物/道路データが混雑していました。再読み込みしてもう一度お試しください（マップサイズを小さくするとより確実に読み込めます）。',
+  'video.failed': '動画の書き出しに失敗しました。もう一度お試しください。',
 };

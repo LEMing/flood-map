@@ -194,4 +194,6 @@ export const uz: Record<string, string> = {
   'video.newAddress': 'Yangi manzil 📍',
   'video.exit': 'Chiqish',
   'viz.buildings3D': '3D binolar',
+  'toast.osmBusy': '{place} yuklandi — lekin bino/yoʻl maʼlumotlari band edi. Qayta urinish uchun qayta yuklang (kichikroq xarita oʻlchami ishonchliroq yuklanadi).',
+  'video.failed': 'Videoni eksport qilish amalga oshmadi. Iltimos, qayta urinib koʻring.',
 };

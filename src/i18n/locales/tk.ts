@@ -195,4 +195,6 @@ export const tk: Record<string, string> = {
   'video.newAddress': 'Täze salgy 📍',
   'video.exit': 'Çykmak',
   'viz.buildings3D': '3D binalar',
+  'toast.osmBusy': '{place} ýüklendi — ýöne bina/ýol maglumatlary meşguldy. Täzeden synanyşmak üçin gaýtadan ýükläň (kiçiräk karta ölçegi has ygtybarly ýüklenýär).',
+  'video.failed': 'Wideony eksport etmek şowsuz boldy. Haýyş, täzeden synanyşyň.',
 };

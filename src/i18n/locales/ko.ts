@@ -212,4 +212,6 @@ export const ko: Record<string, string> = {
   'video.newAddress': '새 주소 📍',
   'video.exit': '종료',
   'viz.buildings3D': '3D 건물',
+  'toast.osmBusy': '{place}을(를) 불러왔습니다 — 하지만 건물/도로 데이터가 사용 중이었습니다. 다시 시도하려면 새로고침하세요(지도 크기가 작을수록 더 안정적으로 로드됩니다).',
+  'video.failed': '동영상 내보내기에 실패했습니다. 다시 시도해 주세요.',
 };

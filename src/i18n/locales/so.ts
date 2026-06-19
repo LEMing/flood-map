@@ -195,4 +195,6 @@ export const so: Record<string, string> = {
   'video.newAddress': 'Cinwaan cusub 📍',
   'video.exit': 'Ka bax',
   'viz.buildings3D': 'Dhismayaal 3D',
+  'toast.osmBusy': '{place} waa la soo raray — laakiin xogta dhismaha/wadooyinka way mashquul ahayd. Dib u soo raray si aad mar kale u isku daydo (cabbir khariidad yar ayaa si la isku halleyn karo u soo raraya).',
+  'video.failed': 'Soo saaridda fiidiyowga way fashilantay. Fadlan mar kale isku day.',
 };

@@ -207,4 +207,6 @@ export const zh: Record<string, string> = {
   'video.newAddress': '新地址 📍',
   'video.exit': '退出',
   'viz.buildings3D': '3D建筑',
+  'toast.osmBusy': '已加载 {place} — 但建筑/道路数据正忙。重新加载以重试（较小的地图尺寸加载更可靠）。',
+  'video.failed': '视频导出失败。请重试。',
 };
