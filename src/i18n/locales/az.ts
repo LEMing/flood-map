@@ -73,18 +73,17 @@ export const az: Record<string, string> = {
   'rain.cellY': 'hüceyrə y',
   'rain.cellRadius': 'hüceyrə radiusu',
   'storm.constant': 'Sabit (əl ilə mm/saat)',
-  'storm.cloudburst': 'Leysan (~50 mm / 2 saat)',
-  'storm.design25yr': 'Hesabi leysan P≈25 il',
-  'storm.may2026': 'Müşahidə 18 May 2026 (41 mm/2 saat)',
-  'storm.jun2026': 'Müşahidə 12 İyun 2026 (90 mm/gün)',
-
+  'storm.cloudburst': 'Leysan (~38 mm/2h)',
+  'storm.design25yr': 'Güclü fırtına (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'səth modeli',
   'urban.buildings': 'binalar divar kimi',
   'urban.sewer': 'yağış kanalizasiyası (mm/saat)',
   'urban.groundwater': 'yüksək yeraltı sular',
 
   'soil.infiltration': 'torpağa hopma (mm/saat)',
-  'soil.evaporation': 'buxarlanma (/saat)',
+  'soil.evaporation': 'buxarlanma (mm/saat)',
 
   'physics.gravity': 'cazibə qüvvəsi (m/s²)',
   'physics.flow': 'axın əmsalı',
@@ -154,6 +153,7 @@ export const az: Record<string, string> = {
   'stats.simTime': 'simulyasiya vaxtı',
   'stats.rainIn': 'düşən yağış',
   'stats.stored': 'toplanan su',
+  'stats.balance': 'su balansı',
   'stats.flooded': 'daşqın sahəsi',
   'stats.maxDepth': 'maks. dərinlik',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const az: Record<string, string> = {
   'toast.loadFailed': 'Xəritə yüklənərkən nəsə səhv getdi. Zəhmət olmasa yenidən yükləyin.',
   'toast.linkCopied': 'Keçid mübadilə buferinə kopyalandı',
   'share.title': 'Bu ssenarini paylaşın',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Necə işləyir və məhdudiyyətlər',
+  'method.body': 'Təhsil məqsədli yağış-daşqın simulyasiyası. Suyun fizikası sadələşdirilib və model real ölçmələrə görə kalibrlənməyib, ona görə daşqın dərinlikləri və sahələri yalnız təxminidir — daşqın riski qiymətləndirməsi deyil. O, yağış kanalizasiyasını, yeraltı suları, çay və sahil daşqınlarını modelləşdirmir. Fırtına hazır ayarları təmsilçi yağış profilləridir, ölçü qeydləri deyil.',
+  'method.indicative': 'Təxmini (model)',
   'waterlevel.title': 'Su səviyyəsi 🌊',
   'waterlevel.off': 'Söndür',
 };

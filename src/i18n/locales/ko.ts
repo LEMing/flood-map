@@ -47,11 +47,10 @@ export const ko: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': '일정 (수동 mm/시)',
-  'storm.cloudburst': '집중호우 (~50 mm / 2시간)',
-  'storm.design25yr': '설계 강우 P≈25년',
-  'storm.may2026': '관측 2026년 5월 18일 (41 mm/2시간)',
-  'storm.jun2026': '관측 2026년 6월 12일 (90 mm/일)',
-
+  'storm.cloudburst': '폭우 (~38 mm/2h)',
+  'storm.design25yr': '강한 폭풍 (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 프로파일 (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 프로파일 (~100 mm/24h)',
   // Urban model
   'urban.surface': '지표 모델',
   'urban.buildings': '건물을 벽으로',
@@ -60,7 +59,7 @@ export const ko: Record<string, string> = {
 
   // Soil
   'soil.infiltration': '토양 침투 (mm/hr)',
-  'soil.evaporation': '증발 (/hr)',
+  'soil.evaporation': '증발 (mm/hr)',
 
   // Physics
   'physics.gravity': '중력 (m/s²)',
@@ -169,6 +168,7 @@ export const ko: Record<string, string> = {
   'stats.simTime': '시뮬 시간',
   'stats.rainIn': '강우량',
   'stats.stored': '저장된 물',
+  'stats.balance': '물수지',
   'stats.flooded': '침수 면적',
   'stats.maxDepth': '최대 깊이',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const ko: Record<string, string> = {
   'toast.loadFailed': '지도를 불러오는 중 문제가 발생했습니다. 다시 로드해 주세요.',
   'toast.linkCopied': '링크가 클립보드에 복사되었습니다',
   'share.title': '이 시나리오 공유',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': '작동 방식 및 한계',
+  'method.body': '교육용 강우 침수 시뮬레이션입니다. 물의 물리는 단순화되어 있고 모델은 실제 측정값으로 보정되지 않았으므로 침수 깊이와 범위는 참고용일 뿐이며 홍수 위험 평가가 아닙니다. 우수관거, 지하수, 하천 및 연안 범람은 모델링하지 않습니다. 폭풍 프리셋은 대표적인 강우 프로파일이며 관측 기록이 아닙니다.',
+  'method.indicative': '참고용 (모델)',
   'waterlevel.title': '수위 🌊',
   'waterlevel.off': '끄기',
 };

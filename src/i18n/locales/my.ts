@@ -82,11 +82,10 @@ export const my: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'အမြဲတမ်း (လက်ဖြင့် mm/hr)',
-  'storm.cloudburst': 'မိုးသည်းထန် (~50 mm / 2 h)',
-  'storm.design25yr': 'ဒီဇိုင်းမုန်တိုင်း P≈25 yr',
-  'storm.may2026': 'မှတ်တမ်း 18 May 2026 (41 mm/2 h)',
-  'storm.jun2026': 'မှတ်တမ်း 12 Jun 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'မိုးသည်းထန် (~38 mm/2h)',
+  'storm.design25yr': 'ပြင်းထန်မုန်တိုင်း (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 ပရိုဖိုင် (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 ပရိုဖိုင် (~100 mm/24h)',
   // Urban model
   'urban.surface': 'မျက်နှာပြင်ပုံစံ',
   'urban.buildings': 'အဆောက်အအုံများကို နံရံအဖြစ်',
@@ -95,7 +94,7 @@ export const my: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'မြေစိမ့်ဝင်မှု (mm/hr)',
-  'soil.evaporation': 'အငွေ့ပျံ (/hr)',
+  'soil.evaporation': 'အငွေ့ပျံ (mm/hr)',
 
   // Physics
   'physics.gravity': 'ဆွဲအား (m/s²)',
@@ -173,6 +172,7 @@ export const my: Record<string, string> = {
   'stats.simTime': 'စမ်းသပ်ချိန်',
   'stats.rainIn': 'မိုးရွာသွင်း',
   'stats.stored': 'သိုလှောင်ရေ',
+  'stats.balance': 'ရေချိန်ခွင်လျှာ',
   'stats.flooded': 'ရေကြီးဧရိယာ',
   'stats.maxDepth': 'အနက်ဆုံး',
   'stats.fps': 'fps',
@@ -223,6 +223,10 @@ export const my: Record<string, string> = {
   'toast.loadFailed': 'မြေပုံ ဖွင့်နေစဉ် တစ်ခုခု မှားယွင်းသွားပါသည်။ ကျေးဇူးပြု၍ ပြန်ဖွင့်ပါ။',
   'toast.linkCopied': 'လင့်ခ်ကို ကလစ်ဘုတ်သို့ ကူးယူပြီးပါပြီ',
   'share.title': 'ဤအခြေအနေကို မျှဝေပါ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'ဘယ်လိုအလုပ်လုပ်သလဲ နှင့် ကန့်သတ်ချက်များ',
+  'method.body': 'ပညာရေးအတွက် မိုးရေကြောင့်ရေလွှမ်းမှု ပုံတူပြခြင်းဖြစ်သည်။ ရေ၏ရူပဗေဒကို ရိုးရှင်းအောင်ပြုလုပ်ထားပြီး မော်ဒယ်ကို အမှန်တကယ်တိုင်းတာချက်များနှင့် ချိန်ညှိမထားသဖြင့် ရေလွှမ်းမှု အနက်နှင့် ဧရိယာများသည် ညွှန်ပြချက်သာဖြစ်ပြီး — ရေလွှမ်းမှုအန္တရာယ် အကဲဖြတ်ချက် မဟုတ်ပါ။ ၎င်းသည် မိုးရေနုတ်မြောင်း၊ မြေအောက်ရေ သို့မဟုတ် မြစ်နှင့် ကမ်းရိုးတန်းရေလွှမ်းမှုကို ပုံတူမပြုလုပ်ပါ။ မုန်တိုင်း ကြိုတင်သတ်မှတ်ချက်များသည် ကိုယ်စားပြု မိုးရွာသွန်းမှု ပရိုဖိုင်များဖြစ်ပြီး တိုင်းတာမှတ်တမ်းများ မဟုတ်ပါ။',
+  'method.indicative': 'ညွှန်ပြချက် (မော်ဒယ်)',
   'waterlevel.title': 'ရေမျက်နှာပြင် 🌊',
   'waterlevel.off': 'ပိတ်',
 };

@@ -50,11 +50,10 @@ export const or: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'ସ୍ଥିର (ମାନୁଆଲ୍ mm/hr)',
-  'storm.cloudburst': 'ମେଘଭଙ୍ଗ (~50 mm / 2 h)',
-  'storm.design25yr': 'ଡିଜାଇନ୍ ଝଡ଼ P≈25 yr',
-  'storm.may2026': 'ପର୍ଯ୍ୟବେକ୍ଷିତ 18 May 2026 (41 mm/2 h)',
-  'storm.jun2026': 'ପର୍ଯ୍ୟବେକ୍ଷିତ 12 Jun 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'ମୂଷଳଧାର ବର୍ଷା (~38 mm/2h)',
+  'storm.design25yr': 'ପ୍ରବଳ ଝଡ଼ (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 ପ୍ରୋଫାଇଲ୍ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 ପ୍ରୋଫାଇଲ୍ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'ପୃଷ୍ଠ ମଡେଲ୍',
   'urban.buildings': 'କାନ୍ଥ ଭାବେ କୋଠା',
@@ -63,7 +62,7 @@ export const or: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'ମାଟି ଅନୁପ୍ରବେଶ (mm/hr)',
-  'soil.evaporation': 'ବାଷ୍ପୀଭବନ (/hr)',
+  'soil.evaporation': 'ବାଷ୍ପୀଭବନ (mm/hr)',
 
   // Physics
   'physics.gravity': 'ମାଧ୍ୟାକର୍ଷଣ (m/s²)',
@@ -172,6 +171,7 @@ export const or: Record<string, string> = {
   'stats.simTime': 'ସିମ୍ ସମୟ',
   'stats.rainIn': 'ବର୍ଷା ଭିତରେ',
   'stats.stored': 'ସଞ୍ଚିତ ଜଳ',
+  'stats.balance': 'ଜଳ ସନ୍ତୁଳନ',
   'stats.flooded': 'ବନ୍ୟାକ୍ରାନ୍ତ କ୍ଷେତ୍ର',
   'stats.maxDepth': 'ସର୍ବାଧିକ ଗଭୀରତା',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const or: Record<string, string> = {
   'toast.loadFailed': 'ମାନଚିତ୍ର ଲୋଡ୍ କରିବାବେଳେ କିଛି ଭୁଲ୍ ହୋଇଗଲା। ଦୟାକରି ପୁଣି ଲୋଡ୍ କରନ୍ତୁ।',
   'toast.linkCopied': 'ଲିଙ୍କ କ୍ଲିପବୋର୍ଡକୁ କପି ହେଲା',
   'share.title': 'ଏହି ପରିସ୍ଥିତି ସେୟାର କରନ୍ତୁ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'ଏହା କିପରି କାମ କରେ ଓ ସୀମା',
+  'method.body': 'ଏକ ଶିକ୍ଷାମୂଳକ ବର୍ଷା-ବନ୍ୟା ସିମୁଲେସନ୍। ଜଳର ପଦାର୍ଥ ବିଜ୍ଞାନକୁ ସରଳ କରାଯାଇଛି ଏବଂ ମଡେଲ୍ ପ୍ରକୃତ ମାପ ସହ କ୍ୟାଲିବ୍ରେଟ୍ ହୋଇନାହିଁ, ତେଣୁ ବନ୍ୟାର ଗଭୀରତା ଓ କ୍ଷେତ୍ର କେବଳ ସୂଚକ — ବନ୍ୟା-ବିପଦ ମୂଲ୍ୟାଙ୍କନ ନୁହେଁ। ଏହା ବର୍ଷା ନର୍ଦମା, ଭୂତଳ ଜଳ, କିମ୍ବା ନଦୀ ଓ ଉପକୂଳ ବନ୍ୟାର ମଡେଲ୍ କରେ ନାହିଁ। ଝଡ଼ ପ୍ରିସେଟ୍ ପ୍ରତିନିଧିତ୍ୱମୂଳକ ବର୍ଷା ପ୍ରୋଫାଇଲ୍, ମାପ ରେକର୍ଡ ନୁହେଁ।',
+  'method.indicative': 'ସୂଚକ (ମଡେଲ୍)',
   'waterlevel.title': 'ଜଳ ସ୍ତର 🌊',
   'waterlevel.off': 'ବନ୍ଦ',
 };

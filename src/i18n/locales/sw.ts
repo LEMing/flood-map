@@ -41,18 +41,17 @@ export const sw: Record<string, string> = {
   'rain.cellY': 'seli y',
   'rain.cellRadius': 'radi ya seli',
   'storm.constant': 'Thabiti (mwongozo mm/saa)',
-  'storm.cloudburst': 'Mvua kubwa (~50 mm / 2 saa)',
-  'storm.design25yr': 'Dhoruba ya muundo P≈25 mwaka',
-  'storm.may2026': 'Iliyoonwa 18 Mei 2026 (41 mm/2 saa)',
-  'storm.jun2026': 'Iliyoonwa 12 Jun 2026 (90 mm/siku)',
-
+  'storm.cloudburst': 'Mvua kubwa (~38 mm/2h)',
+  'storm.design25yr': 'Dhoruba kali (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 wasifu (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 wasifu (~100 mm/24h)',
   'urban.surface': 'modeli ya uso',
   'urban.buildings': 'majengo kama kuta',
   'urban.sewer': 'mfereji wa dhoruba (mm/saa)',
   'urban.groundwater': 'maji ya ardhini ya juu',
 
   'soil.infiltration': 'upenyezaji wa udongo (mm/saa)',
-  'soil.evaporation': 'uvukizi (/saa)',
+  'soil.evaporation': 'uvukizi (mm/saa)',
 
   'physics.gravity': 'mvuto (m/s²)',
   'physics.flow': 'mgawo wa mtiririko',
@@ -154,6 +153,7 @@ export const sw: Record<string, string> = {
   'stats.simTime': 'muda wa uigaji',
   'stats.rainIn': 'mvua iliyoingia',
   'stats.stored': 'maji yaliyohifadhiwa',
+  'stats.balance': 'salio la maji',
   'stats.flooded': 'eneo lililofurika',
   'stats.maxDepth': 'kina cha juu',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const sw: Record<string, string> = {
   'toast.loadFailed': 'Hitilafu fulani imetokea wakati wa kupakia ramani. Tafadhali pakia upya.',
   'toast.linkCopied': 'Kiungo kimenakiliwa kwenye ubao wa kunakili',
   'share.title': 'Shiriki hali hii',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Jinsi inavyofanya kazi na mipaka',
+  'method.body': 'Uigaji wa kielimu wa mafuriko ya mvua. Fizikia ya maji imerahisishwa na modeli haijasawazishwa kulingana na vipimo halisi, hivyo kina na maeneo ya mafuriko ni ya kuonyesha tu — si tathmini ya hatari ya mafuriko. Haitengenezi mfumo wa mifereji ya maji ya mvua, maji ya ardhini, wala mafuriko ya mito na pwani. Mipangilio ya dhoruba ni wasifu wa mvua wawakilishi, si rekodi za vipimo.',
+  'method.indicative': 'Kionyeshi (modeli)',
   'waterlevel.title': 'Kiwango cha maji 🌊',
   'waterlevel.off': 'Zima',
 };

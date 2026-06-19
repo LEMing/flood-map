@@ -47,11 +47,10 @@ export const ml: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'സ്ഥിരം (മാന്വൽ mm/hr)',
-  'storm.cloudburst': 'മേഘവിസ്ഫോടനം (~50 mm / 2 h)',
-  'storm.design25yr': 'രൂപകൽപന കൊടുങ്കാറ്റ് P≈25 yr',
-  'storm.may2026': 'നിരീക്ഷിച്ചത് 18 മേയ് 2026 (41 mm/2 h)',
-  'storm.jun2026': 'നിരീക്ഷിച്ചത് 12 ജൂൺ 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'പേമാരി (~38 mm/2h)',
+  'storm.design25yr': 'കനത്ത കൊടുങ്കാറ്റ് (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 പ്രൊഫൈൽ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 പ്രൊഫൈൽ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'പ്രതല മാതൃക',
   'urban.buildings': 'കെട്ടിടങ്ങൾ ഭിത്തികളായി',
@@ -60,7 +59,7 @@ export const ml: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'മണ്ണ് വലിച്ചെടുക്കൽ (mm/hr)',
-  'soil.evaporation': 'ബാഷ്പീകരണം (/hr)',
+  'soil.evaporation': 'ബാഷ്പീകരണം (mm/hr)',
 
   // Physics
   'physics.gravity': 'ഗുരുത്വാകർഷണം (m/s²)',
@@ -169,6 +168,7 @@ export const ml: Record<string, string> = {
   'stats.simTime': 'സിം സമയം',
   'stats.rainIn': 'പെയ്ത മഴ',
   'stats.stored': 'സംഭരിച്ച വെള്ളം',
+  'stats.balance': 'ജല സന്തുലനം',
   'stats.flooded': 'വെള്ളപ്പൊക്ക പ്രദേശം',
   'stats.maxDepth': 'പരമാവധി ആഴം',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const ml: Record<string, string> = {
   'toast.loadFailed': 'മാപ്പ് ലോഡുചെയ്യുമ്പോൾ എന്തോ കുഴപ്പം സംഭവിച്ചു. വീണ്ടും ലോഡുചെയ്യുക.',
   'toast.linkCopied': 'ലിങ്ക് ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി',
   'share.title': 'ഈ സാഹചര്യം പങ്കിടുക',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'എങ്ങനെ പ്രവർത്തിക്കുന്നു & പരിമിതികൾ',
+  'method.body': 'ഒരു വിദ്യാഭ്യാസ മഴ-വെള്ളപ്പൊക്ക സിമുലേഷൻ. ജലത്തിന്റെ ഭൗതികശാസ്ത്രം ലളിതമാക്കിയിരിക്കുന്നു, മാതൃക യഥാർത്ഥ അളവുകളുമായി കാലിബ്രേറ്റ് ചെയ്തിട്ടില്ല, അതിനാൽ വെള്ളപ്പൊക്കത്തിന്റെ ആഴവും വിസ്തൃതിയും സൂചകം മാത്രമാണ് — വെള്ളപ്പൊക്ക-അപകടസാധ്യത വിലയിരുത്തലല്ല. ഇത് മഴവെള്ള ഓവുചാലുകൾ, ഭൂഗർഭജലം, അല്ലെങ്കിൽ നദി, തീരദേശ വെള്ളപ്പൊക്കം എന്നിവ മാതൃകയാക്കുന്നില്ല. കൊടുങ്കാറ്റ് പ്രീസെറ്റുകൾ പ്രാതിനിധ്യ മഴ പ്രൊഫൈലുകളാണ്, അളവ് രേഖകളല്ല.',
+  'method.indicative': 'സൂചകം (മാതൃക)',
   'waterlevel.title': 'ജലനിരപ്പ് 🌊',
   'waterlevel.off': 'ഓഫ്',
 };

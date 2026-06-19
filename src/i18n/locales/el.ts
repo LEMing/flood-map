@@ -41,18 +41,17 @@ export const el: Record<string, string> = {
   'rain.cellY': 'κύτταρο y',
   'rain.cellRadius': 'ακτίνα κυττάρου',
   'storm.constant': 'Σταθερό (χειροκίνητα mm/ώρα)',
-  'storm.cloudburst': 'Νεροποντή (~50 mm / 2 ώ)',
-  'storm.design25yr': 'Καταιγίδα σχεδιασμού P≈25 έτη',
-  'storm.may2026': 'Καταγραφή 18 Μαΐ 2026 (41 mm/2 ώ)',
-  'storm.jun2026': 'Καταγραφή 12 Ιουν 2026 (90 mm/ημέρα)',
-
+  'storm.cloudburst': 'Νεροποντή (~38 mm/2h)',
+  'storm.design25yr': 'Ισχυρή καταιγίδα (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 προφίλ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 προφίλ (~100 mm/24h)',
   'urban.surface': 'μοντέλο επιφάνειας',
   'urban.buildings': 'κτίρια ως τοίχοι',
   'urban.sewer': 'δίκτυο ομβρίων (mm/ώρα)',
   'urban.groundwater': 'υψηλός υδροφόρος ορίζοντας',
 
   'soil.infiltration': 'διήθηση εδάφους (mm/ώρα)',
-  'soil.evaporation': 'εξάτμιση (/ώρα)',
+  'soil.evaporation': 'εξάτμιση (mm/ώρα)',
 
   'physics.gravity': 'βαρύτητα (m/s²)',
   'physics.flow': 'συντελεστής απορροής',
@@ -154,6 +153,7 @@ export const el: Record<string, string> = {
   'stats.simTime': 'χρόνος προσομοίωσης',
   'stats.rainIn': 'βροχή που έπεσε',
   'stats.stored': 'αποθηκευμένο νερό',
+  'stats.balance': 'υδατικό ισοζύγιο',
   'stats.flooded': 'πλημμυρισμένη έκταση',
   'stats.maxDepth': 'μέγ. βάθος',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const el: Record<string, string> = {
   'toast.loadFailed': 'Κάτι πήγε στραβά κατά τη φόρτωση του χάρτη. Φορτώστε ξανά.',
   'toast.linkCopied': 'Ο σύνδεσμος αντιγράφηκε στο πρόχειρο',
   'share.title': 'Κοινοποίηση αυτού του σεναρίου',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Πώς λειτουργεί & όρια',
+  'method.body': 'Μια εκπαιδευτική προσομοίωση πλημμύρας από βροχή. Η φυσική του νερού είναι απλοποιημένη και το μοντέλο δεν έχει βαθμονομηθεί με πραγματικές μετρήσεις, οπότε τα βάθη και οι εκτάσεις πλημμύρας είναι μόνο ενδεικτικά — όχι αξιολόγηση κινδύνου πλημμύρας. Δεν μοντελοποιεί δίκτυα ομβρίων, υπόγεια ύδατα, ούτε ποτάμιες και παράκτιες πλημμύρες. Οι προεπιλογές καταιγίδας είναι αντιπροσωπευτικά προφίλ βροχόπτωσης, όχι καταγραφές οργάνων.',
+  'method.indicative': 'Ενδεικτικό (μοντέλο)',
   'waterlevel.title': 'Στάθμη νερού 🌊',
   'waterlevel.off': 'Ανενεργό',
 };

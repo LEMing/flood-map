@@ -41,18 +41,17 @@ export const ru: Record<string, string> = {
   'rain.cellY': 'ячейка y',
   'rain.cellRadius': 'радиус ячейки',
   'storm.constant': 'Постоянный (вручную мм/ч)',
-  'storm.cloudburst': 'Залповый ливень (~50 мм / 2 ч)',
-  'storm.design25yr': 'Расчётный ливень P≈25 лет',
-  'storm.may2026': 'Факт 18 мая 2026 (41 мм/2 ч)',
-  'storm.jun2026': 'Факт 12 июн 2026 (90 мм/сут)',
-
+  'storm.cloudburst': 'Ливень (~38 mm/2h)',
+  'storm.design25yr': 'Сильный шторм (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профиль (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профиль (~100 mm/24h)',
   'urban.surface': 'модель поверхности',
   'urban.buildings': 'здания как стены',
   'urban.sewer': 'ливнёвка (мм/ч)',
   'urban.groundwater': 'высокие грунтовые воды',
 
   'soil.infiltration': 'инфильтрация почвы (мм/ч)',
-  'soil.evaporation': 'испарение (/ч)',
+  'soil.evaporation': 'испарение (мм/ч)',
 
   'physics.gravity': 'гравитация (м/с²)',
   'physics.flow': 'коэффициент стока',
@@ -153,6 +152,7 @@ export const ru: Record<string, string> = {
   'stats.simTime': 'время симуляции',
   'stats.rainIn': 'выпало дождя',
   'stats.stored': 'воды накоплено',
+  'stats.balance': 'водный баланс',
   'stats.flooded': 'площадь затопления',
   'stats.maxDepth': 'макс. глубина',
   'stats.fps': 'fps',
@@ -201,6 +201,10 @@ export const ru: Record<string, string> = {
   'toast.loadFailed': 'Что-то пошло не так при загрузке карты. Пожалуйста, перезагрузите.',
   'toast.linkCopied': 'Ссылка скопирована в буфер обмена',
   'share.title': 'Поделиться этим сценарием',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Как это работает и ограничения',
+  'method.body': 'Образовательная симуляция дождевого паводка. Физика воды упрощена, а модель не откалибрована по реальным измерениям, поэтому глубины и площади затопления — лишь ориентировочные, а не оценка риска наводнения. Модель не учитывает ливневую канализацию, грунтовые воды, речные и прибрежные наводнения. Пресеты ливней — это репрезентативные профили осадков, а не данные измерений.',
+  'method.indicative': 'Ориентировочно (модель)',
   'waterlevel.title': 'Уровень воды 🌊',
   'waterlevel.off': 'Выкл',
 };

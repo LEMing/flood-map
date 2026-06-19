@@ -73,18 +73,17 @@ export const so: Record<string, string> = {
   'rain.cellY': 'unug y',
   'rain.cellRadius': 'gacanka unugga',
   'storm.constant': 'Joogto (gacanta mm/saac)',
-  'storm.cloudburst': 'Roob daran (~50 mm / 2 h)',
-  'storm.design25yr': 'Duufaan naqshadeysan P≈25 sano',
-  'storm.may2026': 'La arkay 18 Maajo 2026 (41 mm/2 h)',
-  'storm.jun2026': 'La arkay 12 Juun 2026 (90 mm/maalin)',
-
+  'storm.cloudburst': 'Roob daran (~38 mm/2h)',
+  'storm.design25yr': 'Duufaan xoog leh (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 astaan (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 astaan (~100 mm/24h)',
   'urban.surface': 'qaabka dusha sare',
   'urban.buildings': 'dhismayaal sida darbiyo',
   'urban.sewer': 'bullaacadda roobka (mm/saac)',
   'urban.groundwater': 'biyaha dhulka hoostiisa oo sare',
 
   'soil.infiltration': 'gelitaanka biyaha carrada (mm/saac)',
-  'soil.evaporation': 'uumibax (/saac)',
+  'soil.evaporation': 'uumibax (mm/saac)',
 
   'physics.gravity': 'culeyska cuf-isjiidad (m/s²)',
   'physics.flow': 'saamiga socodka',
@@ -154,6 +153,7 @@ export const so: Record<string, string> = {
   'stats.simTime': 'waqtiga jilitaanka',
   'stats.rainIn': 'roob soo galay',
   'stats.stored': 'biyo la kaydiyay',
+  'stats.balance': 'dheellitirka biyaha',
   'stats.flooded': 'aag daad ka muuqdo',
   'stats.maxDepth': 'qoto ugu badan',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const so: Record<string, string> = {
   'toast.loadFailed': 'Wax baa khaldamay markii la rarayay khariidadda. Fadlan dib u soo rar.',
   'toast.linkCopied': 'Xiriirka waxaa lagu koobiyeeyay sabuuradda',
   'share.title': 'La wadaag xaaladdan',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Sida ay u shaqeyso & xadka',
+  'method.body': 'Jilitaan waxbarasho oo daad roob ah. Fiisigiska biyaha waa la fududeeyay, modelkana lagama habayn cabbiraado dhab ah, sidaas darteed qoto-dheerida iyo aagagga daadku waa tilmaan kaliya — maaha qiimayn khatarta daadka. Ma jilo qulqulinta biyaha roobka, biyaha dhulka hoostiisa, ama daadka webiga iyo xeebaha. Habaynta duufaanta waa muuqaalo roob oo matalaad ah, maaha diiwaanno cabbir.',
+  'method.indicative': 'Tilmaan (model)',
   'waterlevel.title': 'Heerka biyaha 🌊',
   'waterlevel.off': 'Dami',
 };

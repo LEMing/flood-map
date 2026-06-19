@@ -41,18 +41,17 @@ export const cs: Record<string, string> = {
   'rain.cellY': 'buňka y',
   'rain.cellRadius': 'poloměr buňky',
   'storm.constant': 'Konstantní (ručně mm/hod)',
-  'storm.cloudburst': 'Průtrž mračen (~50 mm / 2 h)',
-  'storm.design25yr': 'Návrhová bouře P≈25 let',
-  'storm.may2026': 'Naměřeno 18. kvě 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Naměřeno 12. čvn 2026 (90 mm/den)',
-
+  'storm.cloudburst': 'Průtrž (~38 mm/2h)',
+  'storm.design25yr': 'Silná bouře (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'model povrchu',
   'urban.buildings': 'budovy jako stěny',
   'urban.sewer': 'dešťová kanalizace (mm/hod)',
   'urban.groundwater': 'vysoká hladina podzemní vody',
 
   'soil.infiltration': 'infiltrace půdy (mm/hod)',
-  'soil.evaporation': 'výpar (/hod)',
+  'soil.evaporation': 'výpar (mm/hod)',
 
   'physics.gravity': 'gravitace (m/s²)',
   'physics.flow': 'koeficient odtoku',
@@ -154,6 +153,7 @@ export const cs: Record<string, string> = {
   'stats.simTime': 'čas simulace',
   'stats.rainIn': 'spadlý déšť',
   'stats.stored': 'zadržená voda',
+  'stats.balance': 'vodní bilance',
   'stats.flooded': 'zaplavená plocha',
   'stats.maxDepth': 'max. hloubka',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const cs: Record<string, string> = {
   'toast.loadFailed': 'Při načítání mapy se něco pokazilo. Načtěte prosím znovu.',
   'toast.linkCopied': 'Odkaz zkopírován do schránky',
   'share.title': 'Sdílet tento scénář',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Jak to funguje a omezení',
+  'method.body': 'Vzdělávací simulace srážkové povodně. Fyzika vody je zjednodušená a model není kalibrován na skutečná měření, takže hloubky a plochy zaplavení jsou pouze orientační — nejde o posouzení povodňového rizika. Nemodeluje dešťovou kanalizaci, podzemní vodu ani říční a pobřežní záplavy. Předvolby bouří jsou reprezentativní srážkové profily, nikoli záznamy měřidel.',
+  'method.indicative': 'Orientační (model)',
   'waterlevel.title': 'Hladina vody 🌊',
   'waterlevel.off': 'Vyp',
 };

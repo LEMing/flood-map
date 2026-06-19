@@ -47,11 +47,10 @@ export const hi: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'स्थिर (मैन्युअल mm/घंटा)',
-  'storm.cloudburst': 'मूसलाधार वर्षा (~50 mm / 2 घंटा)',
-  'storm.design25yr': 'डिज़ाइन तूफान P≈25 वर्ष',
-  'storm.may2026': 'प्रेक्षित 18 मई 2026 (41 mm/2 घंटा)',
-  'storm.jun2026': 'प्रेक्षित 12 जून 2026 (90 mm/दिन)',
-
+  'storm.cloudburst': 'मूसलाधार बारिश (~38 mm/2h)',
+  'storm.design25yr': 'भारी तूफान (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 प्रोफ़ाइल (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 प्रोफ़ाइल (~100 mm/24h)',
   // Urban model
   'urban.surface': 'सतह मॉडल',
   'urban.buildings': 'भवन दीवारों के रूप में',
@@ -60,7 +59,7 @@ export const hi: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'मृदा अंतःस्यंदन (mm/hr)',
-  'soil.evaporation': 'वाष्पीकरण (/hr)',
+  'soil.evaporation': 'वाष्पीकरण (mm/hr)',
 
   // Physics
   'physics.gravity': 'गुरुत्वाकर्षण (m/s²)',
@@ -169,6 +168,7 @@ export const hi: Record<string, string> = {
   'stats.simTime': 'सिम समय',
   'stats.rainIn': 'कुल वर्षा',
   'stats.stored': 'संग्रहित जल',
+  'stats.balance': 'जल संतुलन',
   'stats.flooded': 'बाढ़ क्षेत्र',
   'stats.maxDepth': 'अधिकतम गहराई',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const hi: Record<string, string> = {
   'toast.loadFailed': 'मानचित्र लोड करते समय कुछ गलत हो गया। कृपया फिर से लोड करें।',
   'toast.linkCopied': 'लिंक क्लिपबोर्ड पर कॉपी किया गया',
   'share.title': 'यह परिदृश्य साझा करें',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'यह कैसे काम करता है और सीमाएँ',
+  'method.body': 'एक शैक्षिक वर्षा-बाढ़ सिमुलेशन। जल भौतिकी को सरल बनाया गया है और मॉडल वास्तविक मापों के अनुसार कैलिब्रेट नहीं है, इसलिए बाढ़ की गहराई और क्षेत्र केवल संकेतात्मक हैं — कोई बाढ़-जोखिम आकलन नहीं। यह वर्षा-नाली, भूजल, या नदी एवं तटीय बाढ़ का मॉडल नहीं बनाता। तूफान प्रीसेट प्रतिनिधि वर्षा प्रोफ़ाइल हैं, माप अभिलेख नहीं।',
+  'method.indicative': 'संकेतात्मक (मॉडल)',
   'waterlevel.title': 'जल स्तर 🌊',
   'waterlevel.off': 'बंद',
 };

@@ -41,18 +41,17 @@ export const hy: Record<string, string> = {
   'rain.cellY': 'բջիջ y',
   'rain.cellRadius': 'բջջի շառավիղ',
   'storm.constant': 'Հաստատուն (ձեռքով մմ/ժ)',
-  'storm.cloudburst': 'Տեղատարափ (~50 մմ / 2 ժ)',
-  'storm.design25yr': 'Հաշվարկային տեղատարափ P≈25 տարի',
-  'storm.may2026': 'Դիտարկում 18 մայիս 2026 (41 մմ/2 ժ)',
-  'storm.jun2026': 'Դիտարկում 12 հունիս 2026 (90 մմ/օր)',
-
+  'storm.cloudburst': 'Հեղեղ (~38 mm/2h)',
+  'storm.design25yr': 'Ուժեղ փոթորիկ (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 պրոֆիլ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 պրոֆիլ (~100 mm/24h)',
   'urban.surface': 'մակերևույթի մոդել',
   'urban.buildings': 'շենքերը՝ որպես պատեր',
   'urban.sewer': 'անձրևային կոյուղի (մմ/ժ)',
   'urban.groundwater': 'բարձր ստորգետնյա ջրեր',
 
   'soil.infiltration': 'հողի ներծծում (մմ/ժ)',
-  'soil.evaporation': 'գոլորշիացում (/ժ)',
+  'soil.evaporation': 'գոլորշիացում (մմ/ժ)',
 
   'physics.gravity': 'ձգողություն (մ/վրկ²)',
   'physics.flow': 'հոսքի գործակից',
@@ -154,6 +153,7 @@ export const hy: Record<string, string> = {
   'stats.simTime': 'սիմուլյացիայի ժամանակ',
   'stats.rainIn': 'տեղացած անձրև',
   'stats.stored': 'կուտակված ջուր',
+  'stats.balance': 'ջրային հաշվեկշիռ',
   'stats.flooded': 'հեղեղված տարածք',
   'stats.maxDepth': 'մաքս. խորություն',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const hy: Record<string, string> = {
   'toast.loadFailed': 'Քարտեզը բեռնելիս ինչ-որ բան սխալ գնաց։ Խնդրում ենք վերաբեռնել։',
   'toast.linkCopied': 'Հղումը պատճենվեց սեղմատախտակին',
   'share.title': 'Կիսվել այս սցենարով',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Ինչպես է աշխատում և սահմանափակումներ',
+  'method.body': 'Անձրևային ջրհեղեղի կրթական մոդելավորում։ Ջրի ֆիզիկան պարզեցված է, և մոդելը չի ճշգրտված իրական չափումներով, ուստի ջրհեղեղի խորություններն ու տարածքները միայն ցուցիչ են — ոչ թե ջրհեղեղի ռիսկի գնահատում։ Այն չի մոդելավորում անձրևաջրահեռացման ցանցը, ստորերկրյա ջրերը կամ գետային ու ափամերձ ջրհեղեղները։ Փոթորկի կարգավորումները ներկայացուցչական տեղումների պրոֆիլներ են, ոչ թե չափիչ գրառումներ։',
+  'method.indicative': 'Ցուցիչ (մոդել)',
   'waterlevel.title': 'Ջրի մակարդակ 🌊',
   'waterlevel.off': 'Անջատ',
 };

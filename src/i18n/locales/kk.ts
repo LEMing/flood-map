@@ -41,18 +41,17 @@ export const kk: Record<string, string> = {
   'rain.cellY': 'ұяшық y',
   'rain.cellRadius': 'ұяшық радиусы',
   'storm.constant': 'Тұрақты (қолмен мм/сағ)',
-  'storm.cloudburst': 'Нөсер (~50 мм / 2 сағ)',
-  'storm.design25yr': 'Есептік нөсер P≈25 жыл',
-  'storm.may2026': 'Бақылау 18 мамыр 2026 (41 мм/2 сағ)',
-  'storm.jun2026': 'Бақылау 12 маусым 2026 (90 мм/тәул)',
-
+  'storm.cloudburst': 'Нөсер (~38 mm/2h)',
+  'storm.design25yr': 'Қатты дауыл (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профиль (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профиль (~100 mm/24h)',
   'urban.surface': 'бет моделі',
   'urban.buildings': 'ғимараттар қабырға ретінде',
   'urban.sewer': 'нөсер кәрізі (мм/сағ)',
   'urban.groundwater': 'жоғары жерасты сулары',
 
   'soil.infiltration': 'топыраққа сіңу (мм/сағ)',
-  'soil.evaporation': 'булану (/сағ)',
+  'soil.evaporation': 'булану (мм/сағ)',
 
   'physics.gravity': 'ауырлық күші (м/с²)',
   'physics.flow': 'ағын коэффициенті',
@@ -154,6 +153,7 @@ export const kk: Record<string, string> = {
   'stats.simTime': 'симуляция уақыты',
   'stats.rainIn': 'жауған жаңбыр',
   'stats.stored': 'жиналған су',
+  'stats.balance': 'су балансы',
   'stats.flooded': 'су басқан аумақ',
   'stats.maxDepth': 'макс. тереңдік',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const kk: Record<string, string> = {
   'toast.loadFailed': 'Картаны жүктеу кезінде бір нәрсе дұрыс болмады. Қайта жүктеңіз.',
   'toast.linkCopied': 'Сілтеме алмасу буферіне көшірілді',
   'share.title': 'Бұл сценариймен бөлісу',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Қалай жұмыс істейді және шектеулер',
+  'method.body': 'Жаңбыр тасқынының білім беру симуляциясы. Су физикасы оңайлатылған, ал модель нақты өлшемдерге калибрленбеген, сондықтан тасқын тереңдігі мен ауданы тек бағдарлық — тасқын қаупін бағалау емес. Ол нөсер кәрізін, жерасты суларын немесе өзен мен жағалау тасқынын модельдемейді. Дауыл алдын ала баптаулары — өкілдік жауын профильдері, өлшеу жазбалары емес.',
+  'method.indicative': 'Бағдарлық (модель)',
   'waterlevel.title': 'Су деңгейі 🌊',
   'waterlevel.off': 'Өшіру',
 };

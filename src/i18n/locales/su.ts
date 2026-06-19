@@ -47,11 +47,10 @@ export const su: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Tetep (manual mm/hr)',
-  'storm.cloudburst': 'Hujan ngagebrét (~50 mm / 2 h)',
-  'storm.design25yr': 'Badai rancangan P≈25 yr',
-  'storm.may2026': 'Katalingakeun 18 Méi 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Katalingakeun 12 Jun 2026 (90 mm/poé)',
-
+  'storm.cloudburst': 'Hujan ageung (~38 mm/2h)',
+  'storm.design25yr': 'Badai beurat (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'modél permukaan',
   'urban.buildings': 'wangunan jadi témbok',
@@ -60,7 +59,7 @@ export const su: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'infiltrasi taneuh (mm/hr)',
-  'soil.evaporation': 'evaporasi (/hr)',
+  'soil.evaporation': 'evaporasi (mm/hr)',
 
   // Physics
   'physics.gravity': 'gravitasi (m/s²)',
@@ -169,6 +168,7 @@ export const su: Record<string, string> = {
   'stats.simTime': 'waktu sim',
   'stats.rainIn': 'hujan asup',
   'stats.stored': 'cai katyimpen',
+  'stats.balance': 'kasaimbangan cai',
   'stats.flooded': 'lega kakeueum',
   'stats.maxDepth': 'jero maks',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const su: Record<string, string> = {
   'toast.loadFailed': 'Aya nu lepat nalika ngamuat peta. Mangga muat deui.',
   'toast.linkCopied': 'Tautan disalin ka papan klip',
   'share.title': 'Bagikeun skenario ieu',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Kumaha jalanna & watesna',
+  'method.body': 'Simulasi caah hujan pikeun atikan. Fisika cai disederhanakeun sarta modél teu dikalibrasi kana ukuran nyata, ku kituna jero jeung legana caah ngan saukur pituduh — lain panaksiran résiko caah. Ieu teu modélkeun salokan cai hujan, cai taneuh, atawa caah walungan jeung basisir. Prését badai mangrupa profil hujan wawakil, lain catetan alat ukur.',
+  'method.indicative': 'Pituduh (modél)',
   'waterlevel.title': 'Tingkat cai 🌊',
   'waterlevel.off': 'Pareum',
 };

@@ -82,11 +82,10 @@ export const mr: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'स्थिर (मॅन्युअल mm/hr)',
-  'storm.cloudburst': 'ढगफुटी (~50 mm / 2 h)',
-  'storm.design25yr': 'डिझाइन वादळ P≈25 yr',
-  'storm.may2026': 'नोंदलेले 18 मे 2026 (41 mm/2 h)',
-  'storm.jun2026': 'नोंदलेले 12 जून 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'मुसळधार पाऊस (~38 mm/2h)',
+  'storm.design25yr': 'जोरदार वादळ (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 प्रोफाइल (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 प्रोफाइल (~100 mm/24h)',
   // Urban model
   'urban.surface': 'पृष्ठभाग मॉडेल',
   'urban.buildings': 'इमारती भिंती म्हणून',
@@ -95,7 +94,7 @@ export const mr: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'मातीत मुरणे (mm/hr)',
-  'soil.evaporation': 'बाष्पीभवन (/hr)',
+  'soil.evaporation': 'बाष्पीभवन (mm/hr)',
 
   // Physics
   'physics.gravity': 'गुरुत्वाकर्षण (m/s²)',
@@ -173,6 +172,7 @@ export const mr: Record<string, string> = {
   'stats.simTime': 'सिम वेळ',
   'stats.rainIn': 'पडलेला पाऊस',
   'stats.stored': 'साठलेले पाणी',
+  'stats.balance': 'जल संतुलन',
   'stats.flooded': 'पूरग्रस्त क्षेत्र',
   'stats.maxDepth': 'कमाल खोली',
   'stats.fps': 'fps',
@@ -223,6 +223,10 @@ export const mr: Record<string, string> = {
   'toast.loadFailed': 'नकाशा लोड करताना काहीतरी चूक झाली. कृपया पुन्हा लोड करा.',
   'toast.linkCopied': 'दुवा क्लिपबोर्डवर कॉपी केला',
   'share.title': 'हे परिदृश्य शेअर करा',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'हे कसे कार्य करते आणि मर्यादा',
+  'method.body': 'एक शैक्षणिक पाऊस-पूर सिम्युलेशन. पाण्याचे भौतिकशास्त्र सोपे केले आहे आणि मॉडेल प्रत्यक्ष मोजमापांशी कॅलिब्रेट केलेले नाही, त्यामुळे पुराची खोली व क्षेत्र केवळ निर्देशक आहे — पूर-धोका मूल्यांकन नाही. हे पावसाळी गटार, भूजल, किंवा नदी व किनारी पूर यांचे मॉडेल करत नाही. वादळ प्रीसेट प्रातिनिधिक पर्जन्य प्रोफाइल आहेत, मोजमाप नोंदी नाहीत.',
+  'method.indicative': 'निर्देशक (मॉडेल)',
   'waterlevel.title': 'पाण्याची पातळी 🌊',
   'waterlevel.off': 'बंद',
 };

@@ -2,6 +2,7 @@ import './styles.css';
 import type { App } from './app/App';
 import { Landing } from './landing/Landing';
 import { LanguagePicker } from './ui/LanguagePicker';
+import { MethodNote } from './ui/MethodNote';
 import { initAnalytics } from './analytics';
 import { detectWebGLSupport } from './render/webglSupport';
 import { getLanguage, loadLanguage, setLanguage, applyDocumentLang, t, type Lang } from './i18n';
@@ -26,6 +27,7 @@ let app: App | null = null;
 let appPromise: Promise<App> | null = null;
 let landing: Landing | null = null;
 let languagePicker: LanguagePicker;
+let methodNote: MethodNote;
 
 interface EnterOpts { cinematic?: boolean; km?: number; grid?: number }
 
@@ -57,6 +59,7 @@ function onLanguageChange(lang: Lang): void {
     writeUrlState({ lang });
     applyDocumentLang();
     languagePicker.retranslate();
+    methodNote.translate();
     landing?.retranslate();
     app?.retranslateForLanguage();
   })();
@@ -152,6 +155,7 @@ try {
   await loadLanguage(getLanguage());
   applyDocumentLang(); // set <html lang/dir> up front so an RTL locale mirrors on first paint
   languagePicker = new LanguagePicker(onLanguageChange); // shared top-right picker
+  methodNote = new MethodNote(); // in-app flood-model methodology/limitations note
   route();
 } catch (err) {
   console.error(err);

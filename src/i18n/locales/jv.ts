@@ -50,11 +50,10 @@ export const jv: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Tetep (manual mm/jam)',
-  'storm.cloudburst': 'Udan deres (~50 mm / 2 jam)',
-  'storm.design25yr': 'Badai rancangan P≈25 taun',
-  'storm.may2026': 'Kacathet 18 Mei 2026 (41 mm/2 jam)',
-  'storm.jun2026': 'Kacathet 12 Jun 2026 (90 mm/dina)',
-
+  'storm.cloudburst': 'Udan deres (~38 mm/2h)',
+  'storm.design25yr': 'Badai abot (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'model permukaan',
   'urban.buildings': 'gedhong dadi tembok',
@@ -63,7 +62,7 @@ export const jv: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'resepan lemah (mm/jam)',
-  'soil.evaporation': 'penguapan (/jam)',
+  'soil.evaporation': 'penguapan (mm/jam)',
 
   // Physics
   'physics.gravity': 'gravitasi (m/s²)',
@@ -172,6 +171,7 @@ export const jv: Record<string, string> = {
   'stats.simTime': 'wektu sim',
   'stats.rainIn': 'udan tiba',
   'stats.stored': 'banyu kasimpen',
+  'stats.balance': 'imbangan banyu',
   'stats.flooded': 'wilayah kebanjiran',
   'stats.maxDepth': 'jero maks',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const jv: Record<string, string> = {
   'toast.loadFailed': 'Ana sing salah nalika ngemot peta. Mangga muat ulang.',
   'toast.linkCopied': 'Link disalin menyang clipboard',
   'share.title': 'Bagikan skenario iki',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cara kerja & watesan',
+  'method.body': 'Simulasi banjir udan kanggo pendhidhikan. Fisika banyu disederhanakake lan model ora dikalibrasi marang pangukuran nyata, mula jero lan ambane banjir mung minangka pituduh — dudu pambiji risiko banjir. Iki ora nggambarake saluran udan, banyu lemah, utawa banjir kali lan pesisir. Prasetel badai yaiku profil udan perwakilan, dudu cathetan alat ukur.',
+  'method.indicative': 'Pituduh (model)',
   'waterlevel.title': 'Dhuwure banyu 🌊',
   'waterlevel.off': 'Mati',
 };

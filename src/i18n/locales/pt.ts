@@ -73,18 +73,17 @@ export const pt: Record<string, string> = {
   'rain.cellY': 'célula y',
   'rain.cellRadius': 'raio da célula',
   'storm.constant': 'Constante (manual mm/h)',
-  'storm.cloudburst': 'Aguaceiro (~50 mm / 2 h)',
-  'storm.design25yr': 'Tempestade de projeto P≈25 anos',
-  'storm.may2026': 'Observado 18 mai 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Observado 12 jun 2026 (90 mm/dia)',
-
+  'storm.cloudburst': 'Aguaceiro (~38 mm/2h)',
+  'storm.design25yr': 'Tempestade forte (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 perfil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 perfil (~100 mm/24h)',
   'urban.surface': 'modelo de superfície',
   'urban.buildings': 'edifícios como paredes',
   'urban.sewer': 'galeria pluvial (mm/h)',
   'urban.groundwater': 'lençol freático alto',
 
   'soil.infiltration': 'infiltração no solo (mm/h)',
-  'soil.evaporation': 'evaporação (/h)',
+  'soil.evaporation': 'evaporação (mm/h)',
 
   'physics.gravity': 'gravidade (m/s²)',
   'physics.flow': 'coeficiente de escoamento',
@@ -154,6 +153,7 @@ export const pt: Record<string, string> = {
   'stats.simTime': 'tempo de simulação',
   'stats.rainIn': 'chuva caída',
   'stats.stored': 'água armazenada',
+  'stats.balance': 'balanço hídrico',
   'stats.flooded': 'área inundada',
   'stats.maxDepth': 'profundidade máx.',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const pt: Record<string, string> = {
   'toast.loadFailed': 'Algo deu errado ao carregar o mapa. Recarregue, por favor.',
   'toast.linkCopied': 'Link copiado para a área de transferência',
   'share.title': 'Partilhar este cenário',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Como funciona e limites',
+  'method.body': 'Uma simulação educativa de inundação por chuva. A física da água é simplificada e o modelo não é calibrado com medições reais, por isso as profundidades e áreas inundadas são apenas indicativas — não uma avaliação de risco de inundação. Não modela a rede de drenagem pluvial, as águas subterrâneas, nem as cheias fluviais e costeiras. As predefinições de tempestade são perfis de chuva representativos, não registos de instrumentos.',
+  'method.indicative': 'Indicativo (modelo)',
   'waterlevel.title': 'Nível da água 🌊',
   'waterlevel.off': 'Desligado',
 };

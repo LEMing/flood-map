@@ -47,11 +47,10 @@ export const kn: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'ಸ್ಥಿರ (ಕೈಯಿಂದ mm/hr)',
-  'storm.cloudburst': 'ಮೋಡಸ್ಫೋಟ (~50 mm / 2 h)',
-  'storm.design25yr': 'ವಿನ್ಯಾಸ ಬಿರುಗಾಳಿ P≈25 yr',
-  'storm.may2026': 'ಗಮನಿಸಲಾದ 18 ಮೇ 2026 (41 mm/2 h)',
-  'storm.jun2026': 'ಗಮನಿಸಲಾದ 12 ಜೂನ್ 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'ಧಾರಾಕಾರ ಮಳೆ (~38 mm/2h)',
+  'storm.design25yr': 'ಭಾರೀ ಚಂಡಮಾರುತ (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 ಪ್ರೊಫೈಲ್ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 ಪ್ರೊಫೈಲ್ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'ಮೇಲ್ಮೈ ಮಾದರಿ',
   'urban.buildings': 'ಕಟ್ಟಡಗಳು ಗೋಡೆಗಳಂತೆ',
@@ -60,7 +59,7 @@ export const kn: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'ಮಣ್ಣಿನ ಒಳನುಸುಳುವಿಕೆ (mm/hr)',
-  'soil.evaporation': 'ಆವಿಯಾಗುವಿಕೆ (/hr)',
+  'soil.evaporation': 'ಆವಿಯಾಗುವಿಕೆ (mm/hr)',
 
   // Physics
   'physics.gravity': 'ಗುರುತ್ವ (m/s²)',
@@ -169,6 +168,7 @@ export const kn: Record<string, string> = {
   'stats.simTime': 'ಸಿಮ್ ಸಮಯ',
   'stats.rainIn': 'ಬಿದ್ದ ಮಳೆ',
   'stats.stored': 'ಸಂಗ್ರಹಿತ ನೀರು',
+  'stats.balance': 'ಜಲ ಸಮತೋಲನ',
   'stats.flooded': 'ಪ್ರವಾಹ ಪ್ರದೇಶ',
   'stats.maxDepth': 'ಗರಿಷ್ಠ ಆಳ',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const kn: Record<string, string> = {
   'toast.loadFailed': 'ನಕ್ಷೆಯನ್ನು ಲೋಡ್ ಮಾಡುವಾಗ ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಲೋಡ್ ಮಾಡಿ.',
   'toast.linkCopied': 'ಲಿಂಕ್ ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ',
   'share.title': 'ಈ ಸನ್ನಿವೇಶವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಮತ್ತು ಮಿತಿಗಳು',
+  'method.body': 'ಒಂದು ಶೈಕ್ಷಣಿಕ ಮಳೆ-ಪ್ರವಾಹ ಸಿಮ್ಯುಲೇಶನ್. ನೀರಿನ ಭೌತಶಾಸ್ತ್ರವನ್ನು ಸರಳಗೊಳಿಸಲಾಗಿದೆ ಮತ್ತು ಮಾದರಿಯನ್ನು ನೈಜ ಅಳತೆಗಳಿಗೆ ಕ್ಯಾಲಿಬ್ರೇಟ್ ಮಾಡಿಲ್ಲ, ಆದ್ದರಿಂದ ಪ್ರವಾಹದ ಆಳ ಮತ್ತು ಪ್ರದೇಶಗಳು ಕೇವಲ ಸೂಚಕ — ಪ್ರವಾಹ-ಅಪಾಯ ಮೌಲ್ಯಮಾಪನವಲ್ಲ. ಇದು ಮಳೆನೀರಿನ ಚರಂಡಿ, ಅಂತರ್ಜಲ, ಅಥವಾ ನದಿ ಮತ್ತು ಕರಾವಳಿ ಪ್ರವಾಹವನ್ನು ಮಾದರಿ ಮಾಡುವುದಿಲ್ಲ. ಚಂಡಮಾರುತ ಪ್ರಿಸೆಟ್‌ಗಳು ಪ್ರಾತಿನಿಧಿಕ ಮಳೆ ಪ್ರೊಫೈಲ್‌ಗಳಾಗಿವೆ, ಅಳತೆ ದಾಖಲೆಗಳಲ್ಲ.',
+  'method.indicative': 'ಸೂಚಕ (ಮಾದರಿ)',
   'waterlevel.title': 'ನೀರಿನ ಮಟ್ಟ 🌊',
   'waterlevel.off': 'ಆಫ್',
 };

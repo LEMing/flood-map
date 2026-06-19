@@ -47,11 +47,10 @@ export const uk: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Постійний (вручну мм/год)',
-  'storm.cloudburst': 'Залпова злива (~50 мм / 2 год)',
-  'storm.design25yr': 'Розрахункова злива P≈25 р.',
-  'storm.may2026': 'Факт 18 трав 2026 (41 мм/2 год)',
-  'storm.jun2026': 'Факт 12 черв 2026 (90 мм/добу)',
-
+  'storm.cloudburst': 'Злива (~38 mm/2h)',
+  'storm.design25yr': 'Сильний шторм (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профіль (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профіль (~100 mm/24h)',
   // Urban model
   'urban.surface': 'модель поверхні',
   'urban.buildings': 'будівлі як стіни',
@@ -60,7 +59,7 @@ export const uk: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'інфільтрація ґрунту (mm/hr)',
-  'soil.evaporation': 'випаровування (/hr)',
+  'soil.evaporation': 'випаровування (mm/hr)',
 
   // Physics
   'physics.gravity': 'гравітація (m/s²)',
@@ -169,6 +168,7 @@ export const uk: Record<string, string> = {
   'stats.simTime': 'час симуляції',
   'stats.rainIn': 'дощу випало',
   'stats.stored': 'накопичено води',
+  'stats.balance': 'водний баланс',
   'stats.flooded': 'затоплена площа',
   'stats.maxDepth': 'макс. глибина',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const uk: Record<string, string> = {
   'toast.loadFailed': 'Щось пішло не так під час завантаження карти. Будь ласка, перезавантажте.',
   'toast.linkCopied': 'Посилання скопійовано в буфер обміну',
   'share.title': 'Поділитися цим сценарієм',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Як це працює та обмеження',
+  'method.body': 'Освітня симуляція дощового паводка. Фізика води спрощена, а модель не відкалібрована за реальними вимірами, тому глибини й площі затоплення лише орієнтовні — це не оцінка ризику повені. Модель не враховує зливову каналізацію, ґрунтові води, річкові та прибережні повені. Пресети злив — це репрезентативні профілі опадів, а не дані вимірювань.',
+  'method.indicative': 'Орієнтовно (модель)',
   'waterlevel.title': 'Рівень води 🌊',
   'waterlevel.off': 'Вимк',
 };

@@ -72,7 +72,7 @@ export class ControlsPanel {
     map.addButton({ title: t('map.apply') }).on('click', () => cb.onRebuild());
     map.addBinding(params, 'demoMode', { label: t('map.demoMode') }).on('change', () => cb.onDemoToggle());
 
-    const s = this.pane.addFolder({ title: t('stats.title'), expanded: true });
+    const s = this.pane.addFolder({ title: `${t('stats.title')} · ${t('method.indicative')}`, expanded: true });
     s.addBinding(stats, 'location', { readonly: true, label: t('stats.location') });
     s.addBinding(stats, 'simTime', { readonly: true, label: t('stats.simTime') });
     s.addBinding(stats, 'floodedArea', { readonly: true, label: t('stats.flooded') });
@@ -123,13 +123,13 @@ export class ControlsPanel {
     // --- Soil / atmosphere ---
     const soil = this.pane.addFolder({ title: t('soil.title'), expanded: false });
     soil.addBinding(params, 'infiltrationMmPerHr', { min: 0, max: 100, step: 1, label: t('soil.infiltration') }).on('change', change);
-    soil.addBinding(params, 'evaporationPerHr', { min: 0, max: 1, step: 0.01, label: t('soil.evaporation') }).on('change', change);
+    soil.addBinding(params, 'evaporationPerHr', { min: 0, max: 10, step: 0.1, label: t('soil.evaporation') }).on('change', change);
 
     // --- Physics ---
     const phys = this.pane.addFolder({ title: t('physics.title'), expanded: false });
     phys.addBinding(params, 'gravity', { min: 1, max: 25, step: 0.01, label: t('physics.gravity') }).on('change', change);
     phys.addBinding(params, 'pipeArea', { min: 0.1, max: 4, step: 0.05, label: t('physics.flow') }).on('change', change);
-    phys.addBinding(params, 'friction', { min: 0, max: 1, step: 0.01, label: t('physics.friction') }).on('change', change);
+    phys.addBinding(params, 'friction', { min: 0.2, max: 3, step: 0.1, label: t('physics.friction') }).on('change', change);
     phys.addBinding(params, 'boundary', { label: t('physics.edges'), options: { [t('physics.edgesOpen')]: 'open', [t('physics.edgesClosed')]: 'closed' } }).on('change', change);
 
     // --- Map (requires rebuild) ---
@@ -198,11 +198,12 @@ export class ControlsPanel {
     geo.addBinding(params, 'highlightAquiclude', { label: t('geo.aquiclude') }).on('change', change);
 
     // --- Stats (read-only) ---
-    const s = this.pane.addFolder({ title: t('stats.title'), expanded: false });
+    const s = this.pane.addFolder({ title: `${t('stats.title')} · ${t('method.indicative')}`, expanded: false });
     s.addBinding(stats, 'location', { readonly: true, label: t('stats.location') });
     s.addBinding(stats, 'simTime', { readonly: true, label: t('stats.simTime') });
     s.addBinding(stats, 'rained', { readonly: true, label: t('stats.rainIn') });
     s.addBinding(stats, 'stored', { readonly: true, label: t('stats.stored') });
+    s.addBinding(stats, 'balance', { readonly: true, label: t('stats.balance') });
     s.addBinding(stats, 'floodedArea', { readonly: true, label: t('stats.flooded') });
     s.addBinding(stats, 'maxDepth', { readonly: true, label: t('stats.maxDepth') });
     s.addBinding(stats, 'fps', { readonly: true, label: t('stats.fps') });

@@ -73,18 +73,17 @@ export const he: Record<string, string> = {
   'rain.cellY': 'תא y',
   'rain.cellRadius': 'רדיוס תא',
   'storm.constant': 'קבוע (ידני מ"מ/שעה)',
-  'storm.cloudburst': 'מבול (~50 מ"מ / 2 שע\')',
-  'storm.design25yr': 'סערת תכן P≈25 שנה',
-  'storm.may2026': 'נמדד 18 מאי 2026 (41 מ"מ/2 שע\')',
-  'storm.jun2026': 'נמדד 12 יונ 2026 (90 מ"מ/יום)',
-
+  'storm.cloudburst': 'ממטר עז (~38 mm/2h)',
+  'storm.design25yr': 'סופה כבדה (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 פרופיל (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 פרופיל (~100 mm/24h)',
   'urban.surface': 'מודל פני שטח',
   'urban.buildings': 'מבנים כקירות',
   'urban.sewer': 'ביוב נגר (מ"מ/שעה)',
   'urban.groundwater': 'מי תהום גבוהים',
 
   'soil.infiltration': 'חלחול קרקע (מ"מ/שעה)',
-  'soil.evaporation': 'אידוי (/שעה)',
+  'soil.evaporation': 'אידוי (מ"מ/שעה)',
 
   'physics.gravity': 'כבידה (מ/ש"ק²)',
   'physics.flow': 'מקדם נגר',
@@ -154,6 +153,7 @@ export const he: Record<string, string> = {
   'stats.simTime': 'זמן סימולציה',
   'stats.rainIn': 'גשם שירד',
   'stats.stored': 'מים אגורים',
+  'stats.balance': 'מאזן מים',
   'stats.flooded': 'שטח מוצף',
   'stats.maxDepth': 'עומק מרבי',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const he: Record<string, string> = {
   'toast.loadFailed': 'משהו השתבש בטעינת המפה. אנא טען מחדש.',
   'toast.linkCopied': 'הקישור הועתק ללוח',
   'share.title': 'שתף את התרחיש הזה',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'איך זה עובד ומגבלות',
+  'method.body': 'סימולציה חינוכית של הצפת גשם. פיזיקת המים פשטנית והמודל אינו מכויל למדידות אמיתיות, ולכן עומקי ההצפה ושטחיה הם מנחים בלבד — אינם הערכת סיכון הצפה. הוא אינו מדמה ביוב תיעול נגר, מי תהום, או הצפות נהר וחוף. הקדם-מוגדרים של הסערה הם פרופילי גשם מייצגים, לא רישומי מדידה.',
+  'method.indicative': 'מנחה (מודל)',
   'waterlevel.title': 'מפלס המים 🌊',
   'waterlevel.off': 'כבוי',
 };

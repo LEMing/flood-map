@@ -77,11 +77,10 @@ export const ja: Record<string, string> = {
   'rain.cellY': 'セル y',
   'rain.cellRadius': 'セル半径',
   'storm.constant': '一定（手動 mm/時）',
-  'storm.cloudburst': '集中豪雨（~50 mm / 2時間）',
-  'storm.design25yr': '計画降雨 P≈25年',
-  'storm.may2026': '実測 2026年5月18日（41 mm/2時間）',
-  'storm.jun2026': '実測 2026年6月12日（90 mm/日）',
-
+  'storm.cloudburst': '集中豪雨 (~38 mm/2h)',
+  'storm.design25yr': '激しい嵐 (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 プロファイル (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 プロファイル (~100 mm/24h)',
   // Urban model
   'urban.surface': '地表モデル',
   'urban.buildings': '建物を壁として扱う',
@@ -90,7 +89,7 @@ export const ja: Record<string, string> = {
 
   // Soil
   'soil.infiltration': '土壌浸透 (mm/hr)',
-  'soil.evaporation': '蒸発 (/hr)',
+  'soil.evaporation': '蒸発 (mm/hr)',
 
   // Physics
   'physics.gravity': '重力 (m/s²)',
@@ -164,6 +163,7 @@ export const ja: Record<string, string> = {
   'stats.simTime': 'シミュ時間',
   'stats.rainIn': '降水量',
   'stats.stored': '貯留水量',
+  'stats.balance': '水収支',
   'stats.flooded': '浸水面積',
   'stats.maxDepth': '最大深度',
   'stats.fps': 'fps',
@@ -214,6 +214,10 @@ export const ja: Record<string, string> = {
   'toast.loadFailed': '地図の読み込み中に問題が発生しました。再読み込みしてください。',
   'toast.linkCopied': 'リンクをクリップボードにコピーしました',
   'share.title': 'このシナリオを共有',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': '仕組みと限界',
+  'method.body': '教育用の降雨洪水シミュレーションです。水の物理は簡略化されており、実測値で較正されていないため、浸水の深さや範囲はあくまで目安であり、洪水リスク評価ではありません。雨水管、地下水、河川や沿岸の洪水はモデル化していません。嵐のプリセットは代表的な降雨プロファイルであり、観測記録ではありません。',
+  'method.indicative': '目安（モデル）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': 'オフ',
 };

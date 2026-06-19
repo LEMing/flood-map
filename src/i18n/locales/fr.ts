@@ -50,11 +50,10 @@ export const fr: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Constant (manuel mm/h)',
-  'storm.cloudburst': 'Averse (~50 mm / 2 h)',
-  'storm.design25yr': 'Pluie de projet P≈25 ans',
-  'storm.may2026': 'Observé 18 mai 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Observé 12 juin 2026 (90 mm/jour)',
-
+  'storm.cloudburst': 'Averse (~38 mm/2h)',
+  'storm.design25yr': 'Tempête forte (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'modèle de surface',
   'urban.buildings': 'bâtiments comme murs',
@@ -63,7 +62,7 @@ export const fr: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'infiltration du sol (mm/hr)',
-  'soil.evaporation': 'évaporation (/hr)',
+  'soil.evaporation': 'évaporation (mm/hr)',
 
   // Physics
   'physics.gravity': 'gravité (m/s²)',
@@ -172,6 +171,7 @@ export const fr: Record<string, string> = {
   'stats.simTime': 'temps de sim',
   'stats.rainIn': 'pluie en',
   'stats.stored': 'eau stockée',
+  'stats.balance': 'bilan hydrique',
   'stats.flooded': 'zone inondée',
   'stats.maxDepth': 'profondeur max',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const fr: Record<string, string> = {
   'toast.loadFailed': 'Un problème est survenu lors du chargement de la carte. Veuillez recharger.',
   'toast.linkCopied': 'Lien copié dans le presse-papiers',
   'share.title': 'Partager ce scénario',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Fonctionnement et limites',
+  'method.body': 'Une simulation pédagogique d’inondation pluviale. La physique de l’eau est simplifiée et le modèle n’est pas calibré sur des mesures réelles ; les hauteurs et surfaces inondées ne sont donc qu’indicatives — pas une évaluation du risque d’inondation. Il ne modélise ni le réseau d’eaux pluviales, ni les eaux souterraines, ni les crues fluviales et côtières. Les préréglages d’orage sont des profils de pluie représentatifs, pas des relevés de mesure.',
+  'method.indicative': 'Indicatif (modèle)',
   'waterlevel.title': 'Niveau d’eau 🌊',
   'waterlevel.off': 'Désactivé',
 };

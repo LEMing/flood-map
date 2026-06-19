@@ -82,11 +82,10 @@ export const yue: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': '固定（人手 mm/hr）',
-  'storm.cloudburst': '傾盆大雨（~50 mm / 2 h）',
-  'storm.design25yr': '設計暴雨 P≈25 yr',
-  'storm.may2026': '實測 18 May 2026（41 mm/2 h）',
-  'storm.jun2026': '實測 12 Jun 2026（90 mm/day）',
-
+  'storm.cloudburst': '暴雨 (~38 mm/2h)',
+  'storm.design25yr': '強烈風暴 (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 曲線 (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 曲線 (~100 mm/24h)',
   // Urban model
   'urban.surface': '地表模型',
   'urban.buildings': '建築物當牆',
@@ -95,7 +94,7 @@ export const yue: Record<string, string> = {
 
   // Soil
   'soil.infiltration': '泥土滲透 (mm/hr)',
-  'soil.evaporation': '蒸發 (/hr)',
+  'soil.evaporation': '蒸發 (mm/hr)',
 
   // Physics
   'physics.gravity': '重力 (m/s²)',
@@ -173,6 +172,7 @@ export const yue: Record<string, string> = {
   'stats.simTime': '模擬時間',
   'stats.rainIn': '已落雨量',
   'stats.stored': '蓄水量',
+  'stats.balance': '水平衡',
   'stats.flooded': '水浸面積',
   'stats.maxDepth': '最大深度',
   'stats.fps': 'fps',
@@ -223,6 +223,10 @@ export const yue: Record<string, string> = {
   'toast.loadFailed': '載入地圖嗰陣出咗問題。請重新載入。',
   'toast.linkCopied': '連結已複製到剪貼簿',
   'share.title': '分享呢個情景',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': '點運作同埋限制',
+  'method.body': '一個教學用嘅降雨水浸模擬。水嘅物理經過簡化，個模型亦冇用真實測量校準過，所以水浸深度同範圍只係參考——唔係水浸風險評估。佢冇模擬雨水渠、地下水，或者河流同沿岸水浸。暴風預設係有代表性嘅降雨曲線，唔係儀器記錄。',
+  'method.indicative': '參考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '關',
 };

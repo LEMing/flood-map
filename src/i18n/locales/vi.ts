@@ -77,11 +77,10 @@ export const vi: Record<string, string> = {
   'rain.cellY': 'ô y',
   'rain.cellRadius': 'bán kính ô',
   'storm.constant': 'Cố định (thủ công mm/giờ)',
-  'storm.cloudburst': 'Mưa lớn (~50 mm / 2 giờ)',
-  'storm.design25yr': 'Bão thiết kế P≈25 năm',
-  'storm.may2026': 'Quan trắc 18 Th5 2026 (41 mm/2 giờ)',
-  'storm.jun2026': 'Quan trắc 12 Th6 2026 (90 mm/ngày)',
-
+  'storm.cloudburst': 'Mưa xối xả (~38 mm/2h)',
+  'storm.design25yr': 'Bão lớn (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 hồ sơ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 hồ sơ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'mô hình bề mặt',
   'urban.buildings': 'tòa nhà làm tường',
@@ -90,7 +89,7 @@ export const vi: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'thấm đất (mm/hr)',
-  'soil.evaporation': 'bốc hơi (/hr)',
+  'soil.evaporation': 'bốc hơi (mm/hr)',
 
   // Physics
   'physics.gravity': 'trọng lực (m/s²)',
@@ -164,6 +163,7 @@ export const vi: Record<string, string> = {
   'stats.simTime': 'thời gian mô phỏng',
   'stats.rainIn': 'lượng mưa',
   'stats.stored': 'nước tích trữ',
+  'stats.balance': 'cân bằng nước',
   'stats.flooded': 'diện tích ngập',
   'stats.maxDepth': 'độ sâu tối đa',
   'stats.fps': 'fps',
@@ -214,6 +214,10 @@ export const vi: Record<string, string> = {
   'toast.loadFailed': 'Đã xảy ra lỗi khi tải bản đồ. Vui lòng tải lại.',
   'toast.linkCopied': 'Đã sao chép liên kết vào bảng nhớ tạm',
   'share.title': 'Chia sẻ kịch bản này',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cách hoạt động & giới hạn',
+  'method.body': 'Một mô phỏng ngập lụt do mưa mang tính giáo dục. Vật lý của nước được đơn giản hóa và mô hình không được hiệu chỉnh theo các phép đo thực tế, nên độ sâu và diện tích ngập chỉ mang tính tham khảo — không phải đánh giá rủi ro lũ lụt. Nó không mô phỏng hệ thống thoát nước mưa, nước ngầm, hay lũ sông và lũ ven biển. Cài đặt sẵn của bão là các hồ sơ mưa đại diện, không phải bản ghi đo đạc.',
+  'method.indicative': 'Tham khảo (mô hình)',
   'waterlevel.title': 'Mực nước 🌊',
   'waterlevel.off': 'Tắt',
 };

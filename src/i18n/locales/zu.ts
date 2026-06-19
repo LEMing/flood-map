@@ -41,18 +41,17 @@ export const zu: Record<string, string> = {
   'rain.cellY': 'iseli y',
   'rain.cellRadius': 'irediyasi yeseli',
   'storm.constant': 'Njalo (mm/ihora ngesandla)',
-  'storm.cloudburst': 'Ukuqhuma kwamafu (~50 mm / 2 h)',
-  'storm.design25yr': 'Isiphepho esiklanyiwe P≈25 iminyaka',
-  'storm.may2026': 'Okubonisiwe 18 Meyi 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Okubonisiwe 12 Jun 2026 (90 mm/usuku)',
-
+  'storm.cloudburst': 'Isihlambo (~38 mm/2h)',
+  'storm.design25yr': 'Isiphepho esinamandla (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 iphrofayela (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 iphrofayela (~100 mm/24h)',
   'urban.surface': 'imodeli yendawo',
   'urban.buildings': 'izakhiwo njengezindonga',
   'urban.sewer': 'indle yezimvula (mm/ihora)',
   'urban.groundwater': 'amanzi aphansi aphezulu',
 
   'soil.infiltration': 'ukungena kwamanzi enhlabathini (mm/ihora)',
-  'soil.evaporation': 'ukuhwamuka (/ihora)',
+  'soil.evaporation': 'ukuhwamuka (mm/ihora)',
 
   'physics.gravity': 'amandla adonsela phansi (m/s²)',
   'physics.flow': 'isikhwama sokugeleza',
@@ -153,6 +152,7 @@ export const zu: Record<string, string> = {
   'stats.simTime': 'isikhathi sesilinganiso',
   'stats.rainIn': 'imvula engenile',
   'stats.stored': 'amanzi agciniwe',
+  'stats.balance': 'ibhalansi yamanzi',
   'stats.flooded': 'indawo enesikhukhula',
   'stats.maxDepth': 'ukujula okukhulu',
   'stats.fps': 'fps',
@@ -201,6 +201,10 @@ export const zu: Record<string, string> = {
   'toast.loadFailed': 'Kukhona okuhambe kabi ngenkathi kulayishwa imephu. Sicela ulayishe kabusha.',
   'toast.linkCopied': 'Isixhumanisi sikopishelwe ku-clipboard',
   'share.title': 'Yabelana ngalesi simo',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Indlela esebenza ngayo & imikhawulo',
+  'method.body': 'Ukulingisa kwezemfundo kwezikhukhula zemvula. Ifiziksi yamanzi yenziwe lula futhi imodeli ayilungiselelwanga ngokwezilinganiso zangempela, ngakho ukujula nezindawo zezikhukhula kungukukhomba kuphela — akusona ukuhlola ingozi yezikhukhula. Ayilingisi imisele yamanzi emvula, amanzi angaphansi komhlaba, noma izikhukhula zomfula nezogu. Izisetho ezimisiwe zesiphepho ziyimingcele yemvula emelele, hhayi amarekhodi okukala.',
+  'method.indicative': 'Ukukhomba (imodeli)',
   'waterlevel.title': 'Izinga lamanzi 🌊',
   'waterlevel.off': 'Vala',
 };

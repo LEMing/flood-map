@@ -45,11 +45,10 @@ export const id: Record<string, string> = {
   'rain.cellY': 'sel y',
   'rain.cellRadius': 'radius sel',
   'storm.constant': 'Konstan (manual mm/jam)',
-  'storm.cloudburst': 'Hujan deras (~50 mm / 2 jam)',
-  'storm.design25yr': 'Badai desain P≈25 thn',
-  'storm.may2026': 'Teramati 18 Mei 2026 (41 mm/2 jam)',
-  'storm.jun2026': 'Teramati 12 Jun 2026 (90 mm/hari)',
-
+  'storm.cloudburst': 'Hujan deras (~38 mm/2h)',
+  'storm.design25yr': 'Badai berat (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'model permukaan',
   'urban.buildings': 'bangunan sebagai dinding',
@@ -58,7 +57,7 @@ export const id: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'infiltrasi tanah (mm/hr)',
-  'soil.evaporation': 'penguapan (/hr)',
+  'soil.evaporation': 'penguapan (mm/hr)',
 
   // Physics
   'physics.gravity': 'gravitasi (m/s²)',
@@ -165,6 +164,7 @@ export const id: Record<string, string> = {
   'stats.simTime': 'waktu sim',
   'stats.rainIn': 'curah hujan',
   'stats.stored': 'air tersimpan',
+  'stats.balance': 'neraca air',
   'stats.flooded': 'area tergenang',
   'stats.maxDepth': 'kedalaman maks',
   'stats.fps': 'fps',
@@ -215,6 +215,10 @@ export const id: Record<string, string> = {
   'toast.loadFailed': 'Terjadi kesalahan saat memuat peta. Silakan muat ulang.',
   'toast.linkCopied': 'Tautan disalin ke papan klip',
   'share.title': 'Bagikan skenario ini',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cara kerja & batasan',
+  'method.body': 'Simulasi banjir hujan untuk edukasi. Fisika air disederhanakan dan model tidak dikalibrasi terhadap pengukuran nyata, sehingga kedalaman dan luas banjir hanya bersifat indikatif — bukan penilaian risiko banjir. Model ini tidak memodelkan saluran air hujan, air tanah, maupun banjir sungai dan pesisir. Prasetel badai adalah profil hujan representatif, bukan catatan alat ukur.',
+  'method.indicative': 'Indikatif (model)',
   'waterlevel.title': 'Ketinggian air 🌊',
   'waterlevel.off': 'Mati',
 };

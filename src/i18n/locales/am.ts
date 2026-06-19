@@ -41,18 +41,17 @@ export const am: Record<string, string> = {
   'rain.cellY': 'ሕዋስ y',
   'rain.cellRadius': 'የሕዋስ ራዲየስ',
   'storm.constant': 'ቋሚ (በእጅ ሚሜ/ሰ)',
-  'storm.cloudburst': 'ድንገተኛ ዝናብ (~50 ሚሜ / 2 ሰ)',
-  'storm.design25yr': 'የንድፍ ማዕበል P≈25 ዓመት',
-  'storm.may2026': 'የተመዘገበ 18 ሜይ 2026 (41 ሚሜ/2 ሰ)',
-  'storm.jun2026': 'የተመዘገበ 12 ጁን 2026 (90 ሚሜ/ቀን)',
-
+  'storm.cloudburst': 'ድንገተኛ ዝናብ (~38 mm/2h)',
+  'storm.design25yr': 'ከባድ ማዕበል (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 መገለጫ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 መገለጫ (~100 mm/24h)',
   'urban.surface': 'የገጽታ ሞዴል',
   'urban.buildings': 'ሕንፃዎች እንደ ግድግዳ',
   'urban.sewer': 'የዝናብ ፍሳሽ (ሚሜ/ሰ)',
   'urban.groundwater': 'ከፍተኛ የከርሰ ምድር ውሃ',
 
   'soil.infiltration': 'የአፈር ስርጭት (ሚሜ/ሰ)',
-  'soil.evaporation': 'ትነት (/ሰ)',
+  'soil.evaporation': 'ትነት (ሚሜ/ሰ)',
 
   'physics.gravity': 'የስበት ኃይል (ሜ/ሰ²)',
   'physics.flow': 'የፍሰት ቅንጅት',
@@ -154,6 +153,7 @@ export const am: Record<string, string> = {
   'stats.simTime': 'የሲም ጊዜ',
   'stats.rainIn': 'የዘነበ ዝናብ',
   'stats.stored': 'የተከማቸ ውሃ',
+  'stats.balance': 'የውሃ ሚዛን',
   'stats.flooded': 'የተጥለቀለቀ ስፋት',
   'stats.maxDepth': 'ከፍተኛ ጥልቀት',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const am: Record<string, string> = {
   'toast.loadFailed': 'ካርታውን በመጫን ላይ የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይጫኑ።',
   'toast.linkCopied': 'አገናኝ ወደ ቅንጥብ ሰሌዳ ተቀድቷል',
   'share.title': 'ይህን ሁኔታ አጋራ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'እንዴት እንደሚሰራ እና ገደቦች',
+  'method.body': 'ለትምህርት የተዘጋጀ የዝናብ-ጎርፍ ማስመሰል። የውሃው ፊዚክስ ቀለል ተደርጓል እና ሞዴሉ ከእውነተኛ መለኪያዎች ጋር አልተስተካከለም፣ ስለዚህ የጎርፍ ጥልቀቶችና አካባቢዎች አመላካች ብቻ ናቸው — የጎርፍ አደጋ ግምገማ አይደሉም። የውሃ ፍሳሽ ቱቦዎችን፣ የከርሰ ምድር ውሃን ወይም የወንዝና የባህር ዳርቻ ጎርፍን አይመስልም። የማዕበል ቅድመ-ቅንብሮች ተወካይ የዝናብ መገለጫዎች ናቸው እንጂ የመለኪያ መዝገቦች አይደሉም።',
+  'method.indicative': 'አመላካች (ሞዴል)',
   'waterlevel.title': 'የውሃ ደረጃ 🌊',
   'waterlevel.off': 'አጥፋ',
 };

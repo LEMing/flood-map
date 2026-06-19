@@ -1,12 +1,16 @@
 # Flood Map
 
 Type an address, get the real ~2×2 km terrain around it as a 3D surface, then
-pour heavy rain on it and watch — with real shallow-water physics — where the
-water flows, pools, and floods. Tuned into an urban pluvial flood model for
-**Krasnodar** (FABDEM terrain + OSM buildings/roads + storm-drain & infiltration
-fields + design-storm rainfall).
+pour heavy rain on it and watch — with a mass-conserving 2-D flow model — where
+the water flows, pools, and floods. It is an **educational, real-time rainfall-
+flood _visualization_, not an engineering flood study**: a non-inertial
+virtual-pipes (diffusive-wave) approximation to the shallow-water equations over a
+bare-earth DEM (FABDEM) with OSM buildings/roads, simplified storm-drain &
+infiltration loss terms, and rainfall hyetographs. Parameters are literature-
+typical defaults, **uncalibrated** to any gauged event — indicative, not a
+flood-risk assessment. See **Limitations** below.
 
-![concept](https://img.shields.io/badge/three.js-GPU%20shallow--water-2f6feb)
+![concept](https://img.shields.io/badge/three.js-GPU%20virtual--pipes-2f6feb)
 
 **Live:** https://krd-flood.web.app
 
@@ -39,12 +43,14 @@ Manual deploy: `npm run build && firebase deploy --only hosting`.
   **real satellite imagery** (Esri World Imagery) or a hypsometric elevation
   tint — toggle in the Visualization panel. Imagery is draped through a second
   UV set so it never disturbs the simulation grid.
-- **Physically-based flood sim.** A **virtual-pipes shallow-water model**
-  (Mei, Decaudin & Hu, 2007) runs entirely on the GPU via
-  `GPUComputationRenderer`: rainfall → inter-cell flux (gravity-driven) →
-  water-depth update → velocity field, with infiltration, evaporation,
-  friction, open/closed boundaries and a stability-scaled flux that conserves
-  water.
+- **Physics-based flow model.** A **non-inertial virtual-pipes (diffusive-wave)
+  model** (after O'Brien/Julien; Mei, Decaudin & Hu, 2007) runs entirely on the
+  GPU via `GPUComputationRenderer`: rainfall → inter-cell flux (driven by the
+  water-surface head gradient) → water-depth update → diagnostic velocity, with
+  simplified infiltration, evaporation, drainage, open/closed boundaries and a
+  volume-capped flux that conserves water exactly. It is an approximation of the
+  shallow-water (Saint-Venant) equations that **omits flow momentum/inertia** —
+  the friction term is a numerical flow-relaxation factor, not Manning's _n_.
 - **Everything is parameterized** live: rain intensity, storm-cell footprint,
   infiltration, evaporation, gravity, flow coefficient, friction, time scale,
   substeps, map size, grid resolution, vertical exaggeration, and the
@@ -81,16 +87,18 @@ npm run build && npm run preview
 Each grid cell holds terrain height `b`, water depth `d`, four outflow fluxes
 `(L,R,T,B)` and a velocity. Per sub-step:
 
-1. **Flux** — `f_i = max(0, f_i + Δt·g·A/l·Δh_i)` toward each lower neighbor,
-   then scaled by `K = min(1, d·cell²/(Σf·Δt))` so a cell never drains more
-   water than it holds.
-2. **Depth** — `Δd = Δt·(inflow − outflow)/cell²`, plus rain, minus
-   infiltration and evaporation.
-3. **Velocity** — derived from the net flux, for flow arrows and ripples.
+1. **Flux** — `f_i = max(0, Δt·g·A/l·Δh_i)` toward each lower neighbor — note it is
+   **recomputed from the water-surface head gradient `Δh` each step** (no stored
+   discharge `f_old`, hence non-inertial / no momentum) — then scaled by
+   `K = min(1, d·cell²/(Σf·Δt))` so a cell never drains more water than it holds.
+2. **Depth** — `Δd = Δt·(inflow − outflow)/cell²`, plus rain, minus infiltration,
+   drainage and evaporation (all simplified loss terms — see Limitations).
+3. **Velocity** — *diagnosed* from the net flux, for flow arrows and ripples.
 
-Sub-step size is CFL-bounded for stability. With infiltration and evaporation
-at zero and **closed** edges, the *water stored* stat tracks *rain in* — a
-mass-conservation sanity check.
+Sub-step size is CFL-bounded (`Δt ≤ 0.45·Δx/√(g·h)`, the gravity-wave Courant
+condition). With losses at zero and **closed** edges, the *water stored* stat
+tracks *rain in* — a mass-conservation sanity check (unit-tested in
+`virtualPipes.test.ts`).
 
 ## Data sources
 
@@ -105,8 +113,26 @@ mass-conservation sanity check.
 
 ## Limitations
 
-- The shallow-water / virtual-pipes model is a real but approximate hydraulic
-  model (no momentum advection / full Saint-Venant). It captures drainage,
-  pooling and flood extent well; it is not an engineering-grade flood study.
-- DEM resolution is ~10–30 m; sub-grid features (curbs, culverts, storm drains)
-  are not represented.
+This is an **educational visualization, not an engineering flood study**, and it
+is **uncalibrated** (parameters are literature-typical defaults, not fitted to any
+gauged event). Specifically:
+
+- **Non-inertial flow.** The virtual-pipes / diffusive-wave scheme omits flow
+  momentum/inertia (the `∂Q/∂t` term of the full shallow-water equations), so it
+  cannot reproduce overshoot, oscillation or hydraulic jumps. Friction is a
+  numerical flow-relaxation factor, **not Manning's _n_**.
+- **Simplified losses.** Infiltration is a constant per-class capacity (a
+  φ-index, not Green-Ampt/Horton/SCS-CN); the storm sewer is a uniform per-cell
+  removal rate, **not a routed pipe network** — so sewer surcharge and downstream
+  resurfacing (the dominant urban-pluvial mechanism) are not represented.
+- **Not modeled:** groundwater flow, river/coastal/fluvial flooding, building
+  porosity (buildings are solid walls), sediment, and sub-grid features (curbs,
+  individual inlets, culverts). Native DEM posting is ~30 m (FABDEM), upsampled to
+  the grid — micro-topography that controls real ponding is sub-grid.
+- **Storm presets** are representative rainfall *profiles* scaled to reported
+  event totals — **not gauge records or validated flood reconstructions**.
+  Reported depths and flooded areas are **indicative, not measurements**.
+
+For real flood-risk work use calibrated tools (HEC-RAS 2D, SWMM, TUFLOW,
+LISFLOOD-FP) with validated inputs. Do **not** use this for insurance, planning,
+or life-safety decisions.

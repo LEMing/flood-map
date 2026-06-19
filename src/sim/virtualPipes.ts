@@ -1,10 +1,14 @@
 /**
- * Pure-CPU reference model of the virtual-pipes shallow-water update, in BOTH
- * the legacy single-pass form and the flux/integrate two-pass form. It exists to
- * pin down the physics as a fast, offline, testable spec: the GPU shaders
- * (shaders.ts) mirror this exactly, and virtualPipes.test.ts proves the two-pass
- * reformulation is mass-conservative and numerically identical to the single
- * pass — the regression anchor the GPU path otherwise lacks.
+ * Pure-CPU reference model of the NON-INERTIAL virtual-pipes update (a diffusive-
+ * wave approximation to the shallow-water equations — no stored discharge /
+ * momentum term, but with a physical per-cell semi-implicit Manning friction term
+ * and constant-flux infiltration/evaporation losses; see shaders.ts), in BOTH the
+ * legacy single-pass form and the flux/integrate two-pass form. It exists to pin
+ * down the physics as a fast,
+ * offline, testable spec: the GPU shaders (shaders.ts) mirror this exactly, and
+ * virtualPipes.test.ts proves the two-pass reformulation is mass-conservative and
+ * numerically identical to the single pass — the regression anchor the GPU path
+ * otherwise lacks.
  *
  * Cell layout matches the textures: index = y * N + x, x east, y north. The four
  * outflux components are ordered (L, R, T, B) = (-x, +x, +y, -y), exactly as the
@@ -14,21 +18,23 @@ export interface PipeGrid {
   N: number;
   depth: Float64Array; // water depth per cell (m)
   height: Float64Array; // terrain elevation per cell (m)
-  /** Optional per-cell roughness (0..1) scaling outflow; defaults to 1. */
+  /** Optional per-cell conductance/flow-ease (0..1) scaling outflow; defaults to 1. */
   roughness?: Float64Array;
+  /** Optional per-cell flow speed |v| (m/s) from the previous step, for Manning friction. */
+  speed?: Float64Array;
 }
 
 export interface PipeParams {
   dt: number;
   gravity: number;
   pipeArea: number;
-  friction: number; // 0..0.95
+  friction: number; // Manning roughness scale: multiplier on the per-cell Manning's n
   cellSize: number; // metres per cell
   boundaryOpen: boolean; // true = water drains off the domain edge
   /** Uniform source/sink terms (m/s), applied in the integrate step. */
   rainRate?: number;
   infilRate?: number;
-  evapRate?: number; // fraction per second
+  evapRate?: number; // open-water evaporation as a constant depth flux (m/s)
   /** Uniform one-shot dump (m) applied on this step only. */
   injectDepth?: number;
 }
@@ -37,8 +43,19 @@ export interface PipeParams {
 export type Flux = [number, number, number, number];
 
 function fluxCoef(p: PipeParams): number {
-  const friction = Math.min(0.95, Math.max(0, p.friction));
-  return (p.dt * p.gravity * p.pipeArea * (1 - friction)) / p.cellSize;
+  return (p.dt * p.gravity * p.pipeArea) / p.cellSize;
+}
+
+// Per-cell Manning's n from the conductance (flow-ease) field, scaled by the
+// roughness control: conductance 1.0 (paved) -> n≈0.015; 0.22 (vegetated) -> n≈0.20.
+function manningN(conductance: number, scale: number): number {
+  return (0.015 + (1 - conductance) * 0.235) * scale;
+}
+
+// Semi-implicit Manning friction factor (Bates, Horritt & Fewtrell 2010): bounded
+// in (0,1], so it only damps the flux. Mirrors the GLSL `manning` term exactly.
+function manningFactor(p: PipeParams, n: number, speed: number, depth: number): number {
+  return 1 / (1 + (p.dt * p.gravity * n * n * speed) / Math.pow(Math.max(depth, 1e-3), 4 / 3));
 }
 
 function surfAt(g: PipeGrid, x: number, y: number): number {
@@ -58,7 +75,10 @@ export function outflux(g: PipeGrid, p: PipeParams, x: number, y: number): Flux 
   const d = g.depth[i];
   const h = b + d;
   const baseCoef = fluxCoef(p);
-  const c = g.roughness ? baseCoef * g.roughness[i] : baseCoef;
+  const conductance = g.roughness ? g.roughness[i] : 1;
+  const speed = g.speed ? g.speed[i] : 0;
+  const manning = manningFactor(p, manningN(conductance, p.friction), speed, d);
+  const c = baseCoef * conductance * manning;
 
   const hasL = x > 0;
   const hasR = x < N - 1;
@@ -86,7 +106,7 @@ function applySourcesSinks(dIn: number, p: PipeParams): number {
   if (p.rainRate) d += p.rainRate * p.dt;
   if (p.injectDepth) d += p.injectDepth;
   if (p.infilRate) d -= Math.min(d, p.infilRate * p.dt);
-  if (p.evapRate) d *= Math.max(0, Math.min(1, 1 - p.evapRate * p.dt));
+  if (p.evapRate) d -= Math.min(d, p.evapRate * p.dt); // constant depth flux, not a fraction of depth
   return Math.max(d, 0);
 }
 

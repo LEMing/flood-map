@@ -47,11 +47,10 @@ export const tl: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Tuloy-tuloy (manu-manong mm/hr)',
-  'storm.cloudburst': 'Biglaang ulan (~50 mm / 2 h)',
-  'storm.design25yr': 'Disenyong bagyo P≈25 yr',
-  'storm.may2026': 'Naobserbahan 18 May 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Naobserbahan 12 Jun 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'Buhos ng ulan (~38 mm/2h)',
+  'storm.design25yr': 'Malakas na bagyo (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profile (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profile (~100 mm/24h)',
   // Urban model
   'urban.surface': 'modelo ng surface',
   'urban.buildings': 'mga gusali bilang pader',
@@ -60,7 +59,7 @@ export const tl: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'infiltration ng lupa (mm/hr)',
-  'soil.evaporation': 'pagsingaw (/hr)',
+  'soil.evaporation': 'pagsingaw (mm/hr)',
 
   // Physics
   'physics.gravity': 'grabidad (m/s²)',
@@ -169,6 +168,7 @@ export const tl: Record<string, string> = {
   'stats.simTime': 'oras ng sim',
   'stats.rainIn': 'ulan sa',
   'stats.stored': 'naimbak na tubig',
+  'stats.balance': 'balanse ng tubig',
   'stats.flooded': 'lugar na binaha',
   'stats.maxDepth': 'max na lalim',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const tl: Record<string, string> = {
   'toast.loadFailed': 'May nangyaring mali habang nilo-load ang mapa. Mangyaring i-reload.',
   'toast.linkCopied': 'Kinopya ang link sa clipboard',
   'share.title': 'Ibahagi ang sitwasyong ito',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Paano ito gumagana & mga limitasyon',
+  'method.body': 'Isang pang-edukasyong simulation ng baha mula sa ulan. Pinasimple ang pisika ng tubig at hindi naka-calibrate ang modelo sa tunay na mga sukat, kaya ang lalim at sukat ng baha ay pahiwatig lamang — hindi isang pagtatasa ng panganib sa baha. Hindi nito minomodelo ang imburnal ng ulan, tubig sa ilalim ng lupa, o baha sa ilog at baybayin. Ang mga preset ng bagyo ay kumakatawang profile ng ulan, hindi mga talaan ng sukat.',
+  'method.indicative': 'Pahiwatig (modelo)',
   'waterlevel.title': 'Antas ng tubig 🌊',
   'waterlevel.off': 'Patay',
 };

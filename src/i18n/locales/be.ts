@@ -72,18 +72,17 @@ export const be: Record<string, string> = {
   'rain.cellY': 'ячэйка y',
   'rain.cellRadius': 'радыус ячэйкі',
   'storm.constant': 'Пастаянны (уручную мм/гадз)',
-  'storm.cloudburst': 'Залпавы ліўню (~50 мм / 2 гадз)',
-  'storm.design25yr': 'Разліковы ліўню P≈25 г',
-  'storm.may2026': 'Факт 18 мая 2026 (41 мм/2 гадз)',
-  'storm.jun2026': 'Факт 12 чэрв 2026 (90 мм/сут)',
-
+  'storm.cloudburst': 'Залева (~38 mm/2h)',
+  'storm.design25yr': 'Моцная навальніца (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профіль (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профіль (~100 mm/24h)',
   'urban.surface': 'мадэль паверхні',
   'urban.buildings': 'будынкі як сцены',
   'urban.sewer': 'ліўнёўка (мм/гадз)',
   'urban.groundwater': 'высокія грунтавыя воды',
 
   'soil.infiltration': 'інфільтрацыя глебы (мм/гадз)',
-  'soil.evaporation': 'выпарэнне (/гадз)',
+  'soil.evaporation': 'выпарэнне (мм/гадз)',
 
   'physics.gravity': 'гравітацыя (м/с²)',
   'physics.flow': 'каэфіцыент сцёку',
@@ -153,6 +152,7 @@ export const be: Record<string, string> = {
   'stats.simTime': 'час сімуляцыі',
   'stats.rainIn': 'выпала дажджу',
   'stats.stored': 'вады назапашана',
+  'stats.balance': 'водны баланс',
   'stats.flooded': 'плошча затаплення',
   'stats.maxDepth': 'макс. глыбіня',
   'stats.fps': 'fps',
@@ -201,6 +201,10 @@ export const be: Record<string, string> = {
   'toast.loadFailed': 'Нешта пайшло не так пры загрузцы карты. Калі ласка, перазагрузіце.',
   'toast.linkCopied': 'Спасылка скапіравана ў буфер абмену',
   'share.title': 'Падзяліцца гэтым сцэнарыем',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Як гэта працуе і абмежаванні',
+  'method.body': 'Адукацыйная сімуляцыя дажджавога паводка. Фізіка вады спрошчана, а мадэль не адкалібравана па рэальных вымярэннях, таму глыбіні і плошчы затаплення толькі прыблізныя — гэта не ацэнка рызыкі паводка. Мадэль не ўлічвае ліўневую каналізацыю, грунтавыя воды, рачныя і прыбярэжныя паводкі. Прэсеты навальніц — рэпрэзентатыўныя профілі дажджу, а не паказанні датчыкаў.',
+  'method.indicative': 'Прыблізна (мадэль)',
   'waterlevel.title': 'Узровень вады 🌊',
   'waterlevel.off': 'Выкл',
 };

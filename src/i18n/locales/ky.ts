@@ -41,18 +41,17 @@ export const ky: Record<string, string> = {
   'rain.cellY': 'уяча y',
   'rain.cellRadius': 'уячанын радиусу',
   'storm.constant': 'Туруктуу (колдон мм/саат)',
-  'storm.cloudburst': 'Нөшөр жамгыр (~50 мм / 2 саат)',
-  'storm.design25yr': 'Эсептик нөшөр P≈25 жыл',
-  'storm.may2026': 'Байкалган 18 май 2026 (41 мм/2 саат)',
-  'storm.jun2026': 'Байкалган 12 июн 2026 (90 мм/күн)',
-
+  'storm.cloudburst': 'Нөшөр (~38 mm/2h)',
+  'storm.design25yr': 'Катуу бороон (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профиль (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профиль (~100 mm/24h)',
   'urban.surface': 'үстүңкү бет модели',
   'urban.buildings': 'имараттар дубал катары',
   'urban.sewer': 'нөшөр кубуру (мм/саат)',
   'urban.groundwater': 'жогорку жер астындагы суу',
 
   'soil.infiltration': 'топуракка сиңүү (мм/саат)',
-  'soil.evaporation': 'буулануу (/саат)',
+  'soil.evaporation': 'буулануу (мм/саат)',
 
   'physics.gravity': 'тартылуу күчү (м/сек²)',
   'physics.flow': 'агым коэффициенти',
@@ -154,6 +153,7 @@ export const ky: Record<string, string> = {
   'stats.simTime': 'симуляция убактысы',
   'stats.rainIn': 'жааган жамгыр',
   'stats.stored': 'чогулган суу',
+  'stats.balance': 'суу балансы',
   'stats.flooded': 'каптаган аянт',
   'stats.maxDepth': 'макс. тереңдик',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const ky: Record<string, string> = {
   'toast.loadFailed': 'Картаны жүктөөдө бир нерсе туура эмес болду. Кайра жүктөңүз.',
   'toast.linkCopied': 'Шилтеме алмашуу буферине көчүрүлдү',
   'share.title': 'Бул сценарийди бөлүшүү',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Кантип иштейт жана чектөөлөр',
+  'method.body': 'Жамгыр ташкынынын билим берүүчү симуляциясы. Суунун физикасы жөнөкөйлөштүрүлгөн жана модель чыныгы өлчөөлөргө калибрленген эмес, ошондуктан ташкындын тереңдиги менен аянты болжолдуу гана — ташкын коркунучун баалоо эмес. Ал жамгыр канализациясын, жер астындагы сууларды же дарыя жана жээк ташкындарын моделдештирбейт. Бороон алдын ала жөндөөлөрү — өкүлчүлүктүү жаан профилдери, өлчөө жазуулары эмес.',
+  'method.indicative': 'Болжолдуу (модель)',
   'waterlevel.title': 'Суу деңгээли 🌊',
   'waterlevel.off': 'Өчүрүү',
 };

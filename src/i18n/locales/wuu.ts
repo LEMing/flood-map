@@ -50,11 +50,10 @@ export const wuu: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': '恒定（手动 mm/hr）',
-  'storm.cloudburst': '倾盆大雨（~50 mm / 2 h）',
-  'storm.design25yr': '设计暴雨 P≈25 yr',
-  'storm.may2026': '实测 2026-5-18（41 mm/2 h）',
-  'storm.jun2026': '实测 2026-6-12（90 mm/day）',
-
+  'storm.cloudburst': '暴雨 (~38 mm/2h)',
+  'storm.design25yr': '强风暴 (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 曲线 (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 曲线 (~100 mm/24h)',
   // Urban model
   'urban.surface': '地表模型',
   'urban.buildings': '房子当墙壁',
@@ -63,7 +62,7 @@ export const wuu: Record<string, string> = {
 
   // Soil
   'soil.infiltration': '泥土下渗 (mm/hr)',
-  'soil.evaporation': '蒸发 (/hr)',
+  'soil.evaporation': '蒸发 (mm/hr)',
 
   // Physics
   'physics.gravity': '重力 (m/s²)',
@@ -172,6 +171,7 @@ export const wuu: Record<string, string> = {
   'stats.simTime': '模拟时间',
   'stats.rainIn': '落雨进来',
   'stats.stored': '蓄水量',
+  'stats.balance': '水平衡',
   'stats.flooded': '淹水面积',
   'stats.maxDepth': '最大深度',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const wuu: Record<string, string> = {
   'toast.loadFailed': '加载地图个辰光出问题哉。请重新加载。',
   'toast.linkCopied': '链接已经复制到剪贴板哉',
   'share.title': '分享搿个场景',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': '工作原理同局限',
+  'method.body': '一只教学用个降雨洪水模拟。水个物理畀简化过哉，模型也呒没拿真实测量来校准，所以淹水个深度同范围只好做参考——勿是洪水风险评估。伊勿模拟雨水管网、地下水，或者河流同沿海洪水。暴风个预设是有代表性个降雨曲线，勿是仪器记录。',
+  'method.indicative': '参考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '关脱',
 };

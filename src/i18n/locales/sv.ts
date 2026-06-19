@@ -73,18 +73,17 @@ export const sv: Record<string, string> = {
   'rain.cellY': 'cell y',
   'rain.cellRadius': 'cellradie',
   'storm.constant': 'Konstant (manuell mm/tim)',
-  'storm.cloudburst': 'Skyfall (~50 mm / 2 h)',
-  'storm.design25yr': 'Dimensionerande storm P≈25 år',
-  'storm.may2026': 'Uppmätt 18 maj 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Uppmätt 12 jun 2026 (90 mm/dygn)',
-
+  'storm.cloudburst': 'Skyfall (~38 mm/2h)',
+  'storm.design25yr': 'Kraftig storm (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'ytmodell',
   'urban.buildings': 'byggnader som väggar',
   'urban.sewer': 'dagvattenledning (mm/tim)',
   'urban.groundwater': 'högt grundvatten',
 
   'soil.infiltration': 'markinfiltration (mm/tim)',
-  'soil.evaporation': 'avdunstning (/tim)',
+  'soil.evaporation': 'avdunstning (mm/tim)',
 
   'physics.gravity': 'gravitation (m/s²)',
   'physics.flow': 'avrinningskoefficient',
@@ -154,6 +153,7 @@ export const sv: Record<string, string> = {
   'stats.simTime': 'simtid',
   'stats.rainIn': 'regn in',
   'stats.stored': 'lagrat vatten',
+  'stats.balance': 'vattenbalans',
   'stats.flooded': 'översvämmad yta',
   'stats.maxDepth': 'maxdjup',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const sv: Record<string, string> = {
   'toast.loadFailed': 'Något gick fel när kartan laddades. Ladda om.',
   'toast.linkCopied': 'Länk kopierad till urklipp',
   'share.title': 'Dela det här scenariot',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Så fungerar det & gränser',
+  'method.body': 'En pedagogisk simulering av regnöversvämning. Vattenfysiken är förenklad och modellen är inte kalibrerad mot verkliga mätningar, så översvämningsdjup och -ytor är endast vägledande — inte en översvämningsriskbedömning. Den modellerar inte dagvattennät, grundvatten eller flod- och kustöversvämningar. Stormförinställningar är representativa nederbördsprofiler, inte mätdata.',
+  'method.indicative': 'Vägledande (modell)',
   'waterlevel.title': 'Vattennivå 🌊',
   'waterlevel.off': 'Av',
 };

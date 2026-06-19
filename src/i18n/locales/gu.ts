@@ -50,11 +50,10 @@ export const gu: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'સ્થિર (મેન્યુઅલ mm/hr)',
-  'storm.cloudburst': 'વાદળ ફાટવું (~50 mm / 2 h)',
-  'storm.design25yr': 'ડિઝાઇન તોફાન P≈25 yr',
-  'storm.may2026': 'નોંધાયેલ 18 મે 2026 (41 mm/2 h)',
-  'storm.jun2026': 'નોંધાયેલ 12 જૂન 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'ધોધમાર વરસાદ (~38 mm/2h)',
+  'storm.design25yr': 'ભારે વાવાઝોડું (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 પ્રોફાઇલ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 પ્રોફાઇલ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'સપાટી મોડેલ',
   'urban.buildings': 'ઇમારતો દિવાલ તરીકે',
@@ -63,7 +62,7 @@ export const gu: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'માટી અંતઃસ્રવણ (mm/hr)',
-  'soil.evaporation': 'બાષ્પીભવન (/hr)',
+  'soil.evaporation': 'બાષ્પીભવન (mm/hr)',
 
   // Physics
   'physics.gravity': 'ગુરુત્વાકર્ષણ (m/s²)',
@@ -172,6 +171,7 @@ export const gu: Record<string, string> = {
   'stats.simTime': 'સિમ સમય',
   'stats.rainIn': 'વરસાદ આવ્યો',
   'stats.stored': 'પાણી સંગ્રહિત',
+  'stats.balance': 'જળ સંતુલન',
   'stats.flooded': 'પૂરગ્રસ્ત વિસ્તાર',
   'stats.maxDepth': 'મહત્તમ ઊંડાઈ',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const gu: Record<string, string> = {
   'toast.loadFailed': 'નકશો લોડ કરતી વખતે કંઈક ખોટું થયું. કૃપા કરીને ફરી લોડ કરો.',
   'toast.linkCopied': 'લિંક ક્લિપબોર્ડ પર કૉપિ થઈ',
   'share.title': 'આ દૃશ્ય શેર કરો',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'કેવી રીતે કાર્ય કરે છે અને મર્યાદાઓ',
+  'method.body': 'એક શૈક્ષણિક વરસાદ-પૂર સિમ્યુલેશન. પાણીની ભૌતિકશાસ્ત્ર સરળ બનાવેલ છે અને મોડેલ વાસ્તવિક માપ સાથે કેલિબ્રેટ થયેલ નથી, તેથી પૂરની ઊંડાઈ અને વિસ્તાર માત્ર સૂચક છે — પૂર-જોખમ આકારણી નથી. તે વરસાદી ગટર, ભૂગર્ભજળ, કે નદી અને દરિયાકાંઠાના પૂરનું મોડેલ બનાવતું નથી. વાવાઝોડાના પ્રીસેટ પ્રતિનિધિ વરસાદ પ્રોફાઇલ છે, માપ રેકોર્ડ નથી.',
+  'method.indicative': 'સૂચક (મોડેલ)',
   'waterlevel.title': 'પાણીનું સ્તર 🌊',
   'waterlevel.off': 'બંધ',
 };

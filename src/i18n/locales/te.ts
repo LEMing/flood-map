@@ -47,11 +47,10 @@ export const te: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'స్థిరం (స్వయంగా mm/hr)',
-  'storm.cloudburst': 'మేఘవిస్ఫోటనం (~50 mm / 2 h)',
-  'storm.design25yr': 'నమూనా తుఫాను P≈25 yr',
-  'storm.may2026': 'గమనించినది 18 మే 2026 (41 mm/2 h)',
-  'storm.jun2026': 'గమనించినది 12 జూన్ 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'భారీ వర్షం (~38 mm/2h)',
+  'storm.design25yr': 'తీవ్ర తుఫాను (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 ప్రొఫైల్ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 ప్రొఫైల్ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'ఉపరితల నమూనా',
   'urban.buildings': 'భవనాలు గోడలుగా',
@@ -60,7 +59,7 @@ export const te: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'నేల అంతఃస్రవణం (mm/hr)',
-  'soil.evaporation': 'బాష్పీభవనం (/hr)',
+  'soil.evaporation': 'బాష్పీభవనం (mm/hr)',
 
   // Physics
   'physics.gravity': 'గురుత్వాకర్షణ (m/s²)',
@@ -169,6 +168,7 @@ export const te: Record<string, string> = {
   'stats.simTime': 'సిమ్ సమయం',
   'stats.rainIn': 'వర్షం పడింది',
   'stats.stored': 'నిల్వ ఉన్న నీరు',
+  'stats.balance': 'నీటి సంతులనం',
   'stats.flooded': 'వరద ముంపు ప్రాంతం',
   'stats.maxDepth': 'గరిష్ఠ లోతు',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const te: Record<string, string> = {
   'toast.loadFailed': 'మ్యాప్ లోడ్ చేస్తున్నప్పుడు ఏదో తప్పు జరిగింది. దయచేసి మళ్లీ లోడ్ చేయండి.',
   'toast.linkCopied': 'లింక్ క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది',
   'share.title': 'ఈ దృశ్యాన్ని భాగస్వామ్యం చేయండి',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'ఇది ఎలా పనిచేస్తుంది & పరిమితులు',
+  'method.body': 'ఒక విద్యా వర్షపు-వరద అనుకరణ. నీటి భౌతికశాస్త్రం సరళీకరించబడింది మరియు మోడల్ వాస్తవ కొలతలతో క్యాలిబ్రేట్ చేయబడలేదు, కాబట్టి వరద లోతులు మరియు ప్రాంతాలు కేవలం సూచనాత్మకం — వరద-ప్రమాద అంచనా కాదు. ఇది వర్షపు మురుగు, భూగర్భ జలం, లేదా నది మరియు తీర వరదలను మోడల్ చేయదు. తుఫాను ప్రీసెట్‌లు ప్రాతినిధ్య వర్షపాత ప్రొఫైల్‌లు, కొలత రికార్డులు కాదు.',
+  'method.indicative': 'సూచనాత్మకం (మోడల్)',
   'waterlevel.title': 'నీటి మట్టం 🌊',
   'waterlevel.off': 'ఆఫ్',
 };

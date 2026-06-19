@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import type { Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { type StatsData, formatDuration, formatVolume } from '../ui/stats';
+import { type StatsData, formatDuration, formatVolume, formatWaterBalance } from '../ui/stats';
 import { stormIntensityMmHr, stormDurationSec } from '../sim/storm';
 import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
@@ -57,6 +57,7 @@ export class SimDriver {
   private captureBuf?: Float32Array;
   private simTime = 0;
   private rainedVolume = 0;
+  private injectedVolume = 0; // cumulative water added by manual dumps (m³), for the budget
   private observedMaxDepth = 1;
   private stored = 0;
   private floodedFrac = 0;
@@ -84,7 +85,7 @@ export class SimDriver {
     this.buf = new Float32Array(sim.N * sim.N * 4);
     this.timelineMode = 'live';
     this.simTime = 0;
-    this.rainedVolume = 0;
+    this.rainedVolume = this.injectedVolume = 0;
     this.observedMaxDepth = 1;
     this.stored = 0;
     this.statsReadback.reset();
@@ -101,7 +102,10 @@ export class SimDriver {
 
   updateParams(params: Params): void { this.sim?.updateParams(params); }
   setSurface(tex: THREE.Texture | null): void { this.sim?.setSurface(tex); }
-  requestInject(depthM: number): void { this.sim?.requestInject(depthM); }
+  requestInject(depthM: number): void {
+    this.injectedVolume += depthM * this.rainArea(); // dump uses the rain footprint → exact m³
+    this.sim?.requestInject(depthM);
+  }
   requestFill(level: number): void { this.sim?.requestFill(level); }
 
   currentDepthTexture(): THREE.Texture | null {
@@ -124,7 +128,7 @@ export class SimDriver {
   reset(): void {
     this.sim?.reset();
     this.simTime = 0;
-    this.rainedVolume = 0;
+    this.rainedVolume = this.injectedVolume = 0;
     this.observedMaxDepth = 1;
   }
 
@@ -350,10 +354,11 @@ export class SimDriver {
     this.stats.simTime = formatDuration(simTime);
     this.stats.rained = formatVolume(this.rainedVolume);
     this.stats.stored = formatVolume(stored * cellArea);
-    this.stats.floodedArea = `${((flooded / (N * N)) * 100).toFixed(1)} %`;
-    this.stats.maxDepth = `${maxNow.toFixed(2)} m (max ${maxEver.toFixed(2)})`;
-    this.stats.fps = this.hooks.fps().toFixed(0);
-    this.stats.timelineStatus = this.status();
+    this.stats.balance = formatWaterBalance(this.rainedVolume, this.injectedVolume, stored * cellArea);
+    const floodedPct = (flooded / (N * N)) * 100;
+    this.stats.floodedArea = floodedPct > 0 && floodedPct < 1 ? '<1 %' : `~${Math.round(floodedPct)} %`;
+    this.stats.maxDepth = `~${maxNow.toFixed(1)} m (max ~${maxEver.toFixed(1)})`;
+    this.stats.fps = this.hooks.fps().toFixed(0); this.stats.timelineStatus = this.status();
     this.hooks.refreshPanel();
   }
 }

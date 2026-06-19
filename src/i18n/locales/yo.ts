@@ -41,18 +41,17 @@ export const yo: Record<string, string> = {
   'rain.cellY': 'sẹ́ẹ̀lì y',
   'rain.cellRadius': 'rédíọ̀sì sẹ́ẹ̀lì',
   'storm.constant': 'Déédéé (pẹ̀lú ọwọ́ mm/wákàtí)',
-  'storm.cloudburst': 'Òjò àrọ̀jò (~50 mm / 2 wák)',
-  'storm.design25yr': 'Ìjì àpẹẹrẹ P≈25 ọdún',
-  'storm.may2026': 'Àkíyèsí 18 Èbibi 2026 (41 mm/2 wák)',
-  'storm.jun2026': 'Àkíyèsí 12 Òkúdu 2026 (90 mm/ọjọ́)',
-
+  'storm.cloudburst': 'Òjò ńlá (~38 mm/2h)',
+  'storm.design25yr': 'Ìjì líle (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 àpèjúwe (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 àpèjúwe (~100 mm/24h)',
   'urban.surface': 'àwòṣe ojú-ilẹ̀',
   'urban.buildings': 'àwọn ilé gẹ́gẹ́ bí ògiri',
   'urban.sewer': 'kòtò òjò (mm/wákàtí)',
   'urban.groundwater': 'omi abẹ́lẹ̀ gíga',
 
   'soil.infiltration': 'ìwọ̀ omi sí ilẹ̀ (mm/wákàtí)',
-  'soil.evaporation': 'ìyọnu (/wákàtí)',
+  'soil.evaporation': 'ìyọnu (mm/wákàtí)',
 
   'physics.gravity': 'agbára ìfàmọ́ra (m/s²)',
   'physics.flow': 'ìpín ìṣàn',
@@ -154,6 +153,7 @@ export const yo: Record<string, string> = {
   'stats.simTime': 'àkókò sim',
   'stats.rainIn': 'òjò tó rọ̀',
   'stats.stored': 'omi tó kó jọ',
+  'stats.balance': 'iwọntunwọnsi omi',
   'stats.flooded': 'agbègbè ìkún-omi',
   'stats.maxDepth': 'ìjìnlẹ̀ tó ga jù',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const yo: Record<string, string> = {
   'toast.loadFailed': 'Nǹkan kan kùnà nígbà tí à ń ṣe àgbéwọlé máàpù. Jọ̀wọ́ tún un kì.',
   'toast.linkCopied': 'A ti daako ọna asopọ sí àgbékalẹ̀',
   'share.title': 'Pín ìṣẹ̀lẹ̀ yìí',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Bí ó ṣe ń ṣiṣẹ́ àti àwọn ààlà',
+  'method.body': 'Àfarawé ẹ̀kọ́ nípa ìkún-omi òjò. A ti sọ físíksì omi di rírọrùn, a kò sì ṣe àtúnṣe àwòṣe náà sí àwọn ìwọ̀n gidi, nítorí náà ìjìnlẹ̀ àti agbègbè ìkún-omi jẹ́ àtọ́ka nìkan — kì í ṣe ìgéléwọ̀n ewu ìkún-omi. Kò ṣe àwòṣe ọ̀nà ìṣàn omi òjò, omi abẹ́lẹ̀, tàbí ìkún-omi odò àti etíkun. Àwọn ìṣàkólẹ̀ ìjì jẹ́ àwòrán òjò aṣojú, kì í ṣe àkọsílẹ̀ òṣùwọ̀n.',
+  'method.indicative': 'Àtọ́ka (àwòṣe)',
   'waterlevel.title': 'Ìpele omi 🌊',
   'waterlevel.off': 'Pa',
 };

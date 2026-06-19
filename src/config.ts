@@ -8,12 +8,17 @@ export type WaterQuality = 'low' | 'medium' | 'high';
 // instead of flat rain. See sim/storm.ts.
 export type StormType = 'constant' | 'cloudburst' | 'design25yr' | 'may2026' | 'jun2026';
 
+// Storm preset labels. These are representative rainfall PROFILES (hyetograph
+// shapes scaled to a reported total) — NOT gauge records or recurrence-interval
+// (IDF) design storms — so the labels avoid "Observed" / "P=25 yr" authority and
+// state the curve's own integrated depth (see storm.ts). The methodology note
+// surfaces the same caveat in-app.
 export const STORM_LABELS: Record<StormType, string> = {
   constant: 'Constant (manual mm/hr)',
-  cloudburst: 'Залповый ливень (~50 mm / 2 h)',
-  design25yr: 'Design storm P≈25 yr',
-  may2026: 'Observed 18 May 2026 (41 mm/2 h)',
-  jun2026: 'Observed 12 Jun 2026 (90 mm/day)',
+  cloudburst: 'Cloudburst (~38 mm/2h)',
+  design25yr: 'Heavy storm (~62 mm/2h)',
+  may2026: '2026-05-18 profile (~40 mm/2h)',
+  jun2026: '2026-06-12 profile (~100 mm/24h)',
 };
 
 export const SOURCE_LABELS: Record<ElevationSource | 'synthetic', string> = {
@@ -49,12 +54,12 @@ export interface Params {
 
   // Soil / atmosphere
   infiltrationMmPerHr: number; // pervious-soil infiltration (scaled down by high groundwater)
-  evaporationPerHr: number; // fraction of depth lost per simulated hour
+  evaporationPerHr: number; // open-water evaporation as a constant depth flux (mm/hr), not a fraction of depth
 
   // Physics
   gravity: number; // m/s^2
-  pipeArea: number; // virtual-pipe cross-section coefficient (m)
-  friction: number; // flux damping per second (0 = none, ~0.1 mild)
+  pipeArea: number; // dimensionless virtual-pipe flow gain (relaxes the head-gradient flux); not a physical area
+  friction: number; // global multiplier on the per-cell Manning's n (1 = land-cover default; see shaders.ts)
   substeps: number;
   timeScale: number; // simulated seconds per real second
   boundary: BoundaryMode;
@@ -143,11 +148,11 @@ export const DEFAULT_PARAMS: Params = {
   burnBuildings: true,
 
   infiltrationMmPerHr: 12, // pervious-soil capacity before groundwater scaling
-  evaporationPerHr: 0.0,
+  evaporationPerHr: 0.0, // mm/hr (off by default; ~0.2 mm/hr ≈ 5 mm/day is a realistic open-water rate)
 
   gravity: 9.81,
   pipeArea: 1.0,
-  friction: 0.06,
+  friction: 1.0, // Manning roughness multiplier (1 = land-cover default n)
   substeps: 4,
   timeScale: 180, // 1 real second = 3 simulated minutes
   boundary: 'open',

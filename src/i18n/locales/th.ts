@@ -77,11 +77,10 @@ export const th: Record<string, string> = {
   'rain.cellY': 'เซลล์ y',
   'rain.cellRadius': 'รัศมีเซลล์',
   'storm.constant': 'คงที่ (กำหนดเอง มม./ชม.)',
-  'storm.cloudburst': 'ฝนถล่ม (~50 มม. / 2 ชม.)',
-  'storm.design25yr': 'พายุออกแบบ P≈25 ปี',
-  'storm.may2026': 'ตรวจวัด 18 พ.ค. 2026 (41 มม./2 ชม.)',
-  'storm.jun2026': 'ตรวจวัด 12 มิ.ย. 2026 (90 มม./วัน)',
-
+  'storm.cloudburst': 'ฝนถล่ม (~38 mm/2h)',
+  'storm.design25yr': 'พายุรุนแรง (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 โปรไฟล์ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 โปรไฟล์ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'แบบจำลองพื้นผิว',
   'urban.buildings': 'อาคารเป็นกำแพง',
@@ -90,7 +89,7 @@ export const th: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'การซึมของดิน (mm/hr)',
-  'soil.evaporation': 'การระเหย (/hr)',
+  'soil.evaporation': 'การระเหย (mm/hr)',
 
   // Physics
   'physics.gravity': 'แรงโน้มถ่วง (m/s²)',
@@ -164,6 +163,7 @@ export const th: Record<string, string> = {
   'stats.simTime': 'เวลาจำลอง',
   'stats.rainIn': 'ปริมาณฝน',
   'stats.stored': 'น้ำที่กักเก็บ',
+  'stats.balance': 'สมดุลน้ำ',
   'stats.flooded': 'พื้นที่น้ำท่วม',
   'stats.maxDepth': 'ความลึกสูงสุด',
   'stats.fps': 'fps',
@@ -214,6 +214,10 @@ export const th: Record<string, string> = {
   'toast.loadFailed': 'เกิดข้อผิดพลาดขณะโหลดแผนที่ โปรดโหลดใหม่',
   'toast.linkCopied': 'คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว',
   'share.title': 'แชร์สถานการณ์นี้',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'วิธีทำงานและข้อจำกัด',
+  'method.body': 'การจำลองน้ำท่วมจากฝนเพื่อการศึกษา ฟิสิกส์ของน้ำถูกทำให้ง่ายขึ้นและแบบจำลองไม่ได้ปรับเทียบกับการวัดจริง ดังนั้นความลึกและพื้นที่น้ำท่วมจึงเป็นเพียงค่าบ่งชี้เท่านั้น — ไม่ใช่การประเมินความเสี่ยงน้ำท่วม ไม่ได้จำลองท่อระบายน้ำฝน น้ำใต้ดิน หรือน้ำท่วมจากแม่น้ำและชายฝั่ง ค่าตั้งล่วงหน้าของพายุเป็นโปรไฟล์ฝนแบบตัวแทน ไม่ใช่บันทึกจากเครื่องวัด',
+  'method.indicative': 'ค่าบ่งชี้ (แบบจำลอง)',
   'waterlevel.title': 'ระดับน้ำ 🌊',
   'waterlevel.off': 'ปิด',
 };

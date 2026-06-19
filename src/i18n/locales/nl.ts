@@ -41,18 +41,17 @@ export const nl: Record<string, string> = {
   'rain.cellY': 'cel y',
   'rain.cellRadius': 'celstraal',
   'storm.constant': 'Constant (handmatig mm/u)',
-  'storm.cloudburst': 'Wolkbreuk (~50 mm / 2 u)',
-  'storm.design25yr': 'Ontwerpbui P≈25 jr',
-  'storm.may2026': 'Gemeten 18 mei 2026 (41 mm/2 u)',
-  'storm.jun2026': 'Gemeten 12 jun 2026 (90 mm/dag)',
-
+  'storm.cloudburst': 'Wolkbreuk (~38 mm/2h)',
+  'storm.design25yr': 'Zware storm (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profiel (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profiel (~100 mm/24h)',
   'urban.surface': 'oppervlaktemodel',
   'urban.buildings': 'gebouwen als muren',
   'urban.sewer': 'regenwaterriool (mm/u)',
   'urban.groundwater': 'hoog grondwater',
 
   'soil.infiltration': 'bodeminfiltratie (mm/u)',
-  'soil.evaporation': 'verdamping (/u)',
+  'soil.evaporation': 'verdamping (mm/u)',
 
   'physics.gravity': 'zwaartekracht (m/s²)',
   'physics.flow': 'afstromingscoëfficiënt',
@@ -154,6 +153,7 @@ export const nl: Record<string, string> = {
   'stats.simTime': 'sim-tijd',
   'stats.rainIn': 'regen gevallen',
   'stats.stored': 'water opgeslagen',
+  'stats.balance': 'waterbalans',
   'stats.flooded': 'overstroomd gebied',
   'stats.maxDepth': 'max. diepte',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const nl: Record<string, string> = {
   'toast.loadFailed': 'Er ging iets mis bij het laden van de kaart. Herlaad alstublieft.',
   'toast.linkCopied': 'Link gekopieerd naar klembord',
   'share.title': 'Deel dit scenario',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Hoe het werkt & grenzen',
+  'method.body': 'Een educatieve simulatie van regenoverstroming. De waterfysica is vereenvoudigd en het model is niet gekalibreerd op echte metingen, dus overstromingsdiepten en -gebieden zijn slechts indicatief — geen overstromingsrisicobeoordeling. Het modelleert geen regenwaterriool, grondwater of rivier- en kustoverstromingen. Stormvoorinstellingen zijn representatieve regenprofielen, geen meetgegevens.',
+  'method.indicative': 'Indicatief (model)',
   'waterlevel.title': 'Waterpeil 🌊',
   'waterlevel.off': 'Uit',
 };

@@ -25,7 +25,7 @@ const NO_DRAIN_CENTER = { lat: 45.0762, lon: 38.9988 };
 const NO_DRAIN_RADIUS_M = 1300;
 
 export interface SurfaceResult {
-  surface: Float32Array; // N*N*4: r=infil m/s, g=drain m/s, b=roughness, a=building flag
+  surface: Float32Array; // N*N*4: r=infil m/s, g=drain m/s, b=conductance (flow-ease), a=building flag
   land: LandClass | null;
   osm: OsmRasters | null;
   buildingGeometry: BuildingGeometryData | null; // extruded in-worker; rings dropped
@@ -33,22 +33,26 @@ export interface SurfaceResult {
   osmFailed: boolean; // OSM was expected (≤8 km) but every mirror failed/returned empty
 }
 
-export function classifyInfilRoughness(
+// The `conductance` is a flow-EASE multiplier on the inter-cell flux (high = water
+// moves freely, e.g. paved/impervious = 1.0; low = vegetated/rough = 0.22). It is
+// the inverse of hydraulic roughness, so it is named conductance rather than
+// roughness. (Pack B will derive it from a Manning's-n land-cover table.)
+export function classifyInfilConductance(
   building: boolean, road: boolean, water: boolean, green: boolean, lc: number, soilInfil: number,
-): { infil: number; rough: number } {
-  if (building) return { infil: 0.2, rough: 1.0 };
-  if (water || lc === 80) return { infil: 0.0, rough: 1.0 };
-  if (road) return { infil: 0.3, rough: 1.0 };
+): { infil: number; conductance: number } {
+  if (building) return { infil: 0.2, conductance: 1.0 };
+  if (water || lc === 80) return { infil: 0.0, conductance: 1.0 };
+  if (road) return { infil: 0.3, conductance: 1.0 };
   if (green || lc === 30 || lc === 10 || lc === 20 || lc === 90 || lc === 100) {
-    return { infil: soilInfil, rough: 0.22 }; // grass/tree/wetland — pervious, rough
+    return { infil: soilInfil, conductance: 0.22 }; // grass/tree/wetland — pervious, rough surface
   }
-  if (lc === 40) return { infil: soilInfil * 0.6, rough: 0.4 }; // cropland
-  if (lc === 50) return { infil: 0.5, rough: 1.0 }; // built-up (impervious)
-  if (lc === 60) return { infil: soilInfil * 0.4, rough: 0.5 }; // bare
-  return { infil: soilInfil * 0.5, rough: 0.4 };
+  if (lc === 40) return { infil: soilInfil * 0.6, conductance: 0.4 }; // cropland
+  if (lc === 50) return { infil: 0.5, conductance: 1.0 }; // built-up (impervious)
+  if (lc === 60) return { infil: soilInfil * 0.4, conductance: 0.5 }; // bare
+  return { infil: soilInfil * 0.5, conductance: 0.4 };
 }
 
-/** Per-cell infiltration / drainage / roughness texture data — no DEM mutation,
+/** Per-cell infiltration / drainage / conductance texture data — no DEM mutation,
  *  so it can be recomputed live when the drainage / groundwater sliders change. */
 export function computeSurfaceFields(
   hm: Heightmap, land: LandClass | null, osm: OsmRasters | null, params: Params,
@@ -70,7 +74,7 @@ export function computeSurfaceFields(
       const water = !!osm?.water[k] && !building;
       const green = !!osm?.green[k] && !building && !road && !water;
       const lc = land ? land[k] : 30;
-      const { infil, rough } = classifyInfilRoughness(building, road, water, green, lc, soilInfil);
+      const { infil, conductance } = classifyInfilConductance(building, road, water, green, lc, soilInfil);
 
       const cx = -half + ix * step;
       const inNoDrain = (cx - mzx) ** 2 + (cy - mzy) ** 2 < NO_DRAIN_RADIUS_M ** 2;
@@ -79,7 +83,7 @@ export function computeSurfaceFields(
 
       surface[k * 4] = infil * MM_S;
       surface[k * 4 + 1] = drain * MM_S;
-      surface[k * 4 + 2] = Math.max(0.1, Math.min(1, rough));
+      surface[k * 4 + 2] = Math.max(0.1, Math.min(1, conductance));
       surface[k * 4 + 3] = building ? 1 : 0;
     }
   }

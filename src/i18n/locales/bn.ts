@@ -73,18 +73,17 @@ export const bn: Record<string, string> = {
   'rain.cellY': 'কোষ y',
   'rain.cellRadius': 'কোষের ব্যাসার্ধ',
   'storm.constant': 'ধ্রুব (ম্যানুয়াল mm/ঘণ্টা)',
-  'storm.cloudburst': 'মেঘভাঙা বৃষ্টি (~50 mm / 2 ঘ)',
-  'storm.design25yr': 'ডিজাইন ঝড় P≈25 বছর',
-  'storm.may2026': 'পর্যবেক্ষিত 18 মে 2026 (41 mm/2 ঘ)',
-  'storm.jun2026': 'পর্যবেক্ষিত 12 জুন 2026 (90 mm/দিন)',
-
+  'storm.cloudburst': 'প্রবল বৃষ্টি (~38 mm/2h)',
+  'storm.design25yr': 'ভারী ঝড় (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 প্রোফাইল (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 প্রোফাইল (~100 mm/24h)',
   'urban.surface': 'পৃষ্ঠ মডেল',
   'urban.buildings': 'ভবন দেয়াল হিসেবে',
   'urban.sewer': 'ঝড়ের নর্দমা (mm/ঘণ্টা)',
   'urban.groundwater': 'উচ্চ ভূগর্ভস্থ পানি',
 
   'soil.infiltration': 'মাটির অনুপ্রবেশ (mm/ঘণ্টা)',
-  'soil.evaporation': 'বাষ্পীভবন (/ঘণ্টা)',
+  'soil.evaporation': 'বাষ্পীভবন (mm/ঘণ্টা)',
 
   'physics.gravity': 'অভিকর্ষ (m/s²)',
   'physics.flow': 'প্রবাহ সহগ',
@@ -154,6 +153,7 @@ export const bn: Record<string, string> = {
   'stats.simTime': 'সিম সময়',
   'stats.rainIn': 'বৃষ্টিপাত',
   'stats.stored': 'সঞ্চিত পানি',
+  'stats.balance': 'পানির ভারসাম্য',
   'stats.flooded': 'প্লাবিত এলাকা',
   'stats.maxDepth': 'সর্বোচ্চ গভীরতা',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const bn: Record<string, string> = {
   'toast.loadFailed': 'মানচিত্র লোড করার সময় কিছু ভুল হয়েছে। অনুগ্রহ করে পুনরায় লোড করুন।',
   'toast.linkCopied': 'লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে',
   'share.title': 'এই দৃশ্যটি শেয়ার করুন',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'কীভাবে কাজ করে এবং সীমাবদ্ধতা',
+  'method.body': 'একটি শিক্ষামূলক বৃষ্টি-বন্যা সিমুলেশন। পানির পদার্থবিজ্ঞান সরলীকৃত এবং মডেলটি প্রকৃত পরিমাপের সাথে ক্যালিব্রেট করা হয়নি, তাই বন্যার গভীরতা ও এলাকা শুধুমাত্র নির্দেশক — কোনো বন্যা-ঝুঁকি মূল্যায়ন নয়। এটি ঝড়ের নর্দমা, ভূগর্ভস্থ পানি, কিংবা নদী ও উপকূলীয় বন্যা মডেল করে না। ঝড়ের প্রিসেটগুলো প্রতিনিধিত্বমূলক বৃষ্টিপাতের প্রোফাইল, পরিমাপের রেকর্ড নয়।',
+  'method.indicative': 'নির্দেশক (মডেল)',
   'waterlevel.title': 'পানির স্তর 🌊',
   'waterlevel.off': 'বন্ধ',
 };

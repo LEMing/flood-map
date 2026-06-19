@@ -41,18 +41,17 @@ export const ha: Record<string, string> = {
   'rain.cellY': 'tantani y',
   'rain.cellRadius': 'radiyon tantani',
   'storm.constant': 'Koyaushe (da hannu mm/awa)',
-  'storm.cloudburst': 'Ruwa mai tsanani (~50 mm / 2 awa)',
-  'storm.design25yr': 'Guguwar ƙira P≈25 shekara',
-  'storm.may2026': 'An lura 18 Mayu 2026 (41 mm/2 awa)',
-  'storm.jun2026': 'An lura 12 Yuni 2026 (90 mm/rana)',
-
+  'storm.cloudburst': 'Ruwan kwararo (~38 mm/2h)',
+  'storm.design25yr': 'Babbar guguwa (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 bayanai (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 bayanai (~100 mm/24h)',
   'urban.surface': 'samfurin saman ƙasa',
   'urban.buildings': 'gine-gine a matsayin bango',
   'urban.sewer': 'magudanar ruwan sama (mm/awa)',
   'urban.groundwater': 'ruwan ƙasa mai yawa',
 
   'soil.infiltration': 'shige ruwa cikin ƙasa (mm/awa)',
-  'soil.evaporation': 'ƙafewa (/awa)',
+  'soil.evaporation': 'ƙafewa (mm/awa)',
 
   'physics.gravity': 'jan ƙasa (m/s²)',
   'physics.flow': 'ma\'aunin gudana',
@@ -152,6 +151,7 @@ export const ha: Record<string, string> = {
   'stats.simTime': 'lokacin sim',
   'stats.rainIn': 'ruwan da ya sauka',
   'stats.stored': 'ruwan da aka adana',
+  'stats.balance': 'ma’aunin ruwa',
   'stats.flooded': 'yankin ambaliya',
   'stats.maxDepth': 'matuƙar zurfi',
   'stats.fps': 'fps',
@@ -200,6 +200,10 @@ export const ha: Record<string, string> = {
   'toast.loadFailed': 'Wani abu ya yi kuskure wajen loda taswira. Da fatan za a sake lodi.',
   'toast.linkCopied': 'An kwafi mahaɗin zuwa allo',
   'share.title': 'Raba wannan yanayin',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Yadda yake aiki da iyaka',
+  'method.body': 'Kwaikwayon ilimi na ambaliyar ruwan sama. An sauƙaƙa kimiyyar ruwa kuma ba a daidaita samfurin da ainihin ma’auni ba, don haka zurfin ambaliya da fadinta alamu ne kawai — ba kima na haɗarin ambaliya ba. Ba ya kwaikwayon magudanar ruwan sama, ruwan ƙarƙashin ƙasa, ko ambaliyar kogi da bakin teku. Saitunan hadari bayanan ruwan sama ne na wakilci, ba bayanan awo ba.',
+  'method.indicative': 'Alama (samfuri)',
   'waterlevel.title': 'Matakin ruwa 🌊',
   'waterlevel.off': 'Kashe',
 };

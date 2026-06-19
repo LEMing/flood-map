@@ -63,8 +63,8 @@ export class GameUI {
 
   setStats(peakDepthM: number, floodedPercent: number): void {
     if (this.hud.hidden) return;
-    this.hudDepth.textContent = `${peakDepthM.toFixed(2)} m`;
-    this.hudArea.textContent = `${floodedPercent.toFixed(0)}%`;
+    this.hudDepth.textContent = `~${peakDepthM.toFixed(1)} m`;
+    this.hudArea.textContent = floodedPercent > 0 && floodedPercent < 1 ? '<1%' : `~${floodedPercent.toFixed(0)}%`;
   }
 
   /** Place name under the launch button (a proper noun — language-independent). */

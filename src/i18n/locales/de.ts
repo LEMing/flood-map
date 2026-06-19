@@ -79,11 +79,10 @@ export const de: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Konstant (manuell mm/h)',
-  'storm.cloudburst': 'Wolkenbruch (~50 mm / 2 h)',
-  'storm.design25yr': 'Bemessungsregen P≈25 J.',
-  'storm.may2026': 'Beobachtet 18. Mai 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Beobachtet 12. Juni 2026 (90 mm/Tag)',
-
+  'storm.cloudburst': 'Wolkenbruch (~38 mm/2h)',
+  'storm.design25yr': 'Schwerer Sturm (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 Profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 Profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'Oberflächenmodell',
   'urban.buildings': 'Gebäude als Wände',
@@ -92,7 +91,7 @@ export const de: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'Bodeninfiltration (mm/hr)',
-  'soil.evaporation': 'Verdunstung (/hr)',
+  'soil.evaporation': 'Verdunstung (mm/hr)',
 
   // Physics
   'physics.gravity': 'Schwerkraft (m/s²)',
@@ -170,6 +169,7 @@ export const de: Record<string, string> = {
   'stats.simTime': 'Sim-Zeit',
   'stats.rainIn': 'Regen seit',
   'stats.stored': 'gespeichertes Wasser',
+  'stats.balance': 'Wasserbilanz',
   'stats.flooded': 'überflutete Fläche',
   'stats.maxDepth': 'max Tiefe',
   'stats.fps': 'fps',
@@ -220,6 +220,10 @@ export const de: Record<string, string> = {
   'toast.loadFailed': 'Beim Laden der Karte ist etwas schiefgelaufen. Bitte lade neu.',
   'toast.linkCopied': 'Link in die Zwischenablage kopiert',
   'share.title': 'Dieses Szenario teilen',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Funktionsweise & Grenzen',
+  'method.body': 'Eine lehrhafte Simulation von Regenüberflutung. Die Wasserphysik ist vereinfacht und das Modell ist nicht an reale Messungen kalibriert, daher sind Überflutungstiefen und -flächen nur Anhaltswerte — keine Hochwasserrisikobewertung. Es modelliert weder Regenkanalisation, Grundwasser noch Fluss- und Küstenhochwasser. Sturm-Voreinstellungen sind repräsentative Regenprofile, keine Messdaten.',
+  'method.indicative': 'Richtwert (Modell)',
   'waterlevel.title': 'Wasserstand 🌊',
   'waterlevel.off': 'Aus',
 };

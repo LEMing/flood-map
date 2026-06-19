@@ -74,18 +74,17 @@ export const fa: Record<string, string> = {
   'rain.cellY': 'سلول y',
   'rain.cellRadius': 'شعاع سلول',
   'storm.constant': 'ثابت (دستی mm/ساعت)',
-  'storm.cloudburst': 'رگبار شدید (~50 mm / 2 ساعت)',
-  'storm.design25yr': 'طوفان طراحی P≈25 سال',
-  'storm.may2026': 'مشاهده‌شده 18 مه 2026 (41 mm/2 ساعت)',
-  'storm.jun2026': 'مشاهده‌شده 12 ژوئن 2026 (90 mm/روز)',
-
+  'storm.cloudburst': 'رگبار شدید (~38 mm/2h)',
+  'storm.design25yr': 'توفان سنگین (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 نمودار (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 نمودار (~100 mm/24h)',
   'urban.surface': 'مدل سطح',
   'urban.buildings': 'ساختمان‌ها به‌عنوان دیوار',
   'urban.sewer': 'فاضلاب آب‌های سطحی (mm/ساعت)',
   'urban.groundwater': 'آب زیرزمینی بالا',
 
   'soil.infiltration': 'نفوذ خاک (mm/ساعت)',
-  'soil.evaporation': 'تبخیر (/ساعت)',
+  'soil.evaporation': 'تبخیر (mm/ساعت)',
 
   'physics.gravity': 'گرانش (m/s²)',
   'physics.flow': 'ضریب رواناب',
@@ -155,6 +154,7 @@ export const fa: Record<string, string> = {
   'stats.simTime': 'زمان شبیه‌سازی',
   'stats.rainIn': 'باران باریده',
   'stats.stored': 'آب ذخیره‌شده',
+  'stats.balance': 'تراز آبی',
   'stats.flooded': 'مساحت سیل‌گرفته',
   'stats.maxDepth': 'بیشینه عمق',
   'stats.fps': 'fps',
@@ -203,6 +203,10 @@ export const fa: Record<string, string> = {
   'toast.loadFailed': 'هنگام بارگیری نقشه مشکلی پیش آمد. لطفاً دوباره بارگیری کنید.',
   'toast.linkCopied': 'پیوند در کلیپ‌بورد کپی شد',
   'share.title': 'این سناریو را به اشتراک بگذارید',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'نحوهٔ کار و محدودیت‌ها',
+  'method.body': 'یک شبیه‌سازی آموزشی سیلابِ ناشی از باران. فیزیک آب ساده‌سازی شده و مدل با اندازه‌گیری‌های واقعی کالیبره نشده است، بنابراین عمق و گسترهٔ سیلاب تنها نشانگر است — نه ارزیابی خطر سیل. این مدل فاضلاب آب باران، آب‌های زیرزمینی یا سیلاب رودخانه‌ای و ساحلی را شبیه‌سازی نمی‌کند. پیش‌تنظیم‌های طوفان نمایه‌های بارش نماینده‌اند، نه ثبت‌های اندازه‌گیری.',
+  'method.indicative': 'نشانگر (مدل)',
   'waterlevel.title': 'سطح آب 🌊',
   'waterlevel.off': 'خاموش',
 };

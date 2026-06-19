@@ -54,10 +54,10 @@ export const en: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'Constant (manual mm/hr)',
-  'storm.cloudburst': 'Cloudburst (~50 mm / 2 h)',
-  'storm.design25yr': 'Design storm P≈25 yr',
-  'storm.may2026': 'Observed 18 May 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Observed 12 Jun 2026 (90 mm/day)',
+  'storm.cloudburst': 'Cloudburst (~38 mm/2h)',
+  'storm.design25yr': 'Heavy storm (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profile (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profile (~100 mm/24h)',
 
   // Urban model
   'urban.surface': 'surface model',
@@ -67,7 +67,7 @@ export const en: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'soil infiltration (mm/hr)',
-  'soil.evaporation': 'evaporation (/hr)',
+  'soil.evaporation': 'evaporation (mm/hr)',
 
   // Physics
   'physics.gravity': 'gravity (m/s²)',
@@ -177,6 +177,7 @@ export const en: Record<string, string> = {
   'stats.simTime': 'sim time',
   'stats.rainIn': 'rain in',
   'stats.stored': 'water stored',
+  'stats.balance': 'water balance',
   'stats.flooded': 'flooded area',
   'stats.maxDepth': 'max depth',
   'stats.fps': 'fps',
@@ -196,6 +197,11 @@ export const en: Record<string, string> = {
   'toast.loadFailed': 'Something went wrong loading the map. Please reload.',
   'toast.linkCopied': 'Link copied to clipboard',
   'share.title': 'Share this scenario',
+
+  // Methodology / limitations note (in-app honesty — mirrors the geology caveat)
+  'method.title': 'How it works & limits',
+  'method.body': 'An educational rainfall-flood simulation. The water physics is simplified and the model is not calibrated to real measurements, so flood depths and areas are indicative only — not a flood-risk assessment. It does not model storm sewers, groundwater, or river and coastal flooding. Storm presets are representative rainfall profiles, not gauge records.',
+  'method.indicative': 'Indicative (model)',
 
   // Misc
   'legend.elevation': 'Elevation',

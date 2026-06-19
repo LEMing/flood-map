@@ -41,18 +41,17 @@ export const uz: Record<string, string> = {
   'rain.cellY': 'hujayra y',
   'rain.cellRadius': 'hujayra radiusi',
   'storm.constant': 'Doimiy (qoʻlda mm/soat)',
-  'storm.cloudburst': 'Jala (~50 mm / 2 soat)',
-  'storm.design25yr': 'Hisobiy jala P≈25 yil',
-  'storm.may2026': 'Kuzatuv 18 may 2026 (41 mm/2 soat)',
-  'storm.jun2026': 'Kuzatuv 12 iyun 2026 (90 mm/kun)',
-
+  'storm.cloudburst': 'Jala (~38 mm/2h)',
+  'storm.design25yr': 'Kuchli boʻron (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'sirt modeli',
   'urban.buildings': 'binolar devor sifatida',
   'urban.sewer': 'yomgʻir kanalizatsiyasi (mm/soat)',
   'urban.groundwater': 'yuqori yer osti suvlari',
 
   'soil.infiltration': 'tuproqqa singish (mm/soat)',
-  'soil.evaporation': 'bugʻlanish (/soat)',
+  'soil.evaporation': 'bugʻlanish (mm/soat)',
 
   'physics.gravity': 'ogʻirlik kuchi (m/s²)',
   'physics.flow': 'oqim koeffitsienti',
@@ -153,6 +152,7 @@ export const uz: Record<string, string> = {
   'stats.simTime': 'simulyatsiya vaqti',
   'stats.rainIn': 'yoqqan yomgʻir',
   'stats.stored': 'toʻplangan suv',
+  'stats.balance': 'suv balansi',
   'stats.flooded': 'suv bosgan hudud',
   'stats.maxDepth': 'maks. chuqurlik',
   'stats.fps': 'fps',
@@ -201,6 +201,10 @@ export const uz: Record<string, string> = {
   'toast.loadFailed': 'Xaritani yuklashda nimadir xato ketdi. Iltimos, qayta yuklang.',
   'toast.linkCopied': 'Havola vaqtinchalik xotiraga nusxalandi',
   'share.title': 'Ushbu stsenariyni ulashing',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Qanday ishlaydi va cheklovlar',
+  'method.body': 'Yomg’ir toshqinining ta’limiy simulyatsiyasi. Suv fizikasi soddalashtirilgan va model haqiqiy o’lchovlarga moslab kalibrlanmagan, shu sababli toshqin chuqurligi va maydonlari faqat indikativ — toshqin xavfini baholash emas. U yomg’ir kanalizatsiyasini, yer osti suvlarini yoki daryo va sohil toshqinlarini modellashtirmaydi. Bo’ron oldindan sozlamalari vakillik qiluvchi yog’in profillaridir, o’lchov yozuvlari emas.',
+  'method.indicative': 'Indikativ (model)',
   'waterlevel.title': 'Suv sathi 🌊',
   'waterlevel.off': 'Oʻchirish',
 };

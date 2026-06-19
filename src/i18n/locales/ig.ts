@@ -41,18 +41,17 @@ export const ig: Record<string, string> = {
   'rain.cellY': 'sel y',
   'rain.cellRadius': 'rediọs sel',
   'storm.constant': 'Mgbe niile (aka mm/elekere)',
-  'storm.cloudburst': 'Mbawanye mmiri (~50 mm / 2 h)',
-  'storm.design25yr': 'Oke mmiri atụmatụ P≈25 afọ',
-  'storm.may2026': 'Ahuru 18 Mee 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Ahuru 12 Jun 2026 (90 mm/ụbọchị)',
-
+  'storm.cloudburst': 'Oké mmiri ozuzo (~38 mm/2h)',
+  'storm.design25yr': 'Oké ifufe (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profaịlụ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profaịlụ (~100 mm/24h)',
   'urban.surface': 'usoro elu ala',
   'urban.buildings': 'ụlọ dị ka mgbidi',
   'urban.sewer': 'apata mmiri (mm/elekere)',
   'urban.groundwater': 'mmiri ala dị elu',
 
   'soil.infiltration': 'mmiri aja na-aba (mm/elekere)',
-  'soil.evaporation': 'mmiri ikuku (/elekere)',
+  'soil.evaporation': 'mmiri ikuku (mm/elekere)',
 
   'physics.gravity': 'ike ndọdo (m/s²)',
   'physics.flow': 'koefishent mmiri ọsọ',
@@ -154,6 +153,7 @@ export const ig: Record<string, string> = {
   'stats.simTime': 'oge ọṅọrọ',
   'stats.rainIn': 'mmiri zoro',
   'stats.stored': 'mmiri echekwara',
+  'stats.balance': 'nguzozi mmiri',
   'stats.flooded': 'mbara dejụrụ mmiri',
   'stats.maxDepth': 'omimi kachasị',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const ig: Record<string, string> = {
   'toast.loadFailed': 'Ihe adịghị mma mere mgbe a na-ebu maapụ. Biko bugharịa.',
   'toast.linkCopied': 'Edebanyela njikọ na clipboard',
   'share.title': 'Kesaa ọnọdụ a',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Otú ọ si arụ ọrụ na oke ya',
+  'method.body': 'Ịmewe agụmakwụkwọ nke idei mmiri si na mmiri ozuzo. E mere ka physics mmiri dị mfe, a kalibreghịkwa ụdị ahụ na nha eziokwu, ya mere omimi na mpaghara idei mmiri bụ naanị ihe ngosi — ọ bụghị ntule ihe ize ndụ idei mmiri. Ọ naghị emepụta ọwa mmiri ozuzo, mmiri okpuru ala, ma ọ bụ idei mmiri osimiri na ụsọ oké osimiri. Ntọala oké ifufe bụ profaịlụ mmiri ozuzo nnọchiteanya, ọ bụghị ndekọ nha.',
+  'method.indicative': 'Ngosi (ụdị)',
   'waterlevel.title': 'Ọkwa mmiri 🌊',
   'waterlevel.off': 'Gbanyụọ',
 };

@@ -73,18 +73,17 @@ export const af: Record<string, string> = {
   'rain.cellY': 'sel y',
   'rain.cellRadius': 'selradius',
   'storm.constant': 'Konstant (handmatig mm/uur)',
-  'storm.cloudburst': 'Wolkbreuk (~50 mm / 2 h)',
-  'storm.design25yr': 'Ontwerpstorm P≈25 jr',
-  'storm.may2026': 'Waargeneem 18 Mei 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Waargeneem 12 Jun 2026 (90 mm/dag)',
-
+  'storm.cloudburst': 'Stortbui (~38 mm/2h)',
+  'storm.design25yr': 'Swaar storm (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profiel (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profiel (~100 mm/24h)',
   'urban.surface': 'oppervlakmodel',
   'urban.buildings': 'geboue as mure',
   'urban.sewer': 'stormriool (mm/uur)',
   'urban.groundwater': 'hoë grondwater',
 
   'soil.infiltration': 'grondinfiltrasie (mm/uur)',
-  'soil.evaporation': 'verdamping (/uur)',
+  'soil.evaporation': 'verdamping (mm/uur)',
 
   'physics.gravity': 'swaartekrag (m/s²)',
   'physics.flow': 'vloeikoëffisiënt',
@@ -154,6 +153,7 @@ export const af: Record<string, string> = {
   'stats.simTime': 'simtyd',
   'stats.rainIn': 'reën in',
   'stats.stored': 'water gestoor',
+  'stats.balance': 'waterbalans',
   'stats.flooded': 'oorstroomde gebied',
   'stats.maxDepth': 'maks diepte',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const af: Record<string, string> = {
   'toast.loadFailed': 'Iets het verkeerd geloop met die laai van die kaart. Herlaai asseblief.',
   'toast.linkCopied': 'Skakel na knipbord gekopieer',
   'share.title': 'Deel hierdie scenario',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Hoe dit werk & beperkings',
+  'method.body': 'ŉ Opvoedkundige reën-vloedsimulasie. Die waterfisika is vereenvoudig en die model is nie teen werklike metings gekalibreer nie, so vloeddieptes en -gebiede is slegs aanduidend — nie ŉ vloedrisiko-assessering nie. Dit modelleer nie stormriole, grondwater, of rivier- en kusvloede nie. Stormvoorinstellings is verteenwoordigende reënprofiele, nie meterrekords nie.',
+  'method.indicative': 'Aanduidend (model)',
   'waterlevel.title': 'Watervlak 🌊',
   'waterlevel.off': 'Af',
 };

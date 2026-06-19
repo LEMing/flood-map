@@ -41,18 +41,17 @@ export const ms: Record<string, string> = {
   'rain.cellY': 'sel y',
   'rain.cellRadius': 'jejari sel',
   'storm.constant': 'Malar (manual mm/jam)',
-  'storm.cloudburst': 'Hujan lebat (~50 mm / 2 j)',
-  'storm.design25yr': 'Ribut reka bentuk P≈25 thn',
-  'storm.may2026': 'Cerapan 18 Mei 2026 (41 mm/2 j)',
-  'storm.jun2026': 'Cerapan 12 Jun 2026 (90 mm/hari)',
-
+  'storm.cloudburst': 'Hujan lebat (~38 mm/2h)',
+  'storm.design25yr': 'Ribut kuat (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'model permukaan',
   'urban.buildings': 'bangunan sebagai dinding',
   'urban.sewer': 'pembetung ribut (mm/jam)',
   'urban.groundwater': 'air bawah tanah tinggi',
 
   'soil.infiltration': 'penyusupan tanah (mm/jam)',
-  'soil.evaporation': 'sejatan (/jam)',
+  'soil.evaporation': 'sejatan (mm/jam)',
 
   'physics.gravity': 'graviti (m/s²)',
   'physics.flow': 'pekali aliran',
@@ -154,6 +153,7 @@ export const ms: Record<string, string> = {
   'stats.simTime': 'masa sim',
   'stats.rainIn': 'hujan masuk',
   'stats.stored': 'air tersimpan',
+  'stats.balance': 'imbangan air',
   'stats.flooded': 'kawasan banjir',
   'stats.maxDepth': 'kedalaman maks',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const ms: Record<string, string> = {
   'toast.loadFailed': 'Sesuatu telah berlaku semasa memuatkan peta. Sila muat semula.',
   'toast.linkCopied': 'Pautan disalin ke papan keratan',
   'share.title': 'Kongsi senario ini',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cara ia berfungsi & had',
+  'method.body': 'Simulasi banjir hujan untuk pendidikan. Fizik air dipermudahkan dan model tidak ditentukur dengan ukuran sebenar, jadi kedalaman dan kawasan banjir hanya bersifat petunjuk — bukan penilaian risiko banjir. Ia tidak memodelkan saliran air hujan, air bawah tanah, mahupun banjir sungai dan pantai. Pratetapan ribut ialah profil hujan yang mewakili, bukan rekod alat ukur.',
+  'method.indicative': 'Petunjuk (model)',
   'waterlevel.title': 'Paras air 🌊',
   'waterlevel.off': 'Mati',
 };

@@ -475,12 +475,45 @@
       }
 
       #credit {
-        position: fixed; bottom: 6px; left: 8px; z-index: 9;
+        position: fixed; bottom: 6px; left: 46px; z-index: 9;
         font-size: 11px; color: rgba(255,255,255,.7);
         text-shadow: 0 1px 2px rgba(0,0,0,.8); pointer-events: none;
         display: none;
         transition: opacity .18s ease;
       }
+
+      /* In-app flood-model methodology/limitations note (ⓘ, bottom-left). */
+      #method-btn {
+        position: fixed; z-index: 11;
+        bottom: calc(10px + var(--safe-b)); left: calc(10px + var(--safe-l));
+        width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--pill-border); background: var(--panel-bg);
+        color: #cdd8e4; font-size: 15px; line-height: 1;
+        box-shadow: var(--panel-shadow);
+        backdrop-filter: blur(var(--pill-blur)); -webkit-backdrop-filter: blur(var(--pill-blur));
+        transition: border-color .15s, color .15s, background .15s;
+        -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+      }
+      #method-btn:hover { border-color: var(--panel-border-strong); color: #fff; }
+      #method-note {
+        position: fixed; z-index: 11;
+        bottom: calc(48px + var(--safe-b)); left: calc(10px + var(--safe-l));
+        max-width: min(360px, calc(100vw - 24px)); padding: 13px 15px;
+        border-radius: 10px; border: 1px solid var(--pill-border);
+        background: var(--panel-bg-strong); color: #d3dde8;
+        font-size: 12px; line-height: 1.55;
+        box-shadow: var(--panel-shadow);
+        backdrop-filter: blur(var(--pill-blur)); -webkit-backdrop-filter: blur(var(--pill-blur));
+      }
+      #method-note[hidden] { display: none; }
+      #method-note .mn-title { font-weight: 700; font-size: 12.5px; color: #e6edf3; margin-bottom: 5px; }
+      @media (max-width: 767px) {
+        #method-btn { bottom: calc(38px + var(--safe-b)); }
+        #method-note { bottom: calc(76px + var(--safe-b)); }
+      }
+      body.landing #method-btn, body.landing #method-note,
+      body.video #method-btn, body.video #method-note { display: none; }
       @media (max-width: 767px) {
         #credit {
           bottom: calc(8px + var(--safe-b));

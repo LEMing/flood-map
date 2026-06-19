@@ -1,6 +1,19 @@
-// Conservative two-pass shallow-water (virtual-pipes) solver. The single-pass
-// version recomputed every cell's outflux ~5x (self + 4 neighbours) per step to
-// read shared-edge flux; this splits it into:
+// Two-pass NON-INERTIAL virtual-pipes solver — a diffusive-wave approximation to
+// the 2-D shallow-water (Saint-Venant) equations (after O'Brien/Julien and the
+// Mei/Decaudin-Hu "Fast Hydraulic Erosion" GPU water model). It is mass-conserving
+// and non-negative by construction, but it carries NO flow momentum/inertia: the
+// edge outflux is recomputed from the head gradient each step (no stored discharge
+// Q, no ∂Q/∂t term), so it cannot overshoot, oscillate, or form a hydraulic jump.
+//
+// Bed friction IS physical: each edge flux is damped by the semi-implicit Manning
+// friction factor 1/(1 + g·dt·n²·|v|/h^{4/3}) from Bates, Horritt & Fewtrell (2010),
+// with a per-cell Manning's n derived from the land-cover conductance field and
+// scaled by `uRoughness`. The factor is bounded in (0,1], so it only ever damps
+// flow — it cannot break the volume cap or the CFL bound. `|v|` is the previous
+// step's diagnostic velocity (lagged), so friction is explicit in v, implicit in n.
+//
+// The single-pass version recomputed every cell's outflux ~5x (self + 4 neighbours)
+// per step to read shared-edge flux; this splits it into:
 //   1. FLUX pass  — each cell computes its own capped outflux ONCE, written as
 //      vec4(oL, oR, oT, oB) into tFlux.
 //   2. INTEGRATE pass — each cell reads its own flux + the 4 neighbours'
@@ -23,7 +36,7 @@ const FLUX_DECLS = /* glsl */ `
   uniform float uDt;
   uniform float uGravity;
   uniform float uPipeArea;
-  uniform float uFriction;
+  uniform float uRoughness;
   uniform int uBoundaryOpen;
 
   float surf(vec2 p) { return texture2D(heightmap, p).x + texture2D(tWater, p).x; }
@@ -36,13 +49,19 @@ export const fluxFragment = /* glsl */ `
     vec2 res = resolution.xy;
     vec2 uv = gl_FragCoord.xy / res;
     vec2 texel = 1.0 / res;
-    float friction = clamp(uFriction, 0.0, 0.95);
-    float coef = uDt * uGravity * uPipeArea * (1.0 - friction) / uCellSize;
+    float coef = uDt * uGravity * uPipeArea / uCellSize;
 
     float b = texture2D(heightmap, uv).x;
-    float d = texture2D(tWater, uv).x;
+    vec4 w = texture2D(tWater, uv);
+    float d = w.x;
     float h = b + d;
-    float c = (uUseSurface == 1) ? coef * texture2D(tSurface, uv).b : coef;
+    // Per-cell Manning's n from the land-cover conductance (flow-ease) field:
+    // conductance 1.0 (paved) -> n≈0.015; 0.22 (vegetated) -> n≈0.20.
+    float cond = (uUseSurface == 1) ? texture2D(tSurface, uv).b : 1.0;
+    float nCell = (0.015 + (1.0 - cond) * 0.235) * uRoughness;
+    float speed = length(w.ba); // diagnostic velocity from the previous step
+    float manning = 1.0 / (1.0 + uDt * uGravity * nCell * nCell * speed / pow(max(d, 1.0e-3), 1.3333333));
+    float c = coef * cond * manning;
     bool hasL = uv.x - texel.x > 0.0;
     bool hasR = uv.x + texel.x < 1.0;
     bool hasT = uv.y + texel.y < 1.0;
@@ -127,11 +146,12 @@ export const integrateFragment = /* glsl */ `
     // removed → water accumulates at the low point. This is the flood trigger.
     float sinkRate = uInfilRate;
     if (uUseSurface == 1) {
-      vec2 surf2 = texture2D(tSurface, uv).rg;
-      sinkRate = surf2.x + surf2.y; // infiltration + drainage capacity
+      vec4 surf4 = texture2D(tSurface, uv);
+      float drain = (surf4.a > 0.5) ? 0.0 : surf4.y; // storm sewer runs under streets, not roofs
+      sinkRate = surf4.x + drain; // infiltration + drainage capacity
     }
     dNew -= min(dNew, sinkRate * uDt);
-    dNew *= clamp(1.0 - uEvapRate * uDt, 0.0, 1.0);
+    dNew -= min(dNew, uEvapRate * uDt); // evaporation is a constant depth flux (m/s), not a fraction of depth
     dNew = max(dNew, 0.0);
     if (uFillLevelAbs > -1.0e8) {
       float terrain = texture2D(heightmap, uv).x;

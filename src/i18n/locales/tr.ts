@@ -45,11 +45,10 @@ export const tr: Record<string, string> = {
   'rain.cellY': 'hücre y',
   'rain.cellRadius': 'hücre yarıçapı',
   'storm.constant': 'Sabit (elle mm/sa)',
-  'storm.cloudburst': 'Sağanak (~50 mm / 2 sa)',
-  'storm.design25yr': 'Tasarım fırtınası P≈25 yıl',
-  'storm.may2026': 'Gözlem 18 May 2026 (41 mm/2 sa)',
-  'storm.jun2026': 'Gözlem 12 Haz 2026 (90 mm/gün)',
-
+  'storm.cloudburst': 'Sağanak (~38 mm/2h)',
+  'storm.design25yr': 'Şiddetli fırtına (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'yüzey modeli',
   'urban.buildings': 'duvar olarak binalar',
@@ -58,7 +57,7 @@ export const tr: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'toprak sızması (mm/hr)',
-  'soil.evaporation': 'buharlaşma (/hr)',
+  'soil.evaporation': 'buharlaşma (mm/hr)',
 
   // Physics
   'physics.gravity': 'yerçekimi (m/s²)',
@@ -164,6 +163,7 @@ export const tr: Record<string, string> = {
   'stats.simTime': 'sim süresi',
   'stats.rainIn': 'yağan yağmur',
   'stats.stored': 'depolanan su',
+  'stats.balance': 'su dengesi',
   'stats.flooded': 'taşkın alanı',
   'stats.maxDepth': 'maks derinlik',
   'stats.fps': 'fps',
@@ -214,6 +214,10 @@ export const tr: Record<string, string> = {
   'toast.loadFailed': 'Harita yüklenirken bir sorun oluştu. Lütfen yeniden yükleyin.',
   'toast.linkCopied': 'Bağlantı panoya kopyalandı',
   'share.title': 'Bu senaryoyu paylaş',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Nasıl çalışır ve sınırlar',
+  'method.body': 'Eğitim amaçlı bir yağmur-taşkın simülasyonu. Suyun fiziği basitleştirilmiştir ve model gerçek ölçümlere göre kalibre edilmemiştir, bu yüzden taşkın derinlikleri ve alanları yalnızca göstergedir — bir taşkın riski değerlendirmesi değildir. Yağmur suyu kanalizasyonunu, yeraltı suyunu veya nehir ve kıyı taşkınlarını modellemez. Fırtına ön ayarları temsili yağış profilleridir, ölçüm kayıtları değildir.',
+  'method.indicative': 'Gösterge (model)',
   'waterlevel.title': 'Su seviyesi 🌊',
   'waterlevel.off': 'Kapalı',
 };

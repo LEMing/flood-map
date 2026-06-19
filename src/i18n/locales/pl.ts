@@ -73,18 +73,17 @@ export const pl: Record<string, string> = {
   'rain.cellY': 'komórka y',
   'rain.cellRadius': 'promień komórki',
   'storm.constant': 'Stały (ręcznie mm/h)',
-  'storm.cloudburst': 'Oberwanie chmury (~50 mm / 2 h)',
-  'storm.design25yr': 'Deszcz projektowy P≈25 lat',
-  'storm.may2026': 'Zaobserwowano 18 maj 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Zaobserwowano 12 cze 2026 (90 mm/dzień)',
-
+  'storm.cloudburst': 'Ulewa (~38 mm/2h)',
+  'storm.design25yr': 'Silna burza (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'model powierzchni',
   'urban.buildings': 'budynki jako ściany',
   'urban.sewer': 'kanalizacja deszczowa (mm/h)',
   'urban.groundwater': 'wysokie wody gruntowe',
 
   'soil.infiltration': 'infiltracja gleby (mm/h)',
-  'soil.evaporation': 'parowanie (/h)',
+  'soil.evaporation': 'parowanie (mm/h)',
 
   'physics.gravity': 'grawitacja (m/s²)',
   'physics.flow': 'współczynnik spływu',
@@ -154,6 +153,7 @@ export const pl: Record<string, string> = {
   'stats.simTime': 'czas symulacji',
   'stats.rainIn': 'opad deszczu',
   'stats.stored': 'zmagazynowana woda',
+  'stats.balance': 'bilans wodny',
   'stats.flooded': 'obszar zalany',
   'stats.maxDepth': 'maks. głębokość',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const pl: Record<string, string> = {
   'toast.loadFailed': 'Coś poszło nie tak podczas ładowania mapy. Załaduj ponownie.',
   'toast.linkCopied': 'Link skopiowany do schowka',
   'share.title': 'Udostępnij ten scenariusz',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Jak to działa i ograniczenia',
+  'method.body': 'Edukacyjna symulacja powodzi opadowej. Fizyka wody jest uproszczona, a model nie jest skalibrowany do rzeczywistych pomiarów, więc głębokości i obszary zalania są jedynie orientacyjne — to nie ocena ryzyka powodziowego. Nie modeluje kanalizacji deszczowej, wód gruntowych ani powodzi rzecznych i przybrzeżnych. Ustawienia burzy to reprezentatywne profile opadów, a nie zapisy pomiarowe.',
+  'method.indicative': 'Orientacyjne (model)',
   'waterlevel.title': 'Poziom wody 🌊',
   'waterlevel.off': 'Wył',
 };

@@ -50,11 +50,10 @@ export const pa: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'ਸਥਿਰ (ਹੱਥੀਂ mm/hr)',
-  'storm.cloudburst': 'ਬੱਦਲ ਫਟਣਾ (~50 mm / 2 h)',
-  'storm.design25yr': 'ਡਿਜ਼ਾਈਨ ਤੂਫ਼ਾਨ P≈25 yr',
-  'storm.may2026': 'ਦੇਖਿਆ 18 ਮਈ 2026 (41 mm/2 h)',
-  'storm.jun2026': 'ਦੇਖਿਆ 12 ਜੂਨ 2026 (90 mm/day)',
-
+  'storm.cloudburst': 'ਮੋਹਲੇਧਾਰ ਮੀਂਹ (~38 mm/2h)',
+  'storm.design25yr': 'ਤੇਜ਼ ਤੂਫਾਨ (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 ਪ੍ਰੋਫਾਈਲ (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 ਪ੍ਰੋਫਾਈਲ (~100 mm/24h)',
   // Urban model
   'urban.surface': 'ਸਤਹ ਮਾਡਲ',
   'urban.buildings': 'ਇਮਾਰਤਾਂ ਕੰਧਾਂ ਵਜੋਂ',
@@ -63,7 +62,7 @@ export const pa: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'ਮਿੱਟੀ ਸੋਖ (mm/hr)',
-  'soil.evaporation': 'ਵਾਸ਼ਪੀਕਰਨ (/hr)',
+  'soil.evaporation': 'ਵਾਸ਼ਪੀਕਰਨ (mm/hr)',
 
   // Physics
   'physics.gravity': 'ਗੁਰੂਤਾ (m/s²)',
@@ -172,6 +171,7 @@ export const pa: Record<string, string> = {
   'stats.simTime': 'ਸਿਮ ਸਮਾਂ',
   'stats.rainIn': 'ਮੀਂਹ ਅੰਦਰ',
   'stats.stored': 'ਪਾਣੀ ਜਮ੍ਹਾਂ',
+  'stats.balance': 'ਪਾਣੀ ਸੰਤੁਲਨ',
   'stats.flooded': 'ਹੜ੍ਹ ਖੇਤਰ',
   'stats.maxDepth': 'ਵੱਧ ਡੂੰਘਾਈ',
   'stats.fps': 'fps',
@@ -222,6 +222,10 @@ export const pa: Record<string, string> = {
   'toast.loadFailed': 'ਨਕਸ਼ਾ ਲੋਡ ਕਰਨ ਵੇਲੇ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਲੋਡ ਕਰੋ।',
   'toast.linkCopied': 'ਲਿੰਕ ਕਲਿੱਪਬੋਰਡ ਉੱਤੇ ਕਾਪੀ ਹੋਇਆ',
   'share.title': 'ਇਹ ਦ੍ਰਿਸ਼ ਸਾਂਝਾ ਕਰੋ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ ਅਤੇ ਸੀਮਾਵਾਂ',
+  'method.body': 'ਇੱਕ ਵਿੱਦਿਅਕ ਮੀਂਹ-ਹੜ੍ਹ ਸਿਮੂਲੇਸ਼ਨ। ਪਾਣੀ ਦਾ ਭੌਤਿਕ ਵਿਗਿਆਨ ਸਰਲ ਕੀਤਾ ਗਿਆ ਹੈ ਅਤੇ ਮਾਡਲ ਅਸਲ ਮਾਪਾਂ ਨਾਲ ਕੈਲੀਬਰੇਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ, ਇਸ ਲਈ ਹੜ੍ਹ ਦੀ ਡੂੰਘਾਈ ਅਤੇ ਖੇਤਰ ਸਿਰਫ਼ ਸੰਕੇਤਕ ਹਨ — ਕੋਈ ਹੜ੍ਹ-ਜੋਖਮ ਮੁਲਾਂਕਣ ਨਹੀਂ। ਇਹ ਮੀਂਹ ਦੇ ਨਾਲੇ, ਜ਼ਮੀਨਦੋਜ਼ ਪਾਣੀ, ਜਾਂ ਦਰਿਆ ਅਤੇ ਤੱਟੀ ਹੜ੍ਹ ਦਾ ਮਾਡਲ ਨਹੀਂ ਬਣਾਉਂਦਾ। ਤੂਫ਼ਾਨ ਪ੍ਰੀਸੈੱਟ ਪ੍ਰਤੀਨਿਧ ਵਰਖਾ ਪ੍ਰੋਫਾਈਲ ਹਨ, ਮਾਪ ਰਿਕਾਰਡ ਨਹੀਂ।',
+  'method.indicative': 'ਸੰਕੇਤਕ (ਮਾਡਲ)',
   'waterlevel.title': 'ਪਾਣੀ ਦਾ ਪੱਧਰ 🌊',
   'waterlevel.off': 'ਬੰਦ',
 };

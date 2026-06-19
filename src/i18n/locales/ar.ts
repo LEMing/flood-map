@@ -41,18 +41,17 @@ export const ar: Record<string, string> = {
   'rain.cellY': 'الخلية y',
   'rain.cellRadius': 'نصف قطر الخلية',
   'storm.constant': 'ثابت (يدوي مم/س)',
-  'storm.cloudburst': 'وابل مطري (~50 مم / 2 س)',
-  'storm.design25yr': 'عاصفة تصميمية P≈25 سنة',
-  'storm.may2026': 'مرصود 18 مايو 2026 (41 مم/2 س)',
-  'storm.jun2026': 'مرصود 12 يونيو 2026 (90 مم/يوم)',
-
+  'storm.cloudburst': 'وابل مطري (~38 mm/2h)',
+  'storm.design25yr': 'عاصفة شديدة (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 منحنى (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 منحنى (~100 mm/24h)',
   'urban.surface': 'نموذج السطح',
   'urban.buildings': 'المباني كجدران',
   'urban.sewer': 'مجاري الأمطار (مم/س)',
   'urban.groundwater': 'مياه جوفية مرتفعة',
 
   'soil.infiltration': 'تسرّب التربة (مم/س)',
-  'soil.evaporation': 'التبخر (/س)',
+  'soil.evaporation': 'التبخر (مم/س)',
 
   'physics.gravity': 'الجاذبية (م/ث²)',
   'physics.flow': 'معامل الجريان',
@@ -154,6 +153,7 @@ export const ar: Record<string, string> = {
   'stats.simTime': 'زمن المحاكاة',
   'stats.rainIn': 'المطر الساقط',
   'stats.stored': 'الماء المخزّن',
+  'stats.balance': 'التوازن المائي',
   'stats.flooded': 'المساحة المغمورة',
   'stats.maxDepth': 'أقصى عمق',
   'stats.fps': 'إطار/ث',
@@ -202,6 +202,10 @@ export const ar: Record<string, string> = {
   'toast.loadFailed': 'حدث خطأ ما أثناء تحميل الخريطة. يرجى إعادة التحميل.',
   'toast.linkCopied': 'تم نسخ الرابط إلى الحافظة',
   'share.title': 'شارك هذا السيناريو',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'كيف يعمل وحدوده',
+  'method.body': 'محاكاة تعليمية لفيضانات الأمطار. فيزياء المياه مبسّطة والنموذج غير معاير وفق قياسات حقيقية، لذا فإن أعماق الفيضان ومساحاته إرشادية فقط — وليست تقييمًا لمخاطر الفيضان. لا يحاكي شبكات تصريف الأمطار أو المياه الجوفية أو فيضانات الأنهار والسواحل. إعدادات العواصف المسبقة هي ملامح مطرية تمثيلية، وليست سجلات قياس.',
+  'method.indicative': 'إرشادي (نموذج)',
   'waterlevel.title': 'منسوب المياه 🌊',
   'waterlevel.off': 'إيقاف',
 };

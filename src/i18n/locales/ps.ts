@@ -47,11 +47,10 @@ export const ps: Record<string, string> = {
 
   // Storm hyetograph presets
   'storm.constant': 'ثابت (لاسي mm/hr)',
-  'storm.cloudburst': 'سخت باران (~50 mm / 2 h)',
-  'storm.design25yr': 'ډیزاین توپان P≈25 yr',
-  'storm.may2026': 'لیدل شوی د ۱۸ مۍ ۲۰۲۶ (41 mm/2 h)',
-  'storm.jun2026': 'لیدل شوی د ۱۲ جون ۲۰۲۶ (90 mm/day)',
-
+  'storm.cloudburst': 'سخت باران (~38 mm/2h)',
+  'storm.design25yr': 'سخت طوفان (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 پروفایل (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 پروفایل (~100 mm/24h)',
   // Urban model
   'urban.surface': 'د سطحې ماډل',
   'urban.buildings': 'ودانۍ لکه دېوالونه',
@@ -60,7 +59,7 @@ export const ps: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'د خاورې جذب (mm/hr)',
-  'soil.evaporation': 'بخارېدنه (/hr)',
+  'soil.evaporation': 'بخارېدنه (mm/hr)',
 
   // Physics
   'physics.gravity': 'جاذبه (m/s²)',
@@ -169,6 +168,7 @@ export const ps: Record<string, string> = {
   'stats.simTime': 'د سیم وخت',
   'stats.rainIn': 'باران دننه',
   'stats.stored': 'ذخیره شوې اوبه',
+  'stats.balance': 'د اوبو انډول',
   'stats.flooded': 'لاندې شوې ساحه',
   'stats.maxDepth': 'اعظمي ژوروالی',
   'stats.fps': 'fps',
@@ -219,6 +219,10 @@ export const ps: Record<string, string> = {
   'toast.loadFailed': 'د نقشې په بارولو کې یو څه غلط شو. مهرباني وکړئ بیا یې بار کړئ.',
   'toast.linkCopied': 'لینک کلیپ بورډ ته کاپي شو',
   'share.title': 'دا سناریو شریک کړئ',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'څنګه کار کوي او محدودیتونه',
+  'method.body': 'د باران د سیلاب یوه ښوونیزه شبیه‌سازي. د اوبو فزیک ساده شوی او ماډل د ریښتینو اندازو سره عیار شوی نه دی، نو د سیلاب ژورتیا او ساحې یوازې ښوونکې دي — د سیلاب د خطر ارزونه نه ده. دا د باران د اوبو نالې، ځمکنۍ اوبه، یا د سیند او ساحل سیلابونه نه ماډل کوي. د طوفان مخکینۍ تنظیمونه استازي د باران پروفایلونه دي، د اندازه‌ګیرۍ ریکارډونه نه دي.',
+  'method.indicative': 'ښوونکی (ماډل)',
   'waterlevel.title': 'د اوبو کچه 🌊',
   'waterlevel.off': 'بند',
 };

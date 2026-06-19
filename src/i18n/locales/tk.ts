@@ -41,18 +41,17 @@ export const tk: Record<string, string> = {
   'rain.cellY': 'öýjük y',
   'rain.cellRadius': 'öýjük radiusy',
   'storm.constant': 'Hemişelik (elde mm/sag)',
-  'storm.cloudburst': 'Çaýkanma ýagyş (~50 mm / 2 sag)',
-  'storm.design25yr': 'Taslama tupany P≈25 ýyl',
-  'storm.may2026': 'Hasaba alnan 18 Maý 2026 (41 mm/2 sag)',
-  'storm.jun2026': 'Hasaba alnan 12 Iýun 2026 (90 mm/gün)',
-
+  'storm.cloudburst': 'Sil ýagyş (~38 mm/2h)',
+  'storm.design25yr': 'Güýçli tupan (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'üst modeli',
   'urban.buildings': 'binalar diwar hökmünde',
   'urban.sewer': 'ýagyş kanalizasiýasy (mm/sag)',
   'urban.groundwater': 'ýokary ýerasty suw',
 
   'soil.infiltration': 'toprak siňdirmesi (mm/sag)',
-  'soil.evaporation': 'bugarmak (/sag)',
+  'soil.evaporation': 'bugarmak (mm/sag)',
 
   'physics.gravity': 'agram güýji (m/s²)',
   'physics.flow': 'akym koeffisiýenti',
@@ -154,6 +153,7 @@ export const tk: Record<string, string> = {
   'stats.simTime': 'sim wagty',
   'stats.rainIn': 'düşen ýagyş',
   'stats.stored': 'saklanan suw',
+  'stats.balance': 'suw balansy',
   'stats.flooded': 'joşan meýdan',
   'stats.maxDepth': 'maks. çuňluk',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const tk: Record<string, string> = {
   'toast.loadFailed': 'Karta ýüklenende bir zat ýalňyş boldy. Haýyş, täzeden ýükläň.',
   'toast.linkCopied': 'Salgy alyş-çalyş tagtasyna göçürildi',
   'share.title': 'Bu ssenarini paýlaş',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Nähili işleýär we çäklendirmeler',
+  'method.body': 'Ýagyş-sil joşmasynyň bilim beriş simulýasiýasy. Suwuň fizikasy ýönekeýleşdirildi we model hakyky ölçeglere görä kalibrlenmedi, şonuň üçin silüň çuňlugy we meýdany diňe görkeziji — sil howpuny bahalandyrma däl. Ol ýagyş lagymyny, ýerasty suwlary ýa-da derýa we kenarýaka silleri modellemeýär. Tupan deslapky sazlamalary wekilçilikli ýagyş profilleridir, ölçeg ýazgylary däl.',
+  'method.indicative': 'Görkeziji (model)',
   'waterlevel.title': 'Suw derejesi 🌊',
   'waterlevel.off': 'Öçür',
 };

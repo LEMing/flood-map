@@ -73,18 +73,17 @@ export const it: Record<string, string> = {
   'rain.cellY': 'cella y',
   'rain.cellRadius': 'raggio cella',
   'storm.constant': 'Costante (manuale mm/h)',
-  'storm.cloudburst': 'Nubifragio (~50 mm / 2 h)',
-  'storm.design25yr': 'Pioggia di progetto P≈25 anni',
-  'storm.may2026': 'Osservato 18 mag 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Osservato 12 giu 2026 (90 mm/giorno)',
-
+  'storm.cloudburst': 'Acquazzone (~38 mm/2h)',
+  'storm.design25yr': 'Tempesta forte (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profilo (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profilo (~100 mm/24h)',
   'urban.surface': 'modello di superficie',
   'urban.buildings': 'edifici come muri',
   'urban.sewer': 'fognatura pluviale (mm/h)',
   'urban.groundwater': 'falda freatica alta',
 
   'soil.infiltration': 'infiltrazione nel suolo (mm/h)',
-  'soil.evaporation': 'evaporazione (/h)',
+  'soil.evaporation': 'evaporazione (mm/h)',
 
   'physics.gravity': 'gravità (m/s²)',
   'physics.flow': 'coefficiente di deflusso',
@@ -154,6 +153,7 @@ export const it: Record<string, string> = {
   'stats.simTime': 'tempo simulazione',
   'stats.rainIn': 'pioggia caduta',
   'stats.stored': 'acqua accumulata',
+  'stats.balance': 'bilancio idrico',
   'stats.flooded': 'area allagata',
   'stats.maxDepth': 'profondità max',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const it: Record<string, string> = {
   'toast.loadFailed': 'Si è verificato un problema durante il caricamento della mappa. Ricarica.',
   'toast.linkCopied': 'Link copiato negli appunti',
   'share.title': 'Condividi questo scenario',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Come funziona e limiti',
+  'method.body': 'Una simulazione didattica di alluvione da pioggia. La fisica dell’acqua è semplificata e il modello non è calibrato su misure reali, quindi profondità e aree allagate sono solo indicative — non una valutazione del rischio alluvionale. Non modella la rete fognaria pluviale, le acque sotterranee, né le piene fluviali e costiere. I preset di tempesta sono profili di pioggia rappresentativi, non registrazioni strumentali.',
+  'method.indicative': 'Indicativo (modello)',
   'waterlevel.title': 'Livello dell’acqua 🌊',
   'waterlevel.off': 'Spento',
 };

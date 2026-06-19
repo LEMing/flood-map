@@ -45,11 +45,10 @@ export const es: Record<string, string> = {
   'rain.cellY': 'celda y',
   'rain.cellRadius': 'radio de celda',
   'storm.constant': 'Constante (manual mm/h)',
-  'storm.cloudburst': 'Aguacero (~50 mm / 2 h)',
-  'storm.design25yr': 'Tormenta de diseño P≈25 años',
-  'storm.may2026': 'Observado 18 may 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Observado 12 jun 2026 (90 mm/día)',
-
+  'storm.cloudburst': 'Aguacero (~38 mm/2h)',
+  'storm.design25yr': 'Tormenta fuerte (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 perfil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 perfil (~100 mm/24h)',
   // Urban model
   'urban.surface': 'modelo de superficie',
   'urban.buildings': 'edificios como muros',
@@ -58,7 +57,7 @@ export const es: Record<string, string> = {
 
   // Soil
   'soil.infiltration': 'infiltración del suelo (mm/hr)',
-  'soil.evaporation': 'evaporación (/hr)',
+  'soil.evaporation': 'evaporación (mm/hr)',
 
   // Physics
   'physics.gravity': 'gravedad (m/s²)',
@@ -167,6 +166,7 @@ export const es: Record<string, string> = {
   'stats.simTime': 'tiempo de sim',
   'stats.rainIn': 'lluvia en',
   'stats.stored': 'agua almacenada',
+  'stats.balance': 'balance hídrico',
   'stats.flooded': 'área inundada',
   'stats.maxDepth': 'profundidad máx',
   'stats.fps': 'fps',
@@ -217,6 +217,10 @@ export const es: Record<string, string> = {
   'toast.loadFailed': 'Algo salió mal al cargar el mapa. Vuelve a cargar.',
   'toast.linkCopied': 'Enlace copiado al portapapeles',
   'share.title': 'Compartir este escenario',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cómo funciona y límites',
+  'method.body': 'Una simulación educativa de inundación por lluvia. La física del agua está simplificada y el modelo no está calibrado con mediciones reales, por lo que las profundidades y áreas de inundación son solo indicativas, no una evaluación del riesgo de inundación. No modela el alcantarillado pluvial, las aguas subterráneas ni las inundaciones fluviales o costeras. Los ajustes de tormenta son perfiles de lluvia representativos, no registros de instrumentos.',
+  'method.indicative': 'Indicativo (modelo)',
   'waterlevel.title': 'Nivel del agua 🌊',
   'waterlevel.off': 'Apagado',
 };

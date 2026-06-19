@@ -73,18 +73,17 @@ export const tg: Record<string, string> = {
   'rain.cellY': 'ҳуҷайра y',
   'rain.cellRadius': 'радиуси ҳуҷайра',
   'storm.constant': 'Доимӣ (дастӣ мм/соат)',
-  'storm.cloudburst': 'Бориши шадид (~50 мм / 2 соат)',
-  'storm.design25yr': 'Бориши ҳисобӣ P≈25 сол',
-  'storm.may2026': 'Мушоҳидашуда 18 май 2026 (41 мм/2 соат)',
-  'storm.jun2026': 'Мушоҳидашуда 12 июн 2026 (90 мм/рӯз)',
-
+  'storm.cloudburst': 'Борон (~38 mm/2h)',
+  'storm.design25yr': 'Тӯфони шадид (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 профил (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 профил (~100 mm/24h)',
   'urban.surface': 'модели сатҳ',
   'urban.buildings': 'биноҳо ҳамчун девор',
   'urban.sewer': 'обпартои борон (мм/соат)',
   'urban.groundwater': 'оби зеризаминии баланд',
 
   'soil.infiltration': 'фурӯравии хок (мм/соат)',
-  'soil.evaporation': 'бухоршавӣ (/соат)',
+  'soil.evaporation': 'бухоршавӣ (мм/соат)',
 
   'physics.gravity': 'ҷозиба (м/с²)',
   'physics.flow': 'коэффитсиенти ҷараён',
@@ -154,6 +153,7 @@ export const tg: Record<string, string> = {
   'stats.simTime': 'вақти симулятсия',
   'stats.rainIn': 'бориши борон',
   'stats.stored': 'оби захирашуда',
+  'stats.balance': 'тавозуни об',
   'stats.flooded': 'масоҳати обхезӣ',
   'stats.maxDepth': 'чуқурии макс.',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const tg: Record<string, string> = {
   'toast.loadFailed': 'Ҳангоми боргузории харита чизе нодуруст шуд. Лутфан аз нав бор кунед.',
   'toast.linkCopied': 'Истинод ба ҳофизаи муваққатӣ нусхабардорӣ шуд',
   'share.title': 'Ин сенарияро мубодила кунед',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Чӣ тавр кор мекунад ва маҳдудиятҳо',
+  'method.body': 'Симулясияи таълимии обхезии боронӣ. Физикаи об содда карда шудааст ва модел бо ченакҳои воқеӣ калибр карда нашудааст, бинобар ин чуқурӣ ва масоҳати обхезӣ танҳо нишондиҳанда мебошанд — на арзёбии хатари обхезӣ. Он канализатсияи борон, оби зеризаминӣ ё обхезии дарёӣ ва соҳилиро моделсозӣ намекунад. Танзимоти пешакии тӯфон профилҳои намояндагии боришот мебошанд, на сабтҳои ченкунӣ.',
+  'method.indicative': 'Нишондиҳанда (модел)',
   'waterlevel.title': 'Сатҳи об 🌊',
   'waterlevel.off': 'Хомӯш',
 };

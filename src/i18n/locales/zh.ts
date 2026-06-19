@@ -77,11 +77,10 @@ export const zh: Record<string, string> = {
   'rain.cellY': '单元 y',
   'rain.cellRadius': '单元半径',
   'storm.constant': '恒定（手动 mm/小时）',
-  'storm.cloudburst': '暴雨（~50 mm / 2 小时）',
-  'storm.design25yr': '设计暴雨 P≈25 年',
-  'storm.may2026': '实测 2026年5月18日（41 mm/2小时）',
-  'storm.jun2026': '实测 2026年6月12日（90 mm/天）',
-
+  'storm.cloudburst': '暴雨 (~38 mm/2h)',
+  'storm.design25yr': '强风暴 (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 曲线 (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 曲线 (~100 mm/24h)',
   // Urban model
   'urban.surface': '地表模型',
   'urban.buildings': '建筑作为墙体',
@@ -90,7 +89,7 @@ export const zh: Record<string, string> = {
 
   // Soil
   'soil.infiltration': '土壤入渗 (mm/hr)',
-  'soil.evaporation': '蒸发 (/hr)',
+  'soil.evaporation': '蒸发 (mm/hr)',
 
   // Physics
   'physics.gravity': '重力 (m/s²)',
@@ -164,6 +163,7 @@ export const zh: Record<string, string> = {
   'stats.simTime': '模拟时间',
   'stats.rainIn': '降雨量',
   'stats.stored': '蓄水量',
+  'stats.balance': '水量平衡',
   'stats.flooded': '淹没面积',
   'stats.maxDepth': '最大深度',
   'stats.fps': 'fps',
@@ -214,6 +214,10 @@ export const zh: Record<string, string> = {
   'toast.loadFailed': '加载地图时出了点问题。请重新加载。',
   'toast.linkCopied': '链接已复制到剪贴板',
   'share.title': '分享此场景',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': '工作原理与局限',
+  'method.body': '一个用于教学的降雨洪涝模拟。水的物理过程已简化，模型也未根据实测数据校准，因此淹没深度和范围仅供参考，并非洪水风险评估。它不模拟雨水管网、地下水，也不模拟河流和海岸洪水。暴雨预设是有代表性的降雨曲线，而非实测记录。',
+  'method.indicative': '参考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '关闭',
 };

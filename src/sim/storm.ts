@@ -1,23 +1,29 @@
 import type { StormType } from '../config';
 
-// Time-varying rain (hyetograph) instead of flat rainfall. A залповый ливень has
-// a short, sharply-peaked intensity that briefly exceeds the storm-sewer
-// capacity — that peak is what triggers the flooding. Curves are [minutes, mm/hr]
-// anchored to sim time from 0 (reset replays the storm). Tuned to the Krasnodar
-// СП 32.13330 design intensities and the observed 2026 events.
+// Time-varying rain (hyetograph) instead of flat rainfall. A cloudburst has a
+// short, sharply-peaked intensity that briefly exceeds the storm-sewer capacity —
+// that peak is what triggers the flooding. Curves are [minutes, mm/hr] anchored to
+// sim time from 0 (reset replays the storm).
+//
+// NOTE: these are REPRESENTATIVE rainfall profiles (eyeballed piecewise-linear
+// shapes scaled to a reported total depth) — they are NOT fitted IDF / alternating-
+// block design storms (Keifer & Chu 1957) nor gauge records, and the "2026" curves
+// are not validated against any observed flood extent. Each preset's label states
+// its own trapezoidal-integral depth so the number is honest. A proper version
+// would synthesize a Chicago storm from Krasnodar СП 32.13330.2018 IDF parameters.
 
 interface Curve {
   points: Array<[number, number]>;
 }
 
 const STORMS: Record<Exclude<StormType, 'constant'>, Curve> = {
-  // ~50 mm over 2 h, peak ~55 mm/hr — the recurring street-flood storm.
+  // Cloudburst: peak ~55 mm/hr, ~38 mm over 2 h (trapezoidal) — the street-flood shape.
   cloudburst: { points: [[0, 4], [15, 12], [30, 38], [40, 55], [50, 40], [65, 18], [90, 7], [120, 0]] },
-  // P≈25 yr design storm, higher peak.
+  // Heavy storm: higher peak ~95 mm/hr, ~62 mm over ~2 h (design-type shape, not an IDF fit).
   design25yr: { points: [[0, 6], [15, 20], [30, 62], [40, 95], [50, 55], [70, 22], [100, 8], [135, 0]] },
-  // Observed 18 May 2026 — 41 mm in ~2 h.
+  // 18 May 2026 profile: ~40 mm over 2 h (representative shape, not a gauge trace).
   may2026: { points: [[0, 5], [20, 18], [45, 34], [70, 28], [95, 15], [120, 0]] },
-  // Observed 12 Jun 2026 — ~90 mm over the day (long, lower intensity).
+  // 12 Jun 2026 profile: ~100 mm over the day, long & low-intensity (representative shape).
   jun2026: { points: [[0, 3], [60, 7], [180, 9], [360, 7], [600, 5], [900, 3], [1440, 0]] },
 };
 

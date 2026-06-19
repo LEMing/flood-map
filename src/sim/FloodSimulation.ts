@@ -23,11 +23,13 @@ interface GpuApi {
 const MM_PER_HR_TO_M_PER_S = 1 / 1000 / 3600;
 
 /**
- * GPU shallow-water flood simulation. A ping-pong `tWater` texture stores depth
- * (r), max depth (g) and velocity (b,a). Each step runs two passes: a flux pass
- * computes every cell's capped outflux into `tFlux`, then an integrate pass reads
- * the flux field to update depth and apply rain/infiltration/etc. See shaders.ts;
- * the physics is pinned by virtualPipes.ts + its tests.
+ * GPU rainfall-flood simulation: a non-inertial virtual-pipes / diffusive-wave
+ * approximation to the 2-D shallow-water equations (see shaders.ts — mass-
+ * conserving, but no flow momentum/inertia). A ping-pong `tWater` texture stores
+ * depth (r), max depth (g) and a diagnostic velocity (b,a). Each step runs two
+ * passes: a flux pass computes every cell's capped outflux into `tFlux`, then an
+ * integrate pass reads the flux field to update depth and apply rain/infiltration/
+ * drainage/evaporation. The physics is pinned by virtualPipes.ts + its tests.
  */
 export class FloodSimulation {
   readonly N: number;
@@ -83,7 +85,7 @@ export class FloodSimulation {
       uDt: { value: 0 },
       uGravity: { value: params.gravity },
       uPipeArea: { value: params.pipeArea },
-      uFriction: { value: params.friction },
+      uRoughness: { value: params.friction },
       uBoundaryOpen: { value: params.boundary === 'open' ? 1 : 0 },
       uRainRate: { value: 0 },
       uInfilRate: { value: 0 },
@@ -102,7 +104,7 @@ export class FloodSimulation {
     const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
     this.fluxMat = gpu.createShaderMaterial(fluxFragment, pick([
       'heightmap', 'tWater', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
-      'uGravity', 'uPipeArea', 'uFriction', 'uBoundaryOpen',
+      'uGravity', 'uPipeArea', 'uRoughness', 'uBoundaryOpen',
     ]));
     this.integrateMat = gpu.createShaderMaterial(integrateFragment, pick([
       'heightmap', 'tWater', 'tFlux', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
@@ -126,11 +128,11 @@ export class FloodSimulation {
   updateParams(params: Params): void {
     this.u.uGravity.value = params.gravity;
     this.u.uPipeArea.value = params.pipeArea;
-    this.u.uFriction.value = params.friction;
+    this.u.uRoughness.value = params.friction;
     this.u.uBoundaryOpen.value = params.boundary === 'open' ? 1 : 0;
     this.u.uRainRate.value = params.intensityMmPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uInfilRate.value = params.infiltrationMmPerHr * MM_PER_HR_TO_M_PER_S;
-    this.u.uEvapRate.value = params.evaporationPerHr / 3600;
+    this.u.uEvapRate.value = params.evaporationPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uRaining.value = params.raining ? 1 : 0;
     this.u.uFootprintSpot.value = params.rainFootprint === 'spot' ? 1 : 0;
     (this.u.uSpot.value as THREE.Vector2).set(params.spotX, params.spotY);

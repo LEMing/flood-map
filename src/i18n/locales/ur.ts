@@ -73,18 +73,17 @@ export const ur: Record<string, string> = {
   'rain.cellY': 'خانہ y',
   'rain.cellRadius': 'خانے کا رداس',
   'storm.constant': 'مستقل (دستی ملی میٹر/گھنٹہ)',
-  'storm.cloudburst': 'بادل پھٹنا (~50 ملی میٹر / 2 گھنٹے)',
-  'storm.design25yr': 'ڈیزائن طوفان P≈25 سال',
-  'storm.may2026': 'مشاہدہ 18 مئی 2026 (41 ملی میٹر/2 گھنٹے)',
-  'storm.jun2026': 'مشاہدہ 12 جون 2026 (90 ملی میٹر/دن)',
-
+  'storm.cloudburst': 'موسلادھار بارش (~38 mm/2h)',
+  'storm.design25yr': 'شدید طوفان (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 پروفائل (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 پروفائل (~100 mm/24h)',
   'urban.surface': 'سطحی ماڈل',
   'urban.buildings': 'عمارتیں بطور دیواریں',
   'urban.sewer': 'برساتی نالہ (ملی میٹر/گھنٹہ)',
   'urban.groundwater': 'بلند زیر زمین پانی',
 
   'soil.infiltration': 'مٹی میں جذب (ملی میٹر/گھنٹہ)',
-  'soil.evaporation': 'تبخیر (/گھنٹہ)',
+  'soil.evaporation': 'تبخیر (ملی میٹر/گھنٹہ)',
 
   'physics.gravity': 'کششِ ثقل (میٹر/سیکنڈ²)',
   'physics.flow': 'بہاؤ کا عددی عامل',
@@ -154,6 +153,7 @@ export const ur: Record<string, string> = {
   'stats.simTime': 'سمولیشن وقت',
   'stats.rainIn': 'بارش ہوئی',
   'stats.stored': 'ذخیرہ شدہ پانی',
+  'stats.balance': 'آبی توازن',
   'stats.flooded': 'سیلاب زدہ رقبہ',
   'stats.maxDepth': 'زیادہ سے زیادہ گہرائی',
   'stats.fps': 'fps',
@@ -202,6 +202,10 @@ export const ur: Record<string, string> = {
   'toast.loadFailed': 'نقشہ لوڈ کرتے وقت کچھ غلط ہو گیا۔ براہ کرم دوبارہ لوڈ کریں۔',
   'toast.linkCopied': 'لنک کلپ بورڈ پر کاپی ہو گیا',
   'share.title': 'یہ منظرنامہ شیئر کریں',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'یہ کیسے کام کرتا ہے اور حدود',
+  'method.body': 'ایک تعلیمی بارش-سیلاب سمولیشن۔ پانی کی طبیعیات کو سادہ بنایا گیا ہے اور ماڈل کو حقیقی پیمائشوں سے کیلیبریٹ نہیں کیا گیا، اس لیے سیلاب کی گہرائی اور رقبہ صرف اشاراتی ہیں — کوئی سیلاب-خطرہ تشخیص نہیں۔ یہ بارشی نالوں، زیرِ زمین پانی، یا دریائی اور ساحلی سیلاب کا ماڈل نہیں بناتا۔ طوفان کے پری سیٹ نمائندہ بارش کے پروفائل ہیں، پیمائشی ریکارڈ نہیں۔',
+  'method.indicative': 'اشاراتی (ماڈل)',
   'waterlevel.title': 'پانی کی سطح 🌊',
   'waterlevel.off': 'بند',
 };

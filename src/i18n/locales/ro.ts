@@ -72,18 +72,17 @@ export const ro: Record<string, string> = {
   'rain.cellY': 'celulă y',
   'rain.cellRadius': 'rază celulă',
   'storm.constant': 'Constant (manual mm/h)',
-  'storm.cloudburst': 'Aversă (~50 mm / 2 h)',
-  'storm.design25yr': 'Furtună de proiectare P≈25 ani',
-  'storm.may2026': 'Observat 18 mai 2026 (41 mm/2 h)',
-  'storm.jun2026': 'Observat 12 iun 2026 (90 mm/zi)',
-
+  'storm.cloudburst': 'Aversă (~38 mm/2h)',
+  'storm.design25yr': 'Furtună puternică (~62 mm/2h)',
+  'storm.may2026': '2026-05-18 profil (~40 mm/2h)',
+  'storm.jun2026': '2026-06-12 profil (~100 mm/24h)',
   'urban.surface': 'model de suprafață',
   'urban.buildings': 'clădiri ca ziduri',
   'urban.sewer': 'canalizare pluvială (mm/h)',
   'urban.groundwater': 'apă freatică ridicată',
 
   'soil.infiltration': 'infiltrare în sol (mm/h)',
-  'soil.evaporation': 'evaporare (/h)',
+  'soil.evaporation': 'evaporare (mm/h)',
 
   'physics.gravity': 'gravitație (m/s²)',
   'physics.flow': 'coeficient de scurgere',
@@ -153,6 +152,7 @@ export const ro: Record<string, string> = {
   'stats.simTime': 'timp simulare',
   'stats.rainIn': 'ploaie căzută',
   'stats.stored': 'apă stocată',
+  'stats.balance': 'bilanț hidric',
   'stats.flooded': 'suprafață inundată',
   'stats.maxDepth': 'adâncime max',
   'stats.fps': 'fps',
@@ -201,6 +201,10 @@ export const ro: Record<string, string> = {
   'toast.loadFailed': 'Ceva nu a mers bine la încărcarea hărții. Reîncarcă.',
   'toast.linkCopied': 'Link copiat în clipboard',
   'share.title': 'Distribuie acest scenariu',
+  // Methodology / limitations note (in-app honesty)
+  'method.title': 'Cum funcționează și limite',
+  'method.body': 'O simulare educativă a inundațiilor pluviale. Fizica apei este simplificată, iar modelul nu este calibrat pe măsurători reale, așa că adâncimile și zonele inundate sunt doar orientative — nu o evaluare a riscului de inundație. Nu modelează rețeaua de canalizare pluvială, apele subterane, nici inundațiile fluviale și costiere. Presetările de furtună sunt profiluri de ploaie reprezentative, nu înregistrări de aparate.',
+  'method.indicative': 'Orientativ (model)',
   'waterlevel.title': 'Nivelul apei 🌊',
   'waterlevel.off': 'Oprit',
 };
