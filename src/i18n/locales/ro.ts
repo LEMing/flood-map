@@ -199,4 +199,6 @@ export const ro: Record<string, string> = {
   'toast.webglUnsupported': 'Acest dispozitiv nu poate rula simularea apei 3D — necesită WebGL2 cu texturi float.',
   'toast.loadTimeout': 'Timpul de încărcare a expirat. Verifică conexiunea și reîncarcă.',
   'toast.loadFailed': 'Ceva nu a mers bine la încărcarea hărții. Reîncarcă.',
+  'toast.linkCopied': 'Link copiat în clipboard',
+  'share.title': 'Distribuie acest scenariu',
 };

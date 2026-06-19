@@ -217,4 +217,6 @@ export const ps: Record<string, string> = {
   'toast.webglUnsupported': 'دا وسیله نشي کولی د 3D اوبو سمولیشن پرمخ یوسي — دې ته د float بافتونو سره WebGL2 اړتیا ده.',
   'toast.loadTimeout': 'د بارولو وخت پای ته ورسید. خپل اتصال وګورئ او بیا یې بار کړئ.',
   'toast.loadFailed': 'د نقشې په بارولو کې یو څه غلط شو. مهرباني وکړئ بیا یې بار کړئ.',
+  'toast.linkCopied': 'لینک کلیپ بورډ ته کاپي شو',
+  'share.title': 'دا سناریو شریک کړئ',
 };

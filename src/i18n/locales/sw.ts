@@ -200,4 +200,6 @@ export const sw: Record<string, string> = {
   'toast.webglUnsupported': 'Kifaa hiki hakiwezi kuendesha uigaji wa maji wa 3D — kinahitaji WebGL2 yenye texture za float.',
   'toast.loadTimeout': 'Muda wa kupakia umeisha. Angalia muunganisho wako na upakie upya.',
   'toast.loadFailed': 'Hitilafu fulani imetokea wakati wa kupakia ramani. Tafadhali pakia upya.',
+  'toast.linkCopied': 'Kiungo kimenakiliwa kwenye ubao wa kunakili',
+  'share.title': 'Shiriki hali hii',
 };

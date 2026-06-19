@@ -200,4 +200,6 @@ export const so: Record<string, string> = {
   'toast.webglUnsupported': 'Qalabkani ma awoodo inuu socodsiiyo jilitaanka biyaha 3D — wuxuu u baahan yahay WebGL2 oo leh float textures.',
   'toast.loadTimeout': 'Wakhtigii rarista wuu dhammaaday. Hubi xiriirkaaga oo dib u soo rar.',
   'toast.loadFailed': 'Wax baa khaldamay markii la rarayay khariidadda. Fadlan dib u soo rar.',
+  'toast.linkCopied': 'Xiriirka waxaa lagu koobiyeeyay sabuuradda',
+  'share.title': 'La wadaag xaaladdan',
 };

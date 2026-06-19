@@ -221,4 +221,6 @@ export const yue: Record<string, string> = {
   'toast.webglUnsupported': '呢部裝置運行唔到 3D 水模擬 — 需要支援 float 紋理嘅 WebGL2。',
   'toast.loadTimeout': '載入逾時。請檢查你嘅連線再重新載入。',
   'toast.loadFailed': '載入地圖嗰陣出咗問題。請重新載入。',
+  'toast.linkCopied': '連結已複製到剪貼簿',
+  'share.title': '分享呢個情景',
 };

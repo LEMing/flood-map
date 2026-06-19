@@ -200,4 +200,6 @@ export const tk: Record<string, string> = {
   'toast.webglUnsupported': 'Bu enjam 3D suw simulýasiýasyny işledip bilmeýär — float tekstura bilen WebGL2 gerek.',
   'toast.loadTimeout': 'Ýüklemegiň wagty gutardy. Birikmäňizi barlaň we täzeden ýükläň.',
   'toast.loadFailed': 'Karta ýüklenende bir zat ýalňyş boldy. Haýyş, täzeden ýükläň.',
+  'toast.linkCopied': 'Salgy alyş-çalyş tagtasyna göçürildi',
+  'share.title': 'Bu ssenarini paýlaş',
 };

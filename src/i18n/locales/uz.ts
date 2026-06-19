@@ -199,4 +199,6 @@ export const uz: Record<string, string> = {
   'toast.webglUnsupported': 'Bu qurilma 3D suv simulyatsiyasini ishga tushira olmaydi — unga float teksturali WebGL2 kerak.',
   'toast.loadTimeout': 'Yuklash vaqti tugadi. Ulanishingizni tekshiring va qayta yuklang.',
   'toast.loadFailed': 'Xaritani yuklashda nimadir xato ketdi. Iltimos, qayta yuklang.',
+  'toast.linkCopied': 'Havola vaqtinchalik xotiraga nusxalandi',
+  'share.title': 'Ushbu stsenariyni ulashing',
 };

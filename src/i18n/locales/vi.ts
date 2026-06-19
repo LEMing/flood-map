@@ -212,4 +212,6 @@ export const vi: Record<string, string> = {
   'toast.webglUnsupported': 'Thiết bị này không thể chạy mô phỏng nước 3D — cần WebGL2 với kết cấu float.',
   'toast.loadTimeout': 'Đã hết thời gian tải. Kiểm tra kết nối của bạn và tải lại.',
   'toast.loadFailed': 'Đã xảy ra lỗi khi tải bản đồ. Vui lòng tải lại.',
+  'toast.linkCopied': 'Đã sao chép liên kết vào bảng nhớ tạm',
+  'share.title': 'Chia sẻ kịch bản này',
 };

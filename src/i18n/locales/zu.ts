@@ -199,4 +199,6 @@ export const zu: Record<string, string> = {
   'toast.webglUnsupported': 'Le divayisi ayikwazi ukusebenzisa isilinganiso samanzi se-3D — idinga i-WebGL2 ene-float textures.',
   'toast.loadTimeout': 'Isikhathi sokulayisha siphelelwe yisikhathi. Hlola uxhumano lwakho bese ulayisha kabusha.',
   'toast.loadFailed': 'Kukhona okuhambe kabi ngenkathi kulayishwa imephu. Sicela ulayishe kabusha.',
+  'toast.linkCopied': 'Isixhumanisi sikopishelwe ku-clipboard',
+  'share.title': 'Yabelana ngalesi simo',
 };

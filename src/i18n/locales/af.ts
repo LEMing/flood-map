@@ -200,4 +200,6 @@ export const af: Record<string, string> = {
   'toast.webglUnsupported': 'Hierdie toestel kan nie die 3D-watersimulasie laat loop nie — dit benodig WebGL2 met float-teksture.',
   'toast.loadTimeout': 'Laai het uitgetel. Gaan jou verbinding na en herlaai.',
   'toast.loadFailed': 'Iets het verkeerd geloop met die laai van die kaart. Herlaai asseblief.',
+  'toast.linkCopied': 'Skakel na knipbord gekopieer',
+  'share.title': 'Deel hierdie scenario',
 };

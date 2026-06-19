@@ -200,4 +200,6 @@ export const ar: Record<string, string> = {
   'toast.webglUnsupported': 'لا يمكن لهذا الجهاز تشغيل محاكاة الماء ثلاثية الأبعاد — فهو يحتاج إلى WebGL2 مع تظليلات عائمة (float).',
   'toast.loadTimeout': 'انتهت مهلة التحميل. تحقق من اتصالك وأعد التحميل.',
   'toast.loadFailed': 'حدث خطأ ما أثناء تحميل الخريطة. يرجى إعادة التحميل.',
+  'toast.linkCopied': 'تم نسخ الرابط إلى الحافظة',
+  'share.title': 'شارك هذا السيناريو',
 };

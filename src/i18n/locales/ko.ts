@@ -217,4 +217,6 @@ export const ko: Record<string, string> = {
   'toast.webglUnsupported': '이 기기에서는 3D 물 시뮬레이션을 실행할 수 없습니다 — float 텍스처를 지원하는 WebGL2가 필요합니다.',
   'toast.loadTimeout': '로딩 시간이 초과되었습니다. 연결을 확인하고 다시 로드하세요.',
   'toast.loadFailed': '지도를 불러오는 중 문제가 발생했습니다. 다시 로드해 주세요.',
+  'toast.linkCopied': '링크가 클립보드에 복사되었습니다',
+  'share.title': '이 시나리오 공유',
 };

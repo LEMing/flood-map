@@ -200,4 +200,6 @@ export const ur: Record<string, string> = {
   'toast.webglUnsupported': 'یہ ڈیوائس 3D واٹر سمیولیشن نہیں چلا سکتی — اسے float ٹیکسچرز کے ساتھ WebGL2 درکار ہے۔',
   'toast.loadTimeout': 'لوڈنگ کا وقت ختم ہو گیا۔ اپنا کنکشن چیک کریں اور دوبارہ لوڈ کریں۔',
   'toast.loadFailed': 'نقشہ لوڈ کرتے وقت کچھ غلط ہو گیا۔ براہ کرم دوبارہ لوڈ کریں۔',
+  'toast.linkCopied': 'لنک کلپ بورڈ پر کاپی ہو گیا',
+  'share.title': 'یہ منظرنامہ شیئر کریں',
 };

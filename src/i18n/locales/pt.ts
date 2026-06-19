@@ -200,4 +200,6 @@ export const pt: Record<string, string> = {
   'toast.webglUnsupported': 'Este dispositivo não consegue executar a simulação de água em 3D — precisa de WebGL2 com texturas float.',
   'toast.loadTimeout': 'Tempo de carregamento esgotado. Verifique a sua ligação e recarregue.',
   'toast.loadFailed': 'Algo deu errado ao carregar o mapa. Recarregue, por favor.',
+  'toast.linkCopied': 'Link copiado para a área de transferência',
+  'share.title': 'Partilhar este cenário',
 };

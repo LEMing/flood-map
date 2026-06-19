@@ -200,4 +200,6 @@ export const az: Record<string, string> = {
   'toast.webglUnsupported': 'Bu cihaz 3D su simulyasiyasını işlədə bilmir — float teksturaları olan WebGL2 tələb edir.',
   'toast.loadTimeout': 'Yükləmənin vaxtı bitdi. Bağlantınızı yoxlayın və yenidən yükləyin.',
   'toast.loadFailed': 'Xəritə yüklənərkən nəsə səhv getdi. Zəhmət olmasa yenidən yükləyin.',
+  'toast.linkCopied': 'Keçid mübadilə buferinə kopyalandı',
+  'share.title': 'Bu ssenarini paylaşın',
 };

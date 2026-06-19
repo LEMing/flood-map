@@ -200,4 +200,6 @@ export const cs: Record<string, string> = {
   'toast.webglUnsupported': 'Toto zařízení nedokáže spustit 3D simulaci vody — vyžaduje WebGL2 s plovoucími (float) texturami.',
   'toast.loadTimeout': 'Vypršel časový limit načítání. Zkontrolujte připojení a načtěte znovu.',
   'toast.loadFailed': 'Při načítání mapy se něco pokazilo. Načtěte prosím znovu.',
+  'toast.linkCopied': 'Odkaz zkopírován do schránky',
+  'share.title': 'Sdílet tento scénář',
 };

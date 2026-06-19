@@ -217,4 +217,6 @@ export const su: Record<string, string> = {
   'toast.webglUnsupported': 'Alat ieu teu tiasa ngajalankeun simulasi cai 3D — peryogi WebGL2 sareng tékstur float.',
   'toast.loadTimeout': 'Waktos ngamuat béak. Pariksa sambungan anjeun teras muat deui.',
   'toast.loadFailed': 'Aya nu lepat nalika ngamuat peta. Mangga muat deui.',
+  'toast.linkCopied': 'Tautan disalin ka papan klip',
+  'share.title': 'Bagikeun skenario ieu',
 };

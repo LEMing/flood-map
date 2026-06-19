@@ -200,4 +200,6 @@ export const he: Record<string, string> = {
   'toast.webglUnsupported': 'מכשיר זה אינו יכול להריץ את סימולציית המים התלת-ממדית — נדרש WebGL2 עם טקסטורות float.',
   'toast.loadTimeout': 'תם הזמן הקצוב לטעינה. בדקו את החיבור וטענו מחדש.',
   'toast.loadFailed': 'משהו השתבש בטעינת המפה. אנא טען מחדש.',
+  'toast.linkCopied': 'הקישור הועתק ללוח',
+  'share.title': 'שתף את התרחיש הזה',
 };

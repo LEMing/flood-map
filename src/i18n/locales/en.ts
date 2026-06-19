@@ -190,6 +190,8 @@ export const en: Record<string, string> = {
   'toast.webglUnsupported': 'This device can’t run the 3D water simulation — it needs WebGL2 with float textures.',
   'toast.loadTimeout': 'Loading timed out. Check your connection and reload.',
   'toast.loadFailed': 'Something went wrong loading the map. Please reload.',
+  'toast.linkCopied': 'Link copied to clipboard',
+  'share.title': 'Share this scenario',
 
   // Misc
   'legend.elevation': 'Elevation',

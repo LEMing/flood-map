@@ -4,6 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Flood Map — rain &amp; flood simulation</title>
+    <meta
+      name="description"
+      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video. Free, no sign-up."
+    />
+
+    <!-- Social cards: a shared link (Slack / Telegram / X / WhatsApp) renders a
+         real thumbnail instead of a blank box. Static baseline; per-place cards
+         can follow via a Cloud Function later. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Flood Map" />
+    <meta property="og:title" content="See how a downpour floods any address" />
+    <meta
+      property="og:description"
+      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video."
+    />
+    <meta property="og:image" content="https://krd-flood.web.app/og-card.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://krd-flood.web.app/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="See how a downpour floods any address" />
+    <meta
+      name="twitter:description"
+      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video."
+    />
+    <meta name="twitter:image" content="https://krd-flood.web.app/og-card.jpg" />
     <style>
       :root {
         color-scheme: dark;
@@ -958,6 +984,7 @@
     <div id="game-dock" hidden>
       <button id="btn-pause" type="button" aria-label="Pause">⏸</button>
       <button id="btn-restart" type="button" aria-label="Restart">↻</button>
+      <button id="share-btn" type="button" aria-label="Share">🔗</button>
     </div>
     <div id="hud-stats" hidden>
       <span class="wave">🌊</span>

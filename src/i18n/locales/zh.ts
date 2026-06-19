@@ -212,4 +212,6 @@ export const zh: Record<string, string> = {
   'toast.webglUnsupported': '此设备无法运行 3D 水体模拟 — 需要支持 float 纹理的 WebGL2。',
   'toast.loadTimeout': '加载超时。请检查网络连接后重新加载。',
   'toast.loadFailed': '加载地图时出了点问题。请重新加载。',
+  'toast.linkCopied': '链接已复制到剪贴板',
+  'share.title': '分享此场景',
 };

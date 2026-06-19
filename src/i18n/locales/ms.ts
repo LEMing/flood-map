@@ -200,4 +200,6 @@ export const ms: Record<string, string> = {
   'toast.webglUnsupported': 'Peranti ini tidak dapat menjalankan simulasi air 3D — ia memerlukan WebGL2 dengan tekstur float.',
   'toast.loadTimeout': 'Masa muat tamat. Semak sambungan anda dan muat semula.',
   'toast.loadFailed': 'Sesuatu telah berlaku semasa memuatkan peta. Sila muat semula.',
+  'toast.linkCopied': 'Pautan disalin ke papan keratan',
+  'share.title': 'Kongsi senario ini',
 };

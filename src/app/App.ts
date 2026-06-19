@@ -5,6 +5,7 @@ import type { GeocodeResult } from '../geo/geocode';
 import { VideoMode } from './VideoMode';
 import { pickVideoMime } from '../video/Recorder';
 import { readUrlState, writeUrlState } from '../url';
+import { ScenarioUrl } from './ScenarioUrl';
 import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
 import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
 import { trackEvent } from '../analytics';
@@ -74,6 +75,7 @@ export class App {
   private needsRender = true;
   private framesRendered = 0;
   private readonly credit = document.getElementById('credit');
+  private readonly scenarioUrl = new ScenarioUrl(this.params, () => this.stats.location || this.params.address);
 
   // Routing lifecycle: the loop is kicked once (started), but only steps/renders
   // while `active` (this view is the live /sim, not the hidden landing) and not
@@ -102,11 +104,12 @@ export class App {
     this.scene.scene.add(this.group);
 
     const url = readUrlState();
-    if (url.km) this.params.mapSizeKm = url.km;
+    if (url.km !== undefined) this.params.mapSizeKm = url.km;
     if (url.grid && (GRID_RESOLUTIONS as readonly number[]).includes(url.grid)) {
       this.params.gridResolution = url.grid;
     }
     if (url.demo) this.params.demoMode = true;
+    this.scenarioUrl.applyFromUrl(url);
 
     this.addressBar = new AddressBar({
       onSubmit: (text) => this.worldBuilder.loadAddress(text),
@@ -348,6 +351,7 @@ export class App {
   retranslateForLanguage(): void {
     this.addressBar.retranslate();
     this.gameUI.retranslate();
+    this.scenarioUrl.translate(); // refresh the share tooltip in the new language
     applyDocumentLang();
     this.rebuildPanel();
     this.applyParams(); // re-translate legend labels etc.
@@ -390,6 +394,7 @@ export class App {
     this.applyOverlayVisibility();
     this.heatLegend.update(this.params.terrainStyle, this.heightmap);
     this.geology.update(this.params, this.heightmap, this.surfaceRaw?.land ?? null);
+    this.scenarioUrl.queueSync();
   }
 
   /** Toggle the optional overlay meshes + the satellite credit per the viz flags. */

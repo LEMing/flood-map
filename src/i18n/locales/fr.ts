@@ -220,4 +220,6 @@ export const fr: Record<string, string> = {
   'toast.webglUnsupported': 'Cet appareil ne peut pas exécuter la simulation d’eau 3D — il lui faut WebGL2 avec des textures flottantes.',
   'toast.loadTimeout': 'Délai de chargement dépassé. Vérifiez votre connexion et rechargez.',
   'toast.loadFailed': 'Un problème est survenu lors du chargement de la carte. Veuillez recharger.',
+  'toast.linkCopied': 'Lien copié dans le presse-papiers',
+  'share.title': 'Partager ce scénario',
 };

@@ -220,4 +220,6 @@ export const gu: Record<string, string> = {
   'toast.webglUnsupported': 'આ ઉપકરણ 3D પાણીનું સિમ્યુલેશન ચલાવી શકતું નથી — તેને float ટેક્સચર સાથે WebGL2 જરૂરી છે.',
   'toast.loadTimeout': 'લોડ થવાનો સમય સમાપ્ત થયો. તમારું કનેક્શન તપાસો અને ફરી લોડ કરો.',
   'toast.loadFailed': 'નકશો લોડ કરતી વખતે કંઈક ખોટું થયું. કૃપા કરીને ફરી લોડ કરો.',
+  'toast.linkCopied': 'લિંક ક્લિપબોર્ડ પર કૉપિ થઈ',
+  'share.title': 'આ દૃશ્ય શેર કરો',
 };

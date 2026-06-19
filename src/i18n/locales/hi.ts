@@ -217,4 +217,6 @@ export const hi: Record<string, string> = {
   'toast.webglUnsupported': 'यह डिवाइस 3D जल सिमुलेशन नहीं चला सकता — इसके लिए float टेक्सचर वाला WebGL2 चाहिए।',
   'toast.loadTimeout': 'लोड होने में समय समाप्त हो गया। अपना कनेक्शन जांचें और फिर से लोड करें।',
   'toast.loadFailed': 'मानचित्र लोड करते समय कुछ गलत हो गया। कृपया फिर से लोड करें।',
+  'toast.linkCopied': 'लिंक क्लिपबोर्ड पर कॉपी किया गया',
+  'share.title': 'यह परिदृश्य साझा करें',
 };

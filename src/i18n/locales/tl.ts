@@ -217,4 +217,6 @@ export const tl: Record<string, string> = {
   'toast.webglUnsupported': 'Hindi kayang patakbuhin ng device na ito ang 3D water simulation — kailangan nito ng WebGL2 na may float textures.',
   'toast.loadTimeout': 'Nag-time out ang pag-load. Suriin ang iyong koneksyon at i-reload.',
   'toast.loadFailed': 'May nangyaring mali habang nilo-load ang mapa. Mangyaring i-reload.',
+  'toast.linkCopied': 'Kinopya ang link sa clipboard',
+  'share.title': 'Ibahagi ang sitwasyong ito',
 };

@@ -200,4 +200,6 @@ export const hy: Record<string, string> = {
   'toast.webglUnsupported': 'Այս սարքը չի կարող գործարկել 3D ջրի սիմուլյացիան — պահանջվում է WebGL2՝ float հյուսվածքներով։',
   'toast.loadTimeout': 'Բեռնման ժամանակը սպառվեց։ Ստուգեք կապը և վերաբեռնեք։',
   'toast.loadFailed': 'Քարտեզը բեռնելիս ինչ-որ բան սխալ գնաց։ Խնդրում ենք վերաբեռնել։',
+  'toast.linkCopied': 'Հղումը պատճենվեց սեղմատախտակին',
+  'share.title': 'Կիսվել այս սցենարով',
 };

@@ -220,4 +220,6 @@ export const pa: Record<string, string> = {
   'toast.webglUnsupported': 'ਇਹ ਡਿਵਾਈਸ 3D ਪਾਣੀ ਸਿਮੂਲੇਸ਼ਨ ਨਹੀਂ ਚਲਾ ਸਕਦਾ — ਇਸ ਲਈ float ਟੈਕਸਚਰ ਵਾਲਾ WebGL2 ਚਾਹੀਦਾ ਹੈ।',
   'toast.loadTimeout': 'ਲੋਡ ਹੋਣ ਦਾ ਸਮਾਂ ਖਤਮ ਹੋ ਗਿਆ। ਆਪਣਾ ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ ਅਤੇ ਮੁੜ ਲੋਡ ਕਰੋ।',
   'toast.loadFailed': 'ਨਕਸ਼ਾ ਲੋਡ ਕਰਨ ਵੇਲੇ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਮੁੜ ਲੋਡ ਕਰੋ।',
+  'toast.linkCopied': 'ਲਿੰਕ ਕਲਿੱਪਬੋਰਡ ਉੱਤੇ ਕਾਪੀ ਹੋਇਆ',
+  'share.title': 'ਇਹ ਦ੍ਰਿਸ਼ ਸਾਂਝਾ ਕਰੋ',
 };

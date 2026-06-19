@@ -212,4 +212,6 @@ export const th: Record<string, string> = {
   'toast.webglUnsupported': 'อุปกรณ์นี้ไม่สามารถเรียกใช้การจำลองน้ำ 3 มิติได้ — ต้องใช้ WebGL2 ที่รองรับเท็กซ์เจอร์แบบ float',
   'toast.loadTimeout': 'หมดเวลาการโหลด ตรวจสอบการเชื่อมต่อแล้วโหลดใหม่',
   'toast.loadFailed': 'เกิดข้อผิดพลาดขณะโหลดแผนที่ โปรดโหลดใหม่',
+  'toast.linkCopied': 'คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว',
+  'share.title': 'แชร์สถานการณ์นี้',
 };

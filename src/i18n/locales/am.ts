@@ -200,4 +200,6 @@ export const am: Record<string, string> = {
   'toast.webglUnsupported': 'ይህ መሣሪያ የ3D የውሃ ማስመሰልን ማስኬድ አይችልም — WebGL2 ከ float ሸካራዎች ጋር ይፈልጋል።',
   'toast.loadTimeout': 'መጫን ጊዜው አልፎበታል። ግንኙነትዎን ያረጋግጡ እና እንደገና ይጫኑ።',
   'toast.loadFailed': 'ካርታውን በመጫን ላይ የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይጫኑ።',
+  'toast.linkCopied': 'አገናኝ ወደ ቅንጥብ ሰሌዳ ተቀድቷል',
+  'share.title': 'ይህን ሁኔታ አጋራ',
 };

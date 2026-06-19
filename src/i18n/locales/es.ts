@@ -215,4 +215,6 @@ export const es: Record<string, string> = {
   'toast.webglUnsupported': 'Este dispositivo no puede ejecutar la simulación de agua en 3D: necesita WebGL2 con texturas de coma flotante.',
   'toast.loadTimeout': 'Se agotó el tiempo de carga. Comprueba tu conexión y vuelve a cargar.',
   'toast.loadFailed': 'Algo salió mal al cargar el mapa. Vuelve a cargar.',
+  'toast.linkCopied': 'Enlace copiado al portapapeles',
+  'share.title': 'Compartir este escenario',
 };

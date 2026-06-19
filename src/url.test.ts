@@ -211,4 +211,63 @@ describe('readUrlState / writeUrlState', () => {
     expect(state.lang).toBe('ru');
     expect(state.km).toBe(5);
   });
+
+  it('reads scenario params (storm/style/src/water/ve/b3d/overlay)', () => {
+    location.search = '?storm=cloudburst&style=heatmap&src=glo30&water=1.5&ve=2&b3d=0&overlay=1';
+    const s = readUrlState();
+    expect(s.storm).toBe('cloudburst');
+    expect(s.style).toBe('heatmap');
+    expect(s.src).toBe('glo30');
+    expect(s.water).toBe(1.5);
+    expect(s.ve).toBe(2);
+    expect(s.b3d).toBe(false);
+    expect(s.overlay).toBe(true);
+  });
+
+  it('ignores out-of-vocabulary scenario enum values', () => {
+    location.search = '?storm=hurricane&style=neon&src=lidar';
+    const s = readUrlState();
+    expect(s.storm).toBeUndefined();
+    expect(s.style).toBeUndefined();
+    expect(s.src).toBeUndefined();
+  });
+
+  it('round-trips scenario params, rounding water/ve to two decimals', () => {
+    writeUrlState({ storm: 'design25yr', style: 'surface', src: 'fabdem', water: 1.234, ve: 1.5, b3d: false, overlay: true });
+    const p = new URLSearchParams(location.search);
+    expect(p.get('water')).toBe('1.23');
+    expect(p.get('ve')).toBe('1.50');
+    expect(p.get('b3d')).toBe('0');
+    expect(p.get('overlay')).toBe('1');
+    const s = readUrlState();
+    expect(s.storm).toBe('design25yr');
+    expect(s.style).toBe('surface');
+    expect(s.b3d).toBe(false);
+    expect(s.overlay).toBe(true);
+  });
+
+  it('deletes a scenario param when its patch value is undefined', () => {
+    location.search = '?storm=cloudburst&b3d=0';
+    writeUrlState({ storm: undefined, b3d: undefined });
+    expect(readUrlState().storm).toBeUndefined();
+    expect(new URLSearchParams(location.search).has('b3d')).toBe(false);
+  });
+
+  it('clamps out-of-range numeric fields so a hostile/typo link cannot escape the sliders', () => {
+    location.search = '?km=1e9&water=-50&ve=1e9&lat=999&lon=-999';
+    const s = readUrlState();
+    expect(s.km).toBe(20); // [0.5, 20]
+    expect(s.water).toBe(0); // [0, 50]
+    expect(s.ve).toBe(5); // [1, 5]
+    expect(s.lat).toBe(90); // [-90, 90]
+    expect(s.lon).toBe(-180); // [-180, 180]
+  });
+
+  it('rejects trailing-garbage numbers strictly (Number, not parseFloat)', () => {
+    location.search = '?water=5junk&km=2.5x&ve=';
+    const s = readUrlState();
+    expect(s.water).toBeUndefined();
+    expect(s.km).toBeUndefined();
+    expect(s.ve).toBeUndefined();
+  });
 });

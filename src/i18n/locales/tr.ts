@@ -212,4 +212,6 @@ export const tr: Record<string, string> = {
   'toast.webglUnsupported': 'Bu cihaz 3D su simülasyonunu çalıştıramıyor — float dokulara sahip WebGL2 gerektiriyor.',
   'toast.loadTimeout': 'Yükleme zaman aşımına uğradı. Bağlantınızı kontrol edip yeniden yükleyin.',
   'toast.loadFailed': 'Harita yüklenirken bir sorun oluştu. Lütfen yeniden yükleyin.',
+  'toast.linkCopied': 'Bağlantı panoya kopyalandı',
+  'share.title': 'Bu senaryoyu paylaş',
 };

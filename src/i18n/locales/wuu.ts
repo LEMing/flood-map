@@ -220,4 +220,6 @@ export const wuu: Record<string, string> = {
   'toast.webglUnsupported': '搿只设备勿能跑3D水模拟 — 要WebGL2搭float纹理。',
   'toast.loadTimeout': '加载超时哉。请检查侬个连接,再重新加载。',
   'toast.loadFailed': '加载地图个辰光出问题哉。请重新加载。',
+  'toast.linkCopied': '链接已经复制到剪贴板哉',
+  'share.title': '分享搿个场景',
 };

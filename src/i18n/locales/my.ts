@@ -221,4 +221,6 @@ export const my: Record<string, string> = {
   'toast.webglUnsupported': 'ဤစက်ပစ္စည်းသည် 3D ရေ simulation ကို လည်ပတ်၍မရပါ — float texture ပါသော WebGL2 လိုအပ်သည်။',
   'toast.loadTimeout': 'ဖွင့်ရန် အချိန်ကုန်သွားပါပြီ။ သင့်ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ပြန်ဖွင့်ပါ။',
   'toast.loadFailed': 'မြေပုံ ဖွင့်နေစဉ် တစ်ခုခု မှားယွင်းသွားပါသည်။ ကျေးဇူးပြု၍ ပြန်ဖွင့်ပါ။',
+  'toast.linkCopied': 'လင့်ခ်ကို ကလစ်ဘုတ်သို့ ကူးယူပြီးပါပြီ',
+  'share.title': 'ဤအခြေအနေကို မျှဝေပါ',
 };

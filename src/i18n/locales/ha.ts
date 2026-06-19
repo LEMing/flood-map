@@ -198,4 +198,6 @@ export const ha: Record<string, string> = {
   'toast.webglUnsupported': 'Wannan na’urar ba za ta iya gudanar da kwaikwayon ruwa na 3D ba — tana buƙatar WebGL2 mai float textures.',
   'toast.loadTimeout': 'Lokacin lodi ya ƙare. Duba haɗin ku sannan ku sake lodi.',
   'toast.loadFailed': 'Wani abu ya yi kuskure wajen loda taswira. Da fatan za a sake lodi.',
+  'toast.linkCopied': 'An kwafi mahaɗin zuwa allo',
+  'share.title': 'Raba wannan yanayin',
 };

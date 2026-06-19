@@ -212,4 +212,6 @@ export const ja: Record<string, string> = {
   'toast.webglUnsupported': 'このデバイスでは3D水シミュレーションを実行できません — float テクスチャ対応の WebGL2 が必要です。',
   'toast.loadTimeout': '読み込みがタイムアウトしました。接続を確認して再読み込みしてください。',
   'toast.loadFailed': '地図の読み込み中に問題が発生しました。再読み込みしてください。',
+  'toast.linkCopied': 'リンクをクリップボードにコピーしました',
+  'share.title': 'このシナリオを共有',
 };

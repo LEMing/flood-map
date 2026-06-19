@@ -200,4 +200,6 @@ export const sv: Record<string, string> = {
   'toast.webglUnsupported': 'Den här enheten kan inte köra 3D-vattensimuleringen — den kräver WebGL2 med flyttalstexturer.',
   'toast.loadTimeout': 'Tidsgränsen för inläsning överskreds. Kontrollera anslutningen och ladda om.',
   'toast.loadFailed': 'Något gick fel när kartan laddades. Ladda om.',
+  'toast.linkCopied': 'Länk kopierad till urklipp',
+  'share.title': 'Dela det här scenariot',
 };

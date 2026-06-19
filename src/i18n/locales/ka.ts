@@ -199,4 +199,6 @@ export const ka: Record<string, string> = {
   'toast.webglUnsupported': 'ეს მოწყობილობა ვერ უშვებს 3D წყლის სიმულაციას — საჭიროა WebGL2 float ტექსტურებით.',
   'toast.loadTimeout': 'ჩატვირთვის დრო ამოიწურა. შეამოწმეთ კავშირი და ხელახლა ჩატვირთეთ.',
   'toast.loadFailed': 'რუკის ჩატვირთვისას რაღაც შეცდომა მოხდა. გთხოვთ, ხელახლა ჩატვირთოთ.',
+  'toast.linkCopied': 'ბმული დაკოპირდა ბუფერში',
+  'share.title': 'ამ სცენარის გაზიარება',
 };

@@ -220,4 +220,6 @@ export const jv: Record<string, string> = {
   'toast.webglUnsupported': 'Piranti iki ora bisa njalanké simulasi banyu 3D — butuh WebGL2 kanthi tekstur float.',
   'toast.loadTimeout': 'Wektu pamuatan entek. Priksa sambungan sampeyan lan muat ulang.',
   'toast.loadFailed': 'Ana sing salah nalika ngemot peta. Mangga muat ulang.',
+  'toast.linkCopied': 'Link disalin menyang clipboard',
+  'share.title': 'Bagikan skenario iki',
 };
