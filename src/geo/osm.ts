@@ -48,8 +48,7 @@ const OVERPASS_MIRRORS = [
   'https://overpass.osm.ch/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
-const OVERPASS_TIMEOUT_MS = 18000; // per mirror; the lighter big-map query fits comfortably
-const OSM_GREEN_MAX_METERS = 3500; // above this, skip land-use/leisure/green (too heavy)
+const OVERPASS_TIMEOUT_MS = 20000; // per mirror; a big (km≥5) bbox can take ~15 s server-side
 
 type OverpassResponse = { elements: OsmWay[] };
 
@@ -162,25 +161,16 @@ export async function fetchOsm(
 ): Promise<OsmRasters> {
   const [s, w, n, e] = bbox(center, sizeMeters);
   const box = `${s},${w},${n},${e}`;
-  // Above ~3.5 km the bbox covers a lot of ground and the land-use / leisure /
-  // natural-green polygons (farmland etc.) dominate the Overpass payload + parse
-  // time. They only feed the pervious-soil fallback, so for big maps we drop them
-  // and keep the essentials (buildings + roads + water) — much faster to load.
-  const clauses = [
-    `way["building"](${box});`,
-    `way["highway"](${box});`,
-    `way["natural"="water"](${box});`,
-    `way["water"](${box});`,
-    `way["waterway"](${box});`,
-  ];
-  if (sizeMeters <= OSM_GREEN_MAX_METERS) {
-    clauses.push(
-      `way["landuse"](${box});`,
-      `way["leisure"](${box});`,
-      `way["natural"~"wood|scrub|grassland|heath|wetland"](${box});`,
-    );
-  }
-  const query = `[out:json][timeout:60];(${clauses.join('')});out geom;`;
+  const query = `[out:json][timeout:60];(
+    way["building"](${box});
+    way["highway"](${box});
+    way["natural"="water"](${box});
+    way["water"](${box});
+    way["waterway"](${box});
+    way["landuse"](${box});
+    way["leisure"](${box});
+    way["natural"~"wood|scrub|grassland|heath|wetland"](${box});
+  );out geom;`;
 
   const json = await overpassFetch(query);
 
