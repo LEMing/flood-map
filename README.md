@@ -133,6 +133,12 @@ Together with the property tests in `inertialFlow.test.ts` (exact mass conservat
 well-balanced lake-at-rest, positivity), this makes "mirrors Bates et al. (2010) /
 LISFLOOD-FP" a reproducible result rather than an assertion.
 
+`eaBenchmarks.test.ts` adds the two cases from the **UK Environment Agency** 2D benchmark
+suite (Néelz & Pender, 2013) that have a mass-balance answer: a uniform dump **fills a
+depression** to the analytical still-water level with a flat surface, and two **disconnected
+ponds** behind a ridge stay at their own levels without leaking across or equalising —
+pinning the wetting/drying and multi-basin still-water behaviour.
+
 **GPU vs CPU parity.** Those cases verify the Float64 CPU reference; the model that actually
 ships runs the GLSL shaders on the GPU. `parityHarness.ts` (browser-only — it needs a WebGL2
 float context) runs both on an identical scenario and confirms they agree: in the smooth-flow
