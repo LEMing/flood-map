@@ -4,6 +4,7 @@ import { extrudeBuildings, BUILDING_RAISE_M, type BuildingGeometryData } from '.
 import { fetchLandCover, type LandClass } from './landcover';
 import { fetchOsm, type OsmRasters } from './osm';
 import { lonLatToLocalMeters } from './projection';
+import { flowAccumulation } from './flowAccum';
 
 // Builds the per-cell urban-surface fields (infiltration, storm-drain capacity,
 // roughness) from ESA WorldCover + OSM, and burns OSM buildings (raised no-flow
@@ -52,6 +53,27 @@ export function classifyInfilConductance(
   return { infil: soilInfil * 0.5, conductance: 0.4 };
 }
 
+const STREET_BURN_M = 0.5; // extra lowering under roads so synthetic flow routes along streets
+// Real storm sewers carry the most water where the catchment converges (valley
+// bottoms, streets), not uniformly. We approximate that with D8 flow accumulation on
+// a street-burned DEM, log-compressed into a per-cell capacity multiplier: ~0.3 on
+// ridges/high points, up to ~2.5 along the trunk flow lines. Synthetic, not a pipe
+// network — see the README/MethodNote caveat. Cached per heightmap (independent of
+// the drainage/groundwater sliders, so a live recompute reuses it).
+const areaWeightCache = new WeakMap<Float32Array, Float32Array>();
+function drainageAreaWeight(hm: Heightmap, osm: OsmRasters | null): Float32Array {
+  const cached = areaWeightCache.get(hm.data);
+  if (cached) return cached;
+  const n = hm.N * hm.N;
+  const elev = Float32Array.from(hm.data);
+  if (osm) for (let k = 0; k < n; k++) if (osm.road[k]) elev[k] -= STREET_BURN_M;
+  const { accum } = flowAccumulation(elev, hm.N);
+  const w = new Float32Array(n);
+  for (let k = 0; k < n; k++) w[k] = Math.max(0.3, Math.min(2.5, 0.5 + 0.28 * Math.log2(accum[k])));
+  areaWeightCache.set(hm.data, w);
+  return w;
+}
+
 /** Per-cell infiltration / drainage / conductance texture data — no DEM mutation,
  *  so it can be recomputed live when the drainage / groundwater sliders change. */
 export function computeSurfaceFields(
@@ -62,6 +84,7 @@ export function computeSurfaceFields(
   const soilInfil = params.infiltrationMmPerHr * (params.groundwaterHigh ? 0.25 : 1);
   const servedDrain = params.drainageCapacityMmPerHr;
   const [mzx, mzy] = lonLatToLocalMeters(hm.center, NO_DRAIN_CENTER.lon, NO_DRAIN_CENTER.lat);
+  const areaWeight = drainageAreaWeight(hm, osm);
   const step = sizeMeters / (N - 1);
   const half = sizeMeters / 2;
 
@@ -79,7 +102,7 @@ export function computeSurfaceFields(
       const cx = -half + ix * step;
       const inNoDrain = (cx - mzx) ** 2 + (cy - mzy) ** 2 < NO_DRAIN_RADIUS_M ** 2;
       const urban = building || road || lc === 50;
-      const drain = urban && !inNoDrain ? servedDrain : 0;
+      const drain = urban && !inNoDrain ? servedDrain * areaWeight[k] : 0;
 
       surface[k * 4] = infil * MM_S;
       surface[k * 4 + 1] = drain * MM_S;

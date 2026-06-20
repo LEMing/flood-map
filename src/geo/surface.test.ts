@@ -147,21 +147,22 @@ describe('computeSurfaceFields', () => {
     land[kTree] = LC_TREE;
 
     const surface = computeSurfaceFields(hm, land, osm, params);
-    const drain = 8 * MM_S;
 
+    // Served urban cells get a NONZERO drain (the exact value is now scaled by the
+    // synthetic flow-accumulation area weight — see the param-scaling test for that).
     // Building: impervious-ish infil 0.2, conductance 1, building flag set, served drain.
     const building = cell(surface, kBuilding);
     expect(building.infil).toBeCloseTo(0.2 * MM_S, 12);
     expect(building.conductance).toBe(1);
     expect(building.building).toBe(1);
-    expect(building.drain).toBeCloseTo(drain, 12);
+    expect(building.drain).toBeGreaterThan(0);
 
     // OSM road: infil 0.3, conductance 1, urban -> served drain, not a building.
     const road = cell(surface, kRoad);
     expect(road.infil).toBeCloseTo(0.3 * MM_S, 12);
     expect(road.conductance).toBe(1);
     expect(road.building).toBe(0);
-    expect(road.drain).toBeCloseTo(drain, 12);
+    expect(road.drain).toBeGreaterThan(0);
 
     // OSM water: no infiltration, conductance 1, NOT urban -> no drain.
     const waterOsm = cell(surface, kWaterOsm);
@@ -174,7 +175,7 @@ describe('computeSurfaceFields', () => {
     const builtUp = cell(surface, kBuiltUp);
     expect(builtUp.infil).toBeCloseTo(0.5 * MM_S, 12);
     expect(builtUp.conductance).toBe(1);
-    expect(builtUp.drain).toBeCloseTo(drain, 12);
+    expect(builtUp.drain).toBeGreaterThan(0);
     expect(builtUp.building).toBe(0);
 
     // Water land cover (lc=80): same no-infiltration behaviour as OSM water.
@@ -245,9 +246,11 @@ describe('computeSurfaceFields', () => {
     const low = computeSurfaceFields(hm, land, osm, withParams({ drainageCapacityMmPerHr: 5 }));
     const high = computeSurfaceFields(hm, land, osm, withParams({ drainageCapacityMmPerHr: 20 }));
 
+    // Same cell, same DEM → the synthetic area weight cancels, so the drain scales
+    // exactly with the storm-sewer capacity param (20/5 = 4×).
     const k = idx(4, 4);
-    expect(low[k * 4 + 1]).toBeCloseTo(5 * MM_S, 12);
-    expect(high[k * 4 + 1]).toBeCloseTo(20 * MM_S, 12);
+    expect(low[k * 4 + 1]).toBeGreaterThan(0);
+    expect(high[k * 4 + 1]).toBeCloseTo(low[k * 4 + 1] * 4, 9);
     expect(high[k * 4 + 1]).toBeGreaterThan(low[k * 4 + 1]);
   });
 
