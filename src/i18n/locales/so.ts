@@ -204,7 +204,7 @@ export const so: Record<string, string> = {
   'share.title': 'La wadaag xaaladdan',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Sida ay u shaqeyso & xadka',
-  'method.body': 'Jilitaan waxbarasho oo daad roob ah. Fiisigiska biyaha waa la fududeeyay, modelkana lagama habayn cabbiraado dhab ah, sidaas darteed qoto-dheerida iyo aagagga daadku waa tilmaan kaliya — maaha qiimayn khatarta daadka. Ma jilo qulqulinta biyaha roobka, biyaha dhulka hoostiisa, ama daadka webiga iyo xeebaha. Habaynta duufaanta waa muuqaalo roob oo matalaad ah, maaha diiwaanno cabbir.',
+  'method.body': 'Jilitaan waxbarasho oo daad roob ah. Fiisigiska biyaha waa la fududeeyay, lagamana habayn cabbiraado dhab ah, sidaas darteed qoto-dheerida iyo aagagga daadku waa tilmaan kaliya — maaha qiimayn khatarta daadka. Biyo-mareenka iyo luminta carrada waa qiyaaso macmal ah oo xog furan laga sameeyay, maaha model la cabbiray; biyaha dhulka hoostiisa iyo daadka webiga ama xeebaha laguma darin. Habaynta duufaanta waa muuqaalo roob oo matalaad ah, maaha diiwaanno cabbir.',
   'method.indicative': 'Tilmaan (model)',
   'waterlevel.title': 'Heerka biyaha 🌊',
   'waterlevel.off': 'Dami',

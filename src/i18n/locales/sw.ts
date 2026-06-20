@@ -204,7 +204,7 @@ export const sw: Record<string, string> = {
   'share.title': 'Shiriki hali hii',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Jinsi inavyofanya kazi na mipaka',
-  'method.body': 'Uigaji wa kielimu wa mafuriko ya mvua. Fizikia ya maji imerahisishwa na modeli haijasawazishwa kulingana na vipimo halisi, hivyo kina na maeneo ya mafuriko ni ya kuonyesha tu — si tathmini ya hatari ya mafuriko. Haitengenezi mfumo wa mifereji ya maji ya mvua, maji ya ardhini, wala mafuriko ya mito na pwani. Mipangilio ya dhoruba ni wasifu wa mvua wawakilishi, si rekodi za vipimo.',
+  'method.body': 'Uigaji wa kielimu wa mafuriko ya mvua. Fizikia ya maji imerahisishwa na haijasawazishwa kulingana na vipimo halisi, hivyo kina na maeneo ya mafuriko ni ya kuonyesha tu — si tathmini ya hatari ya mafuriko. Mifereji ya maji na hasara za udongo ni makadirio bandia kutoka data huria, si modeli iliyopimwa; maji ya ardhini na mafuriko ya mito au pwani hayajajumuishwa. Mipangilio ya dhoruba ni wasifu wa mvua wawakilishi, si rekodi za vipimo.',
   'method.indicative': 'Kionyeshi (modeli)',
   'waterlevel.title': 'Kiwango cha maji 🌊',
   'waterlevel.off': 'Zima',

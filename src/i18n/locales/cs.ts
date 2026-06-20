@@ -204,7 +204,7 @@ export const cs: Record<string, string> = {
   'share.title': 'Sdílet tento scénář',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Jak to funguje a omezení',
-  'method.body': 'Vzdělávací simulace srážkové povodně. Fyzika vody je zjednodušená a model není kalibrován na skutečná měření, takže hloubky a plochy zaplavení jsou pouze orientační — nejde o posouzení povodňového rizika. Nemodeluje dešťovou kanalizaci, podzemní vodu ani říční a pobřežní záplavy. Předvolby bouří jsou reprezentativní srážkové profily, nikoli záznamy měřidel.',
+  'method.body': 'Vzdělávací simulace srážkové povodně. Fyzika vody je zjednodušená a není kalibrována na skutečná měření, takže hloubky a plochy zaplavení jsou pouze orientační — nejde o posouzení povodňového rizika. Odvodnění a ztráty v půdě jsou syntetické odhady z otevřených dat, nikoli zaměřený model; podzemní voda ani říční či pobřežní záplavy nejsou zahrnuty. Předvolby bouří jsou reprezentativní srážkové profily, nikoli záznamy měřidel.',
   'method.indicative': 'Orientační (model)',
   'waterlevel.title': 'Hladina vody 🌊',
   'waterlevel.off': 'Vyp',

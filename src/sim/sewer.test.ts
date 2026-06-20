@@ -5,8 +5,10 @@ import { type SewerGrid, type SewerParams, stepSewer } from './sewer';
 function lineGrid(N: number, h: number, cap: number): SewerGrid {
   const n = N * N;
   const downstream = new Int32Array(n).fill(-1);
+  const outfall = new Uint8Array(n);
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N - 1; x++) downstream[y * N + x] = y * N + x + 1; // east
+    outfall[y * N + (N - 1)] = 1; // the east-edge terminal is a true outfall (leaves the domain)
   }
   return {
     N,
@@ -14,6 +16,7 @@ function lineGrid(N: number, h: number, cap: number): SewerGrid {
     S: new Float64Array(n),
     cap: new Float64Array(n).fill(cap),
     downstream,
+    outfall,
   };
 }
 
@@ -74,7 +77,11 @@ describe('sewer — surcharge (the point)', () => {
     }
     const cap = new Float64Array(n).fill(1e-3);
     cap[1 * N + 1] = 1e-6; // bottleneck at the sink
-    const g: SewerGrid = { N, h: new Float64Array(n).fill(2), S: new Float64Array(n), cap, downstream };
+    // The centre is an INTERIOR pit (not an outfall): the pipe can't discharge there,
+    // so it backs up and surcharges.
+    const g: SewerGrid = {
+      N, h: new Float64Array(n).fill(2), S: new Float64Array(n), cap, downstream, outfall: new Uint8Array(n),
+    };
     const p: SewerParams = { dt: 1, bufferSec: 30 };
     const hCentreStart = g.h[1 * N + 1];
     let maxCentreH = hCentreStart;

@@ -54,24 +54,54 @@ export function classifyInfilConductance(
 }
 
 const STREET_BURN_M = 0.5; // extra lowering under roads so synthetic flow routes along streets
+
 // Real storm sewers carry the most water where the catchment converges (valley
 // bottoms, streets), not uniformly. We approximate that with D8 flow accumulation on
-// a street-burned DEM, log-compressed into a per-cell capacity multiplier: ~0.3 on
-// ridges/high points, up to ~2.5 along the trunk flow lines. Synthetic, not a pipe
-// network — see the README/MethodNote caveat. Cached per heightmap (independent of
-// the drainage/groundwater sliders, so a live recompute reuses it).
-const areaWeightCache = new WeakMap<Float32Array, Float32Array>();
-function drainageAreaWeight(hm: Heightmap, osm: OsmRasters | null): Float32Array {
-  const cached = areaWeightCache.get(hm.data);
+// a street-burned DEM: a log-compressed per-cell capacity multiplier (~0.3 on ridges,
+// up to ~2.5 along the trunk flow lines) AND the D8 downstream direction (which the
+// sewer routing follows). Synthetic, not a pipe network — see the README caveat.
+// Cached per heightmap (independent of the drainage/groundwater sliders).
+interface DrainagePrecompute { areaWeight: Float32Array; downstream: Int32Array }
+const drainageCache = new WeakMap<Float32Array, DrainagePrecompute>();
+function drainagePrecompute(hm: Heightmap, osm: OsmRasters | null): DrainagePrecompute {
+  const cached = drainageCache.get(hm.data);
   if (cached) return cached;
   const n = hm.N * hm.N;
   const elev = Float32Array.from(hm.data);
   if (osm) for (let k = 0; k < n; k++) if (osm.road[k]) elev[k] -= STREET_BURN_M;
-  const { accum } = flowAccumulation(elev, hm.N);
-  const w = new Float32Array(n);
-  for (let k = 0; k < n; k++) w[k] = Math.max(0.3, Math.min(2.5, 0.5 + 0.28 * Math.log2(accum[k])));
-  areaWeightCache.set(hm.data, w);
-  return w;
+  const { accum, downstream } = flowAccumulation(elev, hm.N);
+  const areaWeight = new Float32Array(n);
+  for (let k = 0; k < n; k++) areaWeight[k] = Math.max(0.3, Math.min(2.5, 0.5 + 0.28 * Math.log2(accum[k])));
+  const result = { areaWeight, downstream };
+  drainageCache.set(hm.data, result);
+  return result;
+}
+
+/**
+ * Per-cell storm-sewer fields for the GPU routing (RGBA): r=pipe capacity m/s (the
+ * area-weighted drain from `surface`), g=D8 downstream dirX (−1/0/1), b=dirY, a=outfall
+ * flag. A cell routes to its D8 downstream neighbour; a cell with no downstream (a pit) is
+ * dir 0 and backs up, surcharging in place — EXCEPT a pit on the domain edge, which is an
+ * outfall (pipe flow leaves the map there). An edge cell that still has a downstream routes
+ * inward like any other, instead of dumping its flow off-map. Mirrors sewer.ts; built on
+ * the main thread in App.refreshSurface.
+ */
+export function computeSewerFields(hm: Heightmap, osm: OsmRasters | null, surface: Float32Array): Float32Array {
+  const N = hm.N;
+  const { downstream } = drainagePrecompute(hm, osm);
+  const sewer = new Float32Array(N * N * 4);
+  for (let k = 0; k < N * N; k++) {
+    const x = k % N;
+    const y = Math.floor(k / N);
+    const onEdge = x === 0 || x === N - 1 || y === 0 || y === N - 1;
+    const d = downstream[k];
+    const routes = d >= 0;
+    sewer[k * 4] = surface[k * 4 + 1]; // capacity = the drain channel
+    sewer[k * 4 + 1] = routes ? (d % N) - x : 0; // dirX (0 at pits)
+    sewer[k * 4 + 2] = routes ? Math.floor(d / N) - y : 0; // dirY
+    sewer[k * 4 + 3] = onEdge && !routes ? 1 : 0; // outfall only at a boundary pit
+  }
+  return sewer;
 }
 
 /** Per-cell infiltration / drainage / conductance texture data — no DEM mutation,
@@ -84,7 +114,7 @@ export function computeSurfaceFields(
   const soilInfil = params.infiltrationMmPerHr * (params.groundwaterHigh ? 0.25 : 1);
   const servedDrain = params.drainageCapacityMmPerHr;
   const [mzx, mzy] = lonLatToLocalMeters(hm.center, NO_DRAIN_CENTER.lon, NO_DRAIN_CENTER.lat);
-  const areaWeight = drainageAreaWeight(hm, osm);
+  const { areaWeight } = drainagePrecompute(hm, osm);
   const step = sizeMeters / (N - 1);
   const half = sizeMeters / 2;
 

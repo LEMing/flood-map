@@ -224,7 +224,7 @@ export const wuu: Record<string, string> = {
   'share.title': '分享搿个场景',
   // Methodology / limitations note (in-app honesty)
   'method.title': '工作原理同局限',
-  'method.body': '一只教学用个降雨洪水模拟。水个物理畀简化过哉，模型也呒没拿真实测量来校准，所以淹水个深度同范围只好做参考——勿是洪水风险评估。伊勿模拟雨水管网、地下水，或者河流同沿海洪水。暴风个预设是有代表性个降雨曲线，勿是仪器记录。',
+  'method.body': '一只教学用个降雨洪水模拟。水个物理畀简化过哉，也呒没拿真实测量来校准，所以淹水个深度同范围只好做参考——勿是洪水风险评估。排水同泥土损失是从公开数据来个合成估计，勿是实测模型；地下水同河流或者沿海洪水勿包括了。暴风个预设是有代表性个降雨曲线，勿是仪器记录。',
   'method.indicative': '参考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '关脱',

@@ -202,7 +202,7 @@ export const ha: Record<string, string> = {
   'share.title': 'Raba wannan yanayin',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Yadda yake aiki da iyaka',
-  'method.body': 'Kwaikwayon ilimi na ambaliyar ruwan sama. An sauƙaƙa kimiyyar ruwa kuma ba a daidaita samfurin da ainihin ma’auni ba, don haka zurfin ambaliya da fadinta alamu ne kawai — ba kima na haɗarin ambaliya ba. Ba ya kwaikwayon magudanar ruwan sama, ruwan ƙarƙashin ƙasa, ko ambaliyar kogi da bakin teku. Saitunan hadari bayanan ruwan sama ne na wakilci, ba bayanan awo ba.',
+  'method.body': 'Kwaikwayon ilimi na ambaliyar ruwan sama. An sauƙaƙa kimiyyar ruwa kuma ba a daidaita ta da ainihin ma’auni ba, don haka zurfin ambaliya da fadinta alamu ne kawai — ba kima na haɗarin ambaliya ba. Magudana da asarar ƙasa ƙididdiga ne na roba daga buɗaɗɗen bayanai, ba samfurin da aka auna ba; ruwan ƙarƙashin ƙasa da ambaliyar kogi ko bakin teku ba a haɗa su ba. Saitunan hadari bayanan ruwan sama ne na wakilci, ba bayanan awo ba.',
   'method.indicative': 'Alama (samfuri)',
   'waterlevel.title': 'Matakin ruwa 🌊',
   'waterlevel.off': 'Kashe',

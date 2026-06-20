@@ -204,7 +204,7 @@ export const tk: Record<string, string> = {
   'share.title': 'Bu ssenarini paýlaş',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Nähili işleýär we çäklendirmeler',
-  'method.body': 'Ýagyş-sil joşmasynyň bilim beriş simulýasiýasy. Suwuň fizikasy ýönekeýleşdirildi we model hakyky ölçeglere görä kalibrlenmedi, şonuň üçin silüň çuňlugy we meýdany diňe görkeziji — sil howpuny bahalandyrma däl. Ol ýagyş lagymyny, ýerasty suwlary ýa-da derýa we kenarýaka silleri modellemeýär. Tupan deslapky sazlamalary wekilçilikli ýagyş profilleridir, ölçeg ýazgylary däl.',
+  'method.body': 'Ýagyş-sil joşmasynyň bilim beriş simulýasiýasy. Suwuň fizikasy ýönekeýleşdirildi we hakyky ölçeglere görä kalibrlenmedi, şonuň üçin silüň çuňlugy we meýdany diňe görkeziji — sil howpuny bahalandyrma däl. Suw akdyryş we toprak ýitgileri açyk maglumatlardan emeli çaklamalardyr, ölçenen model däl; ýerasty suwlar we derýa ýa-da kenarýaka silleri goşulmaýar. Tupan deslapky sazlamalary wekilçilikli ýagyş profilleridir, ölçeg ýazgylary däl.',
   'method.indicative': 'Görkeziji (model)',
   'waterlevel.title': 'Suw derejesi 🌊',
   'waterlevel.off': 'Öçür',

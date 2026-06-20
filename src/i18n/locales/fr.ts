@@ -224,7 +224,7 @@ export const fr: Record<string, string> = {
   'share.title': 'Partager ce scénario',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Fonctionnement et limites',
-  'method.body': 'Une simulation pédagogique d’inondation pluviale. La physique de l’eau est simplifiée et le modèle n’est pas calibré sur des mesures réelles ; les hauteurs et surfaces inondées ne sont donc qu’indicatives — pas une évaluation du risque d’inondation. Il ne modélise ni le réseau d’eaux pluviales, ni les eaux souterraines, ni les crues fluviales et côtières. Les préréglages d’orage sont des profils de pluie représentatifs, pas des relevés de mesure.',
+  'method.body': 'Une simulation pédagogique d’inondation pluviale. La physique de l’eau est simplifiée et non calibrée sur des mesures réelles ; les hauteurs et surfaces inondées ne sont donc qu’indicatives — pas une évaluation du risque d’inondation. Le drainage et les pertes du sol sont des estimations synthétiques issues de données ouvertes, pas un modèle relevé ; les eaux souterraines et les crues fluviales ou côtières ne sont pas incluses. Les préréglages d’orage sont des profils de pluie représentatifs, pas des relevés de mesure.',
   'method.indicative': 'Indicatif (modèle)',
   'waterlevel.title': 'Niveau d’eau 🌊',
   'waterlevel.off': 'Désactivé',

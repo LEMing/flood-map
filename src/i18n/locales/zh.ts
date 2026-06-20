@@ -216,7 +216,7 @@ export const zh: Record<string, string> = {
   'share.title': '分享此场景',
   // Methodology / limitations note (in-app honesty)
   'method.title': '工作原理与局限',
-  'method.body': '一个用于教学的降雨洪涝模拟。水的物理过程已简化，模型也未根据实测数据校准，因此淹没深度和范围仅供参考，并非洪水风险评估。它不模拟雨水管网、地下水，也不模拟河流和海岸洪水。暴雨预设是有代表性的降雨曲线，而非实测记录。',
+  'method.body': '一个用于教学的降雨洪涝模拟。水的物理过程已简化，也未根据实测数据校准，因此淹没深度和范围仅供参考，并非洪水风险评估。排水和土壤损失是基于开放数据的合成估算，而非实测模型；地下水以及河流或海岸洪水未包含在内。暴雨预设是有代表性的降雨曲线，而非实测记录。',
   'method.indicative': '参考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '关闭',

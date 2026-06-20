@@ -204,7 +204,7 @@ export const it: Record<string, string> = {
   'share.title': 'Condividi questo scenario',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Come funziona e limiti',
-  'method.body': 'Una simulazione didattica di alluvione da pioggia. La fisica dell’acqua è semplificata e il modello non è calibrato su misure reali, quindi profondità e aree allagate sono solo indicative — non una valutazione del rischio alluvionale. Non modella la rete fognaria pluviale, le acque sotterranee, né le piene fluviali e costiere. I preset di tempesta sono profili di pioggia rappresentativi, non registrazioni strumentali.',
+  'method.body': 'Una simulazione didattica di alluvione da pioggia. La fisica dell’acqua è semplificata e non calibrata su misure reali, quindi profondità e aree allagate sono solo indicative — non una valutazione del rischio alluvionale. Il drenaggio e le perdite del suolo sono stime sintetiche da dati aperti, non un modello rilevato; le acque sotterranee e le piene fluviali o costiere non sono incluse. I preset di tempesta sono profili di pioggia rappresentativi, non registrazioni strumentali.',
   'method.indicative': 'Indicativo (modello)',
   'waterlevel.title': 'Livello dell’acqua 🌊',
   'waterlevel.off': 'Spento',

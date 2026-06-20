@@ -15,6 +15,7 @@ interface MockSim {
   cellSize: number;
   steps: number[];
   step: ReturnType<typeof vi.fn>;
+  sewerStep: ReturnType<typeof vi.fn>;
   readWater: (buf: Float32Array) => void;
 }
 
@@ -25,6 +26,7 @@ function mockSim(N: number, cellSize: number): MockSim {
     cellSize,
     steps,
     step: vi.fn((dt: number) => steps.push(dt)),
+    sewerStep: vi.fn(),
     readWater: (buf: Float32Array) => buf.fill(0), // dry → observedMaxDepth stays 1
     setRainRateMmPerHr: vi.fn(),
     updateParams: vi.fn(),

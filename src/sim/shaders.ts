@@ -194,12 +194,10 @@ export const depthFragment = /* glsl */ `
     }
     // Green-Ampt infiltration: capacity declines with the per-cell cumulative F
     // (from the start of this step, carried in tQprev.b) — so pervious ground gulps
-    // early rain, then saturates and ponds. Storm sewer runs under streets, not roofs.
+    // early rain, then saturates and ponds. (The storm sewer is now a separate
+    // routing + surcharge subsystem — the sewer passes — not a per-cell sink here.)
     float fOld = texture2D(tQprev, uv).b;
-    float drainRate = 0.0;
-    if (uUseSurface == 1) drainRate = (texture2D(tSurface, uv).a > 0.5) ? 0.0 : texture2D(tSurface, uv).y;
     dNew -= min(dNew, greenAmptRate(fOld, soilKs(uv)) * uDt);
-    dNew -= min(dNew, drainRate * uDt);
     dNew -= min(dNew, uEvapRate * uDt); // evaporation is a constant depth flux (m/s)
     dNew = max(dNew, 0.0);
     if (uFillLevelAbs > -1.0e8) {
@@ -213,5 +211,78 @@ export const depthFragment = /* glsl */ `
     float vx = 0.5 * (qE + qW) / dbar;
     float vy = 0.5 * (qN + qS) / dbar;
     gl_FragColor = vec4(dNew, maxD, vx, vy);
+  }
+`;
+
+// ── Synthetic storm-sewer subsystem (mirrors sewer.ts) ─────────────────────────
+// `tSewer` (static) = (capacity m/s, D8 dirX, D8 dirY, outfall flag). `tSewerState`
+// ping-pongs the storage S (.r) + the surcharge scratch (.g). Three passes per
+// substep: OUT (inlet + pipe outflow), ROUTE (gather upstream → S + surcharge),
+// APPLY (exchange inlet/surcharge with the surface). `S_max = capacity·uSewerBuffer`.
+
+// Pass 1: water entering the pipe (inlet) and the pipe's outflow this step.
+export const sewerOutFragment = /* glsl */ `
+  uniform sampler2D tWater;
+  uniform sampler2D tSewerState;
+  uniform sampler2D tSewer;
+  uniform float uDt;
+  uniform float uSewerBuffer;
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    float h = max(0.0, texture2D(tWater, uv).x);
+    float s = texture2D(tSewerState, uv).r;
+    vec4 sw = texture2D(tSewer, uv);
+    float cap = sw.r;
+    float inlet = min(min(h, cap * uDt), max(0.0, cap * uSewerBuffer - s));
+    // An interior D8 pit (no downstream, not an outfall) can't push flow on → it backs up.
+    bool interiorPit = abs(sw.g) < 0.5 && abs(sw.b) < 0.5 && sw.a < 0.5;
+    float outflow = interiorPit ? 0.0 : min(s + inlet, cap * uDt);
+    gl_FragColor = vec4(outflow, inlet, 0.0, 0.0);
+  }
+`;
+
+// Pass 2: route one cell downstream. Gather each upstream neighbour's outflow (a
+// neighbour at offset o drains into us iff its D8 direction is −o), then surcharge.
+export const sewerRouteFragment = /* glsl */ `
+  uniform sampler2D tOut;
+  uniform sampler2D tSewerState;
+  uniform sampler2D tSewer;
+  uniform float uSewerBuffer;
+  float inFrom(vec2 uv, vec2 texel, vec2 o) {
+    vec2 p = uv + o * texel;
+    if (p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0) return 0.0;
+    vec2 dir = texture2D(tSewer, p).gb; // neighbour's D8 downstream
+    if (abs(dir.x + o.x) < 0.5 && abs(dir.y + o.y) < 0.5) return texture2D(tOut, p).x;
+    return 0.0;
+  }
+  void main() {
+    vec2 res = resolution.xy;
+    vec2 uv = gl_FragCoord.xy / res;
+    vec2 texel = 1.0 / res;
+    vec4 self = texture2D(tOut, uv); // outflow (.x), inlet (.y)
+    float s = texture2D(tSewerState, uv).r;
+    float cap = texture2D(tSewer, uv).r;
+    float inflow =
+        inFrom(uv, texel, vec2(-1.0, -1.0)) + inFrom(uv, texel, vec2(0.0, -1.0)) + inFrom(uv, texel, vec2(1.0, -1.0))
+      + inFrom(uv, texel, vec2(-1.0, 0.0))                                       + inFrom(uv, texel, vec2(1.0, 0.0))
+      + inFrom(uv, texel, vec2(-1.0, 1.0)) + inFrom(uv, texel, vec2(0.0, 1.0))  + inFrom(uv, texel, vec2(1.0, 1.0));
+    float sNew = s + self.y - self.x + inflow;
+    float surcharge = max(0.0, sNew - cap * uSewerBuffer);
+    gl_FragColor = vec4(sNew - surcharge, surcharge, 0.0, 0.0);
+  }
+`;
+
+// Pass 3: exchange with the surface — remove the inlet, add back the surcharge.
+export const sewerApplyFragment = /* glsl */ `
+  uniform sampler2D tWater;
+  uniform sampler2D tOut;
+  uniform sampler2D tSewerNew;
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    vec4 w = texture2D(tWater, uv);
+    float inlet = texture2D(tOut, uv).y;
+    float surcharge = texture2D(tSewerNew, uv).g;
+    float hNew = max(0.0, w.x - inlet + surcharge);
+    gl_FragColor = vec4(hNew, max(w.y, hNew), w.z, w.w);
   }
 `;

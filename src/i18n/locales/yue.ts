@@ -225,7 +225,7 @@ export const yue: Record<string, string> = {
   'share.title': '分享呢個情景',
   // Methodology / limitations note (in-app honesty)
   'method.title': '點運作同埋限制',
-  'method.body': '一個教學用嘅降雨水浸模擬。水嘅物理經過簡化，個模型亦冇用真實測量校準過，所以水浸深度同範圍只係參考——唔係水浸風險評估。佢冇模擬雨水渠、地下水，或者河流同沿岸水浸。暴風預設係有代表性嘅降雨曲線，唔係儀器記錄。',
+  'method.body': '一個教學用嘅降雨水浸模擬。水嘅物理經過簡化，亦冇用真實測量校準過，所以水浸深度同範圍只係參考——唔係水浸風險評估。排水同泥土流失係由公開數據嚟嘅合成估算，唔係實測模型；地下水同河流或者沿岸水浸冇計算喺內。暴風預設係有代表性嘅降雨曲線，唔係儀器記錄。',
   'method.indicative': '參考（模型）',
   'waterlevel.title': '水位 🌊',
   'waterlevel.off': '關',

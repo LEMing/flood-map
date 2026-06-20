@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js';
 import type { Params } from '../config';
-import { momentumFragment, limiterFragment, depthFragment } from './shaders';
+import {
+  momentumFragment, limiterFragment, depthFragment,
+  sewerOutFragment, sewerRouteFragment, sewerApplyFragment,
+} from './shaders';
 
 type U = Record<string, THREE.IUniform>;
 
@@ -22,6 +25,7 @@ interface GpuApi {
 
 const MM_PER_HR_TO_M_PER_S = 1 / 1000 / 3600;
 const H_MIN = 1e-3; // wet/dry flow threshold (m) — faces shallower than this carry no flow
+const SEWER_BUFFER_SEC = 1200; // pipe storage horizon: S_max = capacity · this (how long a pipe absorbs a burst)
 
 /**
  * GPU inertial flood simulation: the local-inertial formulation of the 2-D shallow-
@@ -41,14 +45,22 @@ export class FloodSimulation {
   private readonly momentumMat: THREE.ShaderMaterial;
   private readonly limiterMat: THREE.ShaderMaterial;
   private readonly depthMat: THREE.ShaderMaterial;
+  private readonly sewerOutMat: THREE.ShaderMaterial;
+  private readonly sewerRouteMat: THREE.ShaderMaterial;
+  private readonly sewerApplyMat: THREE.ShaderMaterial;
   private readonly waterRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
   private readonly qRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
   private readonly lamRT: THREE.WebGLRenderTarget;
+  private readonly sewerRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
+  private readonly outRT: THREE.WebGLRenderTarget;
   private readonly zero: THREE.DataTexture;
   private readonly dummySurface: THREE.DataTexture;
+  private readonly dummySewer: THREE.DataTexture;
   private readonly u: U;
   private currentIdx = 0;
   private qIdx = 0;
+  private sIdx = 0;
+  private sewerOn = false;
   private pendingInject = 0;
   private pendingFill = -1e9;
   private pendingFillSet = false;
@@ -77,6 +89,12 @@ export class FloodSimulation {
       new Float32Array([0, 0, 1, 0]), 1, 1, THREE.RGBAFormat, THREE.FloatType,
     );
     this.dummySurface.needsUpdate = true;
+
+    // Fallback 1×1 sewer fields (capacity 0 → the sewer passes are a no-op).
+    this.dummySewer = new THREE.DataTexture(
+      new Float32Array([0, 0, 0, 1]), 1, 1, THREE.RGBAFormat, THREE.FloatType,
+    );
+    this.dummySewer.needsUpdate = true;
 
     // One uniform object per name, shared by reference across the three materials,
     // so updateParams/step mutate a single `u` and every pass sees it.
@@ -108,6 +126,11 @@ export class FloodSimulation {
       uPointRadiusUv: { value: 0.05 },
       uFillLevelAbs: { value: -1e9 },
       uFillSet: { value: 0 },
+      tSewer: { value: this.dummySewer }, // static (capacity, D8 dirX, dirY, outfall)
+      tSewerState: { value: null }, // bound to the current sewer storage S each step
+      tSewerNew: { value: null }, // bound to the routed S before the apply pass
+      tOut: { value: null }, // bound to the transient out/inlet RT
+      uSewerBuffer: { value: SEWER_BUFFER_SEC },
     };
     const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
     const shared = ['heightmap', 'tWater', 'tQ', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
@@ -119,6 +142,12 @@ export class FloodSimulation {
       'uSpot', 'uSpotRadius', 'uInjectDepth', 'uPointDepth', 'uPointUv', 'uPointRadiusUv',
       'uFillLevelAbs', 'uFillSet',
     ]));
+    this.sewerOutMat = gpu.createShaderMaterial(sewerOutFragment,
+      pick(['tWater', 'tSewerState', 'tSewer', 'uDt', 'uSewerBuffer']));
+    this.sewerRouteMat = gpu.createShaderMaterial(sewerRouteFragment,
+      pick(['tOut', 'tSewerState', 'tSewer', 'uSewerBuffer']));
+    this.sewerApplyMat = gpu.createShaderMaterial(sewerApplyFragment,
+      pick(['tWater', 'tOut', 'tSewerNew']));
 
     const make = (): THREE.WebGLRenderTarget => gpu.createRenderTarget(
       N, N, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.NearestFilter, THREE.NearestFilter,
@@ -126,6 +155,8 @@ export class FloodSimulation {
     this.waterRT = [make(), make()];
     this.qRT = [make(), make()];
     this.lamRT = make();
+    this.sewerRT = [make(), make()];
+    this.outRT = make();
     this.zero = gpu.createTexture(); // zero-filled (dry water / no discharge)
     this.reset();
 
@@ -170,7 +201,6 @@ export class FloodSimulation {
     this.gpu.doRenderTarget(this.limiterMat, this.lamRT); // pass 2: per-cell drainage cap
     this.u.tLam.value = this.lamRT.texture;
     this.gpu.doRenderTarget(this.depthMat, waterNext); // pass 3: continuity + sources
-
     this.currentIdx = 1 - this.currentIdx;
     this.qIdx = 1 - this.qIdx;
 
@@ -178,6 +208,28 @@ export class FloodSimulation {
     this.pendingPoint.depth = 0;
     this.pendingFill = -1e9;
     this.pendingFillSet = false;
+  }
+
+  /**
+   * Storm-sewer exchange — run ONCE per frame (not per CFL substep): the sewer
+   * dynamics are slow (minutes), so substep resolution is wasted GPU. Inlet from the
+   * surface → route one cell downstream → surcharge the excess back to the surface.
+   */
+  sewerStep(simDt: number): void {
+    if (!this.sewerOn) return;
+    this.u.uDt.value = simDt;
+    const water = this.waterRT[this.currentIdx];
+    const waterNext = this.waterRT[1 - this.currentIdx];
+    const sNext = this.sewerRT[1 - this.sIdx];
+    this.u.tWater.value = water.texture;
+    this.u.tSewerState.value = this.sewerRT[this.sIdx].texture;
+    this.gpu.doRenderTarget(this.sewerOutMat, this.outRT); // outflow + inlet
+    this.u.tOut.value = this.outRT.texture;
+    this.gpu.doRenderTarget(this.sewerRouteMat, sNext); // gather downstream → S + surcharge
+    this.u.tSewerNew.value = sNext.texture;
+    this.gpu.doRenderTarget(this.sewerApplyMat, waterNext); // h -= inlet + surcharge
+    this.currentIdx = 1 - this.currentIdx;
+    this.sIdx = 1 - this.sIdx;
   }
 
   /** Dump `depthMeters` of water across the (footprint-shaped) area on the next step. */
@@ -209,6 +261,12 @@ export class FloodSimulation {
     this.u.uUseSurface.value = texture ? 1 : 0;
   }
 
+  /** Per-cell storm-sewer fields (rgba = capacity m/s, D8 dirX, dirY, outfall). Null disables routing. */
+  setSewer(texture: THREE.Texture | null): void {
+    this.u.tSewer.value = texture ?? this.dummySewer;
+    this.sewerOn = !!texture;
+  }
+
   /** Drive the rain rate from the storm hyetograph (overrides the constant rate). */
   setRainRateMmPerHr(mmPerHr: number): void {
     this.u.uRainRate.value = mmPerHr * MM_PER_HR_TO_M_PER_S;
@@ -219,8 +277,11 @@ export class FloodSimulation {
     this.gpu.renderTexture(this.zero, this.waterRT[1]);
     this.gpu.renderTexture(this.zero, this.qRT[0]);
     this.gpu.renderTexture(this.zero, this.qRT[1]);
+    this.gpu.renderTexture(this.zero, this.sewerRT[0]);
+    this.gpu.renderTexture(this.zero, this.sewerRT[1]);
     this.currentIdx = 0;
     this.qIdx = 0;
+    this.sIdx = 0;
   }
 
   /** rgba = (depth, maxDepth, velX, velY). */
@@ -282,11 +343,18 @@ export class FloodSimulation {
     this.qRT[0].dispose();
     this.qRT[1].dispose();
     this.lamRT.dispose();
+    this.sewerRT[0].dispose();
+    this.sewerRT[1].dispose();
+    this.outRT.dispose();
     this.zero.dispose();
     this.dummySurface.dispose();
+    this.dummySewer.dispose();
     this.momentumMat.dispose();
     this.limiterMat.dispose();
     this.depthMat.dispose();
+    this.sewerOutMat.dispose();
+    this.sewerRouteMat.dispose();
+    this.sewerApplyMat.dispose();
     const gl = this.renderer.getContext() as WebGL2RenderingContext;
     if (this.fence) gl.deleteSync(this.fence);
     if (this.pbo) gl.deleteBuffer(this.pbo);

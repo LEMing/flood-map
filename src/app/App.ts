@@ -7,7 +7,8 @@ import { pickVideoMime } from '../video/Recorder';
 import { readUrlState, writeUrlState } from '../url';
 import { ScenarioUrl } from './ScenarioUrl';
 import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
-import { computeSurfaceFields, type SurfaceResult } from '../geo/surface';
+import { computeSurfaceFields, computeSewerFields, type SurfaceResult } from '../geo/surface';
+import { upsertFloatTexture } from './floatTexture';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
 import { Rain } from '../render/Rain';
@@ -56,6 +57,7 @@ export class App {
   private readonly geology = new GeologyController();
   private heightmap?: Heightmap;
   private surfaceTexture?: THREE.DataTexture;
+  private sewerTexture?: THREE.DataTexture;
   private surfaceRaw?: Pick<SurfaceResult, 'land' | 'osm'>;
 
   private readonly resBuf = new THREE.Vector2();
@@ -429,8 +431,12 @@ export class App {
       this.surfaceTexture.needsUpdate = true;
       this.simDriver.setSurface(this.surfaceTexture);
       this.terrain?.setSurfaceColors(data, this.heightmap.N);
+      const sewer = computeSewerFields(this.heightmap, this.surfaceRaw.osm, data);
+      this.sewerTexture = upsertFloatTexture(this.sewerTexture, sewer, this.heightmap.N);
+      this.simDriver.setSewer(this.sewerTexture);
     } else {
       this.simDriver.setSurface(null);
+      this.simDriver.setSewer(null);
     }
   }
 
@@ -588,6 +594,7 @@ export class App {
     this.buildings?.dispose();
     this.terrain?.dispose();
     this.surfaceTexture?.dispose();
+    this.sewerTexture?.dispose();
     this.water = undefined;
     this.floodOverlay = undefined;
     this.maxFlood = undefined;
@@ -596,6 +603,7 @@ export class App {
     this.buildings = undefined;
     this.terrain = undefined;
     this.surfaceTexture = undefined;
+    this.sewerTexture = undefined;
     this.surfaceRaw = undefined;
   }
 }

@@ -102,7 +102,8 @@ export class SimDriver {
   }
 
   updateParams(params: Params): void { this.sim?.updateParams(params); }
-  setSurface(tex: THREE.Texture | null): void { this.sim?.setSurface(tex); }
+  setSurface(t: THREE.Texture | null): void { this.sim?.setSurface(t); }
+  setSewer(t: THREE.Texture | null): void { this.sim?.setSewer(t); }
   requestInject(depthM: number): void {
     this.injectedVolume += depthM * this.rainArea(); // dump uses the rain footprint → exact m³
     this.sim?.requestInject(depthM);
@@ -128,15 +129,14 @@ export class SimDriver {
 
   reset(): void {
     this.sim?.reset();
-    this.simTime = 0;
-    this.rainedVolume = this.injectedVolume = 0;
+    this.simTime = 0; this.rainedVolume = this.injectedVolume = 0;
     this.observedMaxDepth = 1; this.observedMaxVel = 0;
   }
 
   stepOnce(): void {
     if (!this.sim) return;
     const stepDt = this.params.mapSizeKm * 1000 / this.params.gridResolution * 0.1;
-    this.sim.step(stepDt);
+    this.sim.step(stepDt); this.sim.sewerStep(stepDt);
     this.simTime += stepDt;
   }
 
@@ -264,7 +264,7 @@ export class SimDriver {
       steps++;
     }
     const simulated = simSeconds - remaining;
-    this.simTime += simulated;
+    if (simulated > 0) this.sim.sewerStep(simulated); this.simTime += simulated; // sewer once per frame (slow dynamics)
     this.rainedVolume += (intensityMmHr / 1000 / 3600) * this.rainArea() * simulated;
   }
 

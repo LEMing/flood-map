@@ -224,7 +224,7 @@ export const jv: Record<string, string> = {
   'share.title': 'Bagikan skenario iki',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Cara kerja & watesan',
-  'method.body': 'Simulasi banjir udan kanggo pendhidhikan. Fisika banyu disederhanakake lan model ora dikalibrasi marang pangukuran nyata, mula jero lan ambane banjir mung minangka pituduh — dudu pambiji risiko banjir. Iki ora nggambarake saluran udan, banyu lemah, utawa banjir kali lan pesisir. Prasetel badai yaiku profil udan perwakilan, dudu cathetan alat ukur.',
+  'method.body': 'Simulasi banjir udan kanggo pendhidhikan. Fisika banyu disederhanakake lan ora dikalibrasi marang pangukuran nyata, mula jero lan ambane banjir mung minangka pituduh — dudu pambiji risiko banjir. Pembuwangan banyu lan kelangan lemah iku prakiraan sintetik saka data terbuka, dudu model sing diukur; banyu lemah lan banjir kali utawa pesisir ora kalebu. Prasetel badai yaiku profil udan perwakilan, dudu cathetan alat ukur.',
   'method.indicative': 'Pituduh (model)',
   'waterlevel.title': 'Dhuwure banyu 🌊',
   'waterlevel.off': 'Mati',

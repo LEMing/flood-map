@@ -203,7 +203,7 @@ export const ro: Record<string, string> = {
   'share.title': 'Distribuie acest scenariu',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Cum funcționează și limite',
-  'method.body': 'O simulare educativă a inundațiilor pluviale. Fizica apei este simplificată, iar modelul nu este calibrat pe măsurători reale, așa că adâncimile și zonele inundate sunt doar orientative — nu o evaluare a riscului de inundație. Nu modelează rețeaua de canalizare pluvială, apele subterane, nici inundațiile fluviale și costiere. Presetările de furtună sunt profiluri de ploaie reprezentative, nu înregistrări de aparate.',
+  'method.body': 'O simulare educativă a inundațiilor pluviale. Fizica apei este simplificată și nu este calibrată pe măsurători reale, așa că adâncimile și zonele inundate sunt doar orientative — nu o evaluare a riscului de inundație. Drenajul și pierderile din sol sunt estimări sintetice din date deschise, nu un model măsurat; apele subterane și inundațiile fluviale sau costiere nu sunt incluse. Presetările de furtună sunt profiluri de ploaie reprezentative, nu înregistrări de aparate.',
   'method.indicative': 'Orientativ (model)',
   'waterlevel.title': 'Nivelul apei 🌊',
   'waterlevel.off': 'Oprit',

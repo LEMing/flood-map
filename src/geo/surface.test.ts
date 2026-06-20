@@ -8,7 +8,7 @@
 // the classification rules in surface.ts are meant to produce.
 
 import { describe, it, expect } from 'vitest';
-import { computeSurfaceFields, classifyInfilConductance, burnHeights } from './surface';
+import { computeSurfaceFields, classifyInfilConductance, burnHeights, computeSewerFields } from './surface';
 import type { Heightmap, LatLon } from './heightmap';
 import type { LandClass } from './landcover';
 import type { OsmRasters } from './osm';
@@ -508,5 +508,54 @@ describe('burnHeights', () => {
     let sum = 0;
     for (let k = 0; k < N * N; k++) sum += hm.data[k];
     expect(sum).toBeCloseTo(2 * BUILDING_RAISE_M - 3 * ROAD_LOWER_M, 4);
+  });
+});
+
+describe('computeSewerFields', () => {
+  // Elevation falls due east (-x), so every cell drains east; the east edge has no
+  // lower neighbour (boundary pits), and one carved interior hole is a closed pit.
+  function tiltedHeightmap(): Heightmap {
+    const data = new Float32Array(N * N);
+    for (let k = 0; k < N * N; k++) data[k] = -(k % N);
+    data[idx(4, 4)] = -100; // a deep interior pit
+    return { ...makeHeightmap(), data };
+  }
+
+  function sewerCell(sewer: Float32Array, k: number) {
+    return { cap: sewer[k * 4], dirX: sewer[k * 4 + 1], dirY: sewer[k * 4 + 2], outfall: sewer[k * 4 + 3] };
+  }
+
+  const sewer = computeSewerFields(tiltedHeightmap(), emptyOsm(), new Float32Array(N * N * 4));
+
+  it('routes an interior cell to its D8 downstream neighbour, never an outfall', () => {
+    const c = sewerCell(sewer, idx(2, 1));
+    expect([c.dirX, c.dirY]).toEqual([1, 0]); // due east
+    expect(c.outfall).toBe(0);
+  });
+
+  it('discharges at a boundary pit — an edge cell with no lower neighbour', () => {
+    const c = sewerCell(sewer, idx(N - 1, 3));
+    expect([c.dirX, c.dirY]).toEqual([0, 0]);
+    expect(c.outfall).toBe(1);
+  });
+
+  it('routes an edge cell inward when it still has a downstream, instead of dumping off-map', () => {
+    const c = sewerCell(sewer, idx(3, 0)); // north edge, drains east into the domain
+    expect([c.dirX, c.dirY]).toEqual([1, 0]);
+    expect(c.outfall).toBe(0);
+  });
+
+  it('surcharges an interior pit in place — dir 0, no outfall', () => {
+    const c = sewerCell(sewer, idx(4, 4));
+    expect([c.dirX, c.dirY]).toEqual([0, 0]);
+    expect(c.outfall).toBe(0);
+  });
+
+  it('encodes every routing direction as a unit D8 step', () => {
+    for (let k = 0; k < N * N; k++) {
+      const c = sewerCell(sewer, k);
+      expect(Math.abs(c.dirX)).toBeLessThanOrEqual(1);
+      expect(Math.abs(c.dirY)).toBeLessThanOrEqual(1);
+    }
   });
 });

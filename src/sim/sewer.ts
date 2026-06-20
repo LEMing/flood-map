@@ -22,7 +22,10 @@ export interface SewerGrid {
   h: Float64Array; // surface water depth (m) — updated in place
   S: Float64Array; // sewer storage (m depth-equivalent) — updated in place
   cap: Float64Array; // per-cell pipe capacity / inlet rate (m/s)
-  downstream: Int32Array; // D8 downstream cell index, or -1 for an outfall
+  downstream: Int32Array; // D8 downstream cell index, or -1 for a terminal (pit/edge)
+  /** 1 where pipe flow leaves the domain (true outfalls = domain edges); a terminal that
+   *  is NOT an outfall is an interior pit where the pipe backs up and surcharges. */
+  outfall: Uint8Array;
 }
 
 export interface SewerParams {
@@ -40,14 +43,16 @@ export function stepSewer(g: SewerGrid, p: SewerParams): { discharged: number } 
   for (let i = 0; i < n; i++) {
     const sMax = g.cap[i] * p.bufferSec;
     inlet[i] = Math.min(Math.max(0, g.h[i]), g.cap[i] * p.dt, Math.max(0, sMax - g.S[i]));
-    out[i] = Math.min(g.S[i] + inlet[i], g.cap[i] * p.dt); // pipe throughput this step
+    // An interior pit (terminal, not an outfall) can't push flow on → it backs up.
+    const interiorPit = g.downstream[i] < 0 && !g.outfall[i];
+    out[i] = interiorPit ? 0 : Math.min(g.S[i] + inlet[i], g.cap[i] * p.dt);
   }
-  // Route each cell's outflow one step downstream (scatter); outfalls discharge out.
+  // Route each cell's outflow one step downstream (scatter); outfalls discharge it out.
   let discharged = 0;
   for (let i = 0; i < n; i++) {
     const d = g.downstream[i];
     if (d >= 0) inflow[d] += out[i];
-    else discharged += out[i];
+    else if (g.outfall[i]) discharged += out[i];
   }
   for (let i = 0; i < n; i++) {
     const sMax = g.cap[i] * p.bufferSec;

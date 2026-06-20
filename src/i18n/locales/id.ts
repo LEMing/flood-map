@@ -217,7 +217,7 @@ export const id: Record<string, string> = {
   'share.title': 'Bagikan skenario ini',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Cara kerja & batasan',
-  'method.body': 'Simulasi banjir hujan untuk edukasi. Fisika air disederhanakan dan model tidak dikalibrasi terhadap pengukuran nyata, sehingga kedalaman dan luas banjir hanya bersifat indikatif — bukan penilaian risiko banjir. Model ini tidak memodelkan saluran air hujan, air tanah, maupun banjir sungai dan pesisir. Prasetel badai adalah profil hujan representatif, bukan catatan alat ukur.',
+  'method.body': 'Simulasi banjir hujan untuk edukasi. Fisika air disederhanakan dan tidak dikalibrasi terhadap pengukuran nyata, sehingga kedalaman dan luas banjir hanya bersifat indikatif — bukan penilaian risiko banjir. Drainase dan kehilangan tanah adalah perkiraan sintetis dari data terbuka, bukan model tersurvei; air tanah serta banjir sungai atau pesisir tidak disertakan. Prasetel badai adalah profil hujan representatif, bukan catatan alat ukur.',
   'method.indicative': 'Indikatif (model)',
   'waterlevel.title': 'Ketinggian air 🌊',
   'waterlevel.off': 'Mati',

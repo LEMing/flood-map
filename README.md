@@ -133,11 +133,13 @@ gauged event). Specifically:
   declines as the soil wets up, → the saturated conductivity Ks), so dry pervious
   ground absorbs the early rain and then ponds — but Ks and the suction-deficit are
   literature-typical, not measured, and there is no soil drying/redistribution
-  between storms. The storm sewer is a **synthetic** per-cell capacity — scaled by
-  D8 flow-accumulation (contributing area, concentrated along streets/valleys), not
-  a digitized pipe network — so it is a heuristic prior, not real pipe diameters, and
-  sewer surcharge / downstream resurfacing (a major urban-pluvial mechanism) is not
-  yet represented.
+  between storms. The storm sewer is a **synthetic** network: a per-cell capacity
+  scaled by D8 flow-accumulation (contributing area, concentrated along streets/
+  valleys), with sewer storage routed one cell downstream per step and **surcharge**
+  — when an overwhelmed pipe fills, the excess resurfaces at the bottleneck, the
+  dominant urban-pluvial mechanism. It is a heuristic prior, **not** a digitized pipe
+  network with real diameters; capacity and coverage are uncalibrated, and DEM-based
+  routing breaks down on very flat terrain.
 - **Not modeled:** groundwater flow, river/coastal/fluvial flooding, building
   porosity (buildings are solid walls), sediment, and sub-grid features (curbs,
   individual inlets, culverts). Native DEM posting is ~30 m (FABDEM), upsampled to

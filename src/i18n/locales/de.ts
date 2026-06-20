@@ -222,7 +222,7 @@ export const de: Record<string, string> = {
   'share.title': 'Dieses Szenario teilen',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Funktionsweise & Grenzen',
-  'method.body': 'Eine lehrhafte Simulation von Regenüberflutung. Die Wasserphysik ist vereinfacht und das Modell ist nicht an reale Messungen kalibriert, daher sind Überflutungstiefen und -flächen nur Anhaltswerte — keine Hochwasserrisikobewertung. Es modelliert weder Regenkanalisation, Grundwasser noch Fluss- und Küstenhochwasser. Sturm-Voreinstellungen sind repräsentative Regenprofile, keine Messdaten.',
+  'method.body': 'Eine lehrhafte Simulation von Regenüberflutung. Die Wasserphysik ist vereinfacht und nicht an reale Messungen kalibriert, daher sind Überflutungstiefen und -flächen nur Anhaltswerte — keine Hochwasserrisikobewertung. Entwässerung und Bodenverluste sind synthetische Schätzungen aus offenen Daten, kein vermessenes Modell; Grundwasser sowie Fluss- oder Küstenhochwasser sind nicht enthalten. Sturm-Voreinstellungen sind repräsentative Regenprofile, keine Messdaten.',
   'method.indicative': 'Richtwert (Modell)',
   'waterlevel.title': 'Wasserstand 🌊',
   'waterlevel.off': 'Aus',
