@@ -133,6 +133,16 @@ Together with the property tests in `inertialFlow.test.ts` (exact mass conservat
 well-balanced lake-at-rest, positivity), this makes "mirrors Bates et al. (2010) /
 LISFLOOD-FP" a reproducible result rather than an assertion.
 
+**GPU vs CPU parity.** Those cases verify the Float64 CPU reference; the model that actually
+ships runs the GLSL shaders on the GPU. `parityHarness.ts` (browser-only — it needs a WebGL2
+float context) runs both on an identical scenario and confirms they agree: in the smooth-flow
+regime the shader output matches the CPU reference to **~1.5 mm over 120 steps** (float32-vs-
+float64 rounding), with total mass identical to ~1e-9. The two diverge only where cells
+straddle the wet/dry threshold `hMin` — a discontinuous on/off switch that float32 and float64
+cross at slightly different moments, inherent to a float wet/dry scheme rather than a
+shader/CPU mismatch (flat-bed and few-step runs match bit-for-bit). Run it from the dev-server
+console: `(await import('/src/sim/parityHarness.ts')).runParity()`.
+
 ## Data sources
 
 - Geocoding: [Nominatim](https://operations.osmfoundation.org/policies/nominatim/) (OSM) — ~1 req/s.
