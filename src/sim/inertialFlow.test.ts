@@ -186,3 +186,36 @@ describe('inertial solver — friction', () => {
     expect(rough).toBeGreaterThan(smooth); // rougher ground equilibrates slower
   });
 });
+
+describe('inertial solver — depression storage', () => {
+  // A thin 3 mm sheet on a slope with an OPEN edge: with 5 mm of depression storage it is
+  // below the micro-hollow fill level and cannot run off; with none, it drains away.
+  const thinSheetOnSlope = (): InertialGrid => makeGrid(20, (x) => ({ z: (20 - x) * 0.5, h: 0.003 }));
+
+  it('holds shallow water below the depression depth — nothing runs off the open edge', () => {
+    const g = thinSheetOnSlope();
+    const p: InertialParams = { ...BASE, boundaryOpen: true, depressionM: 0.005, dt: cfl(g, BASE) };
+    const start = totalWater(g);
+    for (let s = 0; s < 100; s++) step(g, p);
+    expect(totalWater(g)).toBeCloseTo(start, 9); // held in micro-hollows, not a silent sink
+  });
+
+  it('without depression storage the same sheet drains off the open edge', () => {
+    const g = thinSheetOnSlope();
+    const p: InertialParams = { ...BASE, boundaryOpen: true, depressionM: 0, dt: cfl(g, BASE) };
+    const start = totalWater(g);
+    for (let s = 0; s < 100; s++) step(g, p);
+    expect(totalWater(g)).toBeLessThan(start); // runs off
+  });
+
+  it('a steep bed step cannot drain a cell below its depression reserve (limiter cap)', () => {
+    // A cell perched 5 mm above the 50 mm depression line atop a 10 m drop into dry ground:
+    // the inertial discharge down that face is large, so the limiter — not just the hFlow
+    // gate — must hold the reserve (it caps outflow at h − depression, not full h).
+    const N = 8, dep = 0.05;
+    const g = makeGrid(N, (x, y) => (x === 2 && y === 2 ? { z: 10, h: 0.055 } : { z: 0, h: 0 }));
+    const p: InertialParams = { ...BASE, manning: 0.012, depressionM: dep, dt: cfl(g, BASE) };
+    for (let s = 0; s < 200; s++) step(g, p);
+    expect(g.h[2 * N + 2]).toBeGreaterThanOrEqual(dep - 1e-6); // reserve held, not drained to 0
+  });
+});

@@ -36,6 +36,7 @@ export interface InertialParams {
   manning: number; // uniform Manning's n used where grid.manningN is absent
   boundaryOpen: boolean; // true = water drains off the domain edge
   hMin?: number; // wet/dry flow threshold (m); faces shallower than this carry no flow
+  depressionM?: number; // depression storage (m): held in micro-hollows, doesn't run off
   /** Uniform source/sink terms (m/s), applied in the continuity step. */
   rainRate?: number;
   infilRate?: number;
@@ -65,9 +66,11 @@ export interface FaceGeom { etaA: number; etaB: number; zA: number; zB: number; 
  * max(surfaces) − max(beds).
  */
 export function faceFlux(qOld: number, f: FaceGeom, n: number, p: InertialParams): number {
-  const hFlow = Math.max(f.etaA, f.etaB) - Math.max(f.zA, f.zB);
+  // Depression storage holds the first `depressionM` of water in sub-grid hollows: subtract
+  // it from the Cunge flow depth so shallow sheet flow can't run off (it stays in h).
+  const hFlow = Math.max(f.etaA, f.etaB) - Math.max(f.zA, f.zB) - (p.depressionM ?? 0);
   const hMin = p.hMin ?? HMIN_DEFAULT;
-  if (hFlow <= hMin) return 0; // dry face → no flow, and stored momentum is dropped
+  if (hFlow <= hMin) return 0; // dry face / below depression storage → no flow, drop momentum
   const slope = (f.etaB - f.etaA) / p.cellSize; // +slope (B higher) ⇒ flux toward A (negative)
   const num = qOld - p.gravity * hFlow * p.dt * slope;
   const den = 1 + (p.gravity * p.dt * n * n * Math.abs(qOld)) / Math.pow(hFlow, 7 / 3);
@@ -146,7 +149,10 @@ function drainageLimiter(g: InertialGrid, p: InertialParams, qx: Float64Array, q
       const qW = x > 0 ? qx[i - 1] : boundaryFlux(g, p, i, 0, -1);
       const qS = y > 0 ? qy[i - N] : boundaryFlux(g, p, i, 0, -1);
       const drain = k * (Math.max(0, qx[i]) + Math.max(0, -qW) + Math.max(0, qy[i]) + Math.max(0, -qS));
-      if (drain > g.h[i]) lam[i] = g.h[i] / drain;
+      // Only the water above the depression reserve may leave in one step — so a steep face
+      // can't drain a cell below its micro-hollow storage.
+      const avail = Math.max(0, g.h[i] - (p.depressionM ?? 0));
+      if (drain > avail) lam[i] = avail / drain;
     }
   }
   return lam;

@@ -56,6 +56,7 @@ export interface Params {
   infiltrationMmPerHr: number; // pervious-soil Ks (SoilGrids+Saxton-Rawls); groundwater acts via suction S, not here
   sorptivityM?: number; // Green-Ampt suction-deficit S (m), soil-derived; undefined → groundwater binary
   evaporationPerHr: number; // open-water evaporation as a constant depth flux (mm/hr), not a fraction of depth
+  depressionStorageMm: number; // water held in sub-grid micro-hollows before runoff (held in h, not lost)
 
   // Physics
   gravity: number; // m/s^2
@@ -149,6 +150,7 @@ export const DEFAULT_PARAMS: Params = {
 
   infiltrationMmPerHr: 12, // pervious-soil capacity before groundwater scaling
   evaporationPerHr: 0.0, // mm/hr (off by default; ~0.2 mm/hr ≈ 5 mm/day is a realistic open-water rate)
+  depressionStorageMm: 4, // ~4 mm held in surface micro-hollows before runoff (literature-typical mixed)
 
   gravity: 9.81,
   friction: 1.0, // Manning roughness multiplier (1 = land-cover default n)

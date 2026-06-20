@@ -112,6 +112,7 @@ export class FloodSimulation {
       uGravity: { value: params.gravity },
       uRoughness: { value: params.friction },
       uHMin: { value: H_MIN },
+      uDepression: { value: params.depressionStorageMm / 1000 }, // mm → m
       uBoundaryOpen: { value: params.boundary === 'open' ? 1 : 0 },
       uRainRate: { value: 0 },
       uInfilRate: { value: 0 },
@@ -135,7 +136,7 @@ export class FloodSimulation {
     };
     const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
     const shared = ['heightmap', 'tWater', 'tQ', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
-      'uGravity', 'uRoughness', 'uHMin', 'uInfilRate', 'uSorptivity', 'uBoundaryOpen'];
+      'uGravity', 'uRoughness', 'uHMin', 'uDepression', 'uInfilRate', 'uSorptivity', 'uBoundaryOpen'];
     this.momentumMat = gpu.createShaderMaterial(momentumFragment, pick(shared));
     this.limiterMat = gpu.createShaderMaterial(limiterFragment, pick(shared));
     this.depthMat = gpu.createShaderMaterial(depthFragment, pick([
@@ -167,6 +168,7 @@ export class FloodSimulation {
   updateParams(params: Params): void {
     this.u.uGravity.value = params.gravity;
     this.u.uRoughness.value = params.friction;
+    this.u.uDepression.value = params.depressionStorageMm / 1000; // mm → m
     this.u.uBoundaryOpen.value = params.boundary === 'open' ? 1 : 0;
     this.u.uRainRate.value = params.intensityMmPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uInfilRate.value = params.infiltrationMmPerHr * MM_PER_HR_TO_M_PER_S;
