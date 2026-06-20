@@ -168,8 +168,10 @@ gauged event). Specifically:
   is the _local-inertial_ approximation (Bates et al., 2010): it drops the
   convective-acceleration term `∂(q²/h)/∂x`, so it is most accurate for the
   sub-to-trans-critical sheet flow of urban pluvial flooding and does **not**
-  resolve true hydraulic jumps or strongly supercritical shocks. Manning _n_ is
-  literature-typical and **uncalibrated**.
+  resolve true hydraulic jumps or strongly supercritical shocks. The per-cell Manning
+  _n_ comes from the **Engman (1986)** overland-flow roughness table by land cover
+  (paved ~0.013, bare soil ~0.04, cropland ~0.10, grass ~0.20, woods ~0.40), scaled by
+  the global friction slider — a cited table, but still **uncalibrated** to this site.
 - **Simplified losses.** Infiltration uses a per-cell **Green-Ampt** model (capacity
   declines as the soil wets up, → the saturated conductivity Ks), so dry pervious
   ground absorbs the early rain and then ponds. Both Ks and the suction-deficit are
@@ -189,9 +191,12 @@ gauged event). Specifically:
   porosity (buildings are solid walls), sediment, and sub-grid features (curbs,
   individual inlets, culverts). Native DEM posting is ~30 m (FABDEM), upsampled to
   the grid — micro-topography that controls real ponding is sub-grid.
-- **Storm presets** are representative rainfall *profiles* scaled to reported
-  event totals — **not gauge records or validated flood reconstructions**.
-  Reported depths and flooded areas are **indicative, not measurements**.
+- **Storm presets.** The "Heavy storm" preset is a 25-year **alternating-block (Keifer &
+  Chu, 1957 / "Chicago") design storm** synthesised from the Krasnodar **СП 32.13330.2018**
+  intensity-duration-frequency formula (`idf.ts`) — a method an engineer would recognise,
+  though the IDF coefficients carry the usual regional-map uncertainty. The other presets are
+  representative *profiles* scaled to reported event totals — **not gauge records or validated
+  flood reconstructions**. Reported depths and flooded areas are **indicative, not measurements**.
 
 For real flood-risk work use calibrated tools (HEC-RAS 2D, SWMM, TUFLOW,
 LISFLOOD-FP) with validated inputs. Do **not** use this for insurance, planning,

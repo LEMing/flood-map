@@ -84,9 +84,10 @@ export class FloodSimulation {
     this.gpu = gpu;
     gpu.setDataType?.(THREE.FloatType);
 
-    // Fallback 1×1 surface (conductance = 1); real per-cell fields set via setSurface().
+    // Fallback 1×1 surface (Manning n 0.03 in .b — only sampled if uUseSurface flips on);
+    // the real per-cell fields are set via setSurface().
     this.dummySurface = new THREE.DataTexture(
-      new Float32Array([0, 0, 1, 0]), 1, 1, THREE.RGBAFormat, THREE.FloatType,
+      new Float32Array([0, 0, 0.03, 0]), 1, 1, THREE.RGBAFormat, THREE.FloatType,
     );
     this.dummySurface.needsUpdate = true;
 
@@ -256,7 +257,7 @@ export class FloodSimulation {
     this.pendingFillSet = set;
   }
 
-  /** Per-cell urban surface fields (rgba = infil m/s, drain m/s, conductance 0..1, building flag). */
+  /** Per-cell urban surface fields (rgba = infil m/s, drain m/s, Manning n, building flag). */
   setSurface(texture: THREE.Texture | null): void {
     this.u.tSurface.value = texture ?? this.dummySurface;
     this.u.uUseSurface.value = texture ? 1 : 0;

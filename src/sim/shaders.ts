@@ -5,7 +5,7 @@
 // ∂q/∂t term), so a flood wave can accelerate, overshoot and reverse — it carries
 // real inertia, not just a head-gradient relaxation. Bed friction is the same
 // semi-implicit Manning term we already used; the per-cell Manning's n comes from
-// the land-cover conductance field, scaled by `uRoughness`.
+// the land-cover roughness field (Engman 1986), scaled by `uRoughness`.
 //
 // Staggered (Arakawa-C / MAC) grid, mirrored line-for-line from the CPU reference
 // in inertialFlow.ts (which the unit tests pin for mass conservation, the
@@ -40,8 +40,10 @@ const HELPERS = /* glsl */ `
   uniform int uBoundaryOpen;
 
   float manningN(vec2 p) {
-    float cond = (uUseSurface == 1) ? texture2D(tSurface, p).b : 1.0;
-    return (0.015 + (1.0 - cond) * 0.235) * uRoughness;
+    // tSurface.b carries the per-cell Manning n straight from the land-cover table
+    // (Engman 1986 overland-flow values), scaled by the global roughness slider.
+    float n = (uUseSurface == 1) ? texture2D(tSurface, p).b : 0.03;
+    return n * uRoughness;
   }
   // Green-Ampt infiltration capacity (m/s): declines as the cumulative infiltration
   // F (m) grows (the wetting front deepens), → Ks. Mirrors src/sim/infiltration.ts.
