@@ -204,7 +204,7 @@ export const pt: Record<string, string> = {
   'share.title': 'Partilhar este cenário',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Como funciona e limites',
-  'method.body': 'Uma simulação educativa de inundação por chuva. A física da água é simplificada e não calibrada com medições reais, por isso as profundidades e áreas inundadas são apenas indicativas — não uma avaliação de risco de inundação. A drenagem e as perdas no solo são estimativas sintéticas a partir de dados abertos, não um modelo levantado; as águas subterrâneas e as cheias fluviais ou costeiras não estão incluídas. As predefinições de tempestade são perfis de chuva representativos, não registos de instrumentos.',
+  'method.body': 'Uma simulação educativa de inundação por chuva. A física da água é simplificada e não calibrada com medições reais, por isso as profundidades e áreas inundadas são apenas indicativas — não uma avaliação de risco de inundação. A drenagem é uma estimativa sintética e as perdas no solo usam dados de solo abertos mapeados (SoilGrids), uma estimativa regional grosseira, não um levantamento de campo. As águas subterrâneas e as cheias fluviais ou costeiras não estão incluídas. As predefinições de tempestade são perfis de chuva representativos, não registos de instrumentos.',
   'method.indicative': 'Indicativo (modelo)',
   'waterlevel.title': 'Nível da água 🌊',
   'waterlevel.off': 'Desligado',

@@ -204,7 +204,7 @@ export const sv: Record<string, string> = {
   'share.title': 'Dela det här scenariot',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Så fungerar det & gränser',
-  'method.body': 'En pedagogisk simulering av regnöversvämning. Vattenfysiken är förenklad och inte kalibrerad mot verkliga mätningar, så översvämningsdjup och -ytor är endast vägledande — inte en översvämningsriskbedömning. Avvattning och markförluster är syntetiska uppskattningar från öppna data, inte en uppmätt modell; grundvatten och flod- eller kustöversvämningar ingår inte. Stormförinställningar är representativa nederbördsprofiler, inte mätdata.',
+  'method.body': 'En pedagogisk simulering av regnöversvämning. Vattenfysiken är förenklad och inte kalibrerad mot verkliga mätningar, så översvämningsdjup och -ytor är endast vägledande — inte en översvämningsriskbedömning. Avvattning är en syntetisk uppskattning och markförluster använder öppna karterade markdata (SoilGrids), en grov regional uppskattning, inte en fältundersökning. Grundvatten och flod- eller kustöversvämningar ingår inte. Stormförinställningar är representativa nederbördsprofiler, inte mätdata.',
   'method.indicative': 'Vägledande (modell)',
   'waterlevel.title': 'Vattennivå 🌊',
   'waterlevel.off': 'Av',

@@ -204,7 +204,7 @@ export const pl: Record<string, string> = {
   'share.title': 'Udostępnij ten scenariusz',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Jak to działa i ograniczenia',
-  'method.body': 'Edukacyjna symulacja powodzi opadowej. Fizyka wody jest uproszczona i nie jest skalibrowana do rzeczywistych pomiarów, więc głębokości i obszary zalania są jedynie orientacyjne — to nie ocena ryzyka powodziowego. Odwodnienie i straty w glebie to syntetyczne szacunki z otwartych danych, a nie pomierzony model; wody gruntowe oraz powodzie rzeczne lub przybrzeżne nie są uwzględnione. Ustawienia burzy to reprezentatywne profile opadów, a nie zapisy pomiarowe.',
+  'method.body': 'Edukacyjna symulacja powodzi opadowej. Fizyka wody jest uproszczona i nie jest skalibrowana do rzeczywistych pomiarów, więc głębokości i obszary zalania są jedynie orientacyjne — to nie ocena ryzyka powodziowego. Odwodnienie to syntetyczne oszacowanie, a straty w glebie korzystają z otwartych zmapowanych danych glebowych (SoilGrids), zgrubnego oszacowania obszarowego, a nie z badań terenowych. Wody gruntowe oraz powodzie rzeczne lub przybrzeżne nie są uwzględnione. Ustawienia burzy to reprezentatywne profile opadów, a nie zapisy pomiarowe.',
   'method.indicative': 'Orientacyjne (model)',
   'waterlevel.title': 'Poziom wody 🌊',
   'waterlevel.off': 'Wył',

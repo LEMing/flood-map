@@ -203,7 +203,7 @@ export const zu: Record<string, string> = {
   'share.title': 'Yabelana ngalesi simo',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Indlela esebenza ngayo & imikhawulo',
-  'method.body': 'Ukulingisa kwezemfundo kwezikhukhula zemvula. Ifiziksi yamanzi yenziwe lula futhi ayilungiselelwanga ngokwezilinganiso zangempela, ngakho ukujula nezindawo zezikhukhula kungukukhomba kuphela — akusona ukuhlola ingozi yezikhukhula. Ukuhlanza amanzi nokulahleka komhlaba kuyizilinganiso ezenziwe ezivela kudatha evulekile, hhayi imodeli elinganisiwe; amanzi angaphansi komhlaba nezikhukhula zomfula noma zogu akufakiwe. Izisetho ezimisiwe zesiphepho ziyimingcele yemvula emelele, hhayi amarekhodi okukala.',
+  'method.body': 'Ukulingisa kwezemfundo kwezikhukhula zemvula. Ifiziksi yamanzi yenziwe lula futhi ayilungiselelwanga ngokwezilinganiso zangempela, ngakho ukujula nezindawo zezikhukhula kungukukhomba kuphela — akusona ukuhlola ingozi yezikhukhula. Ukukhipha amanzi kuyisilinganiso esenziwe, futhi ukulahleka komhlaba kusebenzisa idatha yomhlaba evulekile ebhalwe imephu (SoilGrids), isilinganiso esiluhlaza sesifunda, hhayi ukuhlola kwendawo. Amanzi angaphansi komhlaba nezikhukhula zomfula noma zogu akufakiwe. Izisetho ezimisiwe zesiphepho ziyimingcele yemvula emelele, hhayi amarekhodi okukala.',
   'method.indicative': 'Ukukhomba (imodeli)',
   'waterlevel.title': 'Izinga lamanzi 🌊',
   'waterlevel.off': 'Vala',

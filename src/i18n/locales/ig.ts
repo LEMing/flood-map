@@ -204,7 +204,7 @@ export const ig: Record<string, string> = {
   'share.title': 'Kesaa ọnọdụ a',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Otú ọ si arụ ọrụ na oke ya',
-  'method.body': 'Ịmewe agụmakwụkwọ nke idei mmiri si na mmiri ozuzo. E mere ka physics mmiri dị mfe, a kalibreghịkwa ya na nha eziokwu, ya mere omimi na mpaghara idei mmiri bụ naanị ihe ngosi — ọ bụghị ntule ihe ize ndụ idei mmiri. Mmiri mmiri na mfu ala bụ atụmatụ aghụghọ sitere na data mepere emepe, ọ bụghị ụdị a tụrụ atụ; mmiri okpuru ala na idei mmiri osimiri ma ọ bụ ụsọ oké osimiri abụghị nke etinyere. Ntọala oké ifufe bụ profaịlụ mmiri ozuzo nnọchiteanya, ọ bụghị ndekọ nha.',
+  'method.body': 'Ịmewe agụmakwụkwọ nke idei mmiri si na mmiri ozuzo. E mere ka physics mmiri dị mfe, a kalibreghịkwa ya na nha eziokwu, ya mere omimi na mpaghara idei mmiri bụ naanị ihe ngosi — ọ bụghị ntule ihe ize ndụ idei mmiri. Mmiri mmiri bụ atụmatụ aghụghọ, mfu ala na-eji data ala emepere emepe nke e setịpụrụ map (SoilGrids), atụmatụ mpaghara siri ike, ọ bụghị nyocha ebe. Mmiri okpuru ala na idei mmiri osimiri ma ọ bụ ụsọ oké osimiri abụghị nke etinyere. Ntọala oké ifufe bụ profaịlụ mmiri ozuzo nnọchiteanya, ọ bụghị ndekọ nha.',
   'method.indicative': 'Ngosi (ụdị)',
   'waterlevel.title': 'Ọkwa mmiri 🌊',
   'waterlevel.off': 'Gbanyụọ',

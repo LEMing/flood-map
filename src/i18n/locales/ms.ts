@@ -204,7 +204,7 @@ export const ms: Record<string, string> = {
   'share.title': 'Kongsi senario ini',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Cara ia berfungsi & had',
-  'method.body': 'Simulasi banjir hujan untuk pendidikan. Fizik air dipermudahkan dan tidak ditentukur dengan ukuran sebenar, jadi kedalaman dan kawasan banjir hanya bersifat petunjuk — bukan penilaian risiko banjir. Saliran dan kehilangan tanah ialah anggaran sintetik daripada data terbuka, bukan model yang diukur; air bawah tanah serta banjir sungai atau pantai tidak disertakan. Pratetapan ribut ialah profil hujan yang mewakili, bukan rekod alat ukur.',
+  'method.body': 'Simulasi banjir hujan untuk pendidikan. Fizik air dipermudahkan dan tidak ditentukur dengan ukuran sebenar, jadi kedalaman dan kawasan banjir hanya bersifat petunjuk — bukan penilaian risiko banjir. Saliran ialah anggaran sintetik dan kehilangan tanah menggunakan data tanah terbuka yang dipetakan (SoilGrids), anggaran rantau yang kasar, bukan tinjauan tapak. Air bawah tanah serta banjir sungai atau pantai tidak disertakan. Pratetapan ribut ialah profil hujan yang mewakili, bukan rekod alat ukur.',
   'method.indicative': 'Petunjuk (model)',
   'waterlevel.title': 'Paras air 🌊',
   'waterlevel.off': 'Mati',

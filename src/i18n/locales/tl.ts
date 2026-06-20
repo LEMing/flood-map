@@ -221,7 +221,7 @@ export const tl: Record<string, string> = {
   'share.title': 'Ibahagi ang sitwasyong ito',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Paano ito gumagana & mga limitasyon',
-  'method.body': 'Isang pang-edukasyong simulation ng baha mula sa ulan. Pinasimple ang pisika ng tubig at hindi naka-calibrate sa tunay na mga sukat, kaya ang lalim at sukat ng baha ay pahiwatig lamang — hindi isang pagtatasa ng panganib sa baha. Ang drenahe at pagkawala sa lupa ay mga sintetikong tantya mula sa bukas na datos, hindi isang sinukat na modelo; hindi kasama ang tubig sa ilalim ng lupa at baha sa ilog o baybayin. Ang mga preset ng bagyo ay kumakatawang profile ng ulan, hindi mga talaan ng sukat.',
+  'method.body': 'Isang pang-edukasyong simulation ng baha mula sa ulan. Pinasimple ang pisika ng tubig at hindi naka-calibrate sa tunay na mga sukat, kaya ang lalim at sukat ng baha ay pahiwatig lamang — hindi isang pagtatasa ng panganib sa baha. Ang drenahe ay isang sintetikong tantya at ang pagkawala sa lupa ay gumagamit ng bukas na minapang datos ng lupa (SoilGrids), isang magaspang na pantianong tantya, hindi isang sarbey sa lugar. Hindi kasama ang tubig sa ilalim ng lupa at baha sa ilog o baybayin. Ang mga preset ng bagyo ay kumakatawang profile ng ulan, hindi mga talaan ng sukat.',
   'method.indicative': 'Pahiwatig (modelo)',
   'waterlevel.title': 'Antas ng tubig 🌊',
   'waterlevel.off': 'Patay',

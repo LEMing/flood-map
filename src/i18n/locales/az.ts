@@ -204,7 +204,7 @@ export const az: Record<string, string> = {
   'share.title': 'Bu ssenarini paylaşın',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Necə işləyir və məhdudiyyətlər',
-  'method.body': 'Təhsil məqsədli yağış-daşqın simulyasiyası. Suyun fizikası sadələşdirilib və real ölçmələrə görə kalibrlənməyib, ona görə daşqın dərinlikləri və sahələri yalnız təxminidir — daşqın riski qiymətləndirməsi deyil. Drenaj və torpaq itkiləri açıq məlumatlardan alınan sintetik təxminlərdir, ölçülmüş model deyil; yeraltı sular və çay yaxud sahil daşqınları daxil edilmir. Fırtına hazır ayarları təmsilçi yağış profilləridir, ölçü qeydləri deyil.',
+  'method.body': 'Təhsil məqsədli yağış-daşqın simulyasiyası. Suyun fizikası sadələşdirilib və real ölçmələrə görə kalibrlənməyib, ona görə daşqın dərinlikləri və sahələri yalnız təxminidir — daşqın riski qiymətləndirməsi deyil. Drenaj sintetik təxmindir, torpaq itkiləri isə açıq xəritələnmiş torpaq məlumatlarından (SoilGrids) istifadə edir ki, bu da kobud regional təxmindir, sahə tədqiqatı deyil. Yeraltı sular və çay yaxud sahil daşqınları daxil edilmir. Fırtına hazır ayarları təmsilçi yağış profilləridir, ölçü qeydləri deyil.',
   'method.indicative': 'Təxmini (model)',
   'waterlevel.title': 'Su səviyyəsi 🌊',
   'waterlevel.off': 'Söndür',

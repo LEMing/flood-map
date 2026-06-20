@@ -204,7 +204,7 @@ export const af: Record<string, string> = {
   'share.title': 'Deel hierdie scenario',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Hoe dit werk & beperkings',
-  'method.body': 'ŉ Opvoedkundige reën-vloedsimulasie. Die waterfisika is vereenvoudig en nie teen werklike metings gekalibreer nie, so vloeddieptes en -gebiede is slegs aanduidend — nie ŉ vloedrisiko-assessering nie. Dreinering en grondverliese is sintetiese skattings uit oop data, nie ŉ opgemete model nie; grondwater en rivier- of kusvloede word nie ingesluit nie. Stormvoorinstellings is verteenwoordigende reënprofiele, nie meterrekords nie.',
+  'method.body': 'ŉ Opvoedkundige reën-vloedsimulasie. Die waterfisika is vereenvoudig en nie teen werklike metings gekalibreer nie, so vloeddieptes en -gebiede is slegs aanduidend — nie ŉ vloedrisiko-assessering nie. Dreinering is ŉ sintetiese skatting en grondverliese gebruik oop gekarteerde gronddata (SoilGrids), ŉ growwe streekskatting, nie ŉ terreinopname nie. Grondwater en rivier- of kusvloede word nie ingesluit nie. Stormvoorinstellings is verteenwoordigende reënprofiele, nie meterrekords nie.',
   'method.indicative': 'Aanduidend (model)',
   'waterlevel.title': 'Watervlak 🌊',
   'waterlevel.off': 'Af',

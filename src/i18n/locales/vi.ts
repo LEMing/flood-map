@@ -216,7 +216,7 @@ export const vi: Record<string, string> = {
   'share.title': 'Chia sẻ kịch bản này',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Cách hoạt động & giới hạn',
-  'method.body': 'Một mô phỏng ngập lụt do mưa mang tính giáo dục. Vật lý của nước được đơn giản hóa và không được hiệu chỉnh theo các phép đo thực tế, nên độ sâu và diện tích ngập chỉ mang tính tham khảo — không phải đánh giá rủi ro lũ lụt. Thoát nước và tổn thất đất là các ước tính tổng hợp từ dữ liệu mở, không phải mô hình được khảo sát; nước ngầm và lũ sông hay ven biển không được tính đến. Cài đặt sẵn của bão là các hồ sơ mưa đại diện, không phải bản ghi đo đạc.',
+  'method.body': 'Một mô phỏng ngập lụt do mưa mang tính giáo dục. Vật lý của nước được đơn giản hóa và không được hiệu chỉnh theo các phép đo thực tế, nên độ sâu và diện tích ngập chỉ mang tính tham khảo — không phải đánh giá rủi ro lũ lụt. Thoát nước là một ước tính tổng hợp và tổn thất đất dùng dữ liệu đất mở đã lập bản đồ (SoilGrids), một ước tính khu vực thô, không phải khảo sát hiện trường. Nước ngầm và lũ sông hay ven biển không được tính đến. Cài đặt sẵn của bão là các hồ sơ mưa đại diện, không phải bản ghi đo đạc.',
   'method.indicative': 'Tham khảo (mô hình)',
   'waterlevel.title': 'Mực nước 🌊',
   'waterlevel.off': 'Tắt',

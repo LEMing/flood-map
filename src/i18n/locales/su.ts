@@ -221,7 +221,7 @@ export const su: Record<string, string> = {
   'share.title': 'Bagikeun skenario ieu',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Kumaha jalanna & watesna',
-  'method.body': 'Simulasi caah hujan pikeun atikan. Fisika cai disederhanakeun sarta teu dikalibrasi kana ukuran nyata, ku kituna jero jeung legana caah ngan saukur pituduh — lain panaksiran résiko caah. Drainase jeung leungitna taneuh nyaéta perkiraan sintétik tina data kabuka, lain modél anu diukur; cai taneuh jeung caah walungan atawa basisir teu kaasup. Prését badai mangrupa profil hujan wawakil, lain catetan alat ukur.',
+  'method.body': 'Simulasi caah hujan pikeun atikan. Fisika cai disederhanakeun sarta teu dikalibrasi kana ukuran nyata, ku kituna jero jeung legana caah ngan saukur pituduh — lain panaksiran résiko caah. Drainase mangrupa perkiraan sintétik sarta leungitna taneuh ngagunakeun data taneuh kabuka anu dipétakeun (SoilGrids), perkiraan wewengkon anu kasar, lain survéy lapangan. Cai taneuh jeung caah walungan atawa basisir teu kaasup. Prését badai mangrupa profil hujan wawakil, lain catetan alat ukur.',
   'method.indicative': 'Pituduh (modél)',
   'waterlevel.title': 'Tingkat cai 🌊',
   'waterlevel.off': 'Pareum',

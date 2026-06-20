@@ -204,7 +204,7 @@ export const nl: Record<string, string> = {
   'share.title': 'Deel dit scenario',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Hoe het werkt & grenzen',
-  'method.body': 'Een educatieve simulatie van regenoverstroming. De waterfysica is vereenvoudigd en niet gekalibreerd op echte metingen, dus overstromingsdiepten en -gebieden zijn slechts indicatief — geen overstromingsrisicobeoordeling. Afwatering en bodemverliezen zijn synthetische schattingen uit open data, geen ingemeten model; grondwater en rivier- of kustoverstromingen zijn niet inbegrepen. Stormvoorinstellingen zijn representatieve regenprofielen, geen meetgegevens.',
+  'method.body': 'Een educatieve simulatie van regenoverstroming. De waterfysica is vereenvoudigd en niet gekalibreerd op echte metingen, dus overstromingsdiepten en -gebieden zijn slechts indicatief — geen overstromingsrisicobeoordeling. Afwatering is een synthetische schatting en bodemverliezen gebruiken open gekarteerde bodemdata (SoilGrids), een grove regionale schatting, geen terreinopname. Grondwater en rivier- of kustoverstromingen zijn niet inbegrepen. Stormvoorinstellingen zijn representatieve regenprofielen, geen meetgegevens.',
   'method.indicative': 'Indicatief (model)',
   'waterlevel.title': 'Waterpeil 🌊',
   'waterlevel.off': 'Uit',

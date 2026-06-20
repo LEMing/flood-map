@@ -216,7 +216,7 @@ export const tr: Record<string, string> = {
   'share.title': 'Bu senaryoyu paylaş',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Nasıl çalışır ve sınırlar',
-  'method.body': 'Eğitim amaçlı bir yağmur-taşkın simülasyonu. Suyun fiziği basitleştirilmiştir ve gerçek ölçümlere göre kalibre edilmemiştir, bu yüzden taşkın derinlikleri ve alanları yalnızca göstergedir — bir taşkın riski değerlendirmesi değildir. Drenaj ve toprak kayıpları açık verilerden sentetik tahminlerdir, ölçülmüş bir model değildir; yeraltı suyu ile nehir veya kıyı taşkınları dahil edilmemiştir. Fırtına ön ayarları temsili yağış profilleridir, ölçüm kayıtları değildir.',
+  'method.body': 'Eğitim amaçlı bir yağmur-taşkın simülasyonu. Suyun fiziği basitleştirilmiştir ve gerçek ölçümlere göre kalibre edilmemiştir, bu yüzden taşkın derinlikleri ve alanları yalnızca göstergedir — bir taşkın riski değerlendirmesi değildir. Drenaj sentetik bir tahmindir ve toprak kayıpları açık haritalanmış toprak verilerini (SoilGrids) kullanır; bu kaba bir bölgesel tahmindir, saha etüdü değildir. Yeraltı suyu ile nehir veya kıyı taşkınları dahil edilmemiştir. Fırtına ön ayarları temsili yağış profilleridir, ölçüm kayıtları değildir.',
   'method.indicative': 'Gösterge (model)',
   'waterlevel.title': 'Su seviyesi 🌊',
   'waterlevel.off': 'Kapalı',

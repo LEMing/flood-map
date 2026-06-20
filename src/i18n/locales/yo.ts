@@ -204,7 +204,7 @@ export const yo: Record<string, string> = {
   'share.title': 'Pín ìṣẹ̀lẹ̀ yìí',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Bí ó ṣe ń ṣiṣẹ́ àti àwọn ààlà',
-  'method.body': 'Àfarawé ẹ̀kọ́ nípa ìkún-omi òjò. A ti sọ físíksì omi di rírọrùn, a kò sì ṣe àtúnṣe rẹ̀ sí àwọn ìwọ̀n gidi, nítorí náà ìjìnlẹ̀ àti agbègbè ìkún-omi jẹ́ àtọ́ka nìkan — kì í ṣe ìgéléwọ̀n ewu ìkún-omi. Ìṣàn omi àti àdánù ilẹ̀ jẹ́ ìfojúsọ́nà àtọwọ́dá láti inú dátà ṣíṣí, kì í ṣe àwòṣe tí a díwọ̀n; omi abẹ́lẹ̀ àti ìkún-omi odò tàbí etíkun kò sí nínú rẹ̀. Àwọn ìṣàkólẹ̀ ìjì jẹ́ àwòrán òjò aṣojú, kì í ṣe àkọsílẹ̀ òṣùwọ̀n.',
+  'method.body': 'Àfarawé ẹ̀kọ́ nípa ìkún-omi òjò. A ti sọ físíksì omi di rírọrùn, a kò sì ṣe àtúnṣe rẹ̀ sí àwọn ìwọ̀n gidi, nítorí náà ìjìnlẹ̀ àti agbègbè ìkún-omi jẹ́ àtọ́ka nìkan — kì í ṣe ìgéléwọ̀n ewu ìkún-omi. Ìṣàn omi jẹ́ àfojúsọ́nà àtọwọ́dá, àdánù ilẹ̀ sì ń lo data ilẹ̀ tí ó ṣí sílẹ̀ tí a yàwòrán (SoilGrids), àfojúsọ́nà agbègbè tí ó ríra, kì í ṣe ìwádìí ojúlé. Omi abẹ́lẹ̀ àti ìkún-omi odò tàbí etíkun kò sí nínú rẹ̀. Àwọn ìṣàkólẹ̀ ìjì jẹ́ àwòrán òjò aṣojú, kì í ṣe àkọsílẹ̀ òṣùwọ̀n.',
   'method.indicative': 'Àtọ́ka (àwòṣe)',
   'waterlevel.title': 'Ìpele omi 🌊',
   'waterlevel.off': 'Pa',

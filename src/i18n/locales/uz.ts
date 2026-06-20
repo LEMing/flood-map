@@ -203,7 +203,7 @@ export const uz: Record<string, string> = {
   'share.title': 'Ushbu stsenariyni ulashing',
   // Methodology / limitations note (in-app honesty)
   'method.title': 'Qanday ishlaydi va cheklovlar',
-  'method.body': 'Yomg’ir toshqinining ta’limiy simulyatsiyasi. Suv fizikasi soddalashtirilgan va haqiqiy o’lchovlarga moslab kalibrlanmagan, shu sababli toshqin chuqurligi va maydonlari faqat indikativ — toshqin xavfini baholash emas. Drenaj va tuproq yo’qotishlari ochiq ma’lumotlardan olingan sintetik baholardir, o’lchangan model emas; yer osti suvlari hamda daryo yoki sohil toshqinlari kiritilmagan. Bo’ron oldindan sozlamalari vakillik qiluvchi yog’in profillaridir, o’lchov yozuvlari emas.',
+  'method.body': 'Yomg’ir toshqinining ta’limiy simulyatsiyasi. Suv fizikasi soddalashtirilgan va haqiqiy o’lchovlarga moslab kalibrlanmagan, shu sababli toshqin chuqurligi va maydonlari faqat indikativ — toshqin xavfini baholash emas. Drenaj sintetik baho, tuproq yo’qotishlari esa ochiq xaritalangan tuproq ma’lumotlaridan (SoilGrids) foydalanadi, bu qo’pol hududiy baho, dala tadqiqoti emas. Yer osti suvlari hamda daryo yoki sohil toshqinlari kiritilmagan. Bo’ron oldindan sozlamalari vakillik qiluvchi yog’in profillaridir, o’lchov yozuvlari emas.',
   'method.indicative': 'Indikativ (model)',
   'waterlevel.title': 'Suv sathi 🌊',
   'waterlevel.off': 'Oʻchirish',
