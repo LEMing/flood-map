@@ -105,6 +105,34 @@ Courant condition for the inertial scheme). With losses at zero and **closed**
 edges, the *water stored* stat tracks *rain in* — a mass-conservation sanity check
 (the whole scheme is pinned by a CPU reference in `inertialFlow.test.ts`).
 
+## Verification
+
+The solver is **verified** against closed-form shallow-water solutions — a separate
+claim from *calibration*. Verification asks "does the code solve the equations
+correctly?"; calibration asks "are the parameters right for this place?". This model is
+verified but, by design, **uncalibrated** (see Limitations). `analyticalValidation.test.ts`
+runs the CPU reference (which the GPU shaders mirror line-for-line) against four
+analytical cases, each in a regime the local-inertial scheme is valid in:
+
+- **Manning normal depth** — uniform rain on a tilted plane converges to the analytical
+  steady overland-flow depth `h = (q·n/√S₀)^{3/5}` to within ~2 % in the developed
+  interior. Validates the friction–slope balance that drives all pluvial routing.
+- **Merian seiche** — a closed flat basin oscillates in its fundamental mode at exactly
+  `T₁ = 2L/√(gH)` (measured ratio 1.000). Pins the gravity-wave celerity `√(gH)`: a scheme
+  can conserve mass perfectly and still propagate waves at the wrong speed — this proves
+  it does not.
+- **Thacker parabolic bowl** — a frictionless sloshing bowl whose shoreline dries and
+  re-wets each cycle conserves mass to machine precision and keeps depth ≥ 0, exercising
+  the moving wet/dry front dynamically.
+- **Ritter dam-break** — the dry-bed dam-break captures the subcritical rarefaction head
+  accurately but, as the local-inertial approximation predicts, **under-propagates the
+  supercritical front**. Included as an honest *characterisation* of the documented limit
+  (the dropped convective-acceleration term — see Limitations), not a tight-accuracy claim.
+
+Together with the property tests in `inertialFlow.test.ts` (exact mass conservation,
+well-balanced lake-at-rest, positivity), this makes "mirrors Bates et al. (2010) /
+LISFLOOD-FP" a reproducible result rather than an assertion.
+
 ## Data sources
 
 - Geocoding: [Nominatim](https://operations.osmfoundation.org/policies/nominatim/) (OSM) — ~1 req/s.
