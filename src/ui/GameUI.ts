@@ -8,8 +8,8 @@ export interface GameUICallbacks {
 
 /**
  * The clean game shell: a single centred launch button, then a floating
- * pause/restart dock and a compact flood readout. Pure view — it owns the
- * DOM visibility and button glyphs and emits intent; the app owns the params.
+ * pause/restart dock. Pure view — it owns the DOM visibility and button glyphs
+ * and emits intent; the app owns the params.
  */
 export class GameUI {
   private readonly overlay = document.getElementById('start-overlay') as HTMLElement;
@@ -19,9 +19,6 @@ export class GameUI {
   private readonly dock = document.getElementById('game-dock') as HTMLElement;
   private readonly pauseBtn = document.getElementById('btn-pause') as HTMLButtonElement;
   private readonly restartBtn = document.getElementById('btn-restart') as HTMLButtonElement;
-  private readonly hud = document.getElementById('hud-stats') as HTMLElement;
-  private readonly hudDepth = document.getElementById('hud-depth') as HTMLElement;
-  private readonly hudArea = document.getElementById('hud-area') as HTMLElement;
   private started = false;
   private running = false;
   private ready = false;
@@ -48,7 +45,6 @@ export class GameUI {
     document.body.classList.add('game-started');
     this.overlay.hidden = true;
     this.dock.hidden = false;
-    this.hud.hidden = false;
     this.cb.onStart();
   }
 
@@ -59,12 +55,6 @@ export class GameUI {
     const label = running ? t('sim.pause') : t('sim.play');
     this.pauseBtn.title = label;
     this.pauseBtn.setAttribute('aria-label', label);
-  }
-
-  setStats(peakDepthM: number, floodedPercent: number): void {
-    if (this.hud.hidden) return;
-    this.hudDepth.textContent = `~${peakDepthM.toFixed(1)} m`;
-    this.hudArea.textContent = floodedPercent > 0 && floodedPercent < 1 ? '<1%' : `~${floodedPercent.toFixed(0)}%`;
   }
 
   /** Place name under the launch button (a proper noun — language-independent). */

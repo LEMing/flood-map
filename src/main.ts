@@ -38,7 +38,7 @@ function ensureApp(): Promise<App> {
   if (!appPromise) {
     appPromise = import('./app/App')
       .then(({ App }) => {
-        app = new App(sceneCanvas, () => languagePicker.retranslate());
+        app = new App(sceneCanvas, () => { languagePicker.retranslate(); methodNote.translate(); });
         if (import.meta.env.DEV) (window as unknown as { app: App }).app = app;
         return app;
       })

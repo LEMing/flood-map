@@ -503,10 +503,9 @@ export class App {
     if (!on) this.lastTime = performance.now();
   }
 
-  /** Refresh the FPS badge and (on the same throttled cadence) the HUD stats. */
+  /** Refresh the FPS badge on its throttled cadence. */
   private showFps(now: number): void {
-    if (!this.fpsBadge.update(now, this.fpsEma)) return;
-    this.gameUI.setStats(this.simDriver.peakDepth, this.simDriver.floodedFraction * 100);
+    this.fpsBadge.update(now, this.fpsEma);
   }
 
   /** One-way quality degradation when FPS stays low, so weak GPUs stay usable. */

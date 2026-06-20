@@ -7,6 +7,7 @@ import { t } from '../i18n';
 export class MethodNote {
   private readonly btn = document.createElement('button');
   private readonly panel = document.createElement('div');
+  private readonly closeBtn = document.createElement('button');
   private readonly titleEl = document.createElement('div');
   private readonly bodyEl = document.createElement('div');
   private open = false;
@@ -17,13 +18,18 @@ export class MethodNote {
     this.btn.textContent = 'ⓘ';
     this.panel.id = 'method-note';
     this.panel.hidden = true;
+    this.closeBtn.className = 'mn-close';
+    this.closeBtn.type = 'button';
+    this.closeBtn.textContent = '✕';
+    this.closeBtn.setAttribute('aria-label', 'Close');
     this.titleEl.className = 'mn-title';
     this.bodyEl.className = 'mn-body';
-    this.panel.append(this.titleEl, this.bodyEl);
+    this.panel.append(this.closeBtn, this.titleEl, this.bodyEl);
     document.body.append(this.btn, this.panel);
     this.translate();
 
     this.btn.addEventListener('click', () => this.setOpen(!this.open));
+    this.closeBtn.addEventListener('click', () => this.setOpen(false));
     document.addEventListener('pointerdown', (e) => {
       if (!this.open) return;
       const target = e.target as Node;
