@@ -49,8 +49,9 @@ Manual deploy: `npm run build && firebase deploy --only hosting`.
   water-surface head gradient) → water-depth update → diagnostic velocity, with
   simplified infiltration, evaporation, drainage, open/closed boundaries and a
   volume-capped flux that conserves water exactly. It is an approximation of the
-  shallow-water (Saint-Venant) equations that **omits flow momentum/inertia** —
-  the friction term is a numerical flow-relaxation factor, not Manning's _n_.
+  shallow-water (Saint-Venant) equations that **omits flow momentum/inertia**, but
+  bed friction is physical: a semi-implicit Manning term (Bates, Horritt &
+  Fewtrell, 2010) with a per-cell _n_ derived from the land-cover roughness.
 - **Everything is parameterized** live: rain intensity, storm-cell footprint,
   infiltration, evaporation, gravity, flow coefficient, friction, time scale,
   substeps, map size, grid resolution, vertical exaggeration, and the
@@ -89,8 +90,10 @@ Each grid cell holds terrain height `b`, water depth `d`, four outflow fluxes
 
 1. **Flux** — `f_i = max(0, Δt·g·A/l·Δh_i)` toward each lower neighbor — note it is
    **recomputed from the water-surface head gradient `Δh` each step** (no stored
-   discharge `f_old`, hence non-inertial / no momentum) — then scaled by
-   `K = min(1, d·cell²/(Σf·Δt))` so a cell never drains more water than it holds.
+   discharge `f_old`, hence non-inertial / no momentum) — damped by the
+   semi-implicit Manning friction factor `1/(1 + g·Δt·n²·|v|/d^{4/3})` (per-cell `n`
+   from land cover), then scaled by `K = min(1, d·cell²/(Σf·Δt))` so a cell never
+   drains more water than it holds.
 2. **Depth** — `Δd = Δt·(inflow − outflow)/cell²`, plus rain, minus infiltration,
    drainage and evaporation (all simplified loss terms — see Limitations).
 3. **Velocity** — *diagnosed* from the net flux, for flow arrows and ripples.
@@ -119,8 +122,10 @@ gauged event). Specifically:
 
 - **Non-inertial flow.** The virtual-pipes / diffusive-wave scheme omits flow
   momentum/inertia (the `∂Q/∂t` term of the full shallow-water equations), so it
-  cannot reproduce overshoot, oscillation or hydraulic jumps. Friction is a
-  numerical flow-relaxation factor, **not Manning's _n_**.
+  cannot reproduce overshoot, oscillation or hydraulic jumps. Bed friction _is_
+  modelled — a semi-implicit Manning term (Bates et al., 2010) with a per-cell
+  _n_ from land cover — but it is applied to a non-inertial flux, not the full
+  inertial (momentum-carrying) formulation, and _n_ is uncalibrated.
 - **Simplified losses.** Infiltration is a constant per-class capacity (a
   φ-index, not Green-Ampt/Horton/SCS-CN); the storm sewer is a uniform per-cell
   removal rate, **not a routed pipe network** — so sewer surcharge and downstream
