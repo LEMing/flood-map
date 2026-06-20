@@ -56,7 +56,7 @@ export interface Params {
   infiltrationMmPerHr: number; // pervious-soil Ks (SoilGrids+Saxton-Rawls); groundwater acts via suction S, not here
   sorptivityM?: number; // Green-Ampt suction-deficit S (m), soil-derived; undefined → groundwater binary
   evaporationPerHr: number; // open-water evaporation as a constant depth flux (mm/hr), not a fraction of depth
-  depressionStorageMm: number; // water held in sub-grid micro-hollows before runoff (held in h, not lost)
+  depressionStorageMm: number; // reference depression depth (at cropland n); scaled per cell by roughness
 
   // Physics
   gravity: number; // m/s^2

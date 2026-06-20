@@ -194,7 +194,8 @@ describe('inertial solver — depression storage', () => {
 
   it('holds shallow water below the depression depth — nothing runs off the open edge', () => {
     const g = thinSheetOnSlope();
-    const p: InertialParams = { ...BASE, boundaryOpen: true, depressionM: 0.005, dt: cfl(g, BASE) };
+    // manning at the reference n (0.10) → the roughness scale is 1, so the held depth = depressionM.
+    const p: InertialParams = { ...BASE, manning: 0.10, boundaryOpen: true, depressionM: 0.005, dt: cfl(g, BASE) };
     const start = totalWater(g);
     for (let s = 0; s < 100; s++) step(g, p);
     expect(totalWater(g)).toBeCloseTo(start, 9); // held in micro-hollows, not a silent sink
@@ -214,8 +215,32 @@ describe('inertial solver — depression storage', () => {
     // gate — must hold the reserve (it caps outflow at h − depression, not full h).
     const N = 8, dep = 0.05;
     const g = makeGrid(N, (x, y) => (x === 2 && y === 2 ? { z: 10, h: 0.055 } : { z: 0, h: 0 }));
-    const p: InertialParams = { ...BASE, manning: 0.012, depressionM: dep, dt: cfl(g, BASE) };
+    const p: InertialParams = { ...BASE, manning: 0.10, depressionM: dep, dt: cfl(g, BASE) }; // n_ref → held = dep
     for (let s = 0; s < 200; s++) step(g, p);
     expect(g.h[2 * N + 2]).toBeGreaterThanOrEqual(dep - 1e-6); // reserve held, not drained to 0
+  });
+
+  it('rough cover holds more depression than smooth paving (roughness-scaled)', () => {
+    // Same scenario, different land cover: grass (high n) holds a deeper reserve than paving.
+    const hold = (manning: number): number => {
+      const g = makeGrid(20, (x) => ({ z: (20 - x) * 0.5, h: 0.012 })); // 12 mm sheet on a slope
+      const p: InertialParams = { ...BASE, manning, boundaryOpen: true, depressionM: 0.005, dt: cfl(g, BASE) };
+      for (let s = 0; s < 150; s++) step(g, p);
+      return totalWater(g);
+    };
+    expect(hold(0.20)).toBeGreaterThan(hold(0.013)); // grass retains more than asphalt
+  });
+
+  it('varies the reserve per cell from grid.manningN (real spatial roughness, not just uniform n)', () => {
+    // Two perched cells over dry ground, one paved + one grass via a per-cell Manning map: each
+    // drains to its OWN roughness-scaled reserve, exercising nAt(grid.manningN) → depressionAt.
+    const N = 8;
+    const g = makeGrid(N, (x, y) => (y === 4 && (x === 2 || x === 5) ? { z: 5, h: 0.012 } : { z: 0, h: 0 }));
+    g.manningN = new Float64Array(N * N).fill(0.05);
+    g.manningN[4 * N + 2] = 0.013; // paved cell → ~1 mm reserve
+    g.manningN[4 * N + 5] = 0.20; // grass cell → ~8 mm reserve
+    const p: InertialParams = { ...BASE, depressionM: 0.005, dt: cfl(g, BASE) };
+    for (let s = 0; s < 200; s++) step(g, p);
+    expect(g.h[4 * N + 5]).toBeGreaterThan(g.h[4 * N + 2]); // grass holds a deeper reserve than paving
   });
 });

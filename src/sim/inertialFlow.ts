@@ -65,10 +65,21 @@ export interface FaceGeom { etaA: number; etaB: number; zA: number; zB: number; 
  * +x / +y neighbour). hFlow is the depth available to flow across the face (Cunge):
  * max(surfaces) − max(beds).
  */
+const DEP_N_REF = 0.10; // reference Manning n (≈cropland) where depression equals the reference depth
+
+/**
+ * Per-cell depression storage, scaled by surface roughness: rough cover (grass/woods, high n)
+ * holds more in micro-hollows than smooth paving (low n). The Manning n already encodes
+ * land-cover roughness, so depression rides on it — bounded to [0.25, 2]× the reference.
+ */
+export function depressionAt(depRef: number, n: number): number {
+  return depRef * Math.max(0.25, Math.min(2.0, n / DEP_N_REF));
+}
+
 export function faceFlux(qOld: number, f: FaceGeom, n: number, p: InertialParams): number {
-  // Depression storage holds the first `depressionM` of water in sub-grid hollows: subtract
-  // it from the Cunge flow depth so shallow sheet flow can't run off (it stays in h).
-  const hFlow = Math.max(f.etaA, f.etaB) - Math.max(f.zA, f.zB) - (p.depressionM ?? 0);
+  // Depression storage holds the first few mm of water in sub-grid hollows: subtract it from
+  // the Cunge flow depth so shallow sheet flow can't run off (it stays in h, not a sink).
+  const hFlow = Math.max(f.etaA, f.etaB) - Math.max(f.zA, f.zB) - depressionAt(p.depressionM ?? 0, n);
   const hMin = p.hMin ?? HMIN_DEFAULT;
   if (hFlow <= hMin) return 0; // dry face / below depression storage → no flow, drop momentum
   const slope = (f.etaB - f.etaA) / p.cellSize; // +slope (B higher) ⇒ flux toward A (negative)
@@ -149,9 +160,9 @@ function drainageLimiter(g: InertialGrid, p: InertialParams, qx: Float64Array, q
       const qW = x > 0 ? qx[i - 1] : boundaryFlux(g, p, i, 0, -1);
       const qS = y > 0 ? qy[i - N] : boundaryFlux(g, p, i, 0, -1);
       const drain = k * (Math.max(0, qx[i]) + Math.max(0, -qW) + Math.max(0, qy[i]) + Math.max(0, -qS));
-      // Only the water above the depression reserve may leave in one step — so a steep face
-      // can't drain a cell below its micro-hollow storage.
-      const avail = Math.max(0, g.h[i] - (p.depressionM ?? 0));
+      // Only the water above the (roughness-scaled) depression reserve may leave in one step —
+      // so a steep face can't drain a cell below its micro-hollow storage.
+      const avail = Math.max(0, g.h[i] - depressionAt(p.depressionM ?? 0, nAt(g, p, i)));
       if (drain > avail) lam[i] = avail / drain;
     }
   }

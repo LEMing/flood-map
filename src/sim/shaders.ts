@@ -52,10 +52,13 @@ const HELPERS = /* glsl */ `
     return ks * (1.0 + uSorptivity / max(cumulativeF, 0.002));
   }
   float soilKs(vec2 p) { return (uUseSurface == 1) ? texture2D(tSurface, p).r : uInfilRate; }
+  // Per-cell depression storage scaled by surface roughness (rough cover holds more than
+  // smooth paving); n already encodes land cover, bounded to [0.25, 2]× the reference.
+  float depressionAt(float n) { return uDepression * clamp(n / 0.10, 0.25, 2.0); }
   float faceFlux(float qOld, float etaA, float etaB, float zA, float zB, float n) {
-    // Depression storage: the first uDepression of water sits in sub-grid micro-hollows and
-    // does not run off — subtract it from the Cunge flow depth (it stays in h / the balance).
-    float hFlow = max(etaA, etaB) - max(zA, zB) - uDepression;
+    // Depression storage: the first few mm sit in sub-grid micro-hollows and do not run off —
+    // subtract it from the Cunge flow depth (it stays in h / the balance, not a sink).
+    float hFlow = max(etaA, etaB) - max(zA, zB) - depressionAt(n);
     if (hFlow <= uHMin) return 0.0; // dry face / below depression storage: no flow, drop momentum
     float slope = (etaB - etaA) / uCellSize;
     float num = qOld - uGravity * hFlow * uDt * slope;
@@ -129,7 +132,7 @@ export const limiterFragment = /* glsl */ `
     float qW = (uv.x - texel.x > 0.0) ? texture2D(tQ, uv - vec2(texel.x, 0.0)).x : edgeFlux(zC, hC, nC, -1.0);
     float qS = (uv.y - texel.y > 0.0) ? texture2D(tQ, uv - vec2(0.0, texel.y)).y : edgeFlux(zC, hC, nC, -1.0);
     float drain = (uDt / uCellSize) * (max(0.0, qC.x) + max(0.0, -qW) + max(0.0, qC.y) + max(0.0, -qS));
-    float avail = max(0.0, hC - uDepression); // depression reserve can't leave in one step
+    float avail = max(0.0, hC - depressionAt(nC)); // roughness-scaled depression reserve held
     float lambda = (drain > avail && drain > 0.0) ? avail / drain : 1.0;
     gl_FragColor = vec4(lambda, 0.0, 0.0, 0.0);
   }

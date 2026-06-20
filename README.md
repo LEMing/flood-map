@@ -186,10 +186,12 @@ gauged event). Specifically:
   — when an overwhelmed pipe fills, the excess resurfaces at the bottleneck, the
   dominant urban-pluvial mechanism. It is a heuristic prior, **not** a digitized pipe
   network with real diameters; capacity and coverage are uncalibrated, and DEM-based
-  routing breaks down on very flat terrain. A literature-typical **depression storage**
-  (~4 mm) holds the first few millimetres of water in sub-grid micro-hollows before runoff
-  begins — held in the depth and the water balance, not a sink — so light rain wets the
-  ground without instantly sheeting off; it is a uniform constant, not relief-scaled per cell.
+  routing breaks down on very flat terrain. A literature-typical **depression storage** holds
+  the first few millimetres of water in sub-grid micro-hollows before runoff begins — held in
+  the depth and the water balance, not a sink — so light rain wets the ground without instantly
+  sheeting off. It is scaled per cell by land-cover roughness (the Manning _n_): ~1 mm over
+  smooth paving up to ~8 mm over rough grass/woods. The Manning _n_ is a proxy for the true
+  micro-roughness, which the 30 m DEM can't resolve.
 - **Not modeled:** groundwater flow, river/coastal/fluvial flooding, building
   porosity (buildings are solid walls), sediment, and sub-grid features (curbs,
   individual inlets, culverts). Native DEM posting is ~30 m (FABDEM), upsampled to
