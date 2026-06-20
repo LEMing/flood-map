@@ -46,7 +46,7 @@ const HELPERS = /* glsl */ `
     if (hFlow <= uHMin) return 0.0; // dry face: no flow, drop stored momentum
     float slope = (etaB - etaA) / uCellSize;
     float num = qOld - uGravity * hFlow * uDt * slope;
-    float den = 1.0 + uGravity * uDt * n * n * abs(qOld) / pow(hFlow, 2.3333333);
+    float den = 1.0 + uGravity * uDt * n * n * abs(qOld) / pow(hFlow, 7.0 / 3.0);
     return num / den;
   }
   // Outflow across a domain edge to dry terrain at the cell's own bed. sign +1 =

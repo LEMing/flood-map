@@ -64,15 +64,17 @@ describe('inertial solver — mass conservation', () => {
     expect(totalWater(g) - before).toBeCloseTo(p.rainRate! * p.dt * g.N * g.N, 9);
   });
 
-  it('interior face discharge is shared (cell i east flux = cell i+1 west inflow)', () => {
-    const rng = mulberry32(3);
-    const g = makeGrid(8, () => ({ z: rng() * 10, h: rng() * 2 }));
-    const p: InertialParams = { ...BASE, dt: cfl(g, BASE) };
+  it('discharge responds to the head gradient (flows from the higher surface to the lower)', () => {
+    // Flat bed, water surface stepping DOWN toward the east. From rest, every interior
+    // east-face discharge must be ≥ 0 (eastward, toward the lower surface) — this pins
+    // the sign convention that the continuity/mass tests rely on.
+    const N = 6;
+    const g = makeGrid(N, (x) => ({ z: 0, h: 3 - x * 0.4 })); // η: 3, 2.6, … 1, dropping east
+    const p: InertialParams = { ...BASE, manning: 0.02, dt: cfl(g, BASE) };
     const { qx } = momentumStep(g, p);
-    // The east face of (2,3) is exactly the west face of (3,3): one stored value.
-    const i = 3 * 8 + 2;
-    expect(qx[i]).toBe(qx[i]); // single source of truth (no separate west-of-(3,3) value exists)
-    expect(Number.isFinite(qx[i])).toBe(true);
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N - 1; x++) expect(qx[y * N + x]).toBeGreaterThanOrEqual(0);
+    }
   });
 });
 
