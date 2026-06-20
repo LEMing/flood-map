@@ -8,6 +8,7 @@ import { readUrlState, writeUrlState } from '../url';
 import { ScenarioUrl } from './ScenarioUrl';
 import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
 import { computeSurfaceFields, computeSewerFields, type SurfaceResult } from '../geo/surface';
+import { SoilInfiltration } from './SoilInfiltration';
 import { upsertFloatTexture } from './floatTexture';
 import { trackEvent } from '../analytics';
 import { stormIntensityMmHr } from '../sim/storm';
@@ -55,6 +56,7 @@ export class App {
   private sea?: SeaMesh;
   private buildings?: BuildingsMesh;
   private readonly geology = new GeologyController();
+  private readonly soil = new SoilInfiltration(); // SoilGrids → per-cell Ks + Green-Ampt suction
   private heightmap?: Heightmap;
   private surfaceTexture?: THREE.DataTexture;
   private sewerTexture?: THREE.DataTexture;
@@ -385,12 +387,18 @@ export class App {
     this.surfaceTexture = w.surfaceTexture;
     this.surfaceRaw = w.surfaceRaw;
     this.gameUI.setReady(true); // world exists — the launch button is now safe to press
+    this.soil.load(this.heightmap, (ks) => {
+      this.params.infiltrationMmPerHr = ks; // real Saxton-Rawls Ks for this location's soil
+      this.applyParams();
+      this.panel.refresh();
+    });
   }
 
   private applyParams(): void {
     this.needsRender = true; // single choke point for every param/viz/world change
     this.group.scale.y = this.params.verticalExaggeration;
     this.buildings?.setVerticalExaggeration(this.params.verticalExaggeration);
+    this.params.sorptivityM = this.soil.sorptivityM(this.params.groundwaterHigh); // soil S or undefined
     this.simDriver.updateParams(this.params);
     this.refreshSurface();
     this.water?.update(this.params);

@@ -111,7 +111,9 @@ export function computeSurfaceFields(
 ): Float32Array {
   const { N, sizeMeters } = hm;
   const surface = new Float32Array(N * N * 4);
-  const soilInfil = params.infiltrationMmPerHr * (params.groundwaterHigh ? 0.25 : 1);
+  // Soil Ks straight through — high groundwater is modelled the physical way, by the small
+  // Green-Ampt suction-deficit S (FloodSimulation.updateParams), not a second cut to Ks here.
+  const soilInfil = params.infiltrationMmPerHr;
   const servedDrain = params.drainageCapacityMmPerHr;
   const [mzx, mzy] = lonLatToLocalMeters(hm.center, NO_DRAIN_CENTER.lon, NO_DRAIN_CENTER.lat);
   const { areaWeight } = drainagePrecompute(hm, osm);

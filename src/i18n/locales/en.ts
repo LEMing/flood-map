@@ -200,7 +200,7 @@ export const en: Record<string, string> = {
 
   // Methodology / limitations note (in-app honesty — mirrors the geology caveat)
   'method.title': 'How it works & limits',
-  'method.body': 'An educational rainfall-flood simulation. The water physics is simplified and not calibrated to real measurements, so flood depths and areas are indicative only — not a flood-risk assessment. Drainage and soil losses are synthetic estimates from open data, not a surveyed model; groundwater and river or coastal flooding are not included. Storm presets are representative rainfall profiles, not gauge records.',
+  'method.body': 'An educational rainfall-flood simulation. The water physics is simplified and not calibrated to real measurements, so flood depths and areas are indicative only — not a flood-risk assessment. Drainage is a synthetic estimate and soil losses use open mapped soil data (SoilGrids), a coarse area estimate, not a site survey. Groundwater and river or coastal flooding are not included. Storm presets are representative rainfall profiles, not gauge records.',
   'method.indicative': 'Indicative (model)',
 
   // Misc

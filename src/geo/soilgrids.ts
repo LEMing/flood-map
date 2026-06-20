@@ -6,6 +6,7 @@
 
 import { cachedJson } from './cache';
 import type { GeoLayer } from './geology';
+import type { SoilTextureInput } from './pedotransfer';
 
 const BASE = 'https://rest.isric.org/soilgrids/v2.0/properties/query';
 const PROPS = ['sand', 'silt', 'clay', 'bdod', 'soc'] as const;
@@ -72,15 +73,16 @@ function parse(resp: SoilGridsResponse): GeoLayer[] | null {
   return out.length ? out : null;
 }
 
+const PROBE_RING: Array<[number, number]> = [
+  [0, 0], [0.01, 0], [-0.01, 0], [0, 0.01], [0, -0.01], [0.03, 0.03], [-0.03, -0.03],
+];
+
 /**
  * Fetch the real 0–2 m soil profile, probing a ring of nearby pixels when the
  * exact point is masked. Returns null if every probe is masked or the API fails.
  */
 export async function fetchSoilProfile(lat: number, lon: number): Promise<GeoLayer[] | null> {
-  const offsets: Array<[number, number]> = [
-    [0, 0], [0.01, 0], [-0.01, 0], [0, 0.01], [0, -0.01], [0.03, 0.03], [-0.03, -0.03],
-  ];
-  for (const [dLat, dLon] of offsets) {
+  for (const [dLat, dLon] of PROBE_RING) {
     try {
       const url = queryUrl(lat + dLat, lon + dLon);
       const resp = await cachedJson<SoilGridsResponse>(url, { key: `soilgrids:${url}` });
@@ -88,6 +90,51 @@ export async function fetchSoilProfile(lat: number, lon: number): Promise<GeoLay
       if (layers) return layers;
     } catch {
       /* try the next ring offset; fall through to null */
+    }
+  }
+  return null;
+}
+
+// Topsoil (0–30 cm) depth bands and their thicknesses (cm) for an infiltration-relevant
+// composite — the layer that actually controls how fast a downpour soaks in.
+const TOPSOIL_BANDS: Array<{ i: number; w: number }> = [{ i: 0, w: 5 }, { i: 1, w: 10 }, { i: 2, w: 15 }];
+
+/** Thickness-weighted topsoil sand/clay fractions + organic-matter % from a SoilGrids reply. */
+export function parseSoilTexture(resp: SoilGridsResponse): SoilTextureInput | null {
+  const byName: Record<string, SoilGridsDepth[]> = {};
+  for (const layer of resp.properties.layers) byName[layer.name] = layer.depths;
+  if (!byName.sand || !byName.clay) return null;
+
+  let wSum = 0, socWSum = 0, sand = 0, clay = 0, soc = 0;
+  for (const { i, w } of TOPSOIL_BANDS) {
+    const s = byName.sand[i]?.values.mean;
+    const c = byName.clay[i]?.values.mean;
+    if (s == null || c == null) continue;
+    wSum += w;
+    sand += (s / D_FACTOR.sand) * w; // g/kg → %
+    clay += (c / D_FACTOR.clay) * w;
+    const so = byName.soc?.[i]?.values.mean;
+    if (so != null) { soc += (so / D_FACTOR.soc) * w; socWSum += w; } // own denominator: don't dilute OM
+  }
+  if (wSum === 0) return null;
+  const socGkg = socWSum > 0 ? soc / socWSum : 0;
+  return {
+    sandFrac: sand / wSum / 100,
+    clayFrac: clay / wSum / 100,
+    omPct: (socGkg / 10) * 1.724, // SOC g/kg → SOC % → organic matter % (van Bemmelen)
+  };
+}
+
+/** Real topsoil texture (0–30 cm) for the pedotransfer, probing the masked-pixel ring. */
+export async function fetchSoilTexture(lat: number, lon: number): Promise<SoilTextureInput | null> {
+  for (const [dLat, dLon] of PROBE_RING) {
+    try {
+      const url = queryUrl(lat + dLat, lon + dLon);
+      const resp = await cachedJson<SoilGridsResponse>(url, { key: `soilgrids:${url}` });
+      const tex = parseSoilTexture(resp);
+      if (tex) return tex;
+    } catch {
+      /* next ring offset */
     }
   }
   return null;

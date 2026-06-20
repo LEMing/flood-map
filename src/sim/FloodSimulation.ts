@@ -169,9 +169,10 @@ export class FloodSimulation {
     this.u.uBoundaryOpen.value = params.boundary === 'open' ? 1 : 0;
     this.u.uRainRate.value = params.intensityMmPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uInfilRate.value = params.infiltrationMmPerHr * MM_PER_HR_TO_M_PER_S;
-    // Green-Ampt suction-deficit S: pre-saturated soil (high groundwater) has little
-    // storage left → small S → infiltration drops to Ks almost at once.
-    this.u.uSorptivity.value = params.groundwaterHigh ? 0.015 : 0.06;
+    // Green-Ampt suction-deficit S: soil-derived (Saxton-Rawls, from SoilGrids) once it
+    // resolves; until then the groundwater binary (pre-saturated soil has little storage
+    // left → small S → infiltration drops to Ks almost at once).
+    this.u.uSorptivity.value = params.sorptivityM ?? (params.groundwaterHigh ? 0.015 : 0.06);
     this.u.uEvapRate.value = params.evaporationPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uRaining.value = params.raining ? 1 : 0;
     this.u.uFootprintSpot.value = params.rainFootprint === 'spot' ? 1 : 0;

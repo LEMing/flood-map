@@ -53,7 +53,8 @@ export interface Params {
   burnBuildings: boolean; // raise OSM buildings as no-flow obstacles
 
   // Soil / atmosphere
-  infiltrationMmPerHr: number; // pervious-soil infiltration (scaled down by high groundwater)
+  infiltrationMmPerHr: number; // pervious-soil Ks (SoilGrids+Saxton-Rawls); groundwater acts via suction S, not here
+  sorptivityM?: number; // Green-Ampt suction-deficit S (m), soil-derived; undefined → groundwater binary
   evaporationPerHr: number; // open-water evaporation as a constant depth flux (mm/hr), not a fraction of depth
 
   // Physics

@@ -221,7 +221,7 @@ describe('computeSurfaceFields', () => {
     expect(c.conductance).toBe(1);
   });
 
-  it('scales soil infiltration to a quarter when groundwater is high', () => {
+  it('puts the soil Ks straight into the field — groundwater acts via suction S, not here', () => {
     const hm = makeHeightmap();
     const land: LandClass = new Uint8Array(N * N).fill(LC_GRASSLAND);
 
@@ -233,9 +233,8 @@ describe('computeSurfaceFields', () => {
     );
 
     const k = idx(0, 0);
-    expect(dry[k * 4]).toBeCloseTo(12 * MM_S, 12);
-    expect(wet[k * 4]).toBeCloseTo(12 * 0.25 * MM_S, 12);
-    expect(wet[k * 4]).toBeCloseTo(dry[k * 4] * 0.25, 12);
+    expect(dry[k * 4]).toBeCloseTo(12 * MM_S, 12); // pervious grassland → full Ks
+    expect(wet[k * 4]).toBeCloseTo(12 * MM_S, 12); // unchanged: high groundwater no longer cuts Ks here
   });
 
   it('drainage tracks the storm-sewer capacity param for served urban cells', () => {

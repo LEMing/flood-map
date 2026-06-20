@@ -153,6 +153,9 @@ console: `(await import('/src/sim/parityHarness.ts')).runParity()`.
 - Satellite imagery: [Esri World Imagery](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9)
   — imagery © Esri, Maxar, Earthstar Geographics & the GIS User Community.
   Routed through the `/api/sat` dev proxy.
+- Soil texture: [ISRIC SoilGrids v2.0](https://www.isric.org/explore/soilgrids) (CC-BY 4.0) —
+  CORS-open REST point query; the 0–30 cm sand/clay/organic feeds the Green-Ampt infiltration
+  (via the Saxton–Rawls pedotransfer) and the subsurface-geology topsoil.
 
 ## Limitations
 
@@ -169,9 +172,13 @@ gauged event). Specifically:
   literature-typical and **uncalibrated**.
 - **Simplified losses.** Infiltration uses a per-cell **Green-Ampt** model (capacity
   declines as the soil wets up, → the saturated conductivity Ks), so dry pervious
-  ground absorbs the early rain and then ponds — but Ks and the suction-deficit are
-  literature-typical, not measured, and there is no soil drying/redistribution
-  between storms. The storm sewer is a **synthetic** network: a per-cell capacity
+  ground absorbs the early rain and then ponds. Both Ks and the suction-deficit are
+  derived from the **ISRIC SoilGrids** topsoil texture (sand/clay/organic) via the
+  **Saxton–Rawls (2006)** pedotransfer — from the _same_ soil, so a sandy site infiltrates
+  fast with little capillary pull and a clay site the reverse (e.g. ~100 mm/hr over sand vs
+  ~7 mm/hr over clay-loam). But SoilGrids is a ~250 m _mapped estimate_, not a site
+  measurement; the topsoil texture is taken as uniform over the scene; and there is no soil
+  drying/redistribution between storms. The storm sewer is a **synthetic** network: a per-cell capacity
   scaled by D8 flow-accumulation (contributing area, concentrated along streets/
   valleys), with sewer storage routed one cell downstream per step and **surcharge**
   — when an overwhelmed pipe fills, the excess resurfaces at the bottleneck, the
