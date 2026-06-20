@@ -58,7 +58,6 @@ export interface Params {
 
   // Physics
   gravity: number; // m/s^2
-  pipeArea: number; // dimensionless virtual-pipe flow gain (relaxes the head-gradient flux); not a physical area
   friction: number; // global multiplier on the per-cell Manning's n (1 = land-cover default; see shaders.ts)
   substeps: number;
   timeScale: number; // simulated seconds per real second
@@ -151,7 +150,6 @@ export const DEFAULT_PARAMS: Params = {
   evaporationPerHr: 0.0, // mm/hr (off by default; ~0.2 mm/hr ≈ 5 mm/day is a realistic open-water rate)
 
   gravity: 9.81,
-  pipeArea: 1.0,
   friction: 1.0, // Manning roughness multiplier (1 = land-cover default n)
   substeps: 4,
   timeScale: 180, // 1 real second = 3 simulated minutes

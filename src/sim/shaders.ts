@@ -1,33 +1,31 @@
-// Two-pass NON-INERTIAL virtual-pipes solver — a diffusive-wave approximation to
-// the 2-D shallow-water (Saint-Venant) equations (after O'Brien/Julien and the
-// Mei/Decaudin-Hu "Fast Hydraulic Erosion" GPU water model). It is mass-conserving
-// and non-negative by construction, but it carries NO flow momentum/inertia: the
-// edge outflux is recomputed from the head gradient each step (no stored discharge
-// Q, no ∂Q/∂t term), so it cannot overshoot, oscillate, or form a hydraulic jump.
+// Three-pass INERTIAL shallow-water solver — the local-inertial ("acceleration")
+// formulation of the 2-D shallow-water (Saint-Venant) equations from Bates, Horritt
+// & Fewtrell (2010), the scheme behind LISFLOOD-FP. Unlike the old non-inertial
+// virtual-pipes model it STORES a per-face discharge between steps (the momentum /
+// ∂q/∂t term), so a flood wave can accelerate, overshoot and reverse — it carries
+// real inertia, not just a head-gradient relaxation. Bed friction is the same
+// semi-implicit Manning term we already used; the per-cell Manning's n comes from
+// the land-cover conductance field, scaled by `uRoughness`.
 //
-// Bed friction IS physical: each edge flux is damped by the semi-implicit Manning
-// friction factor 1/(1 + g·dt·n²·|v|/h^{4/3}) from Bates, Horritt & Fewtrell (2010),
-// with a per-cell Manning's n derived from the land-cover conductance field and
-// scaled by `uRoughness`. The factor is bounded in (0,1], so it only ever damps
-// flow — it cannot break the volume cap or the CFL bound. `|v|` is the previous
-// step's diagnostic velocity (lagged), so friction is explicit in v, implicit in n.
+// Staggered (Arakawa-C / MAC) grid, mirrored line-for-line from the CPU reference
+// in inertialFlow.ts (which the unit tests pin for mass conservation, the
+// well-balanced lake-at-rest property, stability and the emergence of inertia):
+//   • `tWater` rgba = depth, max depth, vx, vy (velocity stays here, so the water
+//     renderers are unchanged; it is now a diagnostic computed from the discharge).
+//   • `tQ` r,g = discharge per unit width across this cell's EAST and NORTH face.
 //
-// The single-pass version recomputed every cell's outflux ~5x (self + 4 neighbours)
-// per step to read shared-edge flux; this splits it into:
-//   1. FLUX pass  — each cell computes its own capped outflux ONCE, written as
-//      vec4(oL, oR, oT, oB) into tFlux.
-//   2. INTEGRATE pass — each cell reads its own flux + the 4 neighbours'
-//      opposing components, updates depth/maxDepth/velocity and applies the
-//      rain/inject/pour/infiltration/evaporation/fill terms.
-// Inflow across a shared edge is exactly the neighbour's stored capped outflux,
-// so mass is conserved identically to the single pass (proven in
-// virtualPipes.test.ts) — but with one outflux evaluation per cell, not five.
-//
-// `tWater` holds r=depth (m), g=max depth ever, b/a=velocity. `resolution` is a
-// #define injected by GPUComputationRenderer's createShaderMaterial; the samplers
-// and u* params are bound by FloodSimulation each step.
+// Three passes per substep:
+//   1. MOMENTUM  — update every face's stored discharge from the water surface.
+//   2. LIMITER   — per-cell λ ∈ (0,1] (the inertial analogue of the old volume cap)
+//      so a cell can't drain more than it holds in one step; a shared face is scaled
+//      by its donor's λ, keeping mass conserved and depth ≥ 0 without a clamp.
+//   3. DEPTH     — continuity ∂h/∂t = −(∂qx/∂x + ∂qy/∂y) with the limited fluxes,
+//      then rain/inject/pour/infiltration/drainage/evaporation/fill + the velocity
+//      diagnostic. `resolution` is a #define injected by GPUComputationRenderer.
 
-const FLUX_DECLS = /* glsl */ `
+// Shared GLSL: the face discharge update + the per-cell Manning's n + the open
+// domain-edge outflow (memoryless, qOld = 0). hFlow (Cunge) = max(surfaces) − max(beds).
+const HELPERS = /* glsl */ `
   uniform sampler2D heightmap;
   uniform sampler2D tWater;
   uniform sampler2D tSurface;
@@ -35,62 +33,94 @@ const FLUX_DECLS = /* glsl */ `
   uniform float uCellSize;
   uniform float uDt;
   uniform float uGravity;
-  uniform float uPipeArea;
   uniform float uRoughness;
+  uniform float uHMin;
   uniform int uBoundaryOpen;
 
-  float surf(vec2 p) { return texture2D(heightmap, p).x + texture2D(tWater, p).x; }
+  float manningN(vec2 p) {
+    float cond = (uUseSurface == 1) ? texture2D(tSurface, p).b : 1.0;
+    return (0.015 + (1.0 - cond) * 0.235) * uRoughness;
+  }
+  float faceFlux(float qOld, float etaA, float etaB, float zA, float zB, float n) {
+    float hFlow = max(etaA, etaB) - max(zA, zB);
+    if (hFlow <= uHMin) return 0.0; // dry face: no flow, drop stored momentum
+    float slope = (etaB - etaA) / uCellSize;
+    float num = qOld - uGravity * hFlow * uDt * slope;
+    float den = 1.0 + uGravity * uDt * n * n * abs(qOld) / pow(hFlow, 2.3333333);
+    return num / den;
+  }
+  // Outflow across a domain edge to dry terrain at the cell's own bed. sign +1 =
+  // east/north edge (outflow ≥ 0), −1 = west/south edge (outflow ≤ 0). qOld = 0.
+  float edgeFlux(float zC, float hC, float n, float sign) {
+    if (uBoundaryOpen == 0 || hC <= uHMin) return 0.0;
+    float etaC = zC + hC;
+    float f = (sign < 0.0) ? faceFlux(0.0, zC, etaC, zC, zC, n) : faceFlux(0.0, etaC, zC, zC, zC, n);
+    return (sign > 0.0) ? max(0.0, f) : min(0.0, f);
+  }
 `;
 
-// Pass 1: capped outflow (L, R, T, B) for this cell, from the current water level.
-export const fluxFragment = /* glsl */ `
-  ${FLUX_DECLS}
+// Pass 1: stored discharge on this cell's east + north faces from the water surface.
+export const momentumFragment = /* glsl */ `
+  ${HELPERS}
+  uniform sampler2D tQ; // previous discharge (r = east face, g = north face)
   void main() {
     vec2 res = resolution.xy;
     vec2 uv = gl_FragCoord.xy / res;
     vec2 texel = 1.0 / res;
-    float coef = uDt * uGravity * uPipeArea / uCellSize;
+    float zC = texture2D(heightmap, uv).x;
+    float hC = texture2D(tWater, uv).x;
+    float etaC = zC + hC;
+    float nC = manningN(uv);
+    vec2 qOld = texture2D(tQ, uv).rg;
 
-    float b = texture2D(heightmap, uv).x;
-    vec4 w = texture2D(tWater, uv);
-    float d = w.x;
-    float h = b + d;
-    // Per-cell Manning's n from the land-cover conductance (flow-ease) field:
-    // conductance 1.0 (paved) -> n≈0.015; 0.22 (vegetated) -> n≈0.20.
-    float cond = (uUseSurface == 1) ? texture2D(tSurface, uv).b : 1.0;
-    float nCell = (0.015 + (1.0 - cond) * 0.235) * uRoughness;
-    float speed = length(w.ba); // diagnostic velocity from the previous step
-    float manning = 1.0 / (1.0 + uDt * uGravity * nCell * nCell * speed / pow(max(d, 1.0e-3), 1.3333333));
-    float c = coef * cond * manning;
-    bool hasL = uv.x - texel.x > 0.0;
-    bool hasR = uv.x + texel.x < 1.0;
-    bool hasT = uv.y + texel.y < 1.0;
-    bool hasB = uv.y - texel.y > 0.0;
-    float outside = (uBoundaryOpen == 1) ? b : h; // open drains, closed = no flow
-    float hL = hasL ? surf(uv - vec2(texel.x, 0.0)) : outside;
-    float hR = hasR ? surf(uv + vec2(texel.x, 0.0)) : outside;
-    float hT = hasT ? surf(uv + vec2(0.0, texel.y)) : outside;
-    float hB = hasB ? surf(uv - vec2(0.0, texel.y)) : outside;
-    float oL = max(0.0, c * (h - hL));
-    float oR = max(0.0, c * (h - hR));
-    float oT = max(0.0, c * (h - hT));
-    float oB = max(0.0, c * (h - hB));
-    float sumO = oL + oR + oT + oB;
-    float K = 1.0;
-    if (sumO > 0.0) K = min(1.0, d * uCellSize * uCellSize / (uDt * sumO));
-    gl_FragColor = vec4(oL, oR, oT, oB) * K;
+    float qx;
+    if (uv.x + texel.x < 1.0) {
+      vec2 e = uv + vec2(texel.x, 0.0);
+      float zE = texture2D(heightmap, e).x;
+      float etaE = zE + texture2D(tWater, e).x;
+      qx = faceFlux(qOld.x, etaC, etaE, zC, zE, 0.5 * (nC + manningN(e)));
+    } else {
+      qx = edgeFlux(zC, hC, nC, 1.0); // east domain edge
+    }
+
+    float qy;
+    if (uv.y + texel.y < 1.0) {
+      vec2 nn = uv + vec2(0.0, texel.y);
+      float zN = texture2D(heightmap, nn).x;
+      float etaN = zN + texture2D(tWater, nn).x;
+      qy = faceFlux(qOld.y, etaC, etaN, zC, zN, 0.5 * (nC + manningN(nn)));
+    } else {
+      qy = edgeFlux(zC, hC, nC, 1.0); // north domain edge
+    }
+    gl_FragColor = vec4(qx, qy, 0.0, 0.0);
   }
 `;
 
-// Pass 2: integrate depth from the precomputed flux field + apply sources/sinks.
-export const integrateFragment = /* glsl */ `
-  uniform sampler2D heightmap;
-  uniform sampler2D tWater;
-  uniform sampler2D tFlux;
-  uniform sampler2D tSurface;
-  uniform int uUseSurface;
-  uniform float uCellSize;
-  uniform float uDt;
+// Pass 2: per-cell drainage limiter λ from the four faces draining this cell.
+export const limiterFragment = /* glsl */ `
+  ${HELPERS}
+  uniform sampler2D tQ; // discharge from the momentum pass
+  void main() {
+    vec2 res = resolution.xy;
+    vec2 uv = gl_FragCoord.xy / res;
+    vec2 texel = 1.0 / res;
+    float zC = texture2D(heightmap, uv).x;
+    float hC = texture2D(tWater, uv).x;
+    float nC = manningN(uv);
+    vec2 qC = texture2D(tQ, uv).rg;
+    float qW = (uv.x - texel.x > 0.0) ? texture2D(tQ, uv - vec2(texel.x, 0.0)).x : edgeFlux(zC, hC, nC, -1.0);
+    float qS = (uv.y - texel.y > 0.0) ? texture2D(tQ, uv - vec2(0.0, texel.y)).y : edgeFlux(zC, hC, nC, -1.0);
+    float drain = (uDt / uCellSize) * (max(0.0, qC.x) + max(0.0, -qW) + max(0.0, qC.y) + max(0.0, -qS));
+    float lambda = (drain > hC && drain > 0.0) ? hC / drain : 1.0;
+    gl_FragColor = vec4(lambda, 0.0, 0.0, 0.0);
+  }
+`;
+
+// Pass 3: integrate depth by continuity from the limited fluxes + apply sources/sinks.
+export const depthFragment = /* glsl */ `
+  ${HELPERS}
+  uniform sampler2D tQ; // discharge from the momentum pass
+  uniform sampler2D tLam; // per-cell limiter from the limiter pass
   uniform float uRainRate;
   uniform float uInfilRate;
   uniform float uEvapRate;
@@ -109,26 +139,34 @@ export const integrateFragment = /* glsl */ `
     vec2 res = resolution.xy;
     vec2 uv = gl_FragCoord.xy / res;
     vec2 texel = 1.0 / res;
-
     vec4 cell = texture2D(tWater, uv);
     float d = cell.x;
     float maxD = cell.y;
+    float zC = texture2D(heightmap, uv).x;
+    float nC = manningN(uv);
 
-    vec4 oC = texture2D(tFlux, uv);
-    float outflow = oC.x + oC.y + oC.z + oC.w;
-
-    bool hasL = uv.x - texel.x > 0.0;
-    bool hasR = uv.x + texel.x < 1.0;
-    bool hasT = uv.y + texel.y < 1.0;
+    bool hasE = uv.x + texel.x < 1.0;
+    bool hasN = uv.y + texel.y < 1.0;
+    bool hasW = uv.x - texel.x > 0.0;
     bool hasB = uv.y - texel.y > 0.0;
-    float inL = hasL ? texture2D(tFlux, uv - vec2(texel.x, 0.0)).y : 0.0; // left's R
-    float inR = hasR ? texture2D(tFlux, uv + vec2(texel.x, 0.0)).x : 0.0; // right's L
-    float inT = hasT ? texture2D(tFlux, uv + vec2(0.0, texel.y)).w : 0.0; // top's B
-    float inB = hasB ? texture2D(tFlux, uv - vec2(0.0, texel.y)).z : 0.0; // bottom's T
-    float inflow = inL + inR + inT + inB;
+    vec2 qC = texture2D(tQ, uv).rg; // this cell's east + north face
+    float qWraw = hasW ? texture2D(tQ, uv - vec2(texel.x, 0.0)).x : edgeFlux(zC, cell.x, nC, -1.0);
+    float qSraw = hasB ? texture2D(tQ, uv - vec2(0.0, texel.y)).y : edgeFlux(zC, cell.x, nC, -1.0);
 
-    float area = uCellSize * uCellSize;
-    float dNew = d + uDt * (inflow - outflow) / area;
+    float lamC = texture2D(tLam, uv).x;
+    float lamE = hasE ? texture2D(tLam, uv + vec2(texel.x, 0.0)).x : lamC;
+    float lamN = hasN ? texture2D(tLam, uv + vec2(0.0, texel.y)).x : lamC;
+    float lamW = hasW ? texture2D(tLam, uv - vec2(texel.x, 0.0)).x : lamC;
+    float lamS = hasB ? texture2D(tLam, uv - vec2(0.0, texel.y)).x : lamC;
+
+    // Each face scaled by its donor's λ (the cell it drains), so mass is conserved.
+    float qE = qC.x * (qC.x > 0.0 ? lamC : lamE);
+    float qN = qC.y * (qC.y > 0.0 ? lamC : lamN);
+    float qW = qWraw * (qWraw > 0.0 ? lamW : lamC);
+    float qS = qSraw * (qSraw > 0.0 ? lamS : lamC);
+
+    float net = (qE - qW) + (qN - qS);
+    float dNew = d - uDt * net / uCellSize;
 
     float fp = 1.0;
     if (uFootprintSpot == 1) {
@@ -137,33 +175,29 @@ export const integrateFragment = /* glsl */ `
     }
     if (uRaining == 1) dNew += uRainRate * uDt * fp;
     dNew += uInjectDepth * fp; // instantaneous dump
-    if (uPointDepth > 0.0) { // localized "pour a bucket here" at uPointUv
+    if (uPointDepth > 0.0) {
       float pr = distance(uv, uPointUv) / max(1e-4, uPointRadiusUv);
       dNew += uPointDepth * (1.0 - smoothstep(0.7, 1.0, pr));
     }
-    // Losses: per-cell infiltration + storm-drain removal (m/s). Where there is
-    // no sewer (Музыкальный/periphery) and impervious ground, almost nothing is
-    // removed → water accumulates at the low point. This is the flood trigger.
     float sinkRate = uInfilRate;
     if (uUseSurface == 1) {
       vec4 surf4 = texture2D(tSurface, uv);
       float drain = (surf4.a > 0.5) ? 0.0 : surf4.y; // storm sewer runs under streets, not roofs
-      sinkRate = surf4.x + drain; // infiltration + drainage capacity
+      sinkRate = surf4.x + drain;
     }
     dNew -= min(dNew, sinkRate * uDt);
-    dNew -= min(dNew, uEvapRate * uDt); // evaporation is a constant depth flux (m/s), not a fraction of depth
+    dNew -= min(dNew, uEvapRate * uDt); // evaporation is a constant depth flux (m/s)
     dNew = max(dNew, 0.0);
     if (uFillLevelAbs > -1.0e8) {
-      float terrain = texture2D(heightmap, uv).x;
-      float fill = max(0.0, uFillLevelAbs - terrain); // bathtub depth at this level
+      float fill = max(0.0, uFillLevelAbs - zC);
       dNew = (uFillSet == 1) ? fill : max(dNew, fill);
     }
     maxD = max(maxD, dNew);
 
+    // Diagnostic velocity (render-only): face-averaged discharge / depth (m/s).
     float dbar = max(dNew, 0.02);
-    float vx = 0.5 * ((inL - oC.x) + (oC.y - inR)) / (uCellSize * dbar);
-    float vy = 0.5 * ((inB - oC.w) + (oC.z - inT)) / (uCellSize * dbar);
-
+    float vx = 0.5 * (qE + qW) / dbar;
+    float vy = 0.5 * (qN + qS) / dbar;
     gl_FragColor = vec4(dNew, maxD, vx, vy);
   }
 `;

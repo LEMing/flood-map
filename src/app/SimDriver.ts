@@ -59,6 +59,7 @@ export class SimDriver {
   private rainedVolume = 0;
   private injectedVolume = 0; // cumulative water added by manual dumps (m³), for the budget
   private observedMaxDepth = 1;
+  private observedMaxVel = 0; // peak flow speed (m/s) for the velocity-aware CFL
   private stored = 0;
   private floodedFrac = 0;
   private peakDepthNow = 0;
@@ -86,7 +87,7 @@ export class SimDriver {
     this.timelineMode = 'live';
     this.simTime = 0;
     this.rainedVolume = this.injectedVolume = 0;
-    this.observedMaxDepth = 1;
+    this.observedMaxDepth = 1; this.observedMaxVel = 0;
     this.stored = 0;
     this.statsReadback.reset();
   }
@@ -129,7 +130,7 @@ export class SimDriver {
     this.sim?.reset();
     this.simTime = 0;
     this.rainedVolume = this.injectedVolume = 0;
-    this.observedMaxDepth = 1;
+    this.observedMaxDepth = 1; this.observedMaxVel = 0;
   }
 
   stepOnce(): void {
@@ -250,7 +251,8 @@ export class SimDriver {
     const g = Math.max(0.1, this.params.gravity);
     const cellSize = this.sim.cellSize;
     const refDepth = Math.max(1, this.observedMaxDepth);
-    const cflMax = (0.45 * cellSize) / Math.sqrt(g * refDepth);
+    // Velocity-aware CFL (Bates et al. α≈0.7): supercritical flow advects at |v|+√(g·h).
+    const cflMax = (0.7 * cellSize) / (this.observedMaxVel + Math.sqrt(g * refDepth));
 
     const stepDt = Math.min(simSeconds / this.params.substeps, cflMax);
     let remaining = simSeconds;
@@ -346,14 +348,13 @@ export class SimDriver {
     if (!this.sim || !this.buf) return;
     const N = this.sim.N;
     const cellArea = this.sim.cellSize * this.sim.cellSize;
-    const { stored, flooded, maxNow, maxEver } = scanWater(this.buf, N * N);
-    if (this.timelineMode !== 'scrub') this.observedMaxDepth = Math.max(1, maxEver);
+    const { stored, flooded, maxNow, maxEver, maxVel } = scanWater(this.buf, N * N);
+    if (this.timelineMode !== 'scrub') { this.observedMaxDepth = Math.max(1, maxEver); this.observedMaxVel = maxVel; }
     this.stored = stored * cellArea;
     this.floodedFrac = flooded / (N * N);
     this.peakDepthNow = maxNow;
     this.stats.simTime = formatDuration(simTime);
-    this.stats.rained = formatVolume(this.rainedVolume);
-    this.stats.stored = formatVolume(stored * cellArea);
+    this.stats.rained = formatVolume(this.rainedVolume); this.stats.stored = formatVolume(stored * cellArea);
     this.stats.balance = formatWaterBalance(this.rainedVolume, this.injectedVolume, stored * cellArea);
     const floodedPct = (flooded / (N * N)) * 100;
     this.stats.floodedArea = floodedPct > 0 && floodedPct < 1 ? '<1 %' : `~${Math.round(floodedPct)} %`;

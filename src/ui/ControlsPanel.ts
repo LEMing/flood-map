@@ -128,7 +128,6 @@ export class ControlsPanel {
     // --- Physics ---
     const phys = this.pane.addFolder({ title: t('physics.title'), expanded: false });
     phys.addBinding(params, 'gravity', { min: 1, max: 25, step: 0.01, label: t('physics.gravity') }).on('change', change);
-    phys.addBinding(params, 'pipeArea', { min: 0.1, max: 4, step: 0.05, label: t('physics.flow') }).on('change', change);
     phys.addBinding(params, 'friction', { min: 0.2, max: 3, step: 0.1, label: t('physics.friction') }).on('change', change);
     phys.addBinding(params, 'boundary', { label: t('physics.edges'), options: { [t('physics.edgesOpen')]: 'open', [t('physics.edgesClosed')]: 'closed' } }).on('change', change);
 

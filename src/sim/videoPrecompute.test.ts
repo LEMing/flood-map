@@ -60,4 +60,15 @@ describe('scanWater', () => {
     expect(s.maxNow).toBeCloseTo(0.3);
     expect(s.maxEver).toBe(5);
   });
+
+  it('tracks peak flow speed over wet cells only (for the velocity-aware CFL)', () => {
+    // rgba = depth, maxDepth, vx, vy. A fast but dry cell must NOT raise maxVel.
+    const buf = new Float32Array([
+      0.5, 0.5, 3, 4, // wet: |v| = 5
+      0.01, 0.01, 50, 0, // dry (<5cm): ignored despite |v| = 50
+      0.2, 0.2, 0, 6, // wet: |v| = 6
+    ]);
+    const s = scanWater(buf, 3);
+    expect(s.maxVel).toBeCloseTo(6); // the dry cell's 50 is excluded
+  });
 });

@@ -24,20 +24,26 @@ export function videoFrameBudget(captureN: number): number {
   return Math.min(72, Math.max(48, Math.floor(320e6 / (captureN * captureN * 16))));
 }
 
-export interface WaterScan { stored: number; flooded: number; maxNow: number; maxEver: number }
+export interface WaterScan { stored: number; flooded: number; maxNow: number; maxEver: number; maxVel: number }
 
-/** Single O(n) pass over an rgba water buffer: depth sum, flooded cells, maxima. */
+/** Single O(n) pass over an rgba water buffer: depth sum, flooded cells, maxima, peak speed. */
 export function scanWater(buf: Float32Array, count: number): WaterScan {
-  let stored = 0, flooded = 0, maxNow = 0, maxEver = 0;
+  let stored = 0, flooded = 0, maxNow = 0, maxEver = 0, maxVel = 0;
   for (let i = 0; i < count; i++) {
     const d = buf[i * 4];
     const m = buf[i * 4 + 1];
     stored += d;
-    if (d > 0.05) flooded++;
+    if (d > 0.05) {
+      flooded++;
+      const vx = buf[i * 4 + 2];
+      const vy = buf[i * 4 + 3];
+      const v = Math.sqrt(vx * vx + vy * vy);
+      if (v > maxVel) maxVel = v; // for the velocity-aware CFL (supercritical flow)
+    }
     if (d > maxNow) maxNow = d;
     if (m > maxEver) maxEver = m;
   }
-  return { stored, flooded, maxNow, maxEver };
+  return { stored, flooded, maxNow, maxEver, maxVel };
 }
 
 /** Water has receded to <=3% of its observed peak (volume AND area). */

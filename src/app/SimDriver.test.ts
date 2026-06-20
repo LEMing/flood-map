@@ -51,7 +51,7 @@ function makeDriver(sim: MockSim, over: Partial<Params> = {}): SimDriver {
   return d;
 }
 
-const cfl = (cellSize: number, refDepth = 1, g = 9.81): number => (0.45 * cellSize) / Math.sqrt(g * refDepth);
+const cfl = (cellSize: number, refDepth = 1, g = 9.81): number => (0.7 * cellSize) / Math.sqrt(g * refDepth);
 
 describe('SimDriver — CFL substepping (live)', () => {
   it('never steps the sim with dt above the CFL limit and consumes the full window', () => {

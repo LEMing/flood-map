@@ -3,14 +3,15 @@
 Type an address, get the real ~2×2 km terrain around it as a 3D surface, then
 pour heavy rain on it and watch — with a mass-conserving 2-D flow model — where
 the water flows, pools, and floods. It is an **educational, real-time rainfall-
-flood _visualization_, not an engineering flood study**: a non-inertial
-virtual-pipes (diffusive-wave) approximation to the shallow-water equations over a
-bare-earth DEM (FABDEM) with OSM buildings/roads, simplified storm-drain &
-infiltration loss terms, and rainfall hyetographs. Parameters are literature-
-typical defaults, **uncalibrated** to any gauged event — indicative, not a
-flood-risk assessment. See **Limitations** below.
+flood _visualization_, not an engineering flood study**: the inertial
+("local-acceleration") formulation of the 2-D shallow-water equations (Bates,
+Horritt & Fewtrell, 2010 — the LISFLOOD-FP scheme) over a bare-earth DEM (FABDEM)
+with OSM buildings/roads, simplified storm-drain & infiltration loss terms, and
+rainfall hyetographs. Parameters are literature-typical defaults, **uncalibrated**
+to any gauged event — indicative, not a flood-risk assessment. See **Limitations**
+below.
 
-![concept](https://img.shields.io/badge/three.js-GPU%20virtual--pipes-2f6feb)
+![concept](https://img.shields.io/badge/three.js-GPU%20inertial%20shallow--water-2f6feb)
 
 **Live:** https://krd-flood.web.app
 
@@ -43,15 +44,14 @@ Manual deploy: `npm run build && firebase deploy --only hosting`.
   **real satellite imagery** (Esri World Imagery) or a hypsometric elevation
   tint — toggle in the Visualization panel. Imagery is draped through a second
   UV set so it never disturbs the simulation grid.
-- **Physics-based flow model.** A **non-inertial virtual-pipes (diffusive-wave)
-  model** (after O'Brien/Julien; Mei, Decaudin & Hu, 2007) runs entirely on the
-  GPU via `GPUComputationRenderer`: rainfall → inter-cell flux (driven by the
-  water-surface head gradient) → water-depth update → diagnostic velocity, with
-  simplified infiltration, evaporation, drainage, open/closed boundaries and a
-  volume-capped flux that conserves water exactly. It is an approximation of the
-  shallow-water (Saint-Venant) equations that **omits flow momentum/inertia**, but
-  bed friction is physical: a semi-implicit Manning term (Bates, Horritt &
-  Fewtrell, 2010) with a per-cell _n_ derived from the land-cover roughness.
+- **Physics-based flow model.** The **inertial shallow-water model** of Bates,
+  Horritt & Fewtrell (2010) — the scheme behind LISFLOOD-FP — runs entirely on the
+  GPU via `GPUComputationRenderer`: a per-face discharge carrying real momentum is
+  evolved on a staggered grid (gravity forcing from the water-surface slope +
+  semi-implicit Manning friction), then continuity updates depth. So a flood wave
+  can **accelerate, overshoot and reverse**, not merely relax down the head
+  gradient. A per-cell drainage limiter keeps depth ≥ 0 and conserves water
+  exactly; the Manning _n_ is derived per-cell from the land-cover roughness.
 - **Everything is parameterized** live: rain intensity, storm-cell footprint,
   infiltration, evaporation, gravity, flow coefficient, friction, time scale,
   substeps, map size, grid resolution, vertical exaggeration, and the
@@ -85,23 +85,25 @@ npm run build && npm run preview
 
 ## The physics, briefly
 
-Each grid cell holds terrain height `b`, water depth `d`, four outflow fluxes
-`(L,R,T,B)` and a velocity. Per sub-step:
+Cells hold terrain height `z` and water depth `h`; each cell's east and north
+**faces** hold a discharge per unit width `q` (the stored momentum). Per sub-step
+(CFL-limited by `Δt ≤ 0.7·Δx/(|v| + √(g·h))`):
 
-1. **Flux** — `f_i = max(0, Δt·g·A/l·Δh_i)` toward each lower neighbor — note it is
-   **recomputed from the water-surface head gradient `Δh` each step** (no stored
-   discharge `f_old`, hence non-inertial / no momentum) — damped by the
-   semi-implicit Manning friction factor `1/(1 + g·Δt·n²·|v|/d^{4/3})` (per-cell `n`
-   from land cover), then scaled by `K = min(1, d·cell²/(Σf·Δt))` so a cell never
-   drains more water than it holds.
-2. **Depth** — `Δd = Δt·(inflow − outflow)/cell²`, plus rain, minus infiltration,
-   drainage and evaporation (all simplified loss terms — see Limitations).
-3. **Velocity** — *diagnosed* from the net flux, for flow arrows and ripples.
+1. **Momentum** — each face's discharge is evolved (Bates et al. 2010):
+   `q_{t+Δt} = (q_t − g·hf·Δt·∂η/∂x) / (1 + g·Δt·n²·|q_t|/hf^{7/3})`, where
+   `η = z + h` is the water surface, `hf` the flow depth at the face, and the
+   `q_t` term is the **inertia** the old model lacked. Per-cell `n` from land cover.
+2. **Limiter** — a per-cell `λ ∈ (0,1]` scales each face draining a cell so it can't
+   lose more than it holds in one step (the inertial analogue of a volume cap),
+   keeping depth ≥ 0 while conserving mass on the shared face.
+3. **Depth** — continuity `Δh = −Δt·(∂qx/∂x + ∂qy/∂y)`, plus rain, minus
+   infiltration, drainage and evaporation (simplified loss terms — see Limitations).
+   Velocity is then *diagnosed* (`q/h`) for flow arrows and ripples.
 
-Sub-step size is CFL-bounded (`Δt ≤ 0.45·Δx/√(g·h)`, the gravity-wave Courant
-condition). With losses at zero and **closed** edges, the *water stored* stat
-tracks *rain in* — a mass-conservation sanity check (unit-tested in
-`virtualPipes.test.ts`).
+Sub-step size is CFL-bounded (`Δt ≤ 0.7·Δx/(|v| + √(g·h))`, the velocity-aware
+Courant condition for the inertial scheme). With losses at zero and **closed**
+edges, the *water stored* stat tracks *rain in* — a mass-conservation sanity check
+(the whole scheme is pinned by a CPU reference in `inertialFlow.test.ts`).
 
 ## Data sources
 
@@ -120,12 +122,13 @@ This is an **educational visualization, not an engineering flood study**, and it
 is **uncalibrated** (parameters are literature-typical defaults, not fitted to any
 gauged event). Specifically:
 
-- **Non-inertial flow.** The virtual-pipes / diffusive-wave scheme omits flow
-  momentum/inertia (the `∂Q/∂t` term of the full shallow-water equations), so it
-  cannot reproduce overshoot, oscillation or hydraulic jumps. Bed friction _is_
-  modelled — a semi-implicit Manning term (Bates et al., 2010) with a per-cell
-  _n_ from land cover — but it is applied to a non-inertial flux, not the full
-  inertial (momentum-carrying) formulation, and _n_ is uncalibrated.
+- **Inertial, but still simplified shallow water.** The solver evolves stored
+  momentum (the `∂q/∂t` term), so it captures acceleration and overshoot — but it
+  is the _local-inertial_ approximation (Bates et al., 2010): it drops the
+  convective-acceleration term `∂(q²/h)/∂x`, so it is most accurate for the
+  sub-to-trans-critical sheet flow of urban pluvial flooding and does **not**
+  resolve true hydraulic jumps or strongly supercritical shocks. Manning _n_ is
+  literature-typical and **uncalibrated**.
 - **Simplified losses.** Infiltration is a constant per-class capacity (a
   φ-index, not Green-Ampt/Horton/SCS-CN); the storm sewer is a uniform per-cell
   removal rate, **not a routed pipe network** — so sewer surcharge and downstream

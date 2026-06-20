@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js';
 import type { Params } from '../config';
-import { fluxFragment, integrateFragment } from './shaders';
+import { momentumFragment, limiterFragment, depthFragment } from './shaders';
 
 type U = Record<string, THREE.IUniform>;
 
@@ -21,29 +21,34 @@ interface GpuApi {
 }
 
 const MM_PER_HR_TO_M_PER_S = 1 / 1000 / 3600;
+const H_MIN = 1e-3; // wet/dry flow threshold (m) — faces shallower than this carry no flow
 
 /**
- * GPU rainfall-flood simulation: a non-inertial virtual-pipes / diffusive-wave
- * approximation to the 2-D shallow-water equations (see shaders.ts — mass-
- * conserving, but no flow momentum/inertia). A ping-pong `tWater` texture stores
- * depth (r), max depth (g) and a diagnostic velocity (b,a). Each step runs two
- * passes: a flux pass computes every cell's capped outflux into `tFlux`, then an
- * integrate pass reads the flux field to update depth and apply rain/infiltration/
- * drainage/evaporation. The physics is pinned by virtualPipes.ts + its tests.
+ * GPU inertial flood simulation: the local-inertial formulation of the 2-D shallow-
+ * water equations (Bates et al. 2010; see shaders.ts), carrying real flow momentum.
+ * A ping-pong `tQ` texture stores the per-face discharge (the inertia); a ping-pong
+ * `tWater` texture stores depth (r), max depth (g) and a diagnostic velocity (b,a).
+ * Each substep runs three passes: momentum (update stored discharge), limiter
+ * (per-cell drainage cap so depth stays ≥ 0 and mass is conserved), and depth
+ * (continuity + rain/infiltration/drainage/evaporation). The physics is pinned by
+ * inertialFlow.ts + its tests.
  */
 export class FloodSimulation {
   readonly N: number;
   readonly cellSize: number;
   private readonly renderer: THREE.WebGLRenderer;
   private readonly gpu: GpuApi;
-  private readonly fluxMat: THREE.ShaderMaterial;
-  private readonly integrateMat: THREE.ShaderMaterial;
+  private readonly momentumMat: THREE.ShaderMaterial;
+  private readonly limiterMat: THREE.ShaderMaterial;
+  private readonly depthMat: THREE.ShaderMaterial;
   private readonly waterRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
-  private readonly fluxRT: THREE.WebGLRenderTarget;
-  private readonly water0: THREE.DataTexture;
+  private readonly qRT: [THREE.WebGLRenderTarget, THREE.WebGLRenderTarget];
+  private readonly lamRT: THREE.WebGLRenderTarget;
+  private readonly zero: THREE.DataTexture;
   private readonly dummySurface: THREE.DataTexture;
   private readonly u: U;
   private currentIdx = 0;
+  private qIdx = 0;
   private pendingInject = 0;
   private pendingFill = -1e9;
   private pendingFillSet = false;
@@ -67,25 +72,26 @@ export class FloodSimulation {
     this.gpu = gpu;
     gpu.setDataType?.(THREE.FloatType);
 
-    // Fallback 1×1 surface (roughness = 1); real per-cell fields set via setSurface().
+    // Fallback 1×1 surface (conductance = 1); real per-cell fields set via setSurface().
     this.dummySurface = new THREE.DataTexture(
       new Float32Array([0, 0, 1, 0]), 1, 1, THREE.RGBAFormat, THREE.FloatType,
     );
     this.dummySurface.needsUpdate = true;
 
-    // One uniform object per name, shared by reference between the two materials,
-    // so updateParams/step mutate a single `u` and both passes see it.
+    // One uniform object per name, shared by reference across the three materials,
+    // so updateParams/step mutate a single `u` and every pass sees it.
     this.u = {
       heightmap: { value: heightTexture },
       tWater: { value: null }, // bound to the current water RT each step
-      tFlux: { value: null }, // bound to the flux RT before the integrate pass
+      tQ: { value: null }, // bound to the old/new discharge RT per pass
+      tLam: { value: null }, // bound to the limiter RT before the depth pass
       tSurface: { value: this.dummySurface },
       uUseSurface: { value: 0 },
       uCellSize: { value: this.cellSize },
       uDt: { value: 0 },
       uGravity: { value: params.gravity },
-      uPipeArea: { value: params.pipeArea },
       uRoughness: { value: params.friction },
+      uHMin: { value: H_MIN },
       uBoundaryOpen: { value: params.boundary === 'open' ? 1 : 0 },
       uRainRate: { value: 0 },
       uInfilRate: { value: 0 },
@@ -102,14 +108,13 @@ export class FloodSimulation {
       uFillSet: { value: 0 },
     };
     const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
-    this.fluxMat = gpu.createShaderMaterial(fluxFragment, pick([
-      'heightmap', 'tWater', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
-      'uGravity', 'uPipeArea', 'uRoughness', 'uBoundaryOpen',
-    ]));
-    this.integrateMat = gpu.createShaderMaterial(integrateFragment, pick([
-      'heightmap', 'tWater', 'tFlux', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
-      'uRainRate', 'uInfilRate', 'uEvapRate', 'uRaining', 'uFootprintSpot', 'uSpot',
-      'uSpotRadius', 'uInjectDepth', 'uPointDepth', 'uPointUv', 'uPointRadiusUv',
+    const shared = ['heightmap', 'tWater', 'tQ', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
+      'uGravity', 'uRoughness', 'uHMin', 'uBoundaryOpen'];
+    this.momentumMat = gpu.createShaderMaterial(momentumFragment, pick(shared));
+    this.limiterMat = gpu.createShaderMaterial(limiterFragment, pick(shared));
+    this.depthMat = gpu.createShaderMaterial(depthFragment, pick([
+      ...shared, 'tLam', 'uRainRate', 'uInfilRate', 'uEvapRate', 'uRaining', 'uFootprintSpot',
+      'uSpot', 'uSpotRadius', 'uInjectDepth', 'uPointDepth', 'uPointUv', 'uPointRadiusUv',
       'uFillLevelAbs', 'uFillSet',
     ]));
 
@@ -117,17 +122,16 @@ export class FloodSimulation {
       N, N, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.NearestFilter, THREE.NearestFilter,
     );
     this.waterRT = [make(), make()];
-    this.fluxRT = make();
-    this.water0 = gpu.createTexture(); // zero-filled
-    gpu.renderTexture(this.water0, this.waterRT[0]);
-    gpu.renderTexture(this.water0, this.waterRT[1]);
+    this.qRT = [make(), make()];
+    this.lamRT = make();
+    this.zero = gpu.createTexture(); // zero-filled (dry water / no discharge)
+    this.reset();
 
     this.updateParams(params);
   }
 
   updateParams(params: Params): void {
     this.u.uGravity.value = params.gravity;
-    this.u.uPipeArea.value = params.pipeArea;
     this.u.uRoughness.value = params.friction;
     this.u.uBoundaryOpen.value = params.boundary === 'open' ? 1 : 0;
     this.u.uRainRate.value = params.intensityMmPerHr * MM_PER_HR_TO_M_PER_S;
@@ -148,13 +152,21 @@ export class FloodSimulation {
     this.u.uFillLevelAbs.value = this.pendingFill;
     this.u.uFillSet.value = this.pendingFillSet ? 1 : 0;
 
-    const cur = this.waterRT[this.currentIdx];
-    const next = this.waterRT[1 - this.currentIdx];
-    this.u.tWater.value = cur.texture;
-    this.gpu.doRenderTarget(this.fluxMat, this.fluxRT); // pass 1: capped outflux -> tFlux
-    this.u.tFlux.value = this.fluxRT.texture;
-    this.gpu.doRenderTarget(this.integrateMat, next); // pass 2: integrate depth/vel
+    const water = this.waterRT[this.currentIdx];
+    const waterNext = this.waterRT[1 - this.currentIdx];
+    const qCur = this.qRT[this.qIdx];
+    const qNext = this.qRT[1 - this.qIdx];
+
+    this.u.tWater.value = water.texture; // all three passes read the OLD water surface
+    this.u.tQ.value = qCur.texture;
+    this.gpu.doRenderTarget(this.momentumMat, qNext); // pass 1: stored discharge -> qNext
+    this.u.tQ.value = qNext.texture;
+    this.gpu.doRenderTarget(this.limiterMat, this.lamRT); // pass 2: per-cell drainage cap
+    this.u.tLam.value = this.lamRT.texture;
+    this.gpu.doRenderTarget(this.depthMat, waterNext); // pass 3: continuity + sources
+
     this.currentIdx = 1 - this.currentIdx;
+    this.qIdx = 1 - this.qIdx;
 
     this.pendingInject = 0;
     this.pendingPoint.depth = 0;
@@ -185,7 +197,7 @@ export class FloodSimulation {
     this.pendingFillSet = set;
   }
 
-  /** Per-cell urban surface fields (rgba = infil m/s, drain m/s, roughness 0..1). */
+  /** Per-cell urban surface fields (rgba = infil m/s, drain m/s, conductance 0..1, building flag). */
   setSurface(texture: THREE.Texture | null): void {
     this.u.tSurface.value = texture ?? this.dummySurface;
     this.u.uUseSurface.value = texture ? 1 : 0;
@@ -197,9 +209,12 @@ export class FloodSimulation {
   }
 
   reset(): void {
-    this.gpu.renderTexture(this.water0, this.waterRT[0]);
-    this.gpu.renderTexture(this.water0, this.waterRT[1]);
+    this.gpu.renderTexture(this.zero, this.waterRT[0]);
+    this.gpu.renderTexture(this.zero, this.waterRT[1]);
+    this.gpu.renderTexture(this.zero, this.qRT[0]);
+    this.gpu.renderTexture(this.zero, this.qRT[1]);
     this.currentIdx = 0;
+    this.qIdx = 0;
   }
 
   /** rgba = (depth, maxDepth, velX, velY). */
@@ -258,11 +273,14 @@ export class FloodSimulation {
     this.gpu.dispose();
     this.waterRT[0].dispose();
     this.waterRT[1].dispose();
-    this.fluxRT.dispose();
-    this.water0.dispose();
+    this.qRT[0].dispose();
+    this.qRT[1].dispose();
+    this.lamRT.dispose();
+    this.zero.dispose();
     this.dummySurface.dispose();
-    this.fluxMat.dispose();
-    this.integrateMat.dispose();
+    this.momentumMat.dispose();
+    this.limiterMat.dispose();
+    this.depthMat.dispose();
     const gl = this.renderer.getContext() as WebGL2RenderingContext;
     if (this.fence) gl.deleteSync(this.fence);
     if (this.pbo) gl.deleteBuffer(this.pbo);
