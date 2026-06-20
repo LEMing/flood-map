@@ -35,12 +35,20 @@ const HELPERS = /* glsl */ `
   uniform float uGravity;
   uniform float uRoughness;
   uniform float uHMin;
+  uniform float uInfilRate;   // fallback saturated conductivity Ks (m/s) when no surface
+  uniform float uSorptivity;  // Green-Ampt S = ψ·Δθ (m); 0 = constant-rate infiltration
   uniform int uBoundaryOpen;
 
   float manningN(vec2 p) {
     float cond = (uUseSurface == 1) ? texture2D(tSurface, p).b : 1.0;
     return (0.015 + (1.0 - cond) * 0.235) * uRoughness;
   }
+  // Green-Ampt infiltration capacity (m/s): declines as the cumulative infiltration
+  // F (m) grows (the wetting front deepens), → Ks. Mirrors src/sim/infiltration.ts.
+  float greenAmptRate(float cumulativeF, float ks) {
+    return ks * (1.0 + uSorptivity / max(cumulativeF, 0.002));
+  }
+  float soilKs(vec2 p) { return (uUseSurface == 1) ? texture2D(tSurface, p).r : uInfilRate; }
   float faceFlux(float qOld, float etaA, float etaB, float zA, float zB, float n) {
     float hFlow = max(etaA, etaB) - max(zA, zB);
     if (hFlow <= uHMin) return 0.0; // dry face: no flow, drop stored momentum
@@ -71,7 +79,9 @@ export const momentumFragment = /* glsl */ `
     float hC = texture2D(tWater, uv).x;
     float etaC = zC + hC;
     float nC = manningN(uv);
-    vec2 qOld = texture2D(tQ, uv).rg;
+    vec4 qOldT = texture2D(tQ, uv);
+    vec2 qOld = qOldT.rg;
+    float fOld = qOldT.b; // cumulative infiltration F (m), carried in the discharge texture
 
     float qx;
     if (uv.x + texel.x < 1.0) {
@@ -92,7 +102,10 @@ export const momentumFragment = /* glsl */ `
     } else {
       qy = edgeFlux(zC, hC, nC, 1.0); // north domain edge
     }
-    gl_FragColor = vec4(qx, qy, 0.0, 0.0);
+    // Advance the per-cell Green-Ampt state F (≈ what soaks in this step); the depth
+    // pass removes the matching water using the rate from this F. Rides in .b.
+    float fNew = fOld + min(hC, greenAmptRate(fOld, soilKs(uv)) * uDt);
+    gl_FragColor = vec4(qx, qy, fNew, 0.0);
   }
 `;
 
@@ -120,9 +133,9 @@ export const limiterFragment = /* glsl */ `
 export const depthFragment = /* glsl */ `
   ${HELPERS}
   uniform sampler2D tQ; // discharge from the momentum pass
+  uniform sampler2D tQprev; // the PREVIOUS discharge texture (its .b = cumulative infiltration F)
   uniform sampler2D tLam; // per-cell limiter from the limiter pass
   uniform float uRainRate;
-  uniform float uInfilRate;
   uniform float uEvapRate;
   uniform int uRaining;
   uniform int uFootprintSpot;
@@ -179,13 +192,14 @@ export const depthFragment = /* glsl */ `
       float pr = distance(uv, uPointUv) / max(1e-4, uPointRadiusUv);
       dNew += uPointDepth * (1.0 - smoothstep(0.7, 1.0, pr));
     }
-    float sinkRate = uInfilRate;
-    if (uUseSurface == 1) {
-      vec4 surf4 = texture2D(tSurface, uv);
-      float drain = (surf4.a > 0.5) ? 0.0 : surf4.y; // storm sewer runs under streets, not roofs
-      sinkRate = surf4.x + drain;
-    }
-    dNew -= min(dNew, sinkRate * uDt);
+    // Green-Ampt infiltration: capacity declines with the per-cell cumulative F
+    // (from the start of this step, carried in tQprev.b) — so pervious ground gulps
+    // early rain, then saturates and ponds. Storm sewer runs under streets, not roofs.
+    float fOld = texture2D(tQprev, uv).b;
+    float drainRate = 0.0;
+    if (uUseSurface == 1) drainRate = (texture2D(tSurface, uv).a > 0.5) ? 0.0 : texture2D(tSurface, uv).y;
+    dNew -= min(dNew, greenAmptRate(fOld, soilKs(uv)) * uDt);
+    dNew -= min(dNew, drainRate * uDt);
     dNew -= min(dNew, uEvapRate * uDt); // evaporation is a constant depth flux (m/s)
     dNew = max(dNew, 0.0);
     if (uFillLevelAbs > -1.0e8) {

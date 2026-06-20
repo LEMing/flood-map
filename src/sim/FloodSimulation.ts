@@ -84,6 +84,7 @@ export class FloodSimulation {
       heightmap: { value: heightTexture },
       tWater: { value: null }, // bound to the current water RT each step
       tQ: { value: null }, // bound to the old/new discharge RT per pass
+      tQprev: { value: null }, // the OLD discharge RT (its .b = cumulative infiltration F)
       tLam: { value: null }, // bound to the limiter RT before the depth pass
       tSurface: { value: this.dummySurface },
       uUseSurface: { value: 0 },
@@ -95,6 +96,7 @@ export class FloodSimulation {
       uBoundaryOpen: { value: params.boundary === 'open' ? 1 : 0 },
       uRainRate: { value: 0 },
       uInfilRate: { value: 0 },
+      uSorptivity: { value: params.groundwaterHigh ? 0.015 : 0.06 }, // Green-Ampt S = ψ·Δθ (m)
       uEvapRate: { value: 0 },
       uRaining: { value: params.raining ? 1 : 0 },
       uFootprintSpot: { value: params.rainFootprint === 'spot' ? 1 : 0 },
@@ -109,11 +111,11 @@ export class FloodSimulation {
     };
     const pick = (names: string[]): U => Object.fromEntries(names.map((n) => [n, this.u[n]]));
     const shared = ['heightmap', 'tWater', 'tQ', 'tSurface', 'uUseSurface', 'uCellSize', 'uDt',
-      'uGravity', 'uRoughness', 'uHMin', 'uBoundaryOpen'];
+      'uGravity', 'uRoughness', 'uHMin', 'uInfilRate', 'uSorptivity', 'uBoundaryOpen'];
     this.momentumMat = gpu.createShaderMaterial(momentumFragment, pick(shared));
     this.limiterMat = gpu.createShaderMaterial(limiterFragment, pick(shared));
     this.depthMat = gpu.createShaderMaterial(depthFragment, pick([
-      ...shared, 'tLam', 'uRainRate', 'uInfilRate', 'uEvapRate', 'uRaining', 'uFootprintSpot',
+      ...shared, 'tQprev', 'tLam', 'uRainRate', 'uEvapRate', 'uRaining', 'uFootprintSpot',
       'uSpot', 'uSpotRadius', 'uInjectDepth', 'uPointDepth', 'uPointUv', 'uPointRadiusUv',
       'uFillLevelAbs', 'uFillSet',
     ]));
@@ -136,6 +138,9 @@ export class FloodSimulation {
     this.u.uBoundaryOpen.value = params.boundary === 'open' ? 1 : 0;
     this.u.uRainRate.value = params.intensityMmPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uInfilRate.value = params.infiltrationMmPerHr * MM_PER_HR_TO_M_PER_S;
+    // Green-Ampt suction-deficit S: pre-saturated soil (high groundwater) has little
+    // storage left → small S → infiltration drops to Ks almost at once.
+    this.u.uSorptivity.value = params.groundwaterHigh ? 0.015 : 0.06;
     this.u.uEvapRate.value = params.evaporationPerHr * MM_PER_HR_TO_M_PER_S;
     this.u.uRaining.value = params.raining ? 1 : 0;
     this.u.uFootprintSpot.value = params.rainFootprint === 'spot' ? 1 : 0;
@@ -158,8 +163,9 @@ export class FloodSimulation {
     const qNext = this.qRT[1 - this.qIdx];
 
     this.u.tWater.value = water.texture; // all three passes read the OLD water surface
+    this.u.tQprev.value = qCur.texture; // the OLD discharge (its .b = F at the start of this step)
     this.u.tQ.value = qCur.texture;
-    this.gpu.doRenderTarget(this.momentumMat, qNext); // pass 1: stored discharge -> qNext
+    this.gpu.doRenderTarget(this.momentumMat, qNext); // pass 1: discharge + advance F -> qNext
     this.u.tQ.value = qNext.texture;
     this.gpu.doRenderTarget(this.limiterMat, this.lamRT); // pass 2: per-cell drainage cap
     this.u.tLam.value = this.lamRT.texture;

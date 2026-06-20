@@ -53,7 +53,7 @@ Manual deploy: `npm run build && firebase deploy --only hosting`.
   gradient. A per-cell drainage limiter keeps depth ≥ 0 and conserves water
   exactly; the Manning _n_ is derived per-cell from the land-cover roughness.
 - **Everything is parameterized** live: rain intensity, storm-cell footprint,
-  infiltration, evaporation, gravity, flow coefficient, friction, time scale,
+  infiltration, evaporation, gravity, friction (Manning roughness), time scale,
   substeps, map size, grid resolution, vertical exaggeration, and the
   visualization (water opacity, depth color scale, max-flood extent, flow
   arrows).
@@ -129,10 +129,13 @@ gauged event). Specifically:
   sub-to-trans-critical sheet flow of urban pluvial flooding and does **not**
   resolve true hydraulic jumps or strongly supercritical shocks. Manning _n_ is
   literature-typical and **uncalibrated**.
-- **Simplified losses.** Infiltration is a constant per-class capacity (a
-  φ-index, not Green-Ampt/Horton/SCS-CN); the storm sewer is a uniform per-cell
-  removal rate, **not a routed pipe network** — so sewer surcharge and downstream
-  resurfacing (the dominant urban-pluvial mechanism) are not represented.
+- **Simplified losses.** Infiltration uses a per-cell **Green-Ampt** model (capacity
+  declines as the soil wets up, → the saturated conductivity Ks), so dry pervious
+  ground absorbs the early rain and then ponds — but Ks and the suction-deficit are
+  literature-typical, not measured, and there is no soil drying/redistribution
+  between storms. The storm sewer is a uniform per-cell removal rate, **not a routed
+  pipe network** — so sewer surcharge and downstream resurfacing (a major urban-
+  pluvial mechanism) are not represented.
 - **Not modeled:** groundwater flow, river/coastal/fluvial flooding, building
   porosity (buildings are solid walls), sediment, and sub-grid features (curbs,
   individual inlets, culverts). Native DEM posting is ~30 m (FABDEM), upsampled to
