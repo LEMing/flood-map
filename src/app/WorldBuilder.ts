@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { SOURCE_LABELS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
-import { acquireWorld } from '../geo/worldDataCache';
+import { acquireWorld, type WorldRequest } from '../geo/worldDataCache';
 import { geocode, shortLabel, type GeocodeResult } from '../geo/geocode';
 import { fetchSatellite } from '../geo/satelliteTiles';
 import { clearDownloadSink, setDownloadSink } from '../geo/cache';
@@ -71,7 +71,10 @@ export interface WorldBuilderHost {
  */
 export class WorldBuilder {
   private currentLocation?: GeocodeResult;
+  private builtKm = 0; // map size + grid actually built (vs current params), for the handoff check
+  private builtGrid = 0;
   private loading = false;
+  private pendingLoad: Promise<unknown> = Promise.resolve(); // serializes concurrent loadCenter calls
   private buildToken = 0;
   private readonly loadingUi = new LoadingPanel();
 
@@ -127,6 +130,34 @@ export class WorldBuilder {
     if (this.currentLocation) void this.loadCenter(this.currentLocation);
   }
 
+  /** Build the landing's ambient hero world: the visitor's typed place (`req`, at its scale) when
+   *  there is one, else a curated default. Deferred to idle so the glass card paints first.
+   *  The curated default is decorative (never handed off), so it builds CHEAP + reliable: small
+   *  grid, no OSM, and terrarium tiles (fast + CORS-clean) instead of the heavy 13 MB FABDEM tile —
+   *  a cold first visit shouldn't stall on a slow DEM download. A typed place uses its real scale
+   *  + source so the Realtime/Video handoff reuses the exact same world. */
+  async loadHeroCenter(req?: WorldRequest): Promise<void> {
+    const p = this.host.params;
+    if (req) {
+      p.mapSizeKm = req.mapSizeKm; p.gridResolution = req.N;
+      p.useSurface = req.useSurface; p.elevationSource = req.elevationSource;
+    } else {
+      p.mapSizeKm = HERO_KM; p.gridResolution = HERO_GRID;
+      p.useSurface = false; p.elevationSource = 'terrarium';
+    }
+    await whenIdle();
+    await this.loadCenter(req?.location ?? HERO_DEFAULT);
+  }
+
+  /** True when the built world already matches this place (4dp) + scale — lets the landing→sim
+   *  handoff reuse the ambient-built world instead of rebuilding it. */
+  isBuiltFor(loc: GeocodeResult, km: number, grid: number): boolean {
+    const c = this.currentLocation;
+    return !!c && !this.loading
+      && c.lat.toFixed(4) === loc.lat.toFixed(4) && c.lon.toFixed(4) === loc.lon.toFixed(4)
+      && this.builtKm === km && this.builtGrid === grid;
+  }
+
   async loadAddress(text: string): Promise<void> {
     if (this.loading) return;
     const coords = parseCoords(text);
@@ -147,9 +178,16 @@ export class WorldBuilder {
     if (location) await this.loadCenter(location);
   }
 
-  /** Build the terrain + surface + sim for an already-resolved center. */
+  /** Build the terrain + surface + sim for an already-resolved center. Serialized: a new request
+   *  waits for any in-flight build to finish rather than being dropped — so a CTA fired while the
+   *  ambient hero is still building hands off cleanly instead of landing on a blank sim. */
   async loadCenter(location: GeocodeResult): Promise<void> {
-    if (this.loading) return;
+    const run = this.pendingLoad.catch(() => {}).then(() => this.buildCenter(location));
+    this.pendingLoad = run;
+    await run;
+  }
+
+  private async buildCenter(location: GeocodeResult): Promise<void> {
     this.loading = true;
     this.currentLocation = location;
     this.host.addressBar.setBusy(true);
@@ -173,6 +211,8 @@ export class WorldBuilder {
       );
 
       const token = this.build(heightmap, surface);
+      this.builtKm = this.host.params.mapSizeKm;
+      this.builtGrid = this.host.params.gridResolution;
       this.host.setStatsLocation(location.displayName.split(',').slice(0, 3).join(','));
       writeUrlState({
         lat: location.lat, lon: location.lon,
@@ -323,4 +363,22 @@ export class WorldBuilder {
 // can show the localized retry message instead of "signal timed out".
 function looksLikeTimeout(err: unknown): boolean {
   return /tim(e|ed) ?out|abort/i.test((err as Error)?.message ?? '');
+}
+
+// Curated default for the landing's ambient hero: a dramatic relief-into-the-sea city where a
+// cloudburst visibly pools and sheets downhill (flat cities read as "no flood" from orbit).
+const HERO_DEFAULT: GeocodeResult = { lat: -22.9519, lon: -43.2106, displayName: 'Rio de Janeiro, Brazil' };
+const HERO_KM = 2.5; // small extent → fast cold build
+const HERO_GRID = 256; // a backdrop doesn't need the full sim grid
+
+type IdleWindow = Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void };
+
+/** Yield until the browser is idle (or a short deadline), so the landing card paints before the
+ *  heavy hero world build starts. Falls back to a microtask-ish timeout where unsupported. */
+function whenIdle(): Promise<void> {
+  const ric = (window as IdleWindow).requestIdleCallback;
+  return new Promise((resolve) => {
+    if (ric) ric(() => resolve(), { timeout: 1200 });
+    else setTimeout(resolve, 0);
+  });
 }

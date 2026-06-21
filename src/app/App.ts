@@ -1,8 +1,9 @@
 import * as THREE from 'three';
-import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
+import { DEFAULT_PARAMS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import type { GeocodeResult } from '../geo/geocode';
 import { VideoMode } from './VideoMode';
+import { AmbientHero } from './AmbientHero';
 import { videoCaptureSupported } from '../video/Recorder';
 import { readUrlState, writeUrlState } from '../url';
 import { ScenarioUrl } from './ScenarioUrl';
@@ -89,6 +90,8 @@ export class App {
   private active = false;
   private capturing = false;
   private videoMode?: VideoMode;
+  /** The landing's ambient-flood backdrop + the seamless handoff into the interactive sim. */
+  readonly ambient: AmbientHero;
   // Bumped on every route change (setActive); an async build captures it and bails
   // its post-build enterVideoMode() if the user navigated away meanwhile.
   private navToken = 0;
@@ -108,10 +111,6 @@ export class App {
     this.scene.scene.add(this.group);
 
     const url = readUrlState();
-    if (url.km !== undefined) this.params.mapSizeKm = url.km;
-    if (url.grid && (GRID_RESOLUTIONS as readonly number[]).includes(url.grid)) {
-      this.params.gridResolution = url.grid;
-    }
     if (url.demo) this.params.demoMode = true;
     this.scenarioUrl.applyFromUrl(url);
 
@@ -160,6 +159,13 @@ export class App {
       refreshPanel: () => this.panel.refresh(),
       setStatsLocation: (label) => { this.stats.location = label; this.gameUI.setSubtitle(label); },
     });
+    this.ambient = new AmbientHero({
+      params: this.params, simDriver: this.simDriver, scene: this.scene, worldBuilder: this.worldBuilder,
+      applyParams: () => this.applyParams(),
+      renderCaptureFrame: (dt) => this.renderCaptureFrame(dt),
+      requestLoop: () => { this.ensureLoop(); this.needsRender = true; },
+    });
+    this.ambient.applyScale(url.km, url.grid); // URL deep-link scale (card scale comes via the router)
 
     // GPU context loss (driver reset, OOM): freeze, then rebuild the current
     // world once the browser restores the context (a clean known-good state).
@@ -172,16 +178,13 @@ export class App {
     // again (reset the clock so dt doesn't spike after a long hidden stretch).
     window.addEventListener('resize', () => { this.needsRender = true; });
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) return;
-      this.lastTime = performance.now();
-      this.needsRender = true;
+      if (!document.hidden) { this.lastTime = performance.now(); this.needsRender = true; }
     });
   }
 
   /** Launch button: start the rain and run the sim from dry ground. */
   private startSimulation(): void {
-    this.params.raining = true;
-    this.params.running = true;
+    this.params.raining = this.params.running = true;
     this.applyParams();
     this.panel.refresh();
     this.gameUI.setRunning(true);
@@ -197,8 +200,7 @@ export class App {
 
   private restartSimulation(): void {
     this.simDriver.reset();
-    this.params.running = true;
-    this.needsRender = true;
+    this.params.running = this.needsRender = true;
     this.gameUI.setRunning(true);
     this.panel.refresh();
   }
@@ -209,9 +211,8 @@ export class App {
     this.active = true;
     const gen = this.navToken;
     this.ensureLoop();
-    void this.worldBuilder.bootstrap().then(() => {
-      if (opts.cinematic && gen === this.navToken) this.enterVideoMode();
-    });
+    void this.worldBuilder.bootstrap()
+      .then(() => { if (opts.cinematic && gen === this.navToken) this.enterVideoMode(); });
   }
 
   /** Entry from the landing page: load an already-resolved place, optionally

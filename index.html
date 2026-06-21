@@ -725,6 +725,18 @@
          sits in the top-right corner and above the immersive overlay. */
       body.landing #lang-picker { right: calc(12px + var(--safe-r)); z-index: 51; }
 
+      /* Enhanced landing ("hero-live"): the REAL flood sim runs as an ambient, looping
+         background behind the glass card. Set IN ADDITION to body.landing when WebGL is
+         available and the visitor hasn't asked to save data/motion — these later rules win
+         for #scene + the card transparency. The static satellite path (body.landing alone)
+         stays the fallback. The scrim + waterline (rgba) darken the live render for card
+         legibility, exactly as they did over the satellite. */
+      body.landing.hero-live #scene { display: block !important; }
+      body.landing.hero-live #landing { background: transparent; pointer-events: none; }
+      body.landing.hero-live .lp-card { pointer-events: auto; }
+      body.landing.hero-live .lp-ac { pointer-events: auto; }
+      body.landing.hero-live .lp-bg { display: none; } /* satellite is the no-WebGL fallback only */
+
       /* Dedicated video page ("/video"): keep the 3D canvas (the clip needs it)
          plus the loading card + toast (so a cold build shows progress, not a
          blank sky) but hide the interactive live-sim chrome. */
@@ -750,6 +762,19 @@
           radial-gradient(120% 90% at 50% 12%, rgba(5,9,14,.12), rgba(5,9,14,.62) 64%, rgba(5,9,14,.9) 100%),
           linear-gradient(180deg, rgba(5,9,14,.52) 0%, rgba(5,9,14,.18) 32%, rgba(5,9,14,.66) 100%);
       }
+      /* A subtle tide line breathing along the bottom edge — water, without a second video. */
+      .lp-waterline {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 36vh; z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(40,110,210,0) 0%, rgba(38,104,196,.16) 64%, rgba(30,86,170,.42) 100%);
+        -webkit-mask-image: linear-gradient(180deg, transparent, #000 64%);
+        mask-image: linear-gradient(180deg, transparent, #000 64%);
+        animation: lp-tide 7s ease-in-out infinite;
+      }
+      @keyframes lp-tide { 0%, 100% { transform: translateY(7px); opacity: .8; } 50% { transform: translateY(0); opacity: 1; } }
+      @media (prefers-reduced-motion: reduce) {
+        .lp-waterline { animation: none; }
+      }
 
       .lp-card {
         position: absolute; z-index: 2;
@@ -766,12 +791,14 @@
       }
       @keyframes lp-rise { from { opacity: 0; transform: translate(-50%, -46%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 
-      .lp-brand { display: flex; flex-direction: column; gap: 6px; }
+      .lp-brand { display: flex; flex-direction: column; gap: 7px; filter: drop-shadow(0 2px 16px rgba(0,0,0,.5)); }
       .lp-headline {
-        margin: 0; font-size: 25px; line-height: 1.15; font-weight: 760; letter-spacing: -.2px;
+        margin: 0; font-size: clamp(27px, 6vw, 36px); line-height: 1.07; font-weight: 820; letter-spacing: -.6px;
         text-wrap: balance;
+        background: linear-gradient(177deg, #ffffff 0%, #d4e4f7 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
       }
-      .lp-tagline { margin: 0; font-size: 14px; line-height: 1.45; color: rgba(214,226,240,.82); }
+      .lp-tagline { margin: 0; font-size: 14.5px; line-height: 1.45; color: rgba(220,231,245,.86); }
 
       .lp-search { position: relative; }
       .lp-input {

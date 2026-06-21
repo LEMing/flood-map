@@ -16,6 +16,8 @@ export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number 
 export interface LandingCallbacks {
   /** Leave the landing and enter the sim/video for `location` with the chosen scale. */
   onEnter(location: GeocodeResult, opts: EnterOptions): void;
+  /** Re-point the live ambient hero to a place the visitor selected (no-op on the static path). */
+  onAmbientLocation?(req: WorldRequest): void;
 }
 
 // Map scale + grid density offered on the landing card.
@@ -96,6 +98,7 @@ export class Landing {
     this.root.innerHTML = '';
     this.bg = el('div', 'lp-bg');
     const scrim = el('div', 'lp-scrim');
+    const waterline = el('div', 'lp-waterline');
     const card = el('div', 'lp-card');
 
     const brand = el('div', 'lp-brand');
@@ -138,7 +141,7 @@ export class Landing {
       note.dir = 'auto';
       card.appendChild(note);
     }
-    this.root.append(this.bg, scrim, card);
+    this.root.append(this.bg, scrim, waterline, card);
 
     this.wireCard();
     if (this.selected) this.input.value = shortLabel(this.selected);
@@ -309,7 +312,9 @@ export class Landing {
     const token = ++this.selectToken;
     renderPreparing(this.facts, location);
     void this.swapBackdrop(location);
-    prefetchWorld(this.worldRequest(location)).then(
+    const req = this.worldRequest(location);
+    this.cb.onAmbientLocation?.(req); // swap the live backdrop to this place (warm-cached by the prefetch)
+    prefetchWorld(req).then(
       (res) => { if (token === this.selectToken) renderFacts(this.facts, location, res); },
       () => { if (token === this.selectToken) renderFactError(this.facts, this.input.value.trim()); },
     );
