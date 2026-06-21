@@ -22,8 +22,9 @@ export interface VideoModeHost {
   replay(): void;
 }
 
-const VIDEO_DURATION_SEC = 30;
+const VIDEO_DURATION_SEC = 15;
 const VIDEO_FPS = 30;
+const VIDEO_FRAMES = Math.round(VIDEO_DURATION_SEC * VIDEO_FPS); // even-spaced scrub positions
 const ORBIT_RAD = Math.PI / 9; // ~20° gentle cinematic sweep over the clip
 const RAIN_VISUAL_CUTOFF_MMHR = 0.5;
 
@@ -36,9 +37,10 @@ const TOUCHED: Array<keyof Params> = [
 const UP = new THREE.Vector3(0, 1, 0);
 
 /**
- * Records an accelerated cloudburst over the current world to a downloadable
- * webm: precompute the storm (rain → pools → drains & evaporates), then scrub the
- * timeline across a 30 s clip while a recorder taps the canvas. Shows progress,
+ * Records an accelerated cloudburst over the current world to a downloadable clip:
+ * precompute the WHOLE storm arc (rain → pools → drains to dry), then scrub the
+ * interpolated timeline across a fixed 15 s timelapse — every frame at an even
+ * position, paced to 1/fps, so the result is smooth and exactly 15 s. Shows progress,
  * then an in-page player with download / replay / open-realtime actions.
  */
 export class VideoMode {
@@ -116,30 +118,30 @@ export class VideoMode {
 
     const canvas = this.host.scene.renderer.domElement;
     const label = buildVideoLabel(this.host.placeName(), canvas.width, canvas.height);
-    const recorder = new Recorder(canvas, VIDEO_FPS);
+    const recorder = new Recorder(canvas);
     this.outputExt = recorder.fileExt;
     recorder.start();
 
+    // Deterministic capture: render VIDEO_FRAMES at EVEN timeline positions (smooth scrub
+    // regardless of render rate), and push each to the recorder at its 1/fps slot — so the
+    // clip is exactly VIDEO_DURATION_SEC and judder-free. A fixed dt keeps ripples animating
+    // steadily; the water STATE comes from the interpolated timeline (sampleAt).
+    const frameMs = 1000 / VIDEO_FPS;
+    const dt = 1 / VIDEO_FPS;
     const t0 = performance.now();
-    await new Promise<void>((resolve) => {
-      let last = t0;
-      const frame = (now: number): void => {
-        if (this.aborted) { resolve(); return; }
-        const elapsed = (now - t0) / 1000;
-        const dt = Math.min(0.05, (now - last) / 1000) || 0;
-        last = now;
-        const pos = Math.min(1, elapsed / VIDEO_DURATION_SEC);
-        const time = this.host.simDriver.seekTimeline(pos);
-        this.updateCaptureVisuals(time);
-        this.orbit(pos);
-        this.host.renderCaptureFrame(dt);
-        this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
-        this.setProgress(t('video.recording', { pct: pctOf(pos) }), pos);
-        if (elapsed >= VIDEO_DURATION_SEC) { resolve(); return; }
-        requestAnimationFrame(frame);
-      };
-      requestAnimationFrame(frame);
-    });
+    for (let i = 0; i < VIDEO_FRAMES; i++) {
+      if (this.aborted) break;
+      const pos = i / (VIDEO_FRAMES - 1);
+      const time = this.host.simDriver.seekTimeline(pos);
+      this.updateCaptureVisuals(time);
+      this.orbit(pos);
+      this.host.renderCaptureFrame(dt);
+      this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
+      const waitMs = t0 + i * frameMs - performance.now();
+      if (waitMs > 0) await sleep(waitMs); // pace to an even 1/fps slot → fixed duration
+      recorder.requestFrame(); // push exactly this fully-rendered frame
+      this.setProgress(t('video.recording', { pct: pctOf(pos) }), pos);
+    }
 
     const blob = await recorder.stop();
     label.dispose();
@@ -246,6 +248,10 @@ export class VideoMode {
     this.aborted = true;
     this.dispose();
   }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
 function pctOf(frac: number): number {

@@ -1,6 +1,9 @@
 // Records the WebGL canvas to a downloadable clip. captureStream taps the
-// compositor, so it works without `preserveDrawingBuffer`; auto-capture at a
-// fixed fps keeps the output duration tied to wall-clock.
+// compositor, so it works without `preserveDrawingBuffer`. We capture in MANUAL
+// mode (captureStream(0)): the caller renders each frame and calls requestFrame(),
+// so every video frame is a fully-rendered scrub position — no auto-sampler dropping
+// or duplicating frames when the render rate wobbles. Pacing the requestFrame() calls
+// at 1/fps gives a smooth, fixed-duration clip.
 //
 // Format: prefer MP4 / H.264 — it opens natively in QuickTime / Preview, whereas
 // a .webm trips macOS Gatekeeper ("Apple could not verify … is free of malware").
@@ -34,12 +37,12 @@ export class Recorder {
   readonly mimeType: string;
   private recorder?: MediaRecorder;
   private stream?: MediaStream;
+  private track?: CanvasCaptureMediaStreamTrack;
   private readonly chunks: Blob[] = [];
   private errored = false;
 
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    private readonly fps = 30,
     private readonly bitsPerSecond = 12_000_000,
   ) {
     const mime = pickVideoMime();
@@ -53,7 +56,8 @@ export class Recorder {
   }
 
   start(): void {
-    this.stream = this.canvas.captureStream(this.fps);
+    this.stream = this.canvas.captureStream(0); // 0 = manual: frames only on requestFrame()
+    this.track = this.stream.getVideoTracks()[0] as CanvasCaptureMediaStreamTrack;
     this.recorder = new MediaRecorder(this.stream, {
       mimeType: this.mimeType,
       videoBitsPerSecond: this.bitsPerSecond,
@@ -61,6 +65,11 @@ export class Recorder {
     this.recorder.ondataavailable = (e) => { if (e.data.size > 0) this.chunks.push(e.data); };
     this.recorder.onerror = () => { this.errored = true; };
     this.recorder.start();
+  }
+
+  /** Push the canvas's current contents as one video frame (manual pacing). */
+  requestFrame(): void {
+    this.track?.requestFrame();
   }
 
   async stop(): Promise<Blob> {
