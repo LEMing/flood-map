@@ -7,12 +7,17 @@ export const STEP_TAIL_SEC = 240; // first recession frame; the step then GROWS 
 export const TAIL_GROWTH = 1.22; // recession step grows per frame, so even a slow-draining pool
 // reaches its steady state within the frame budget (the timelapse compresses the long tail).
 export const MAX_CAPTURE_SIM_SECONDS = 60 * 24 * 3600; // backstop: weeks of sim-time for slow pools
-// Phased evaporation: ~0 while it's raining so the flood actually pools, then high during the
-// recession so the city dries to a stable state within the clip. Capture-only; live sim unaffected.
+// Phased evaporation: ~0 while it's raining so the flood pools, then a LOW recession rate so water
+// settles into the low areas (and stays there) rather than evaporating away. Capture-only.
 export const STORM_EVAP_PER_HR = 0.05;
-export const TAIL_EVAP_PER_HR = 3.0;
+export const TAIL_EVAP_PER_HR = 0.3;
 const DRY_FRACTION = 0.02; // "essentially gone" = 2% of the peak
-const SETTLE_FRACTION = 0.015; // per-frame stored change this small (vs peak) ⇒ the water has settled
+// "Stabilized" = the flow has CEASED, not the volume went flat: on a flat city the total volume is
+// ~constant while water still redistributes overland into basins. Detect rest by peak flow SPEED
+// having decayed to a small fraction of the storm peak AND the volume no longer changing.
+const VEL_SETTLE_FRACTION = 0.07; // peak speed ≤ 7% of storm-peak speed ⇒ flow has died down
+// (safely above the inertial scheme's residual-slosh floor, ~4-5% of peak, so it reliably triggers)
+const VOL_SETTLE_FRACTION = 0.012; // …and stored changes ≤1.2% of peak frame-to-frame ⇒ not draining
 const VIDEO_CAPTURE_N = 512; // downsample snapshots to this so RAM stays bounded
 
 /** Capture grid for a sim of size N: <=VIDEO_CAPTURE_N with an integer ratio. */
@@ -54,24 +59,28 @@ function isFullyDrained(stored: number, peakStored: number, floodedFrac: number,
     && floodedFrac <= DRY_FRACTION * Math.max(peakFlooded, 1e-6);
 }
 
-/** Receded past 60% of peak AND no longer changing frame-to-frame (a steady residual pool). */
-function hasSettled(stored: number, prevStored: number, peakStored: number): boolean {
-  return stored <= 0.6 * peakStored
-    && Math.abs(prevStored - stored) <= SETTLE_FRACTION * Math.max(peakStored, 1e-6);
-}
-
 /** The recession step for tail frame k — grows geometrically so the long tail fits the budget. */
 export function tailStepSec(tailFrame: number): number {
   return STEP_TAIL_SEC * Math.pow(TAIL_GROWTH, tailFrame);
 }
 
-/** Past its peak the water has STABILIZED: fully drained, or settled to a steady residual pool.
- *  This is what the timelapse ends on — a settled frame, never mid-drain. */
-export function isStabilized(
-  stored: number, prevStored: number, peakStored: number, floodedFrac: number, peakFlooded: number,
-): boolean {
-  return isFullyDrained(stored, peakStored, floodedFrac, peakFlooded)
-    || hasSettled(stored, prevStored, peakStored);
+/** Per-frame water scan + running peaks, fed to the stabilization test. */
+export interface CaptureStats {
+  stored: number; prevStored: number; peakStored: number;
+  floodedFrac: number; peakFlooded: number;
+  maxVel: number; peakVel: number;
+}
+
+/** Past its peak the water has STABILIZED — the timelapse ends here, not mid-drain. Either it has
+ *  fully drained, OR the FLOW HAS CEASED: peak flow speed decayed to a small fraction of the storm
+ *  peak AND the volume stopped changing frame-to-frame. Volume-flatness alone is the WRONG signal —
+ *  on a flat city the total volume is ~constant while water still redistributes overland into the
+ *  low areas; only the flow speed reveals that it has actually come to rest. */
+export function isStabilized(s: CaptureStats): boolean {
+  if (isFullyDrained(s.stored, s.peakStored, s.floodedFrac, s.peakFlooded)) return true;
+  const flowCeased = s.maxVel <= VEL_SETTLE_FRACTION * Math.max(s.peakVel, 1e-6);
+  const volumeFixed = Math.abs(s.stored - s.prevStored) <= VOL_SETTLE_FRACTION * Math.max(s.peakStored, 1e-6);
+  return flowCeased && volumeFixed;
 }
 
 /** The snapshot to store: downsampled when the sim grid is large (RAM bound), else the readback. */

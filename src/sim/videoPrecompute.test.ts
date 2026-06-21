@@ -44,16 +44,27 @@ describe('downsample', () => {
 });
 
 describe('isStabilized', () => {
-  it('is true when the water has fully drained (<=2% of peak volume AND area)', () => {
-    expect(isStabilized(1, 1, 100, 0.005, 0.5)).toBe(true); // 1% vol & area, flat → drained
-    expect(isStabilized(5, 40, 100, 0.005, 0.5)).toBe(false); // 5% vol, still dropping fast
-    expect(isStabilized(1, 40, 100, 0.4, 0.5)).toBe(false); // tiny vol but 80% area wet, still dropping
+  const base = {
+    stored: 50, prevStored: 50, peakStored: 100,
+    floodedFrac: 0.3, peakFlooded: 0.5, maxVel: 0.02, peakVel: 1.0,
+  };
+
+  it('is true when the water has fully drained (<=2% of peak volume AND area), regardless of flow', () => {
+    expect(isStabilized({ ...base, stored: 1, prevStored: 1, floodedFrac: 0.005, maxVel: 9 })).toBe(true);
+    expect(isStabilized({ ...base, stored: 5, prevStored: 5, floodedFrac: 0.005, maxVel: 9 })).toBe(false); // 5% vol
+    expect(isStabilized({ ...base, stored: 1, prevStored: 1, floodedFrac: 0.4, maxVel: 9 })).toBe(false); // 80% area
   });
 
-  it('is true for a steady residual pool: receded past 60% and no longer changing', () => {
-    expect(isStabilized(50, 50.2, 100, 0.3, 0.5)).toBe(true); // 50% of peak, ~flat frame-to-frame
-    expect(isStabilized(50, 70, 100, 0.3, 0.5)).toBe(false); // still dropping fast → not settled
-    expect(isStabilized(80, 80.1, 100, 0.4, 0.5)).toBe(false); // flat but only 80% of peak (not receded)
+  it('is true once the flow has ceased AND volume is steady (settled into the low areas)', () => {
+    expect(isStabilized({ ...base, maxVel: 0.02, prevStored: 50.2 })).toBe(true); // 2% of peak speed, ~flat vol
+  });
+
+  it('is false while water still redistributes — volume flat but flow ongoing (the bug)', () => {
+    expect(isStabilized({ ...base, maxVel: 0.5, prevStored: 50.0 })).toBe(false); // 50% of peak speed → flowing
+  });
+
+  it('is false while still draining — flow quiet but volume dropping', () => {
+    expect(isStabilized({ ...base, maxVel: 0.02, prevStored: 70 })).toBe(false); // 20% vol drop frame-to-frame
   });
 });
 
