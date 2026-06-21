@@ -3,7 +3,7 @@ import { suggest, type Suggestion } from '../geo/autocomplete';
 import { landingBackdrop } from '../geo/landingSatellite';
 import { detectIpLocation } from '../geo/ipLocation';
 import { prefetchWorld, type WorldRequest } from '../geo/worldDataCache';
-import { pickVideoMime } from '../video/Recorder';
+import { videoCaptureSupported } from '../video/Recorder';
 import { detectWebGLSupport } from '../render/webglSupport';
 import { DEFAULT_PARAMS } from '../config';
 import { formatCoords, parseCoords, readUrlState } from '../url';
@@ -31,9 +31,9 @@ interface OptionSpec {
   unit: string;
 }
 
-/** Whether the browser can record video at all (mp4 preferred, webm fallback). */
+/** Whether the browser can record video (WebCodecs frame-accurate mp4). */
 export function videoExportSupported(): boolean {
-  return pickVideoMime() !== null;
+  return videoCaptureSupported();
 }
 
 /**

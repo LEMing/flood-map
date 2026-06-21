@@ -7,8 +7,8 @@ import { FloodSimulation } from '../sim/FloodSimulation';
 import { Timeline } from '../sim/Timeline';
 import { StatsReadback } from '../sim/StatsReadback';
 import {
-  STORM_FRAMES, STEP_TAIL_SEC, MAX_CAPTURE_SIM_SECONDS, STORM_EVAP_PER_HR, TAIL_EVAP_PER_HR,
-  captureGrid, videoFrameBudget, scanWater, isFullyDrained, captureFrame,
+  STORM_FRAMES, MAX_CAPTURE_SIM_SECONDS, STORM_EVAP_PER_HR, TAIL_EVAP_PER_HR,
+  captureGrid, videoFrameBudget, scanWater, tailStepSec, isStabilized, captureFrame,
 } from '../sim/videoPrecompute';
 import { t } from '../i18n';
 
@@ -16,6 +16,7 @@ const MAX_STEPS_PER_FRAME = 48;
 const READBACK_INTERVAL = 0.4; // seconds (wall clock)
 const DEMO_SIM_SECONDS = 2.5 * 3600; // storm length precomputed for the demo timeline
 const MAX_PRECOMPUTE_STEPS = 600; // sim substeps per captured frame
+const MAX_PRECOMPUTE_TAIL_STEPS = 1400; // deeper budget so each recession frame drains more sim-time
 const TIMELINE_PLAY_SECONDS = 12; // real seconds to play the whole precomputed timeline
 
 export type TimelineMode = 'live' | 'computing' | 'scrub';
@@ -52,6 +53,8 @@ export class SimDriver {
   private peakFlooded = 0;
   private timeOfPeak = 0;
   private dryStreak = 0;
+  private tailFrame = 0; // recession frames captured so far (drives the geometric tail step)
+  private prevStored = 0; // last frame's stored volume, for settling detection
   private captureN = 0;
   private captureFactor = 1;
   private captureBuf?: Float32Array;
@@ -84,8 +87,7 @@ export class SimDriver {
     this.timeline = timeline;
     this.heightmap = heightmap;
     this.buf = new Float32Array(sim.N * sim.N * 4);
-    this.timelineMode = 'live';
-    this.simTime = 0;
+    this.timelineMode = 'live'; this.simTime = 0;
     this.rainedVolume = this.injectedVolume = 0;
     this.observedMaxDepth = 1; this.observedMaxVel = 0;
     this.stored = 0;
@@ -95,10 +97,7 @@ export class SimDriver {
   dispose(): void {
     this.sim?.dispose();
     this.timeline?.dispose();
-    this.sim = undefined;
-    this.timeline = undefined;
-    this.heightmap = undefined;
-    this.buf = undefined;
+    this.sim = this.timeline = this.heightmap = this.buf = undefined;
   }
 
   updateParams(params: Params): void { this.sim?.updateParams(params); }
@@ -165,10 +164,8 @@ export class SimDriver {
     if (this.untilDry) {
       this.maxFrames = videoFrameBudget(captureN);
       this.stepStorm = stormDurationSec(this.params.stormType) / STORM_FRAMES;
-      this.peakStored = 0;
-      this.peakFlooded = 0;
-      this.timeOfPeak = 0;
-      this.dryStreak = 0;
+      this.peakStored = this.peakFlooded = this.timeOfPeak = 0;
+      this.dryStreak = this.tailFrame = this.prevStored = 0;
     } else {
       this.precomputeTargetFrames = Math.max(24, Math.min(72, Math.floor(150e6 / (N * N * 16))));
       this.precomputeFrameSec = (opts.simSeconds ?? DEMO_SIM_SECONDS) / this.precomputeTargetFrames;
@@ -271,15 +268,10 @@ export class SimDriver {
   private tickPrecompute(): void {
     if (!this.sim || !this.timeline || !this.buf) return;
     const stormDur = stormDurationSec(this.params.stormType);
-    let stepSec = this.precomputeFrameSec;
-    if (this.untilDry) {
-      const inStorm = this.simTime < stormDur;
-      stepSec = inStorm ? this.stepStorm : STEP_TAIL_SEC;
-      // Low evap while raining (flood pools), high after (city dries fully + fast).
-      this.params.evaporationPerHr = inStorm ? STORM_EVAP_PER_HR : TAIL_EVAP_PER_HR;
-      this.sim.updateParams(this.params);
-    }
-    this.stepSimSeconds(stepSec, MAX_PRECOMPUTE_STEPS);
+    const { stepSec, maxSteps } = this.untilDry
+      ? this.untilDryStep(stormDur)
+      : { stepSec: this.precomputeFrameSec, maxSteps: MAX_PRECOMPUTE_STEPS };
+    this.stepSimSeconds(stepSec, maxSteps);
     this.sim.readWater(this.buf);
     this.computeStats(this.simTime); // stored / floodedFrac / observedMaxDepth for THIS frame
     this.timeline.capture(captureFrame(this.buf, this.captureBuf, this.captureN, this.captureFactor), this.simTime);
@@ -291,19 +283,33 @@ export class SimDriver {
     }
   }
 
-  /** Until-dry (video) capture: track peaks, drive the monotonic bar, and finish
-   *  once the water has receded to dryness (or a hard cap binds). */
+  /** Per-frame step length + substep budget for the until-dry capture. The recession step
+   *  GROWS each tail frame (so the long drying tail fits the frame budget) and gets a deeper
+   *  substep budget (a slow basin needs many CFL substeps to actually drain). Evap is ~0 while
+   *  raining (flood pools) then high (city dries to a stable state). */
+  private untilDryStep(stormDur: number): { stepSec: number; maxSteps: number } {
+    const inStorm = this.simTime < stormDur;
+    this.params.evaporationPerHr = inStorm ? STORM_EVAP_PER_HR : TAIL_EVAP_PER_HR;
+    this.sim?.updateParams(this.params);
+    if (inStorm) return { stepSec: this.stepStorm, maxSteps: MAX_PRECOMPUTE_STEPS };
+    return { stepSec: tailStepSec(this.tailFrame++), maxSteps: MAX_PRECOMPUTE_TAIL_STEPS };
+  }
+
+  /** Until-dry (video) capture: track peaks, drive the monotonic bar (by frames, since the
+   *  tail's sim-time grows geometrically), and finish once the water has STABILIZED — fully
+   *  drained, or receded to a steady residual pool that no longer changes (a real timelapse
+   *  ends on a settled frame, not mid-drain). A hard cap is only a backstop. */
   private advanceUntilDry(stormDur: number): void {
     if (!this.timeline) return;
     if (this.stored > this.peakStored) { this.peakStored = this.stored; this.timeOfPeak = this.simTime; }
     this.peakFlooded = Math.max(this.peakFlooded, this.floodedFrac);
-    this.timeline.progress = Math.min(1, this.simTime / MAX_CAPTURE_SIM_SECONDS);
-    const dry = this.simTime >= stormDur && this.simTime >= this.timeOfPeak
-      && isFullyDrained(this.stored, this.peakStored, this.floodedFrac, this.peakFlooded);
-    this.dryStreak = dry ? this.dryStreak + 1 : 0;
-    if (this.dryStreak >= 2 || this.timeline.count >= this.maxFrames || this.simTime >= MAX_CAPTURE_SIM_SECONDS) {
-      this.finishPrecompute();
-    }
+    this.timeline.progress = Math.min(1, this.timeline.count / this.maxFrames);
+    const stable = this.simTime >= stormDur && this.simTime >= this.timeOfPeak
+      && isStabilized(this.stored, this.prevStored, this.peakStored, this.floodedFrac, this.peakFlooded);
+    this.prevStored = this.stored;
+    this.dryStreak = stable ? this.dryStreak + 1 : 0;
+    const capped = this.timeline.count >= this.maxFrames || this.simTime >= MAX_CAPTURE_SIM_SECONDS;
+    if (this.dryStreak >= 2 || capped) this.finishPrecompute();
   }
 
   private finishPrecompute(): void {

@@ -22,7 +22,7 @@ export interface VideoModeHost {
   replay(): void;
 }
 
-const VIDEO_DURATION_SEC = 15;
+const VIDEO_DURATION_SEC = 30;
 const VIDEO_FPS = 30;
 const VIDEO_FRAMES = Math.round(VIDEO_DURATION_SEC * VIDEO_FPS); // even-spaced scrub positions
 const ORBIT_RAD = Math.PI / 9; // ~20° gentle cinematic sweep over the clip
@@ -38,10 +38,10 @@ const UP = new THREE.Vector3(0, 1, 0);
 
 /**
  * Records an accelerated cloudburst over the current world to a downloadable clip:
- * precompute the WHOLE storm arc (rain → pools → drains to dry), then scrub the
- * interpolated timeline across a fixed 15 s timelapse — every frame at an even
- * position, paced to 1/fps, so the result is smooth and exactly 15 s. Shows progress,
- * then an in-page player with download / replay / open-realtime actions.
+ * precompute the WHOLE storm arc (rain → pools → drains to a stable state), then scrub
+ * the interpolated timeline across a fixed 30 s timelapse — every frame at an even
+ * position, encoded with explicit WebCodecs timestamps, so the result is smooth and
+ * exactly 30 s. Shows progress, then an in-page player with download / replay actions.
  */
 export class VideoMode {
   private readonly overlay: HTMLDivElement;
@@ -118,17 +118,16 @@ export class VideoMode {
 
     const canvas = this.host.scene.renderer.domElement;
     const label = buildVideoLabel(this.host.placeName(), canvas.width, canvas.height);
-    const recorder = new Recorder(canvas);
+    const recorder = new Recorder(canvas.width, canvas.height, VIDEO_FPS);
     this.outputExt = recorder.fileExt;
     recorder.start();
 
-    // Deterministic capture: render VIDEO_FRAMES at EVEN timeline positions (smooth scrub
-    // regardless of render rate), and push each to the recorder at its 1/fps slot — so the
-    // clip is exactly VIDEO_DURATION_SEC and judder-free. A fixed dt keeps ripples animating
-    // steadily; the water STATE comes from the interpolated timeline (sampleAt).
-    const frameMs = 1000 / VIDEO_FPS;
+    // Deterministic capture: render VIDEO_FRAMES at EVEN timeline positions and encode each
+    // with an explicit timestamp (i/fps) via WebCodecs — the clip is perfectly even fps and
+    // exactly VIDEO_DURATION_SEC, with no wall-clock jitter, however fast the GPU renders. A
+    // fixed dt keeps ripples animating steadily; the water STATE comes from the interpolated
+    // timeline (sampleAt). No real-time pacing — it encodes as fast as the GPU allows.
     const dt = 1 / VIDEO_FPS;
-    const t0 = performance.now();
     for (let i = 0; i < VIDEO_FRAMES; i++) {
       if (this.aborted) break;
       const pos = i / (VIDEO_FRAMES - 1);
@@ -137,13 +136,11 @@ export class VideoMode {
       this.orbit(pos);
       this.host.renderCaptureFrame(dt);
       this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
-      const waitMs = t0 + i * frameMs - performance.now();
-      if (waitMs > 0) await sleep(waitMs); // pace to an even 1/fps slot → fixed duration
-      recorder.requestFrame(); // push exactly this fully-rendered frame
+      await recorder.addFrame(canvas, i); // explicit-timestamp encode (snapshots the canvas now)
       this.setProgress(t('video.recording', { pct: pctOf(pos) }), pos);
     }
 
-    const blob = await recorder.stop();
+    const blob = await recorder.finish();
     label.dispose();
     return blob;
   }
@@ -248,10 +245,6 @@ export class VideoMode {
     this.aborted = true;
     this.dispose();
   }
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
 }
 
 function pctOf(frac: number): number {

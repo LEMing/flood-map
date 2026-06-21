@@ -1,100 +1,94 @@
-// Records the WebGL canvas to a downloadable clip. captureStream taps the
-// compositor, so it works without `preserveDrawingBuffer`. We capture in MANUAL
-// mode (captureStream(0)): the caller renders each frame and calls requestFrame(),
-// so every video frame is a fully-rendered scrub position — no auto-sampler dropping
-// or duplicating frames when the render rate wobbles. Pacing the requestFrame() calls
-// at 1/fps gives a smooth, fixed-duration clip.
-//
-// Format: prefer MP4 / H.264 — it opens natively in QuickTime / Preview, whereas
-// a .webm trips macOS Gatekeeper ("Apple could not verify … is free of malware").
-// Modern Chrome MediaRecorder can mux fragmented MP4; we fall back to webm only
-// where it can't (older Chrome, Firefox).
-const MIME_CANDIDATES = [
-  'video/mp4;codecs=avc1.640028', // H.264 High
-  'video/mp4;codecs=avc1.42E01E', // H.264 Baseline
-  'video/mp4',
-  'video/webm;codecs=vp9',
-  'video/webm;codecs=vp8',
-  'video/webm',
-];
+// Records the WebGL canvas to a smooth, fixed-duration mp4 using WebCodecs. Each rendered
+// frame is encoded with an EXPLICIT timestamp (index / fps), so the clip is mathematically
+// even — no MediaRecorder wall-clock jitter, no dropped or duplicated frames. H.264 in an mp4
+// container opens natively in QuickTime / Preview. The whole clip is built in memory and
+// returned as a Blob. (Reading frames off the canvas relies on preserveDrawingBuffer.)
+import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 
-/** The best supported recording MIME, or null when the browser can't record. */
-export function pickVideoMime(): string | null {
-  if (typeof MediaRecorder === 'undefined' || typeof MediaRecorder.isTypeSupported !== 'function') {
-    return null;
-  }
-  return MIME_CANDIDATES.find((m) => MediaRecorder.isTypeSupported(m)) ?? null;
+/** True when the browser can encode frame-accurate video (WebCodecs + canvas VideoFrame). */
+export function videoCaptureSupported(): boolean {
+  return typeof VideoEncoder === 'function' && typeof VideoFrame === 'function';
 }
 
-/** File extension matching a recording MIME ('mp4' for QuickTime-friendly output). */
-export function videoExt(mime: string): string {
-  return mime.startsWith('video/mp4') ? 'mp4' : 'webm';
-}
-
-const STOP_WATCHDOG_MS = 4000; // some browsers never fire onstop — don't hang the flow
+const KEYFRAME_EVERY_SEC = 2;
+const MAX_LONG_SIDE = 1920; // 1080p-class: within H.264 level 4.0, universally playable, small file
 
 export class Recorder {
-  readonly mimeType: string;
-  private recorder?: MediaRecorder;
-  private stream?: MediaStream;
-  private track?: CanvasCaptureMediaStreamTrack;
-  private readonly chunks: Blob[] = [];
+  readonly fileExt = 'mp4';
+  private muxer?: Muxer<ArrayBufferTarget>;
+  private encoder?: VideoEncoder;
   private errored = false;
+  // Encoded dimensions: the canvas downscaled to <=1080p and made even (a hi-DPI canvas can be
+  // 4K-wide, which exceeds H.264 level 4.0 and would fail to configure). Frames are drawn through
+  // a scratch 2D canvas at this size before encoding.
+  readonly width: number;
+  readonly height: number;
+  private readonly scratch: HTMLCanvasElement;
+  private readonly ctx: CanvasRenderingContext2D;
+  private readonly frameDurUs: number;
+  private readonly keyEvery: number;
 
   constructor(
-    private readonly canvas: HTMLCanvasElement,
-    private readonly bitsPerSecond = 12_000_000,
+    canvasW: number,
+    canvasH: number,
+    private readonly fps = 30,
+    private readonly bitrate = 10_000_000,
   ) {
-    const mime = pickVideoMime();
-    if (!mime) throw new Error('video recording unsupported');
-    this.mimeType = mime;
-  }
-
-  /** 'mp4' or 'webm' — the container actually produced. */
-  get fileExt(): string {
-    return videoExt(this.mimeType);
+    const scale = Math.min(1, MAX_LONG_SIDE / Math.max(canvasW, canvasH));
+    this.width = Math.max(2, Math.round(canvasW * scale)) & ~1;
+    this.height = Math.max(2, Math.round(canvasH * scale)) & ~1;
+    this.scratch = document.createElement('canvas');
+    this.scratch.width = this.width;
+    this.scratch.height = this.height;
+    const ctx = this.scratch.getContext('2d');
+    if (!ctx) throw new Error('2D context unavailable for video scaling');
+    this.ctx = ctx;
+    this.frameDurUs = Math.round(1e6 / fps);
+    this.keyEvery = Math.max(1, Math.round(KEYFRAME_EVERY_SEC * fps));
   }
 
   start(): void {
-    this.stream = this.canvas.captureStream(0); // 0 = manual: frames only on requestFrame()
-    this.track = this.stream.getVideoTracks()[0] as CanvasCaptureMediaStreamTrack;
-    this.recorder = new MediaRecorder(this.stream, {
-      mimeType: this.mimeType,
-      videoBitsPerSecond: this.bitsPerSecond,
+    this.muxer = new Muxer({
+      target: new ArrayBufferTarget(),
+      video: { codec: 'avc', width: this.width, height: this.height },
+      fastStart: 'in-memory',
     });
-    this.recorder.ondataavailable = (e) => { if (e.data.size > 0) this.chunks.push(e.data); };
-    this.recorder.onerror = () => { this.errored = true; };
-    this.recorder.start();
+    this.encoder = new VideoEncoder({
+      output: (chunk, meta) => this.muxer?.addVideoChunk(chunk, meta),
+      error: () => { this.errored = true; },
+    });
+    this.encoder.configure({
+      codec: 'avc1.640028', // H.264 High
+      width: this.width,
+      height: this.height,
+      bitrate: this.bitrate,
+      framerate: this.fps,
+    });
   }
 
-  /** Push the canvas's current contents as one video frame (manual pacing). */
-  requestFrame(): void {
-    this.track?.requestFrame();
+  /** Encode one freshly-rendered frame at its exact even slot (index 0..N-1). */
+  async addFrame(source: CanvasImageSource, index: number): Promise<void> {
+    const enc = this.encoder;
+    if (!enc) return;
+    this.ctx.drawImage(source, 0, 0, this.width, this.height); // downscale to the encode size
+    const frame = new VideoFrame(this.scratch, {
+      timestamp: index * this.frameDurUs,
+      duration: this.frameDurUs,
+    });
+    enc.encode(frame, { keyFrame: index % this.keyEvery === 0 });
+    frame.close();
+    while (enc.encodeQueueSize > 4) await delay(2); // backpressure: don't outrun the encoder
   }
 
-  async stop(): Promise<Blob> {
-    const rec = this.recorder;
-    if (!rec) return new Blob([], { type: this.mimeType });
-    const blob = await new Promise<Blob>((resolve) => {
-      let settled = false;
-      let timer = 0;
-      const finish = (): void => {
-        if (settled) return;
-        settled = true;
-        window.clearTimeout(timer);
-        this.stream?.getTracks().forEach((tr) => tr.stop());
-        resolve(new Blob(this.chunks, { type: this.mimeType }));
-      };
-      rec.onstop = finish;
-      timer = window.setTimeout(finish, STOP_WATCHDOG_MS);
-      try {
-        rec.stop();
-      } catch {
-        this.errored = true;
-        finish();
-      }
-    });
+  async finish(): Promise<Blob> {
+    if (!this.encoder || !this.muxer) return new Blob([], { type: 'video/mp4' });
+    await this.encoder.flush();
+    this.muxer.finalize();
     if (this.errored) throw new Error('recording failed');
-    return blob;
+    return new Blob([this.muxer.target.buffer as ArrayBuffer], { type: 'video/mp4' });
   }
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
 }

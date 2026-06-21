@@ -3,7 +3,7 @@ import { DEFAULT_PARAMS, GRID_RESOLUTIONS, type Params } from '../config';
 import type { Heightmap } from '../geo/heightmap';
 import type { GeocodeResult } from '../geo/geocode';
 import { VideoMode } from './VideoMode';
-import { pickVideoMime } from '../video/Recorder';
+import { videoCaptureSupported } from '../video/Recorder';
 import { readUrlState, writeUrlState } from '../url';
 import { ScenarioUrl } from './ScenarioUrl';
 import { t, setLanguage, loadLanguage, applyDocumentLang, type Lang } from '../i18n';
@@ -257,7 +257,7 @@ export class App {
    *  precompute never starts against a half-built sim (which would stall at 0%). */
   enterVideoMode(): void {
     if (this.videoMode || !this.active) return;
-    if (!pickVideoMime()) { showToast(t('video.unsupported'), true); return; }
+    if (!videoCaptureSupported()) { showToast(t('video.unsupported'), true); return; }
     if (!this.simDriver.hasSim || this.worldBuilder.isLoading) {
       this.pendingVideo = true;
       return;

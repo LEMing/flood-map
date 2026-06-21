@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "geotiff": "^3.0.5",
+    "mp4-muxer": "^5.2.2",
     "proj4": "^2.20.9",
     "three": "^0.184.0",
     "tweakpane": "^4.0.5"

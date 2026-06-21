@@ -69,7 +69,9 @@ export class SceneManager {
   private readonly sunCol = new THREE.Color();
 
   constructor(canvas: HTMLCanvasElement) {
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    // preserveDrawingBuffer lets the video recorder read finished frames off the canvas
+    // (WebCodecs VideoFrame) reliably; the cost on a modern GPU is negligible.
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor(0x0b0e13, 1);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { captureGrid, videoFrameBudget, downsample, isFullyDrained, scanWater } from './videoPrecompute';
+import { captureGrid, videoFrameBudget, downsample, isStabilized, tailStepSec, scanWater } from './videoPrecompute';
 
 describe('captureGrid', () => {
   it('keeps small grids as-is and downsamples large ones to <=512 with an integer ratio', () => {
@@ -43,11 +43,24 @@ describe('downsample', () => {
   });
 });
 
-describe('isFullyDrained', () => {
-  it('is true only when both stored volume and flooded area are <=3% of peak', () => {
-    expect(isFullyDrained(2, 100, 0.01, 0.5)).toBe(true); // 2% volume, 2% area
-    expect(isFullyDrained(5, 100, 0.01, 0.5)).toBe(false); // 5% volume
-    expect(isFullyDrained(2, 100, 0.4, 0.5)).toBe(false); // 80% area still wet
+describe('isStabilized', () => {
+  it('is true when the water has fully drained (<=2% of peak volume AND area)', () => {
+    expect(isStabilized(1, 1, 100, 0.005, 0.5)).toBe(true); // 1% vol & area, flat → drained
+    expect(isStabilized(5, 40, 100, 0.005, 0.5)).toBe(false); // 5% vol, still dropping fast
+    expect(isStabilized(1, 40, 100, 0.4, 0.5)).toBe(false); // tiny vol but 80% area wet, still dropping
+  });
+
+  it('is true for a steady residual pool: receded past 60% and no longer changing', () => {
+    expect(isStabilized(50, 50.2, 100, 0.3, 0.5)).toBe(true); // 50% of peak, ~flat frame-to-frame
+    expect(isStabilized(50, 70, 100, 0.3, 0.5)).toBe(false); // still dropping fast → not settled
+    expect(isStabilized(80, 80.1, 100, 0.4, 0.5)).toBe(false); // flat but only 80% of peak (not receded)
+  });
+});
+
+describe('tailStepSec', () => {
+  it('grows geometrically across recession frames so the long tail fits the budget', () => {
+    expect(tailStepSec(0)).toBeLessThan(tailStepSec(1));
+    expect(tailStepSec(10)).toBeGreaterThan(tailStepSec(0) * 5);
   });
 });
 
