@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://krd-flood.web.app/sitemap.xml

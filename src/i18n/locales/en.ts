@@ -209,8 +209,8 @@ export const en: Record<string, string> = {
   'readout.water': 'water',
 
   // Landing page
-  'landing.headline': 'See how a downpour floods any address',
-  'landing.tagline': 'Enter a place to build its 3D terrain and simulate a cloudburst — live, or as a 30-second video.',
+  'landing.headline': 'Run a storm on real terrain',
+  'landing.tagline': 'Enter a place to build the terrain, prefetch open data, and start a live flood simulation or cinematic video.',
   'landing.cta.realtime': 'Realtime ▶',
   'landing.cta.video': 'Make video 🎬',
   'landing.opt.size': 'Map size',

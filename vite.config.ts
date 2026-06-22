@@ -22,6 +22,11 @@ export default defineConfig({
     },
   },
   server: {
+    watch: {
+      // External local tooling sometimes touches root scratch files named "1",
+      // "6", etc. Do not let those non-source files trigger full-page reloads.
+      ignored: ['**/[0-9]', '**/dist/**', '**/coverage/**'],
+    },
     proxy: {
       '/api/geocode': {
         target: 'https://nominatim.openstreetmap.org',

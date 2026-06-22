@@ -10,6 +10,7 @@ import { formatCoords, parseCoords, readUrlState } from '../url';
 import { getLanguage, t } from '../i18n';
 import { el, button } from '../ui/dom';
 import { renderPreparing, renderFacts, renderFactError } from './landingFacts';
+import { wireDemoButtons } from './demoButtons';
 
 export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number }
 
@@ -51,20 +52,19 @@ export class Landing {
   private input!: HTMLInputElement;
   private acList!: HTMLDivElement;
   private facts!: HTMLDivElement;
-  private btnRealtime!: HTMLButtonElement;
-  private btnVideo!: HTMLButtonElement;
+  private btnRealtime!: HTMLButtonElement; private btnVideo!: HTMLButtonElement;
+  private optionsMount!: HTMLDivElement; private cta!: HTMLDivElement;
   private readonly webglOk = detectWebGLSupport().ok;
+  private wired = false;
 
   private selected?: GeocodeResult;
   private items: Suggestion[] = [];
   private highlight = -1;
   private debounce?: number;
   private abort?: AbortController;
-  private bgToken = 0;
-  private selectToken = 0;
+  private bgToken = 0; private selectToken = 0;
   private touchedInput = false;
-  private km: number;
-  private grid: number;
+  private km: number; private grid: number;
 
   constructor(cb: LandingCallbacks) {
     this.cb = cb;
@@ -73,12 +73,13 @@ export class Landing {
     this.grid = url.grid && GRID_OPTIONS.includes(url.grid) ? url.grid : DEFAULT_PARAMS.gridResolution;
     this.root = document.getElementById('landing') as HTMLElement;
 
+    this.render();
+    this.wireCard();
+
     // Close the autocomplete on any outside click (added once; reads live refs).
     document.addEventListener('click', (e) => {
       if (e.target !== this.input && !this.acList?.contains(e.target as Node)) this.closeAc();
     });
-
-    this.render();
     void this.bootstrapFromIp();
   }
 
@@ -93,61 +94,64 @@ export class Landing {
     if (this.selected) this.select(this.selected);
   }
 
-  /** Build (or rebuild) the entire card DOM and wire its events. */
+  /** Refresh text/options against the static HTML shell. */
   private render(): void {
-    this.root.innerHTML = '';
-    this.bg = el('div', 'lp-bg');
-    const scrim = el('div', 'lp-scrim');
-    const waterline = el('div', 'lp-waterline');
-    const card = el('div', 'lp-card');
+    this.bindStaticShell();
 
-    const brand = el('div', 'lp-brand');
-    const headline = el('h1', 'lp-headline');
-    headline.textContent = t('landing.headline');
-    const tagline = el('p', 'lp-tagline');
-    tagline.textContent = t('landing.tagline');
-    brand.append(headline, tagline);
-
-    const search = el('div', 'lp-search');
-    this.input = document.createElement('input');
-    this.input.className = 'lp-input';
-    this.input.type = 'text';
-    this.input.autocomplete = 'off';
-    this.input.spellcheck = false;
+    const headline = this.root.querySelector<HTMLElement>('#landing-title');
+    const tagline = this.root.querySelector<HTMLElement>('.lp-tagline');
+    if (headline) headline.textContent = t('landing.headline');
+    if (tagline) tagline.textContent = t('landing.tagline');
     this.input.placeholder = t('input.placeholder');
-    this.input.dir = 'auto';
-    this.acList = el('div', 'lp-ac');
-    search.append(this.input, this.acList);
-
-    this.facts = el('div', 'lp-facts');
-
-    const cta = el('div', 'lp-cta');
-    this.btnRealtime = button('lp-btn lp-btn-primary', t('landing.cta.realtime'));
-    this.btnVideo = button('lp-btn lp-btn-ghost', t('landing.cta.video'));
+    this.btnRealtime.textContent = t('landing.cta.realtime');
+    this.btnVideo.textContent = t('landing.cta.video');
     this.btnRealtime.disabled = !this.selected || !this.webglOk;
     this.btnVideo.disabled = !this.selected || !this.webglOk;
+    this.optionsMount.replaceChildren(this.buildOptions());
+
     if (!videoExportSupported()) {
       this.btnVideo.hidden = true;
-      cta.classList.add('single');
+      this.cta.classList.add('single');
+    } else {
+      this.btnVideo.hidden = false;
+      this.cta.classList.remove('single');
     }
-    cta.append(this.btnRealtime, this.btnVideo);
 
-    card.append(brand, search, this.buildOptions(), this.facts, cta);
     if (!this.webglOk) {
       this.btnRealtime.title = t('toast.webglUnsupported');
       this.btnVideo.title = t('toast.webglUnsupported');
-      const note = el('div', 'lp-opt-hint');
+      let note = this.root.querySelector<HTMLDivElement>('#landing-webgl-note');
+      if (!note) {
+        note = el('div', 'lp-opt-hint');
+        note.id = 'landing-webgl-note';
+        note.dir = 'auto';
+        this.cta.after(note);
+      }
       note.textContent = t('toast.webglUnsupported');
-      note.dir = 'auto';
-      card.appendChild(note);
     }
-    this.root.append(this.bg, scrim, waterline, card);
-
-    this.wireCard();
     if (this.selected) this.input.value = shortLabel(this.selected);
   }
 
+  private bindStaticShell(): void {
+    this.bg = this.required<HTMLDivElement>('#lp-bg');
+    this.input = this.required<HTMLInputElement>('#landing-input');
+    this.acList = this.required<HTMLDivElement>('#landing-ac');
+    this.facts = this.required<HTMLDivElement>('#landing-facts');
+    this.optionsMount = this.required<HTMLDivElement>('#landing-options');
+    this.cta = this.required<HTMLDivElement>('#landing-cta');
+    this.btnRealtime = this.required<HTMLButtonElement>('#landing-realtime');
+    this.btnVideo = this.required<HTMLButtonElement>('#landing-video');
+  }
+
+  private required<T extends HTMLElement>(selector: string): T {
+    const node = this.root.querySelector<T>(selector);
+    if (!node) throw new Error(`Landing shell missing ${selector}`);
+    return node;
+  }
+
   private wireCard(): void {
+    if (this.wired) return;
+    this.wired = true;
     this.btnRealtime.addEventListener('click', () => {
       if (this.selected) this.cb.onEnter(this.selected, { km: this.km, grid: this.grid });
     });
@@ -156,6 +160,10 @@ export class Landing {
     });
     this.input.addEventListener('input', () => { this.touchedInput = true; this.onInput(); });
     this.input.addEventListener('keydown', (e) => this.onKey(e));
+    wireDemoButtons(this.root, (location) => {
+      this.touchedInput = true;
+      this.select(location);
+    });
   }
 
   /** Two labelled pickers — map size (km) and grid detail (N) — with a hint. */

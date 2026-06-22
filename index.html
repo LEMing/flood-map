@@ -3,33 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Flood Map — rain &amp; flood simulation</title>
+    <title>Pluvio — 3D rainfall flood simulator</title>
     <meta
       name="description"
-      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video. Free, no sign-up."
+      content="Pluvio builds real 3D terrain for any address and runs a browser-based rainfall flood simulation with GPU shallow-water physics."
     />
+    <link rel="canonical" href="https://krd-flood.web.app/" />
+    <meta name="theme-color" content="#070b10" />
 
     <!-- Social cards: a shared link (Slack / Telegram / X / WhatsApp) renders a
          real thumbnail instead of a blank box. Static baseline; per-place cards
          can follow via a Cloud Function later. -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Flood Map" />
-    <meta property="og:title" content="See how a downpour floods any address" />
+    <meta property="og:site_name" content="Pluvio" />
+    <meta property="og:title" content="Pluvio — simulate a cloudburst on any address" />
     <meta
       property="og:description"
-      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video."
+      content="Build real 3D terrain, pour extreme rain over it, and watch water flow, pool, and flood."
     />
     <meta property="og:image" content="https://krd-flood.web.app/og-card.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://krd-flood.web.app/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="See how a downpour floods any address" />
+    <meta name="twitter:title" content="Pluvio — simulate a cloudburst on any address" />
     <meta
       name="twitter:description"
-      content="Build any place's 3D terrain and simulate a cloudburst — live, or as a 30-second video."
+      content="Build real 3D terrain, pour extreme rain over it, and watch water flow, pool, and flood."
     />
     <meta name="twitter:image" content="https://krd-flood.web.app/og-card.jpg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://krd-flood.web.app/#website",
+            "name": "Pluvio",
+            "url": "https://krd-flood.web.app/",
+            "description": "Build real 3D terrain for any place and simulate rainfall flooding in the browser."
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://krd-flood.web.app/#app",
+            "name": "Pluvio",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web",
+            "url": "https://krd-flood.web.app/",
+            "image": "https://krd-flood.web.app/og-card.jpg",
+            "description": "A free browser-based 3D rainfall flood simulator for any address, with live simulation and 30-second video export.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://krd-flood.web.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is Pluvio a real forecast?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Pluvio is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I simulate any address?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Enter an address, place name, or coordinates, then Pluvio prepares terrain and open-data layers for that local area."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What makes the water feel realistic?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "The simulation stores momentum on grid faces, so water does not just slide downhill. It can surge, pond, drain, and reverse as the surface changes."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I export a flood video?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "On supported browsers, Pluvio can render a short cinematic flood video for the selected location."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <style>
       :root {
         color-scheme: dark;
@@ -709,7 +778,7 @@
       #landing { display: none; }
       body.landing #landing {
         display: block; position: fixed; inset: 0; z-index: 50;
-        overflow: hidden; background: #070b10;
+        overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; background: #070b10;
       }
       body.landing #scene,
       body.landing #addressbar,
@@ -732,9 +801,7 @@
          stays the fallback. The scrim + waterline (rgba) darken the live render for card
          legibility, exactly as they did over the satellite. */
       body.landing.hero-live #scene { display: block !important; }
-      body.landing.hero-live #landing { background: transparent; pointer-events: none; }
-      body.landing.hero-live .lp-card { pointer-events: auto; }
-      body.landing.hero-live .lp-ac { pointer-events: auto; }
+      body.landing.hero-live #landing { background: transparent; }
       body.landing.hero-live .lp-bg { display: none; } /* satellite is the no-WebGL fallback only */
 
       /* Dedicated video page ("/video"): keep the 3D canvas (the clip needs it)
@@ -776,10 +843,65 @@
         .lp-waterline { animation: none; }
       }
 
+      .lp-hero {
+        position: relative;
+        min-height: 100dvh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(52, 211, 153, .14), transparent 28%),
+          radial-gradient(circle at 78% 22%, rgba(56, 189, 248, .18), transparent 30%),
+          linear-gradient(145deg, #071116 0%, #07131d 44%, #0b1118 100%);
+      }
+      .lp-procedural {
+        position: absolute; inset: 0; z-index: 0; pointer-events: none;
+        opacity: .72;
+        background:
+          radial-gradient(ellipse at 50% 35%, rgba(14, 165, 233, .22), transparent 38%),
+          repeating-radial-gradient(ellipse at 28% 58%, rgba(125, 211, 252, .2) 0 1px, transparent 1px 18px),
+          repeating-radial-gradient(ellipse at 72% 42%, rgba(45, 212, 191, .16) 0 1px, transparent 1px 24px),
+          linear-gradient(115deg, transparent 0 42%, rgba(255,255,255,.05) 42% 43%, transparent 43% 100%);
+        -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0 58%, transparent 86%);
+        mask-image: radial-gradient(circle at 50% 45%, #000 0 58%, transparent 86%);
+      }
+      .lp-procedural::before {
+        content: "";
+        position: absolute; inset: -20%;
+        background:
+          linear-gradient(115deg, transparent 0 47%, rgba(125, 211, 252, .16) 47.2% 47.6%, transparent 47.8% 100%),
+          linear-gradient(160deg, transparent 0 52%, rgba(45, 212, 191, .12) 52.2% 52.55%, transparent 52.75% 100%);
+        transform: rotate(-7deg);
+      }
+      body.landing.hero-live .lp-hero { background: transparent; }
+      body.landing.hero-live .lp-procedural { opacity: .22; mix-blend-mode: screen; }
+
+      .lp-shell {
+        position: relative; z-index: 2; min-height: 100%;
+      }
+
+      .lp-content {
+        position: relative; z-index: 3;
+        background:
+          radial-gradient(circle at 12% 8%, rgba(20, 184, 166, .10), transparent 30%),
+          radial-gradient(circle at 92% 16%, rgba(59, 130, 246, .12), transparent 34%),
+          linear-gradient(180deg, #071015 0%, #09121a 46%, #060a0f 100%);
+        border-top: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 -28px 80px rgba(0, 0, 0, .5);
+      }
+      .lp-content::before {
+        content: "";
+        position: absolute; inset: 0; pointer-events: none;
+        opacity: .24;
+        background:
+          linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+        background-size: 48px 48px;
+        -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+        mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+      }
+
       .lp-card {
-        position: absolute; z-index: 2;
-        top: 50%; left: 50%; transform: translate(-50%, -50%);
-        width: min(540px, calc(100vw - 32px));
+        position: relative; z-index: 2;
+        width: min(540px, 100%);
         display: flex; flex-direction: column; gap: 18px;
         padding: 26px 26px 24px;
         border-radius: 18px; color: #eef4fb;
@@ -789,11 +911,11 @@
         backdrop-filter: blur(20px) saturate(1.1); -webkit-backdrop-filter: blur(20px) saturate(1.1);
         animation: lp-rise .5s cubic-bezier(.2,.7,.2,1) both;
       }
-      @keyframes lp-rise { from { opacity: 0; transform: translate(-50%, -46%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+      @keyframes lp-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
       .lp-brand { display: flex; flex-direction: column; gap: 7px; filter: drop-shadow(0 2px 16px rgba(0,0,0,.5)); }
       .lp-headline {
-        margin: 0; font-size: clamp(27px, 6vw, 36px); line-height: 1.07; font-weight: 820; letter-spacing: -.6px;
+        margin: 0; font-size: clamp(27px, 6vw, 36px); line-height: 1.07; font-weight: 820; letter-spacing: 0;
         text-wrap: balance;
         background: linear-gradient(177deg, #ffffff 0%, #d4e4f7 100%);
         -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -900,7 +1022,6 @@
 
       @media (max-width: 767px) {
         .lp-card {
-          top: auto; bottom: 0; left: 0; transform: none;
           width: 100%; border-radius: 20px 20px 0 0;
           padding: 22px 18px calc(20px + var(--safe-b));
           gap: 15px; animation: lp-rise-m .42s cubic-bezier(.2,.7,.2,1) both;
@@ -989,10 +1110,173 @@
   <body>
     <canvas id="scene"></canvas>
 
-    <!-- Landing surface (route "/"): an immersive satellite backdrop with a glass
-         card (search + facts + two CTAs). Built by src/landing/Landing.ts; shown
-         only while body.landing is set, which also hides the sim chrome below. -->
-    <div id="landing"></div>
+    <!-- Landing surface (route "/"): static, crawlable HTML enhanced by
+         src/landing/Landing.ts for search, facts, prefetch and route handoff. -->
+    <div id="landing">
+      <main class="lp-shell">
+        <section class="lp-hero">
+          <div id="lp-bg" class="lp-bg"></div>
+          <div class="lp-procedural"></div>
+          <div class="lp-scrim"></div>
+          <div class="lp-waterline"></div>
+
+          <div class="relative z-[2] mx-auto grid min-h-dvh w-full max-w-7xl items-center gap-8 px-4 pb-12 pt-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_540px] lg:px-8 lg:py-20">
+            <div class="max-w-3xl text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
+              <p class="mb-4 inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">
+                Pluvio / rainfall flood lab
+              </p>
+              <h1 class="mb-5 text-balance text-4xl font-black leading-[.96] tracking-normal text-white sm:text-6xl lg:text-7xl">
+                See where the water goes before the storm arrives.
+              </h1>
+              <p class="max-w-2xl text-lg leading-8 text-slate-100/90 sm:text-xl">
+                Pluvio builds real 3D terrain for an address, drops a design storm onto it, and runs a GPU shallow-water model so you can watch runoff collect, accelerate, and flood low ground.
+              </p>
+              <div class="mt-7 flex flex-wrap gap-2 text-sm font-semibold text-slate-100">
+                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Address → terrain</span>
+                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">N×N water grid</span>
+                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Manning friction</span>
+                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Mass balance readout</span>
+              </div>
+              <div class="mt-8 flex flex-wrap gap-3">
+                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
+                  Try Boulder
+                </button>
+                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="52.3676" data-lon="4.9041" data-label="Amsterdam, North Holland">
+                  Try Amsterdam
+                </button>
+                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
+                  Try Lynmouth
+                </button>
+              </div>
+            </div>
+
+            <section class="lp-card" aria-labelledby="landing-title">
+              <div class="lp-brand">
+                <h2 id="landing-title" class="lp-headline">Run a storm on real terrain</h2>
+                <p class="lp-tagline">Enter a place to build the terrain, prefetch open data, and start a live flood simulation or cinematic video.</p>
+              </div>
+              <div class="lp-search">
+                <input id="landing-input" class="lp-input" type="text" autocomplete="off" spellcheck="false" placeholder="Address, place, or &quot;lat, lon&quot;…" dir="auto" />
+                <div id="landing-ac" class="lp-ac"></div>
+              </div>
+              <details class="group rounded-xl border border-white/10 bg-white/[.04] p-3">
+                <summary class="cursor-pointer list-none text-sm font-bold text-slate-100 marker:hidden">
+                  Simulation settings
+                  <span class="float-right text-slate-400 transition group-open:rotate-180">⌄</span>
+                </summary>
+                <div id="landing-options" class="mt-3"></div>
+              </details>
+              <div id="landing-facts" class="lp-facts" aria-live="polite"></div>
+              <div id="landing-cta" class="lp-cta">
+                <button id="landing-realtime" class="lp-btn lp-btn-primary" type="button" disabled>Realtime ▶</button>
+                <button id="landing-video" class="lp-btn lp-btn-ghost" type="button" disabled>Make video 🎬</button>
+              </div>
+              <p class="text-xs leading-5 text-slate-400">
+                Educational visualization only: indicative flood depths, not an engineering flood-risk assessment.
+              </p>
+            </section>
+          </div>
+        </section>
+
+        <section class="lp-content">
+          <section class="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div class="mb-8 max-w-3xl">
+              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Pluvio actually computes</p>
+              <h2 class="text-3xl font-black leading-tight text-white sm:text-4xl">Not a flood-risk report. A transparent physics sandbox.</h2>
+              <p class="mt-4 text-base leading-7 text-slate-300">The goal is not to pretend we know every pipe, curb, inlet, and soil layer. The goal is to make the assumptions visible and let people feel how terrain, rainfall, roughness, losses, and drainage change the flood pattern.</p>
+            </div>
+            <div class="grid gap-4 lg:grid-cols-4">
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">01 / terrain</p>
+                <h3 class="mb-2 text-base font-black text-white">Metric local world</h3>
+                <p class="text-sm leading-6 text-slate-300">A place becomes a local projected grid in metres, so water movement is calculated in real distances instead of screen pixels.</p>
+              </article>
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">02 / surface</p>
+                <h3 class="mb-2 text-base font-black text-white">Elevation, buildings, soil</h3>
+                <p class="text-sm leading-6 text-slate-300">Open elevation, OSM features, land cover and mapped soil texture feed the terrain, roughness, infiltration and urban drainage assumptions.</p>
+              </article>
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">03 / storm</p>
+                <h3 class="mb-2 text-base font-black text-white">Rain is a curve, not a slider</h3>
+                <p class="text-sm leading-6 text-slate-300">Storm presets use time-varying hyetographs, so peak rainfall can arrive after the ground is already wet and low points are filling.</p>
+              </article>
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">04 / flow</p>
+                <h3 class="mb-2 text-base font-black text-white">Water moves cell by cell</h3>
+                <p class="text-sm leading-6 text-slate-300">Each grid cell stores water depth, while cell faces store discharge. The model evolves flow, then updates depth by continuity.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="relative mx-auto grid w-full max-w-7xl gap-5 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:px-8">
+            <div class="rounded-lg border border-cyan-200/15 bg-slate-950/82 p-6 text-slate-100 shadow-2xl backdrop-blur sm:p-8">
+              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Physics under the hood</p>
+              <h2 class="text-3xl font-black leading-tight text-white">The math is shallow-water, local-inertial, and intentionally inspectable.</h2>
+              <div class="mt-6 grid gap-4 text-sm leading-6 text-slate-300 sm:grid-cols-2">
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Water surface</h3>
+                  <p>The solver works on <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">η = z + h</code>: terrain elevation plus water depth. Flow follows differences in this surface, not just the ground slope.</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Momentum on faces</h3>
+                  <p>East and north faces carry discharge <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">q</code>, so a flood wave can accelerate, overshoot, slow down, and reverse.</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Friction and losses</h3>
+                  <p>Manning roughness, infiltration, evaporation and synthetic storm-sewer capacity pull water out of overland flow in controlled, visible ways.</p>
+                </div>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Stable time steps</h3>
+                  <p>Substeps obey a CFL-style limit, roughly <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">Δt ≤ Δx / (|v| + √gh)</code>, so fast shallow flow gets smaller steps.</p>
+                </div>
+              </div>
+            </div>
+            <aside class="rounded-lg border border-white/10 bg-slate-950/78 p-6 text-slate-100 shadow-2xl backdrop-blur sm:p-8">
+              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Calculation facts</p>
+              <dl class="grid gap-5">
+                <div>
+                  <dt class="text-3xl font-black text-white">256 → 2048</dt>
+                  <dd class="mt-1 text-sm leading-6 text-slate-300">Grid resolution options. Higher grids reveal smaller flow paths but take longer to build and simulate.</dd>
+                </div>
+                <div>
+                  <dt class="text-3xl font-black text-white">mass balance</dt>
+                  <dd class="mt-1 text-sm leading-6 text-slate-300">The app tracks rain in, water stored, flooded area and max depth, so scenarios are observable instead of just visual.</dd>
+                </div>
+                <div>
+                  <dt class="text-3xl font-black text-white">GPU first</dt>
+                  <dd class="mt-1 text-sm leading-6 text-slate-300">The heavy flow fields run on WebGL float textures; the UI stays interactive while the terrain, water and overlays update.</dd>
+                </div>
+              </dl>
+            </aside>
+          </section>
+
+          <section class="relative mx-auto w-full max-w-5xl px-4 pb-20 sm:px-6 lg:px-8">
+            <div class="rounded-lg border border-white/10 bg-slate-950/78 p-5 text-slate-100 shadow-2xl backdrop-blur sm:p-7">
+              <h2 class="mb-5 text-2xl font-black text-white">Pluvio FAQ</h2>
+              <div class="grid gap-5 sm:grid-cols-2">
+                <article>
+                  <h3 class="mb-2 text-sm font-black text-white">Is Pluvio a real forecast?</h3>
+                  <p class="text-sm leading-6 text-slate-300">No. It is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study.</p>
+                </article>
+                <article>
+                  <h3 class="mb-2 text-sm font-black text-white">Can I simulate any address?</h3>
+                  <p class="text-sm leading-6 text-slate-300">Yes. Enter an address, place name, or coordinates, then Pluvio prepares terrain and open-data layers for that local area.</p>
+                </article>
+                <article>
+                  <h3 class="mb-2 text-sm font-black text-white">What makes the water feel realistic?</h3>
+                  <p class="text-sm leading-6 text-slate-300">The simulation stores momentum on grid faces, so water does not just slide downhill. It can surge, pond, drain, and reverse as the surface changes.</p>
+                </article>
+                <article>
+                  <h3 class="mb-2 text-sm font-black text-white">Can I export a flood video?</h3>
+                  <p class="text-sm leading-6 text-slate-300">On supported browsers, Pluvio can render a short cinematic flood video for the selected location.</p>
+                </article>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
 
     <div id="addressbar">
       <div id="ac-wrap">
