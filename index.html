@@ -921,6 +921,8 @@
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
       .lp-tagline { margin: 0; font-size: 14.5px; line-height: 1.45; color: rgba(220,231,245,.86); }
+      /* Inline code/math chips in the landing prose (kept out of the i18n value as bare <code>). */
+      .lp-shell code { border-radius: 4px; background: rgba(103,232,249,.1); padding: 0 4px; color: #cffafe; }
 
       .lp-search { position: relative; }
       .lp-input {
@@ -1122,35 +1124,35 @@
 
           <div class="relative z-[2] mx-auto grid min-h-dvh w-full max-w-7xl items-center gap-8 px-4 pb-12 pt-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_540px] lg:px-8 lg:py-20">
             <div class="max-w-3xl text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
-              <p class="mb-4 inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">
+              <p data-i18n="landing.hero.badge" class="mb-4 inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">
                 Floodlab · GPU rainfall-runoff model
               </p>
-              <h1 class="mb-5 text-balance text-4xl font-black leading-[.96] tracking-normal text-white sm:text-6xl lg:text-7xl">
+              <h1 data-i18n="landing.hero.headline" class="mb-5 text-balance text-4xl font-black leading-[.96] tracking-normal text-white sm:text-6xl lg:text-7xl">
                 See where the water goes before the storm arrives.
               </h1>
-              <p class="max-w-2xl text-lg leading-8 text-slate-100/90 sm:text-xl">
+              <p data-i18n="landing.hero.sub" class="max-w-2xl text-lg leading-8 text-slate-100/90 sm:text-xl">
                 Floodlab builds real 3D terrain for an address, drops a design storm onto it, and runs a GPU shallow-water model so you can watch runoff collect, accelerate, and flood low ground.
               </p>
               <div class="mt-7 flex flex-wrap gap-2 text-sm font-semibold text-slate-100">
-                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Address → terrain</span>
-                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">N×N water grid</span>
-                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Manning friction</span>
-                <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Mass balance readout</span>
+                <span data-i18n="landing.chip.terrain" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Address → terrain</span>
+                <span data-i18n="landing.chip.grid" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">N×N water grid</span>
+                <span data-i18n="landing.chip.friction" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Manning friction</span>
+                <span data-i18n="landing.chip.massbalance" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Mass balance readout</span>
               </div>
               <div class="mt-8 flex flex-wrap gap-3">
-                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
+                <button data-i18n="landing.demo.try" data-place="Boulder" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
                   Try Boulder
                 </button>
-                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="52.3676" data-lon="4.9041" data-label="Amsterdam, North Holland">
+                <button data-i18n="landing.demo.try" data-place="Amsterdam" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="52.3676" data-lon="4.9041" data-label="Amsterdam, North Holland">
                   Try Amsterdam
                 </button>
-                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
+                <button data-i18n="landing.demo.try" data-place="Lynmouth" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
                   Try Lynmouth
                 </button>
-                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
+                <button data-i18n="landing.demo.try" data-place="Rio" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
                   Try Rio
                 </button>
-                <button class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="45.4371" data-lon="12.3326" data-label="Venice, Italy">
+                <button data-i18n="landing.demo.try" data-place="Venice" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="45.4371" data-lon="12.3326" data-label="Venice, Italy">
                   Try Venice
                 </button>
               </div>
@@ -1167,7 +1169,7 @@
               </div>
               <details class="group rounded-xl border border-white/10 bg-white/[.04] p-3">
                 <summary class="cursor-pointer list-none text-sm font-bold text-slate-100 marker:hidden">
-                  Simulation settings
+                  <span data-i18n="landing.card.settings">Simulation settings</span>
                   <span class="float-right text-slate-400 transition group-open:rotate-180">⌄</span>
                 </summary>
                 <div id="landing-options" class="mt-3"></div>
@@ -1177,7 +1179,7 @@
                 <button id="landing-realtime" class="lp-btn lp-btn-primary" type="button" disabled>Realtime ▶</button>
                 <button id="landing-video" class="lp-btn lp-btn-ghost" type="button" disabled>Make video 🎬</button>
               </div>
-              <p class="text-xs leading-5 text-slate-400">
+              <p data-i18n="landing.card.disclaimer" class="text-xs leading-5 text-slate-400">
                 Educational visualization only: indicative flood depths, not an engineering flood-risk assessment.
               </p>
             </section>
@@ -1187,76 +1189,76 @@
         <section class="lp-content">
           <section class="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="mb-8 max-w-3xl">
-              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Floodlab actually computes</p>
-              <h2 class="text-3xl font-black leading-tight text-white sm:text-4xl">Not a flood-risk report. A transparent physics sandbox.</h2>
-              <p class="mt-4 text-base leading-7 text-slate-300">The goal is not to pretend we know every pipe, curb, inlet, and soil layer. The goal is to make the assumptions visible and let people feel how terrain, rainfall, roughness, losses, and drainage change the flood pattern.</p>
+              <p data-i18n="landing.computes.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Floodlab actually computes</p>
+              <h2 data-i18n="landing.computes.title" class="text-3xl font-black leading-tight text-white sm:text-4xl">Not a flood-risk report. A transparent physics sandbox.</h2>
+              <p data-i18n="landing.computes.intro" class="mt-4 text-base leading-7 text-slate-300">The goal is not to pretend we know every pipe, curb, inlet, and soil layer. The goal is to make the assumptions visible and let people feel how terrain, rainfall, roughness, losses, and drainage change the flood pattern.</p>
             </div>
             <div class="grid gap-4 lg:grid-cols-4">
               <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
-                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">01 / terrain</p>
-                <h3 class="mb-2 text-base font-black text-white">Metric local world</h3>
-                <p class="text-sm leading-6 text-slate-300">A place becomes a local projected grid in metres, so water movement is calculated in real distances instead of screen pixels.</p>
+                <p data-i18n="landing.computes.c1.tag" class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">01 / terrain</p>
+                <h3 data-i18n="landing.computes.c1.title" class="mb-2 text-base font-black text-white">Metric local world</h3>
+                <p data-i18n="landing.computes.c1.body" class="text-sm leading-6 text-slate-300">A place becomes a local projected grid in metres, so water movement is calculated in real distances instead of screen pixels.</p>
               </article>
               <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
-                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">02 / surface</p>
-                <h3 class="mb-2 text-base font-black text-white">Elevation, buildings, soil</h3>
-                <p class="text-sm leading-6 text-slate-300">Open elevation, OSM features, land cover and mapped soil texture feed the terrain, roughness, infiltration and urban drainage assumptions.</p>
+                <p data-i18n="landing.computes.c2.tag" class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">02 / surface</p>
+                <h3 data-i18n="landing.computes.c2.title" class="mb-2 text-base font-black text-white">Elevation, buildings, soil</h3>
+                <p data-i18n="landing.computes.c2.body" class="text-sm leading-6 text-slate-300">Open elevation, OSM features, land cover and mapped soil texture feed the terrain, roughness, infiltration and urban drainage assumptions.</p>
               </article>
               <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
-                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">03 / storm</p>
-                <h3 class="mb-2 text-base font-black text-white">Rain is a curve, not a slider</h3>
-                <p class="text-sm leading-6 text-slate-300">Storm presets use time-varying hyetographs, so peak rainfall can arrive after the ground is already wet and low points are filling.</p>
+                <p data-i18n="landing.computes.c3.tag" class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">03 / storm</p>
+                <h3 data-i18n="landing.computes.c3.title" class="mb-2 text-base font-black text-white">Rain is a curve, not a slider</h3>
+                <p data-i18n="landing.computes.c3.body" class="text-sm leading-6 text-slate-300">Storm presets use time-varying hyetographs, so peak rainfall can arrive after the ground is already wet and low points are filling.</p>
               </article>
               <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
-                <p class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">04 / flow</p>
-                <h3 class="mb-2 text-base font-black text-white">Water moves cell by cell</h3>
-                <p class="text-sm leading-6 text-slate-300">Each grid cell stores water depth, while cell faces store discharge. The model evolves flow, then updates depth by continuity.</p>
+                <p data-i18n="landing.computes.c4.tag" class="mb-4 text-xs font-black uppercase tracking-[.16em] text-cyan-200/70">04 / flow</p>
+                <h3 data-i18n="landing.computes.c4.title" class="mb-2 text-base font-black text-white">Water moves cell by cell</h3>
+                <p data-i18n="landing.computes.c4.body" class="text-sm leading-6 text-slate-300">Each grid cell stores water depth, while cell faces store discharge. The model evolves flow, then updates depth by continuity.</p>
               </article>
             </div>
           </section>
 
           <section id="floodlab-physics" class="relative mx-auto grid w-full max-w-7xl items-stretch gap-10 px-4 pb-12 sm:px-6 lg:grid-cols-2 lg:px-8">
             <div class="flex h-full flex-col text-slate-100">
-              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Physics under the hood</p>
-              <h2 class="max-w-xl text-2xl font-black leading-tight text-white sm:text-3xl">The math is shallow-water, local-inertial, and intentionally inspectable.</h2>
+              <p data-i18n="landing.physics.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Physics under the hood</p>
+              <h2 data-i18n="landing.physics.title" class="max-w-xl text-2xl font-black leading-tight text-white sm:text-3xl">The math is shallow-water, local-inertial, and intentionally inspectable.</h2>
               <div class="mt-6 grid flex-1 auto-rows-fr gap-4 text-sm leading-6 text-slate-300 sm:grid-cols-2">
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Water surface</h3>
-                  <p>The solver works on <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">η = z + h</code>: terrain elevation plus water depth. Flow follows differences in this surface, not just the ground slope.</p>
+                  <h3 data-i18n="landing.physics.c1.title" class="mb-2 font-black text-white">Water surface</h3>
+                  <p data-i18n-html="landing.physics.c1.body">The solver works on <code>η = z + h</code>: terrain elevation plus water depth. Flow follows differences in this surface, not just the ground slope.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Momentum on faces</h3>
-                  <p>East and north faces carry discharge <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">q</code>, so a flood wave can accelerate, overshoot, slow down, and reverse.</p>
+                  <h3 data-i18n="landing.physics.c2.title" class="mb-2 font-black text-white">Momentum on faces</h3>
+                  <p data-i18n-html="landing.physics.c2.body">East and north faces carry discharge <code>q</code>, so a flood wave can accelerate, overshoot, slow down, and reverse.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Friction and losses</h3>
-                  <p>Manning roughness, infiltration, evaporation and synthetic storm-sewer capacity pull water out of overland flow in controlled, visible ways.</p>
+                  <h3 data-i18n="landing.physics.c3.title" class="mb-2 font-black text-white">Friction and losses</h3>
+                  <p data-i18n="landing.physics.c3.body">Manning roughness, infiltration, evaporation and synthetic storm-sewer capacity pull water out of overland flow in controlled, visible ways.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Stable time steps</h3>
-                  <p>Substeps obey a CFL-style limit, roughly <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">Δt ≤ Δx / (|v| + √gh)</code>, so fast shallow flow gets smaller steps.</p>
+                  <h3 data-i18n="landing.physics.c4.title" class="mb-2 font-black text-white">Stable time steps</h3>
+                  <p data-i18n-html="landing.physics.c4.body">Substeps obey a CFL-style limit, roughly <code>Δt ≤ Δx / (|v| + √gh)</code>, so fast shallow flow gets smaller steps.</p>
                 </div>
               </div>
             </div>
             <aside class="flex h-full flex-col text-slate-100">
-              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Calculation facts</p>
-              <h2 class="max-w-xl text-2xl font-black leading-tight text-white sm:text-3xl">Every scenario is measured, not just rendered.</h2>
+              <p data-i18n="landing.facts.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Calculation facts</p>
+              <h2 data-i18n="landing.facts.title" class="max-w-xl text-2xl font-black leading-tight text-white sm:text-3xl">Every scenario is measured, not just rendered.</h2>
               <div class="mt-6 grid flex-1 auto-rows-fr gap-4 text-sm leading-6 text-slate-300 sm:grid-cols-2">
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Grid resolution</h3>
-                  <p>Choose <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">256–2048</code> cells per side. Higher grids reveal smaller flow paths but take longer to build and simulate.</p>
+                  <h3 data-i18n="landing.facts.c1.title" class="mb-2 font-black text-white">Grid resolution</h3>
+                  <p data-i18n-html="landing.facts.c1.body">Choose <code>256–2048</code> cells per side. Higher grids reveal smaller flow paths but take longer to build and simulate.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Mass balance</h3>
-                  <p>Rain in, water stored, flooded area and peak depth are all tracked, so scenarios are measurable instead of just visual.</p>
+                  <h3 data-i18n="landing.facts.c2.title" class="mb-2 font-black text-white">Mass balance</h3>
+                  <p data-i18n="landing.facts.c2.body">Rain in, water stored, flooded area and peak depth are all tracked, so scenarios are measurable instead of just visual.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">GPU-first</h3>
-                  <p>The heavy flow fields run on WebGL float textures, so the UI stays interactive while terrain, water and overlays update.</p>
+                  <h3 data-i18n="landing.facts.c3.title" class="mb-2 font-black text-white">GPU-first</h3>
+                  <p data-i18n="landing.facts.c3.body">The heavy flow fields run on WebGL float textures, so the UI stays interactive while terrain, water and overlays update.</p>
                 </div>
                 <div class="flex min-h-44 flex-col rounded-lg border border-white/10 bg-white/[.035] p-4">
-                  <h3 class="mb-2 font-black text-white">Verified core</h3>
-                  <p>The solver is checked against closed-form shallow-water cases and a CPU reference, so the numbers stay defensible.</p>
+                  <h3 data-i18n="landing.facts.c4.title" class="mb-2 font-black text-white">Verified core</h3>
+                  <p data-i18n="landing.facts.c4.body">The solver is checked against closed-form shallow-water cases and a CPU reference, so the numbers stay defensible.</p>
                 </div>
               </div>
             </aside>
@@ -1265,27 +1267,27 @@
           <section id="floodlab-faq" class="relative mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
             <div class="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Questions people ask first</p>
-                <h2 class="text-2xl font-black text-white sm:text-3xl">Floodlab FAQ</h2>
+                <p data-i18n="landing.faq.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Questions people ask first</p>
+                <h2 data-i18n="landing.faq.title" class="text-2xl font-black text-white sm:text-3xl">Floodlab FAQ</h2>
               </div>
-              <p class="max-w-sm text-sm leading-6 text-slate-400">Clear enough for a curious homeowner, explicit enough for an engineer to spot the assumptions.</p>
+              <p data-i18n="landing.faq.intro" class="max-w-sm text-sm leading-6 text-slate-400">Clear enough for a curious homeowner, explicit enough for an engineer to spot the assumptions.</p>
             </div>
             <div class="grid gap-4 md:grid-cols-2">
               <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 shadow-2xl backdrop-blur">
-                  <h3 class="mb-2 text-sm font-black text-white">Is Floodlab a real forecast?</h3>
-                  <p class="text-sm leading-6 text-slate-300">No. It is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study.</p>
+                  <h3 data-i18n="landing.faq.q1" class="mb-2 text-sm font-black text-white">Is Floodlab a real forecast?</h3>
+                  <p data-i18n="landing.faq.a1" class="text-sm leading-6 text-slate-300">No. It is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study.</p>
                 </article>
                 <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 shadow-2xl backdrop-blur">
-                  <h3 class="mb-2 text-sm font-black text-white">Can I simulate any address?</h3>
-                  <p class="text-sm leading-6 text-slate-300">Yes. Enter an address, place name, or coordinates, then Floodlab prepares terrain and open-data layers for that local area.</p>
+                  <h3 data-i18n="landing.faq.q2" class="mb-2 text-sm font-black text-white">Can I simulate any address?</h3>
+                  <p data-i18n="landing.faq.a2" class="text-sm leading-6 text-slate-300">Yes. Enter an address, place name, or coordinates, then Floodlab prepares terrain and open-data layers for that local area.</p>
                 </article>
                 <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 shadow-2xl backdrop-blur">
-                  <h3 class="mb-2 text-sm font-black text-white">What makes the water feel realistic?</h3>
-                  <p class="text-sm leading-6 text-slate-300">The simulation stores momentum on grid faces, so water does not just slide downhill. It can surge, pond, drain, and reverse as the surface changes.</p>
+                  <h3 data-i18n="landing.faq.q3" class="mb-2 text-sm font-black text-white">What makes the water feel realistic?</h3>
+                  <p data-i18n="landing.faq.a3" class="text-sm leading-6 text-slate-300">The simulation stores momentum on grid faces, so water does not just slide downhill. It can surge, pond, drain, and reverse as the surface changes.</p>
                 </article>
                 <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 shadow-2xl backdrop-blur">
-                  <h3 class="mb-2 text-sm font-black text-white">Can I export a flood video?</h3>
-                  <p class="text-sm leading-6 text-slate-300">On supported browsers, Floodlab can render a short cinematic flood video for the selected location.</p>
+                  <h3 data-i18n="landing.faq.q4" class="mb-2 text-sm font-black text-white">Can I export a flood video?</h3>
+                  <p data-i18n="landing.faq.a4" class="text-sm leading-6 text-slate-300">On supported browsers, Floodlab can render a short cinematic flood video for the selected location.</p>
                 </article>
             </div>
           </section>
@@ -1294,25 +1296,25 @@
             <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 text-sm text-slate-400 sm:px-6 lg:grid-cols-[1.2fr_.9fr_.9fr] lg:px-8">
               <div>
                 <p class="text-xl font-black text-white">Floodlab</p>
-                <p class="mt-3 max-w-md leading-6">A browser-based rainfall-runoff lab for exploring how terrain, storm intensity, roughness and drainage assumptions shape flood patterns.</p>
-                <p class="mt-4 text-xs leading-5 text-slate-500">Educational visualization only. Not for engineering design, insurance, planning, emergency response, or life-safety decisions.</p>
+                <p data-i18n="landing.footer.tagline" class="mt-3 max-w-md leading-6">A browser-based rainfall-runoff lab for exploring how terrain, storm intensity, roughness and drainage assumptions shape flood patterns.</p>
+                <p data-i18n="landing.footer.disclaimer" class="mt-4 text-xs leading-5 text-slate-500">Educational visualization only. Not for engineering design, insurance, planning, emergency response, or life-safety decisions.</p>
               </div>
               <div>
-                <h2 class="text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Model ingredients</h2>
+                <h2 data-i18n="landing.footer.ingredients" class="text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Model ingredients</h2>
                 <ul class="mt-4 space-y-2 leading-6">
-                  <li>Open elevation and satellite imagery</li>
-                  <li>OSM buildings and surface context</li>
-                  <li>SoilGrids-derived infiltration estimates</li>
-                  <li>Local-inertial shallow-water flow</li>
+                  <li data-i18n="landing.footer.ing1">Open elevation and satellite imagery</li>
+                  <li data-i18n="landing.footer.ing2">OSM buildings and surface context</li>
+                  <li data-i18n="landing.footer.ing3">SoilGrids-derived infiltration estimates</li>
+                  <li data-i18n="landing.footer.ing4">Local-inertial shallow-water flow</li>
                 </ul>
               </div>
               <div>
-                <h2 class="text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Run it</h2>
+                <h2 data-i18n="landing.footer.runit" class="text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Run it</h2>
                 <div class="mt-4 flex flex-wrap gap-3">
-                  <a class="rounded-lg border border-cyan-200/25 bg-cyan-300/10 px-4 py-2 font-bold text-cyan-100 transition hover:bg-cyan-300/15" href="#landing-input">Start a scenario</a>
-                  <a class="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2 font-bold text-slate-100 transition hover:bg-white/[.07]" href="#floodlab-physics">Model notes</a>
+                  <a data-i18n="landing.footer.start" class="rounded-lg border border-cyan-200/25 bg-cyan-300/10 px-4 py-2 font-bold text-cyan-100 transition hover:bg-cyan-300/15" href="#landing-input">Start a scenario</a>
+                  <a data-i18n="landing.footer.notes" class="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2 font-bold text-slate-100 transition hover:bg-white/[.07]" href="#floodlab-physics">Model notes</a>
                 </div>
-                <p class="mt-4 text-xs leading-5 text-slate-500">Free to try. No account required. Runs locally in the browser with WebGL where supported.</p>
+                <p data-i18n="landing.footer.free" class="mt-4 text-xs leading-5 text-slate-500">Free to try. No account required. Runs locally in the browser with WebGL where supported.</p>
               </div>
             </div>
           </footer>

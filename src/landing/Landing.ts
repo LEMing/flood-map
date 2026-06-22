@@ -96,6 +96,7 @@ export class Landing {
   /** Refresh text/options against the static HTML shell. */
   private render(): void {
     this.bindStaticShell();
+    this.bindI18n();
 
     const headline = this.root.querySelector<HTMLElement>('#landing-title');
     const tagline = this.root.querySelector<HTMLElement>('.lp-tagline');
@@ -129,6 +130,22 @@ export class Landing {
       note.textContent = t('toast.webglUnsupported');
     }
     if (this.selected) this.input.value = shortLabel(this.selected);
+  }
+
+  /** Localize the static marketing shell: [data-i18n] sets textContent (demo buttons pass their
+   *  data-place into the {place} template), [data-i18n-html] sets innerHTML for the few strings
+   *  that carry an inline <code> chip. Runs on first render and on every language change. */
+  private bindI18n(): void {
+    this.root.querySelectorAll<HTMLElement>('[data-i18n]').forEach((node) => {
+      const key = node.dataset.i18n;
+      if (!key) return;
+      const place = node.dataset.place;
+      node.textContent = place ? t(key, { place }) : t(key);
+    });
+    this.root.querySelectorAll<HTMLElement>('[data-i18n-html]').forEach((node) => {
+      const key = node.dataset.i18nHtml;
+      if (key) node.innerHTML = t(key);
+    });
   }
 
   private bindStaticShell(): void {
