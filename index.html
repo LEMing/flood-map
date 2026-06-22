@@ -374,6 +374,21 @@
         border-color: rgba(126, 164, 255, .5); background: var(--accent); color: #fff; box-shadow: 0 9px 22px rgba(47,111,235,.36);
       }
       #game-dock #btn-pause:hover { background: var(--accent-strong); }
+      /* Sim-time + speed readout, floating just above the dock. */
+      #dock-readout {
+        position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+        display: flex; gap: 8px; align-items: baseline; white-space: nowrap;
+        padding: 5px 13px; border-radius: 999px;
+        background: rgba(11, 15, 20, .82); border: 1px solid var(--panel-border);
+        backdrop-filter: blur(var(--pill-blur)); -webkit-backdrop-filter: blur(var(--pill-blur));
+        font-variant-numeric: tabular-nums; box-shadow: 0 10px 26px rgba(0,0,0,.4);
+      }
+      #dock-time { font-size: 14px; font-weight: 700; color: #eef4fb; }
+      #dock-speed { font-size: 12px; font-weight: 600; color: var(--accent-text, #8fb6ff); }
+      /* Smaller, recessed speed buttons flanking the prominent pause button. */
+      #game-dock #btn-slower, #game-dock #btn-faster { width: 40px; height: 40px; font-size: 15px; }
+      #game-dock #btn-slower.off { opacity: .35; pointer-events: none; }
+      #game-dock #btn-faster.off { opacity: .35; pointer-events: none; }
 
       @media (max-width: 767px) {
         body.game-started::after {
@@ -1349,7 +1364,10 @@
       <div class="sub"></div>
     </div>
     <div id="game-dock" hidden>
+      <div id="dock-readout"><span id="dock-time">0 s</span><span id="dock-speed">180×</span></div>
+      <button id="btn-slower" type="button" aria-label="Slower">⏪</button>
       <button id="btn-pause" type="button" aria-label="Pause">⏸</button>
+      <button id="btn-faster" type="button" aria-label="Faster">⏩</button>
       <button id="btn-restart" type="button" aria-label="Restart">↻</button>
       <button id="share-btn" type="button" aria-label="Share">🔗</button>
     </div>

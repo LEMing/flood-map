@@ -122,6 +122,7 @@ export class App {
       onStart: () => this.startSimulation(),
       onTogglePause: () => this.togglePause(),
       onRestart: () => this.restartSimulation(),
+      onSpeedSet: (ts) => { this.params.timeScale = ts; this.applyParams(); },
     });
     // The input is filled only once we know what we're loading (after IP detect
     // / geocode), so a default place never flashes for out-of-region visitors.
@@ -130,7 +131,7 @@ export class App {
     setupChromeToggle();
 
     this.simDriver = new SimDriver(this.params, this.stats, {
-      refreshPanel: () => this.panel.refresh(),
+      refreshPanel: () => { this.panel.refresh(); this.gameUI.setTime(this.stats.simTime); },
       syncTextures: () => this.syncTextures(),
       fps: () => this.fpsEma,
     });
@@ -186,8 +187,7 @@ export class App {
   private startSimulation(): void {
     this.params.raining = this.params.running = true;
     this.applyParams();
-    this.panel.refresh();
-    this.gameUI.setRunning(true);
+    this.panel.refresh(); this.gameUI.setRunning(true);
     trackEvent('sim_start');
   }
 

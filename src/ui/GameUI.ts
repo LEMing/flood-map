@@ -4,7 +4,11 @@ export interface GameUICallbacks {
   onStart(): void; // first launch: begin rain + run the sim
   onTogglePause(): void; // pause / resume the running sim
   onRestart(): void; // reset the flood back to dry ground
+  onSpeedSet(timeScale: number): void; // apply a new time scale (simulated seconds per real second)
 }
+
+// Time-scale presets the slower/faster buttons step through (sim seconds per real second).
+const SPEEDS = [1, 10, 30, 60, 180, 600, 1800, 3000];
 
 /**
  * The clean game shell: a single centred launch button, then a floating
@@ -19,16 +23,41 @@ export class GameUI {
   private readonly dock = document.getElementById('game-dock') as HTMLElement;
   private readonly pauseBtn = document.getElementById('btn-pause') as HTMLButtonElement;
   private readonly restartBtn = document.getElementById('btn-restart') as HTMLButtonElement;
+  private readonly slowerBtn = document.getElementById('btn-slower') as HTMLButtonElement;
+  private readonly fasterBtn = document.getElementById('btn-faster') as HTMLButtonElement;
+  private readonly timeEl = document.getElementById('dock-time') as HTMLElement;
+  private readonly speedEl = document.getElementById('dock-speed') as HTMLElement;
   private started = false;
   private running = false;
   private ready = false;
+  private speedIdx = SPEEDS.indexOf(180); // default time scale (matches DEFAULT_PARAMS.timeScale)
 
   constructor(private readonly cb: GameUICallbacks) {
     this.startBtn.disabled = true; // no world yet — enabled by setReady() once it builds
     this.startBtn.addEventListener('click', () => this.launch());
     this.pauseBtn.addEventListener('click', () => this.cb.onTogglePause());
     this.restartBtn.addEventListener('click', () => this.cb.onRestart());
+    this.slowerBtn.addEventListener('click', () => this.stepSpeed(-1));
+    this.fasterBtn.addEventListener('click', () => this.stepSpeed(1));
+    this.renderSpeed();
     this.retranslate();
+  }
+
+  /** Tick the elapsed-sim-time readout (the app pushes this each stats refresh). */
+  setTime(time: string): void {
+    this.timeEl.textContent = time;
+  }
+
+  private stepSpeed(delta: number): void {
+    this.speedIdx = Math.max(0, Math.min(SPEEDS.length - 1, this.speedIdx + delta));
+    this.cb.onSpeedSet(SPEEDS[this.speedIdx]);
+    this.renderSpeed();
+  }
+
+  private renderSpeed(): void {
+    this.speedEl.textContent = `${SPEEDS[this.speedIdx]}×`;
+    this.slowerBtn.classList.toggle('off', this.speedIdx === 0);
+    this.fasterBtn.classList.toggle('off', this.speedIdx === SPEEDS.length - 1);
   }
 
   /** Enable the launch button once the world has actually built — pressing Play
