@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { Params } from '../config';
 import type { SimDriver } from './SimDriver';
 import type { SceneManager } from '../render/SceneManager';
-import { stormIntensityMmHr } from '../sim/storm';
+import { stormIntensityMmHr, stormDurationSec } from '../sim/storm';
 import { Recorder } from '../video/Recorder';
 import { buildVideoLabel } from '../video/videoLabel';
 import { el, button } from '../ui/dom';
@@ -30,7 +30,7 @@ const RAIN_VISUAL_CUTOFF_MMHR = 0.5;
 
 // Params the capture profile mutates; snapshotted so the live sim is restored after.
 const TOUCHED: Array<keyof Params> = [
-  'stormType', 'storm', 'raining', 'running', 'evaporationPerHr',
+  'stormType', 'storm', 'raining', 'running', 'evaporationPerHr', 'rainMultiplier', 'stormSpeed',
   'rainFootprint', 'timelinePos', 'timelinePlaying',
 ];
 
@@ -166,6 +166,14 @@ export class VideoMode {
     p.storm = true;
     p.raining = true;
     p.rainFootprint = 'uniform';
+    // Capture-only storm knobs: `?storm=N` scales the cloudburst N× (heavier rain), `?stormmins=M`
+    // compresses it into an M-minute burst (a short, fierce залп instead of a long soak).
+    const q = new URLSearchParams(window.location.search);
+    const scale = Number(q.get('storm'));
+    p.rainMultiplier = Number.isFinite(scale) && scale > 0 ? scale : 1;
+    const mins = Number(q.get('stormmins'));
+    const naturalMins = stormDurationSec('cloudburst') / 60;
+    p.stormSpeed = Number.isFinite(mins) && mins > 0 ? naturalMins / mins : 1;
     // evaporationPerHr is driven per-phase by the precompute (low → high); it's in
     // TOUCHED so the live sim value is restored afterwards.
   }

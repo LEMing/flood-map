@@ -39,6 +39,8 @@ export interface Params {
   // Rain
   raining: boolean;
   intensityMmPerHr: number;
+  rainMultiplier: number; // scales the active storm's rate (1 = realistic; >1 for dramatic captures)
+  stormSpeed: number; // time-compresses the hyetograph (1 = natural; >1 = a shorter, sharper burst)
   stormType: StormType; // hyetograph driving the rain over sim time
   storm: boolean; // dark clouds + lightning atmosphere
   rainFootprint: RainFootprint;
@@ -136,6 +138,8 @@ export const DEFAULT_PARAMS: Params = {
 
   raining: true,
   intensityMmPerHr: 120,
+  rainMultiplier: 1,
+  stormSpeed: 1,
   stormType: 'cloudburst',
   storm: true,
   rainFootprint: 'uniform',

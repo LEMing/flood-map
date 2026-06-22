@@ -161,7 +161,7 @@ export class SimDriver {
 
     if (this.untilDry) {
       this.maxFrames = videoFrameBudget(captureN);
-      this.stepStorm = stormDurationSec(this.params.stormType) / STORM_FRAMES;
+      this.stepStorm = stormDurationSec(this.params.stormType) / this.params.stormSpeed / STORM_FRAMES;
       this.peakStored = this.peakFlooded = this.timeOfPeak = 0;
       this.dryStreak = this.tailFrame = this.prevStored = this.peakVel = 0;
     } else {
@@ -237,10 +237,11 @@ export class SimDriver {
   /** Advance the sim by a fixed number of simulated seconds (CFL-substepped). */
   private stepSimSeconds(simSeconds: number, maxSteps: number): void {
     if (!this.sim) return;
-    // Drive rain from the storm hyetograph (peaked залповый ливень) over sim time.
-    const intensityMmHr = this.params.raining
-      ? stormIntensityMmHr(this.params.stormType, this.simTime, this.params.intensityMmPerHr)
-      : 0;
+    // Drive rain from the storm hyetograph (peaked залповый ливень), optionally time-compressed
+    // (stormSpeed) and scaled (rainMultiplier) for a dramatic short-burst capture.
+    const stormT = this.simTime * this.params.stormSpeed;
+    const baseMmHr = stormIntensityMmHr(this.params.stormType, stormT, this.params.intensityMmPerHr);
+    const intensityMmHr = this.params.raining ? baseMmHr * this.params.rainMultiplier : 0;
     this.sim.setRainRateMmPerHr(intensityMmHr);
 
     const g = Math.max(0.1, this.params.gravity);
@@ -265,7 +266,7 @@ export class SimDriver {
 
   private tickPrecompute(): void {
     if (!this.sim || !this.timeline || !this.buf) return;
-    const stormDur = stormDurationSec(this.params.stormType);
+    const stormDur = stormDurationSec(this.params.stormType) / this.params.stormSpeed;
     const { stepSec, maxSteps } = this.untilDry
       ? this.untilDryStep(stormDur)
       : { stepSec: this.precomputeFrameSec, maxSteps: MAX_PRECOMPUTE_STEPS };
