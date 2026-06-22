@@ -1209,10 +1209,10 @@
             </div>
           </section>
 
-          <section class="relative mx-auto grid w-full max-w-7xl gap-5 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:px-8">
+          <section class="relative mx-auto grid w-full max-w-7xl items-start gap-5 px-4 pb-16 sm:px-6 lg:grid-cols-2 lg:px-8">
             <div class="rounded-lg border border-cyan-200/15 bg-slate-950/82 p-6 text-slate-100 shadow-2xl backdrop-blur sm:p-8">
               <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Physics under the hood</p>
-              <h2 class="text-3xl font-black leading-tight text-white">The math is shallow-water, local-inertial, and intentionally inspectable.</h2>
+              <h2 class="text-2xl font-black leading-tight text-white sm:text-3xl">The math is shallow-water, local-inertial, and intentionally inspectable.</h2>
               <div class="mt-6 grid gap-4 text-sm leading-6 text-slate-300 sm:grid-cols-2">
                 <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
                   <h3 class="mb-2 font-black text-white">Water surface</h3>
@@ -1232,22 +1232,27 @@
                 </div>
               </div>
             </div>
-            <aside class="rounded-lg border border-white/10 bg-slate-950/78 p-6 text-slate-100 shadow-2xl backdrop-blur sm:p-8">
+            <aside class="rounded-lg border border-cyan-200/15 bg-slate-950/82 p-6 text-slate-100 shadow-2xl backdrop-blur sm:p-8">
               <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Calculation facts</p>
-              <dl class="grid gap-5">
-                <div>
-                  <dt class="text-3xl font-black text-white">256 → 2048</dt>
-                  <dd class="mt-1 text-sm leading-6 text-slate-300">Grid resolution options. Higher grids reveal smaller flow paths but take longer to build and simulate.</dd>
+              <h2 class="text-2xl font-black leading-tight text-white sm:text-3xl">Every scenario is measured, not just rendered.</h2>
+              <div class="mt-6 grid gap-4 text-sm leading-6 text-slate-300 sm:grid-cols-2">
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Grid resolution</h3>
+                  <p>Choose <code class="rounded bg-cyan-300/10 px-1 text-cyan-100">256–2048</code> cells per side. Higher grids reveal smaller flow paths but take longer to build and simulate.</p>
                 </div>
-                <div>
-                  <dt class="text-3xl font-black text-white">mass balance</dt>
-                  <dd class="mt-1 text-sm leading-6 text-slate-300">The app tracks rain in, water stored, flooded area and max depth, so scenarios are observable instead of just visual.</dd>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Mass balance</h3>
+                  <p>Rain in, water stored, flooded area and peak depth are all tracked, so scenarios are measurable instead of just visual.</p>
                 </div>
-                <div>
-                  <dt class="text-3xl font-black text-white">GPU first</dt>
-                  <dd class="mt-1 text-sm leading-6 text-slate-300">The heavy flow fields run on WebGL float textures; the UI stays interactive while the terrain, water and overlays update.</dd>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">GPU-first</h3>
+                  <p>The heavy flow fields run on WebGL float textures, so the UI stays interactive while terrain, water and overlays update.</p>
                 </div>
-              </dl>
+                <div class="rounded-lg border border-white/10 bg-white/[.035] p-4">
+                  <h3 class="mb-2 font-black text-white">Verified core</h3>
+                  <p>The solver is checked against closed-form shallow-water cases and a CPU reference, so the numbers stay defensible.</p>
+                </div>
+              </div>
             </aside>
           </section>
 

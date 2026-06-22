@@ -1,7 +1,6 @@
 import { geocode, shortLabel, type GeocodeResult } from '../geo/geocode';
 import { suggest, type Suggestion } from '../geo/autocomplete';
 import { landingBackdrop } from '../geo/landingSatellite';
-import { detectIpLocation } from '../geo/ipLocation';
 import { prefetchWorld, type WorldRequest } from '../geo/worldDataCache';
 import { videoCaptureSupported } from '../video/Recorder';
 import { detectWebGLSupport } from '../render/webglSupport';
@@ -63,7 +62,6 @@ export class Landing {
   private debounce?: number;
   private abort?: AbortController;
   private bgToken = 0; private selectToken = 0;
-  private touchedInput = false;
   private km: number; private grid: number;
 
   constructor(cb: LandingCallbacks) {
@@ -80,7 +78,8 @@ export class Landing {
     document.addEventListener('click', (e) => {
       if (e.target !== this.input && !this.acList?.contains(e.target as Node)) this.closeAc();
     });
-    void this.bootstrapFromIp();
+    // The hero background stays the curated showcase place (Rio) until the visitor picks a demo
+    // or types an address — IP geolocation no longer hijacks it with their (often flat) city.
   }
 
   /** Re-entry (e.g. browser Back): the DOM persists, just make sure it's visible. */
@@ -158,12 +157,9 @@ export class Landing {
     this.btnVideo.addEventListener('click', () => {
       if (this.selected) this.cb.onEnter(this.selected, { cinematic: true, km: this.km, grid: this.grid });
     });
-    this.input.addEventListener('input', () => { this.touchedInput = true; this.onInput(); });
+    this.input.addEventListener('input', () => this.onInput());
     this.input.addEventListener('keydown', (e) => this.onKey(e));
-    wireDemoButtons(this.root, (location) => {
-      this.touchedInput = true;
-      this.select(location);
-    });
+    wireDemoButtons(this.root, (location) => this.select(location));
   }
 
   /** Two labelled pickers — map size (km) and grid detail (N) — with a hint. */
@@ -216,13 +212,6 @@ export class Landing {
   /** Size/density changed → re-prefetch + refresh facts for the chosen scale. */
   private onScaleChange(): void {
     if (this.selected) this.select(this.selected);
-  }
-
-  private async bootstrapFromIp(): Promise<void> {
-    const ip = await detectIpLocation().catch(() => null);
-    if (!ip || this.touchedInput || this.selected) return;
-    const displayName = ip.city ? [ip.city, ip.region].filter(Boolean).join(', ') : formatCoords(ip.lat, ip.lon);
-    this.select({ lat: ip.lat, lon: ip.lon, displayName });
   }
 
   private onInput(): void {
