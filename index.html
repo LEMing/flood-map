@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Pluvio — 3D rainfall flood simulator</title>
+    <title>Floodlab — 3D rainfall flood simulator</title>
     <meta
       name="description"
-      content="Pluvio builds real 3D terrain for any address and runs a browser-based rainfall flood simulation with GPU shallow-water physics."
+      content="Floodlab builds real 3D terrain for any address and runs a browser-based rainfall flood simulation with GPU shallow-water physics."
     />
     <link rel="canonical" href="https://krd-flood.web.app/" />
     <meta name="theme-color" content="#070b10" />
@@ -15,8 +15,8 @@
          real thumbnail instead of a blank box. Static baseline; per-place cards
          can follow via a Cloud Function later. -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Pluvio" />
-    <meta property="og:title" content="Pluvio — simulate a cloudburst on any address" />
+    <meta property="og:site_name" content="Floodlab" />
+    <meta property="og:title" content="Floodlab — simulate a cloudburst on any address" />
     <meta
       property="og:description"
       content="Build real 3D terrain, pour extreme rain over it, and watch water flow, pool, and flood."
@@ -26,7 +26,7 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://krd-flood.web.app/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Pluvio — simulate a cloudburst on any address" />
+    <meta name="twitter:title" content="Floodlab — simulate a cloudburst on any address" />
     <meta
       name="twitter:description"
       content="Build real 3D terrain, pour extreme rain over it, and watch water flow, pool, and flood."
@@ -39,14 +39,14 @@
           {
             "@type": "WebSite",
             "@id": "https://krd-flood.web.app/#website",
-            "name": "Pluvio",
+            "name": "Floodlab",
             "url": "https://krd-flood.web.app/",
             "description": "Build real 3D terrain for any place and simulate rainfall flooding in the browser."
           },
           {
             "@type": "SoftwareApplication",
             "@id": "https://krd-flood.web.app/#app",
-            "name": "Pluvio",
+            "name": "Floodlab",
             "applicationCategory": "EducationalApplication",
             "operatingSystem": "Web",
             "url": "https://krd-flood.web.app/",
@@ -64,10 +64,10 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Is Pluvio a real forecast?",
+                "name": "Is Floodlab a real forecast?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Pluvio is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study."
+                  "text": "No. Floodlab is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study."
                 }
               },
               {
@@ -75,7 +75,7 @@
                 "name": "Can I simulate any address?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes. Enter an address, place name, or coordinates, then Pluvio prepares terrain and open-data layers for that local area."
+                  "text": "Yes. Enter an address, place name, or coordinates, then Floodlab prepares terrain and open-data layers for that local area."
                 }
               },
               {
@@ -91,7 +91,7 @@
                 "name": "Can I export a flood video?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "On supported browsers, Pluvio can render a short cinematic flood video for the selected location."
+                  "text": "On supported browsers, Floodlab can render a short cinematic flood video for the selected location."
                 }
               }
             ]
@@ -1123,13 +1123,13 @@
           <div class="relative z-[2] mx-auto grid min-h-dvh w-full max-w-7xl items-center gap-8 px-4 pb-12 pt-24 sm:px-6 lg:grid-cols-[minmax(0,1fr)_540px] lg:px-8 lg:py-20">
             <div class="max-w-3xl text-white [text-shadow:0_2px_24px_rgba(0,0,0,.55)]">
               <p class="mb-4 inline-flex items-center rounded-full border border-cyan-200/20 bg-cyan-200/10 px-3 py-1 text-xs font-semibold uppercase tracking-[.18em] text-cyan-100">
-                Pluvio / rainfall flood lab
+                Floodlab · GPU rainfall-runoff model
               </p>
               <h1 class="mb-5 text-balance text-4xl font-black leading-[.96] tracking-normal text-white sm:text-6xl lg:text-7xl">
                 See where the water goes before the storm arrives.
               </h1>
               <p class="max-w-2xl text-lg leading-8 text-slate-100/90 sm:text-xl">
-                Pluvio builds real 3D terrain for an address, drops a design storm onto it, and runs a GPU shallow-water model so you can watch runoff collect, accelerate, and flood low ground.
+                Floodlab builds real 3D terrain for an address, drops a design storm onto it, and runs a GPU shallow-water model so you can watch runoff collect, accelerate, and flood low ground.
               </p>
               <div class="mt-7 flex flex-wrap gap-2 text-sm font-semibold text-slate-100">
                 <span class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Address → terrain</span>
@@ -1181,7 +1181,7 @@
         <section class="lp-content">
           <section class="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="mb-8 max-w-3xl">
-              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Pluvio actually computes</p>
+              <p class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Floodlab actually computes</p>
               <h2 class="text-3xl font-black leading-tight text-white sm:text-4xl">Not a flood-risk report. A transparent physics sandbox.</h2>
               <p class="mt-4 text-base leading-7 text-slate-300">The goal is not to pretend we know every pipe, curb, inlet, and soil layer. The goal is to make the assumptions visible and let people feel how terrain, rainfall, roughness, losses, and drainage change the flood pattern.</p>
             </div>
@@ -1253,15 +1253,15 @@
 
           <section class="relative mx-auto w-full max-w-5xl px-4 pb-20 sm:px-6 lg:px-8">
             <div class="rounded-lg border border-white/10 bg-slate-950/78 p-5 text-slate-100 shadow-2xl backdrop-blur sm:p-7">
-              <h2 class="mb-5 text-2xl font-black text-white">Pluvio FAQ</h2>
+              <h2 class="mb-5 text-2xl font-black text-white">Floodlab FAQ</h2>
               <div class="grid gap-5 sm:grid-cols-2">
                 <article>
-                  <h3 class="mb-2 text-sm font-black text-white">Is Pluvio a real forecast?</h3>
+                  <h3 class="mb-2 text-sm font-black text-white">Is Floodlab a real forecast?</h3>
                   <p class="text-sm leading-6 text-slate-300">No. It is an educational simulation with explicit assumptions, not a calibrated emergency forecast or engineering flood study.</p>
                 </article>
                 <article>
                   <h3 class="mb-2 text-sm font-black text-white">Can I simulate any address?</h3>
-                  <p class="text-sm leading-6 text-slate-300">Yes. Enter an address, place name, or coordinates, then Pluvio prepares terrain and open-data layers for that local area.</p>
+                  <p class="text-sm leading-6 text-slate-300">Yes. Enter an address, place name, or coordinates, then Floodlab prepares terrain and open-data layers for that local area.</p>
                 </article>
                 <article>
                   <h3 class="mb-2 text-sm font-black text-white">What makes the water feel realistic?</h3>
@@ -1269,7 +1269,7 @@
                 </article>
                 <article>
                   <h3 class="mb-2 text-sm font-black text-white">Can I export a flood video?</h3>
-                  <p class="text-sm leading-6 text-slate-300">On supported browsers, Pluvio can render a short cinematic flood video for the selected location.</p>
+                  <p class="text-sm leading-6 text-slate-300">On supported browsers, Floodlab can render a short cinematic flood video for the selected location.</p>
                 </article>
               </div>
             </div>
