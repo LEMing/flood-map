@@ -5,12 +5,10 @@ import { LanguagePicker } from './ui/LanguagePicker';
 import { MethodNote } from './ui/MethodNote';
 import { initAnalytics } from './analytics';
 import { detectWebGLSupport } from './render/webglSupport';
-import { prefersLowData } from './landing/lowData';
 import { getLanguage, loadLanguage, setLanguage, applyDocumentLang, t, type Lang } from './i18n';
 import { showToast } from './ui/toast';
 import { writeUrlState } from './url';
 import type { GeocodeResult } from './geo/geocode';
-import type { WorldRequest } from './geo/worldDataCache';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement | null;
 if (!canvas) {
@@ -126,32 +124,15 @@ async function mountVideo(location?: GeocodeResult, opts?: EnterOpts): Promise<v
   else a.enterVideoMode(); // world already built (e.g. arrived from /sim)
 }
 
-function isLandingRoute(): boolean {
-  const p = window.location.pathname;
-  return !p.startsWith('/sim') && !p.startsWith('/video');
-}
-
-// The landing runs the REAL flood sim as an ambient background only where it won't cost the
-// visitor: a WebGL2+float-RT GPU, motion+data allowed, and a visible tab. Otherwise it stays
-// the lightweight static satellite landing (zero regression for those visitors).
-function ambientEligible(): boolean {
-  return detectWebGLSupport().ok && !prefersLowData() && !document.hidden;
-}
-
+// The landing is deliberately WebGL-FREE: a pre-recorded flood loop plays as the hero (the real
+// sim captured once), so even a phone or a thermally-throttled laptop loads it instantly without a
+// live render. The live sim only spins up when the visitor explicitly enters /sim or /video.
 function mountLanding(): void {
   document.body.classList.remove('video');
   document.body.classList.add('landing');
   app?.exitVideoMode();
-  app?.setActive(false); // park App's own loop; the ambient hero drives its own rAF
-  if (ambientEligible()) {
-    document.body.classList.add('hero-live');
-    void ensureApp()
-      .then((a) => { if (isLandingRoute()) void a.ambient.enterForHero(); })
-      .catch(() => document.body.classList.remove('hero-live'));
-  } else {
-    document.body.classList.remove('hero-live');
-  }
-  if (!landing) landing = new Landing({ onEnter, onAmbientLocation });
+  app?.setActive(false); // park any kept-alive App; the landing renders no 3D
+  if (!landing) landing = new Landing({ onEnter });
   landing.show();
 }
 
@@ -160,13 +141,6 @@ function onEnter(location: GeocodeResult, opts: EnterOpts): void {
   const path = opts.cinematic ? '/video' : '/sim';
   history.pushState({}, '', `${path}${window.location.search}`);
   safeMount(() => (opts.cinematic ? mountVideo(location, opts) : mountSim(location, opts)));
-}
-
-// The visitor typed a place on the landing → re-point the ambient hero to it (so the live
-// backdrop becomes their address), reusing the prefetch the card already kicked off.
-function onAmbientLocation(req: WorldRequest): void {
-  if (!document.body.classList.contains('hero-live')) return;
-  void ensureApp().then((a) => { if (isLandingRoute()) void a.ambient.enterForHero(req); });
 }
 
 function route(): void {

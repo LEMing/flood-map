@@ -794,16 +794,6 @@
          sits in the top-right corner and above the immersive overlay. */
       body.landing #lang-picker { right: calc(12px + var(--safe-r)); z-index: 51; }
 
-      /* Enhanced landing ("hero-live"): the REAL flood sim runs as an ambient, looping
-         background behind the glass card. Set IN ADDITION to body.landing when WebGL is
-         available and the visitor hasn't asked to save data/motion — these later rules win
-         for #scene + the card transparency. The static satellite path (body.landing alone)
-         stays the fallback. The scrim + waterline (rgba) darken the live render for card
-         legibility, exactly as they did over the satellite. */
-      body.landing.hero-live #scene { display: block !important; }
-      body.landing.hero-live #landing { background: transparent; }
-      body.landing.hero-live .lp-bg { display: none; } /* satellite is the no-WebGL fallback only */
-
       /* Dedicated video page ("/video"): keep the 3D canvas (the clip needs it)
          plus the loading card + toast (so a cold build shows progress, not a
          blank sky) but hide the interactive live-sim chrome. */
@@ -816,6 +806,15 @@
       body.video #fps-meter,
       body.video #credit { display: none !important; }
 
+      /* Pre-recorded flood-loop hero — the real sim captured once, so the landing renders zero
+         WebGL (instant, battery-friendly, works on any device). The place satellite (.lp-bg)
+         fades in over it once a visitor picks an address. */
+      .lp-video {
+        position: absolute; inset: 0; z-index: 0; pointer-events: none;
+        width: 100%; height: 100%; object-fit: cover;
+        opacity: 0; transition: opacity 1.2s ease;
+      }
+      .lp-video.show { opacity: 1; }
       .lp-bg {
         position: absolute; inset: 0; z-index: 0;
         background-position: center; background-size: cover;
@@ -1117,8 +1116,11 @@
     <div id="landing">
       <main class="lp-shell">
         <section class="lp-hero">
-          <div id="lp-bg" class="lp-bg"></div>
           <div class="lp-procedural"></div>
+          <video id="lp-video" class="lp-video" poster="/hero/flood-hero.jpg" muted loop playsinline preload="auto">
+            <source src="/hero/flood-hero.mp4" type="video/mp4" />
+          </video>
+          <div id="lp-bg" class="lp-bg"></div>
           <div class="lp-scrim"></div>
           <div class="lp-waterline"></div>
 

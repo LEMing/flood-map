@@ -117,7 +117,9 @@ export class VideoMode {
     this.startOffset.copy(this.host.scene.camera.position).sub(this.host.scene.controls.target);
 
     const canvas = this.host.scene.renderer.domElement;
-    const label = buildVideoLabel(this.host.placeName(), canvas.width, canvas.height);
+    // `?nolabel` exports a clean clip (no corner watermark) — used to capture the landing hero loop.
+    const clean = new URLSearchParams(window.location.search).has('nolabel');
+    const label = clean ? null : buildVideoLabel(this.host.placeName(), canvas.width, canvas.height);
     const recorder = new Recorder(canvas.width, canvas.height, VIDEO_FPS);
     this.outputExt = recorder.fileExt;
     recorder.start();
@@ -135,13 +137,13 @@ export class VideoMode {
       this.updateCaptureVisuals(time);
       this.orbit(pos);
       this.host.renderCaptureFrame(dt);
-      this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
+      if (label) this.host.scene.renderOverlay(label.scene, label.camera); // bake the corner label
       await recorder.addFrame(canvas, i); // explicit-timestamp encode (snapshots the canvas now)
       this.setProgress(t('video.recording', { pct: pctOf(pos) }), pos);
     }
 
     const blob = await recorder.finish();
-    label.dispose();
+    label?.dispose();
     return blob;
   }
 

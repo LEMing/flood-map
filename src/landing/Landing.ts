@@ -10,14 +10,13 @@ import { getLanguage, t } from '../i18n';
 import { el, button } from '../ui/dom';
 import { renderPreparing, renderFacts, renderFactError } from './landingFacts';
 import { wireDemoButtons } from './demoButtons';
+import { prefersLowData } from './lowData';
 
 export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number }
 
 export interface LandingCallbacks {
   /** Leave the landing and enter the sim/video for `location` with the chosen scale. */
   onEnter(location: GeocodeResult, opts: EnterOptions): void;
-  /** Re-point the live ambient hero to a place the visitor selected (no-op on the static path). */
-  onAmbientLocation?(req: WorldRequest): void;
 }
 
 // Map scale + grid density offered on the landing card.
@@ -47,11 +46,9 @@ export function videoExportSupported(): boolean {
 export class Landing {
   private readonly cb: LandingCallbacks;
   private readonly root: HTMLElement;
-  private bg!: HTMLDivElement;
-  private input!: HTMLInputElement;
-  private acList!: HTMLDivElement;
-  private facts!: HTMLDivElement;
-  private btnRealtime!: HTMLButtonElement; private btnVideo!: HTMLButtonElement;
+  private bg!: HTMLDivElement; private video!: HTMLVideoElement | null;
+  private input!: HTMLInputElement; private acList!: HTMLDivElement;
+  private facts!: HTMLDivElement; private btnRealtime!: HTMLButtonElement; private btnVideo!: HTMLButtonElement;
   private optionsMount!: HTMLDivElement; private cta!: HTMLDivElement;
   private readonly webglOk = detectWebGLSupport().ok;
   private wired = false;
@@ -97,6 +94,7 @@ export class Landing {
   private render(): void {
     this.bindStaticShell();
     this.bindI18n();
+    this.playHeroVideo();
 
     const headline = this.root.querySelector<HTMLElement>('#landing-title');
     const tagline = this.root.querySelector<HTMLElement>('.lp-tagline');
@@ -109,13 +107,9 @@ export class Landing {
     this.btnVideo.disabled = !this.selected || !this.webglOk;
     this.optionsMount.replaceChildren(this.buildOptions());
 
-    if (!videoExportSupported()) {
-      this.btnVideo.hidden = true;
-      this.cta.classList.add('single');
-    } else {
-      this.btnVideo.hidden = false;
-      this.cta.classList.remove('single');
-    }
+    const noVideoExport = !videoExportSupported();
+    this.btnVideo.hidden = noVideoExport;
+    this.cta.classList.toggle('single', noVideoExport);
 
     if (!this.webglOk) {
       this.btnRealtime.title = t('toast.webglUnsupported');
@@ -148,8 +142,17 @@ export class Landing {
     });
   }
 
+  /** Reveal the pre-recorded flood loop and play it (muted) — unless the visitor asked to save
+   *  data / reduce motion, where the poster still is shown instead. No WebGL involved. */
+  private playHeroVideo(): void {
+    if (!this.video) return;
+    this.video.classList.add('show'); // fade in (poster first, then frames once it plays)
+    if (!prefersLowData()) void this.video.play().catch(() => undefined);
+  }
+
   private bindStaticShell(): void {
     this.bg = this.required<HTMLDivElement>('#lp-bg');
+    this.video = this.root.querySelector<HTMLVideoElement>('#lp-video');
     this.input = this.required<HTMLInputElement>('#landing-input');
     this.acList = this.required<HTMLDivElement>('#landing-ac');
     this.facts = this.required<HTMLDivElement>('#landing-facts');
@@ -326,9 +329,7 @@ export class Landing {
     const token = ++this.selectToken;
     renderPreparing(this.facts, location);
     void this.swapBackdrop(location);
-    const req = this.worldRequest(location);
-    this.cb.onAmbientLocation?.(req); // swap the live backdrop to this place (warm-cached by the prefetch)
-    prefetchWorld(req).then(
+    prefetchWorld(this.worldRequest(location)).then(
       (res) => { if (token === this.selectToken) renderFacts(this.facts, location, res); },
       () => { if (token === this.selectToken) renderFactError(this.facts, this.input.value.trim()); },
     );
@@ -351,6 +352,7 @@ export class Landing {
     if (!url || token !== this.bgToken) return;
     this.bg.style.backgroundImage = `url("${url}")`;
     this.bg.classList.add('show');
+    this.video?.pause(); // the place satellite now covers the loop — stop decoding it
   }
 
 }
