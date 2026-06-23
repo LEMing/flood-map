@@ -328,6 +328,7 @@
         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
       }
       #start-overlay[hidden] { display: none; }
+      #start-overlay.leaving { opacity: 0; transform: scale(.985); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
       #start-btn {
         pointer-events: auto; display: inline-flex; align-items: center; gap: 12px;
         min-height: 56px; padding: 16px 30px; border-radius: 999px; cursor: pointer;
@@ -358,6 +359,12 @@
         backdrop-filter: blur(var(--pill-blur)); -webkit-backdrop-filter: blur(var(--pill-blur));
         box-shadow: 0 14px 38px rgba(0,0,0,.42);
         transition: opacity .18s ease, transform .18s ease;
+      }
+      /* The launch button hands off to the dock with a soft entrance (not a hard swap). */
+      #game-dock.dock-enter { animation: dock-in .24s cubic-bezier(.2,.7,.2,1) both; }
+      @keyframes dock-in {
+        from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+        to { opacity: 1; transform: translateX(-50%); }
       }
       #game-dock[hidden] { display: none; }
       #game-dock button {
@@ -937,9 +944,11 @@
 
       /* The card no longer competes with the hero <h1>: a small brand eyebrow leads straight into search. */
       .lp-eyebrow {
+        display: inline-flex; align-items: center; gap: 7px;
         margin: 0 0 2px; font-size: 12px; font-weight: 800; letter-spacing: .16em;
         text-transform: uppercase; color: var(--accent-text, #8fb6ff);
       }
+      .lp-logomark { flex: 0 0 auto; display: inline-block; vertical-align: middle; }
       /* Conversion benefit line + a persistent honesty chip (links to the FAQ) under the CTAs. */
       .lp-benefits { margin: 0; font-size: 12.5px; font-weight: 600; color: rgba(224,235,247,.92); }
       .lp-edu-chip {
@@ -992,7 +1001,7 @@
       }
       .lp-chip.show { opacity: 1; transform: none; }
       .lp-chip .ic { font-size: 14px; line-height: 1; }
-      .lp-chip.loading { color: rgba(219,230,242,.6); }
+      .lp-chip.loading { color: rgba(219,230,242,.74); }
       .lp-chip .spin {
         width: 11px; height: 11px; border-radius: 50%;
         border: 2px solid rgba(255,255,255,.2); border-top-color: var(--accent);
@@ -1007,7 +1016,7 @@
         font-size: 12px; font-weight: 600; color: rgba(222,232,244,.86); letter-spacing: .2px;
       }
       .lp-opt-ic { font-size: 13px; opacity: .85; }
-      .lp-opt-hint { font-size: 11.5px; line-height: 1.4; color: rgba(206,219,235,.6); }
+      .lp-opt-hint { font-size: 11.5px; line-height: 1.4; color: rgba(206,219,235,.72); }
       .lp-seg {
         display: flex; align-items: center; gap: 4px;
         padding: 4px; border-radius: 11px;
@@ -1026,13 +1035,41 @@
         background: var(--accent); color: #fff;
         border-color: rgba(122,170,255,.5); box-shadow: 0 4px 12px rgba(47,111,235,.3);
       }
-      .lp-seg-unit { flex: 0 0 auto; padding: 0 9px 0 5px; font-size: 12px; color: rgba(214,226,240,.6); }
+      .lp-seg-unit { flex: 0 0 auto; padding: 0 9px 0 5px; font-size: 12px; color: rgba(214,226,240,.74); }
+
+      /* Demo scenarios: a single horizontal scroll-snap row (no wrap on mobile), Rio featured. */
+      .lp-demo-row {
+        display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: none;
+      }
+      .lp-demo-row::-webkit-scrollbar { display: none; }
+      .lp-demo-row > .lp-demo-btn { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
+      .lp-demo-featured {
+        border: 1px solid rgba(126,164,255,.5); background: var(--accent); color: #fff;
+        box-shadow: 0 9px 22px rgba(47,111,235,.32);
+      }
+      .lp-demo-featured:hover { background: var(--accent-strong); }
+      /* Honest trust strip at the top of the explainer content. */
+      .lp-trust {
+        display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+        gap: 10px 22px; padding: 16px; border-bottom: 1px solid rgba(255,255,255,.07);
+        font-size: 13px; font-weight: 600; color: rgba(214,226,240,.82);
+      }
+      .lp-trust-item { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
+      a.lp-trust-item:hover { color: #cffafe; }
+      .lp-trust-ic { color: var(--accent-text, #8fb6ff); }
+      /* Step badge for the plain-language "homeowner lane" cards. */
+      .lp-lane-step {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border-radius: 999px; font-size: 14px; font-weight: 800;
+        color: #cffafe; background: rgba(103,232,249,.12); border: 1px solid rgba(103,232,249,.28);
+      }
 
       .lp-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
       .lp-btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-        min-height: 54px; padding: 0 16px; border-radius: 13px; cursor: pointer;
-        font-size: 16px; font-weight: 680; letter-spacing: .2px;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        min-height: 54px; padding: 0 14px; border-radius: 13px; cursor: pointer;
+        font-size: 15px; line-height: 1.15; font-weight: 680; letter-spacing: .2px; text-wrap: balance;
         transition: transform .12s ease, box-shadow .16s ease, filter .16s ease, background .16s ease, border-color .16s ease;
         touch-action: manipulation; -webkit-tap-highlight-color: transparent;
       }
@@ -1171,7 +1208,10 @@
                 <span data-i18n="landing.chip.friction" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Manning friction</span>
                 <span data-i18n="landing.chip.massbalance" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Mass balance readout</span>
               </div>
-              <div class="mt-8 flex flex-wrap gap-3">
+              <div class="mt-8 lp-demo-row">
+                <button data-i18n="landing.demo.try" data-place="Rio" class="lp-demo-btn lp-demo-featured rounded-lg px-4 py-3 text-sm font-bold shadow-2xl backdrop-blur transition" type="button" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
+                  Try Rio
+                </button>
                 <button data-i18n="landing.demo.try" data-place="Boulder" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
                   Try Boulder
                 </button>
@@ -1181,9 +1221,6 @@
                 <button data-i18n="landing.demo.try" data-place="Lynmouth" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
                   Try Lynmouth
                 </button>
-                <button data-i18n="landing.demo.try" data-place="Rio" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
-                  Try Rio
-                </button>
                 <button data-i18n="landing.demo.try" data-place="Venice" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="45.4371" data-lon="12.3326" data-label="Venice, Italy">
                   Try Venice
                 </button>
@@ -1191,7 +1228,7 @@
             </div>
 
             <section class="lp-card" aria-labelledby="landing-title">
-              <p id="landing-title" class="lp-eyebrow">Floodlab</p>
+              <p id="landing-title" class="lp-eyebrow"><svg class="lp-logomark" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none"><path d="M12 3c3.4 3.9 5.8 6.8 5.8 10A5.8 5.8 0 0 1 6.2 13c0-3.2 2.4-6.1 5.8-10Z" fill="currentColor" opacity=".92"/><path d="M3.7 17.2c1.6 1.2 3.1 1.2 4.7 0s3.1-1.2 4.7 0 3.1 1.2 4.7 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></svg>Floodlab</p>
               <div class="lp-search">
                 <input id="landing-input" class="lp-input" type="text" autocomplete="off" spellcheck="false" placeholder="Address, place, or &quot;lat, lon&quot;…" dir="auto" />
                 <div id="landing-ac" class="lp-ac"></div>
@@ -1215,6 +1252,39 @@
         </section>
 
         <section class="lp-content">
+          <div class="lp-trust">
+            <a class="lp-trust-item" href="https://github.com/LEMing/flood-map" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+              <span data-i18n="landing.trust.opensource">Open source</span>
+            </a>
+            <span class="lp-trust-item"><span class="lp-trust-ic" aria-hidden="true">✓</span><span data-i18n="landing.trust.verified">Verified solver</span></span>
+            <span class="lp-trust-item"><span class="lp-trust-ic" aria-hidden="true">🌐</span><span data-i18n="landing.trust.languages">60 languages</span></span>
+          </div>
+          <section class="relative mx-auto w-full max-w-7xl px-4 pt-16 pb-2 sm:px-6 lg:px-8">
+            <div class="mb-8 max-w-3xl">
+              <p data-i18n="landing.lane.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">For anyone, not just engineers</p>
+              <h2 data-i18n="landing.lane.title" class="text-3xl font-black leading-tight text-white sm:text-4xl">Watch how water moves on real terrain.</h2>
+              <p data-i18n="landing.lane.intro" class="mt-4 text-base leading-7 text-slate-300">Pick a place and Floodlab shows where rain collects, which streets channel it, and where it pools — as physics you can watch, not a prediction about any single building.</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-3">
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <span class="lp-lane-step">1</span>
+                <h3 data-i18n="landing.lane.c1.title" class="mb-2 mt-4 text-base font-black text-white">Pick a place</h3>
+                <p data-i18n="landing.lane.c1.body" class="text-sm leading-6 text-slate-300">Type an address or tap a demo. Floodlab builds its real 3D terrain in seconds — no account, no install.</p>
+              </article>
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <span class="lp-lane-step">2</span>
+                <h3 data-i18n="landing.lane.c2.title" class="mb-2 mt-4 text-base font-black text-white">Drop a storm</h3>
+                <p data-i18n="landing.lane.c2.body" class="text-sm leading-6 text-slate-300">A design cloudburst falls on the ground and runs downhill exactly where the slope sends it.</p>
+              </article>
+              <article class="rounded-lg border border-white/10 bg-slate-950/72 p-5 text-slate-100 shadow-2xl backdrop-blur">
+                <span class="lp-lane-step">3</span>
+                <h3 data-i18n="landing.lane.c3.title" class="mb-2 mt-4 text-base font-black text-white">See the low ground</h3>
+                <p data-i18n="landing.lane.c3.body" class="text-sm leading-6 text-slate-300">Water gathers in the dips and valleys, so you can see which areas fill first — then watch it drain away.</p>
+              </article>
+            </div>
+          </section>
+
           <section class="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="mb-8 max-w-3xl">
               <p data-i18n="landing.computes.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">What Floodlab actually computes</p>
@@ -1323,9 +1393,9 @@
           <footer class="relative border-t border-white/10 bg-black/28">
             <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 text-sm text-slate-400 sm:px-6 lg:grid-cols-[1.2fr_.9fr_.9fr] lg:px-8">
               <div>
-                <p class="text-xl font-black text-white">Floodlab</p>
+                <p class="flex items-center gap-2 text-xl font-black text-white"><svg class="lp-logomark text-cyan-300" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none"><path d="M12 3c3.4 3.9 5.8 6.8 5.8 10A5.8 5.8 0 0 1 6.2 13c0-3.2 2.4-6.1 5.8-10Z" fill="currentColor" opacity=".92"/><path d="M3.7 17.2c1.6 1.2 3.1 1.2 4.7 0s3.1-1.2 4.7 0 3.1 1.2 4.7 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".5"/></svg>Floodlab</p>
                 <p data-i18n="landing.footer.tagline" class="mt-3 max-w-md leading-6">A browser-based rainfall-runoff lab for exploring how terrain, storm intensity, roughness and drainage assumptions shape flood patterns.</p>
-                <p data-i18n="landing.footer.disclaimer" class="mt-4 text-xs leading-5 text-slate-500">Educational visualization only. Not for engineering design, insurance, planning, emergency response, or life-safety decisions.</p>
+                <p data-i18n="landing.footer.disclaimer" class="mt-4 text-xs leading-5 text-slate-400">Educational visualization only. Not for engineering design, insurance, planning, emergency response, or life-safety decisions.</p>
               </div>
               <div>
                 <h2 data-i18n="landing.footer.ingredients" class="text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Model ingredients</h2>
@@ -1342,7 +1412,7 @@
                   <a data-i18n="landing.footer.start" class="rounded-lg border border-cyan-200/25 bg-cyan-300/10 px-4 py-2 font-bold text-cyan-100 transition hover:bg-cyan-300/15" href="#landing-input">Start a scenario</a>
                   <a data-i18n="landing.footer.notes" class="rounded-lg border border-white/10 bg-white/[.04] px-4 py-2 font-bold text-slate-100 transition hover:bg-white/[.07]" href="#floodlab-physics">Model notes</a>
                 </div>
-                <p data-i18n="landing.footer.free" class="mt-4 text-xs leading-5 text-slate-500">Free to try. No account required. Runs locally in the browser with WebGL where supported.</p>
+                <p data-i18n="landing.footer.free" class="mt-4 text-xs leading-5 text-slate-400">Free to try. No account required. Runs locally in the browser with WebGL where supported.</p>
               </div>
             </div>
           </footer>

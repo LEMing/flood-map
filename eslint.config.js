@@ -16,6 +16,7 @@ export default tseslint.config(
       'node_modules/',
       'public/',
       '.firebase/',
+      '.scratch/',
       'src/geo/data/regional*.ts',
     ],
   },

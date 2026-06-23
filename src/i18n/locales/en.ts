@@ -240,6 +240,22 @@ export const en: Record<string, string> = {
   'landing.card.benefits': 'Free · no account · runs in your browser',
   'landing.card.disclaimer': 'Educational sandbox — not a flood-risk forecast',
 
+  // Plain-language "homeowner lane" — a benefit-framed intro before the engineer detail.
+  'landing.lane.eyebrow': 'For anyone, not just engineers',
+  'landing.lane.title': 'Watch how water moves on real terrain.',
+  'landing.lane.intro': 'Pick a place and Floodlab shows where rain collects, which streets channel it, and where it pools — as physics you can watch, not a prediction about any single building.',
+  'landing.lane.c1.title': 'Pick a place',
+  'landing.lane.c1.body': 'Type an address or tap a demo. Floodlab builds its real 3D terrain in seconds — no account, no install.',
+  'landing.lane.c2.title': 'Drop a storm',
+  'landing.lane.c2.body': 'A design cloudburst falls on the ground and runs downhill exactly where the slope sends it.',
+  'landing.lane.c3.title': 'See the low ground',
+  'landing.lane.c3.body': 'Water gathers in the dips and valleys, so you can see which areas fill first — then watch it drain away.',
+
+  // Honest trust strip (all three are literally true: public repo, verified solver, 60 locales).
+  'landing.trust.opensource': 'Open source',
+  'landing.trust.verified': 'Verified solver',
+  'landing.trust.languages': '60 languages',
+
   'landing.computes.eyebrow': 'What Floodlab actually computes',
   'landing.computes.title': 'Not a flood-risk report. A transparent physics sandbox.',
   'landing.computes.intro': 'The goal is not to pretend we know every pipe, curb, inlet, and soil layer. The goal is to make the assumptions visible and let people feel how terrain, rainfall, roughness, losses, and drainage change the flood pattern.',

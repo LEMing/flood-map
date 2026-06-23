@@ -12,6 +12,10 @@
       {
         "source": "/index.html",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "/flood/**",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ]
   }

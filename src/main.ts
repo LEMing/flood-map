@@ -132,8 +132,10 @@ function mountLanding(): void {
   document.body.classList.add('landing');
   app?.exitVideoMode();
   app?.setActive(false); // park any kept-alive App; the landing renders no 3D
+  const first = !landing;
   if (!landing) landing = new Landing({ onEnter });
   landing.show();
+  if (first) landing.preselectFromPage(); // /flood/<slug> SEO routes open pre-pointed at the place
 }
 
 function onEnter(location: GeocodeResult, opts: EnterOpts): void {

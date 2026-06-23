@@ -6,7 +6,7 @@
   "description": "Address-based 3D terrain + physically-based GPU rain-flood simulation (three.js)",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/build-place-pages.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

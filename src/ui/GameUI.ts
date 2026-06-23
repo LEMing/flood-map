@@ -97,8 +97,10 @@ export class GameUI {
     if (this.started || !this.ready) return;
     this.started = true;
     document.body.classList.add('game-started');
-    this.overlay.hidden = true;
+    this.overlay.classList.add('leaving'); // fade the launch button out…
     this.dock.hidden = false;
+    this.dock.classList.add('dock-enter'); // …as the dock rises in (reduced-motion: instant)
+    window.setTimeout(() => { this.overlay.hidden = true; }, 220);
     this.cb.onStart();
   }
 

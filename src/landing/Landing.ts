@@ -80,8 +80,14 @@ export class Landing {
   }
 
   /** Re-entry (e.g. browser Back): the DOM persists, just make sure it's visible. */
-  show(): void {
-    this.input.focus({ preventScroll: true });
+  show(): void { this.input.focus({ preventScroll: true }); }
+
+  /** Per-place SEO route (/flood/<slug>): a generated page sets window.__FLOOD_PLACE__
+   *  so the card opens already pointed at that place (backdrop + facts + warm prefetch). */
+  preselectFromPage(): void {
+    const p = (window as unknown as { __FLOOD_PLACE__?: { lat: number; lon: number; label: string } }).__FLOOD_PLACE__;
+    if (!p || !Number.isFinite(p.lat) || !Number.isFinite(p.lon)) return;
+    this.select({ lat: p.lat, lon: p.lon, displayName: p.label });
   }
 
   /** Rebuild the card in the current language; keeps the chosen place + scale. */
