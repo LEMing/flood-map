@@ -1074,6 +1074,15 @@
       .lp-lab-title { margin: 0 0 8px; font-size: clamp(20px, 3vw, 26px); font-weight: 850; line-height: 1.12; color: #eef4fb; }
       .lp-lab-sub { margin: 0 0 16px; max-width: 72ch; font-size: 14px; line-height: 1.5; color: rgba(220,231,245,.84); }
       .lp-lab-sub code { border-radius: 4px; background: rgba(103,232,249,.1); padding: 0 5px; color: #cffafe; }
+      .lp-lab-views { display: inline-flex; gap: 4px; margin: 0 0 12px; padding: 4px; border-radius: 11px; background: rgba(255,255,255,.05); border: 1px solid var(--panel-border); }
+      .lp-lab-view {
+        padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700;
+        color: rgba(214,226,240,.78); background: transparent; border: 0;
+        transition: background .15s ease, color .15s ease; -webkit-tap-highlight-color: transparent;
+      }
+      .lp-lab-view:hover { color: #eef4fb; }
+      .lp-lab-view.on { background: var(--accent); color: #fff; }
+      .lp-lab-view:focus-visible { outline: 2px solid rgba(119,164,255,.86); outline-offset: 2px; }
       .lp-lab-canvas {
         display: block; width: 100%; height: clamp(190px, 30vw, 300px);
         border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
@@ -1356,7 +1365,11 @@
             <div id="lp-lab" class="lp-lab">
               <p data-i18n="landing.lab.eyebrow" class="lp-lab-eyebrow">Physics you can poke</p>
               <h2 data-i18n="landing.lab.title" class="lp-lab-title">Tap “rain” and watch water find the low ground.</h2>
-              <p data-i18n-html="landing.lab.sub" class="lp-lab-sub">The same local-inertial shallow-water math, in 1D. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the valleys, then drains.</p>
+              <p data-i18n-html="landing.lab.sub" class="lp-lab-sub">The same local-inertial shallow-water math the full model runs. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the low ground, then drains.</p>
+              <div class="lp-lab-views">
+                <button type="button" class="lp-lab-view on" data-lab-view="cross"><span data-i18n="landing.lab.viewCross">Cross-section</span></button>
+                <button type="button" class="lp-lab-view" data-lab-view="top"><span data-i18n="landing.lab.viewTop">Top-down · city</span></button>
+              </div>
               <canvas class="lp-lab-canvas" aria-hidden="true"></canvas>
               <div class="lp-lab-bar">
                 <div class="lp-lab-stats">

@@ -259,11 +259,13 @@ export const en: Record<string, string> = {
   // Interactive physics lab (a tiny live shallow-water cross-section on the landing).
   'landing.lab.eyebrow': 'Physics you can poke',
   'landing.lab.title': 'Tap “rain” and watch water find the low ground.',
-  'landing.lab.sub': 'The same local-inertial shallow-water math, in 1D. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the valleys, then drains.',
+  'landing.lab.sub': 'The same local-inertial shallow-water math the full model runs. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the low ground, then drains.',
   'landing.lab.depth': 'deepest',
   'landing.lab.ponded': 'ponded',
   'landing.lab.rain': 'Rain',
   'landing.lab.faster': 'Faster',
+  'landing.lab.viewCross': 'Cross-section',
+  'landing.lab.viewTop': 'Top-down · city',
 
   'landing.computes.eyebrow': 'What Floodlab actually computes',
   'landing.computes.title': 'Not a flood-risk report. A transparent physics sandbox.',
