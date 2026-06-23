@@ -1,28 +1,28 @@
 import { G } from './labShared';
 
 // The single source of truth for the physics lab: ONE 2D local-inertial shallow-water
-// world over a synthetic 2.5 km valley with a city, a meandering river channel and an
-// open plaza basin. Both the top-down map and the side cross-section are pure renderers
+// world over a synthetic urban basin with a gridded neighborhood, a shallow collector
+// street and a low plaza. Both the top-down map and the side cross-section are pure renderers
 // of THIS world (same z, same h), so the two views are literally the same place. The
 // scheme (faces carry discharge q with Manning friction; depth updates by continuity)
 // is the same one the full model runs — here on a tiny CPU grid, no WebGL.
-export const W = 200;
-export const H = 48;
-export const CS = 12.5; // m per cell → a 2500 m × 600 m valley
-export const WET = 0.06; // m — counts as "ponded"
-export const SLICE_ROW = 18; // the cross-section cut: a building band that also crosses the plaza basin
+export const W = 160;
+export const H = 96;
+export const CS = 12.5; // m per cell -> a 2000 m x 1200 m neighborhood
+export const WET = 0.12; // m — counts as meaningfully ponded
+export const SLICE_ROW = 50; // the cross-section cut: a building row beside the flooded collector street
 
 const MANNING = 0.03;
 const PERIOD = 8; // block pitch (cells) → 100 m
 const BLOCK = 5; // building footprint → 3-cell (37.5 m) streets
-const PLAZA_R = 6; // plaza basin radius (cells)
-const PLAZA_U = 0.5;
-const PLAZA_V = 0.44;
-const BASEFLOW = 0.05; // m — thin permanent film in the river channel
+const PLAZA_R = 9; // plaza basin radius (cells)
+const PLAZA_U = 0.54;
+const PLAZA_V = 0.47;
+const BASEFLOW = 0.035; // m — thin permanent film in the collector street
 
 export interface Rect { x: number; y: number; w: number; h: number }
 
-const thalweg = (u: number): number => 0.52 + 0.12 * Math.sin(2 * Math.PI * 1.1 * u);
+const thalweg = (u: number): number => 0.47 + 0.035 * Math.sin(2 * Math.PI * 1.15 * u);
 
 export class LabWorld {
   readonly z = new Float32Array(W * H);
@@ -57,16 +57,20 @@ export class LabWorld {
       for (let i = 0; i < W; i++) {
         const u = i / (W - 1);
         const v = j / (H - 1);
-        const ridges = 11 * Math.exp(-(((u - 0.12) / 0.12) ** 2)) + 9 * Math.exp(-(((u - 0.88) / 0.12) ** 2));
-        const floor = 5 - 2 * u + 1.5 * (v - 0.5);
+        const regionalSlope = 4.2 - 0.55 * u + 0.3 * (v - 0.5);
+        const edgeCurb =
+          0.7 * Math.exp(-(((u - 0.03) / 0.035) ** 2)) +
+          0.55 * Math.exp(-(((u - 0.97) / 0.035) ** 2));
+        const cityCrown = 0.9 * ((u - 0.53) ** 2) + 0.65 * ((v - 0.5) ** 2);
         const dr = v - thalweg(u);
-        const river = 3.5 * Math.exp(-(dr * dr) / (2 * 0.045 * 0.045));
+        const collector = 0.85 * Math.exp(-(dr * dr) / (2 * 0.035 * 0.035));
         const di = i - PLAZA_U * (W - 1);
         const dj = j - PLAZA_V * (H - 1);
-        const plaza = 4 * Math.exp(-(di * di + dj * dj) / (2 * PLAZA_R * PLAZA_R));
-        const zc = ridges + floor - river - plaza;
+        const plaza = 1.15 * Math.exp(-(di * di + dj * dj) / (2 * PLAZA_R * PLAZA_R));
+        const streetTexture = 0.08 * Math.sin(2 * Math.PI * u * 3.2) * Math.cos(2 * Math.PI * v * 2.1);
+        const zc = regionalSlope + edgeCurb + cityCrown + streetTexture - collector - plaza;
         this.z[j * W + i] = zc;
-        if (river > 1.8) this.chan[j * W + i] = 1;
+        if (collector > 0.5) this.chan[j * W + i] = 1;
         lo = Math.min(lo, zc);
         hi = Math.max(hi, zc);
       }
@@ -94,11 +98,11 @@ export class LabWorld {
     const cy = by + BLOCK / 2;
     const u = cx / (W - 1);
     const v = cy / (H - 1);
-    if (u < 0.28 || u > 0.76 || v < 0.16 || v > 0.84) return false;
+    if (u < 0.29 || u > 0.82 || v < 0.2 || v > 0.82) return false;
     const di = cx - PLAZA_U * (W - 1);
     const dj = cy - PLAZA_V * (H - 1);
     if (Math.hypot(di, dj) < PLAZA_R + 3) return false;
-    return Math.abs(v - thalweg(u)) >= 0.05;
+    return Math.abs(v - thalweg(u)) >= 0.045;
   }
 
   reset(): void {

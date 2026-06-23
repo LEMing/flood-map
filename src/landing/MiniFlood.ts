@@ -13,7 +13,7 @@ const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not
 const RAIN_MS = 0.0015;
 const DRAIN_WET = 0.0004; // low loss while raining
 const DRAIN_DRY = 0.0016; // tail loss during recession
-const TARGET_DEPTH = 5; // m — once the basin reaches this, the rain stops and the sim FREEZES, so the
+const TARGET_DEPTH = 1.2; // m — once the basin reaches this, the rain stops and the sim FREEZES, so the
 //                          flood holds steady (deep + visible) and never overflows — at any speed
 
 // state, seconds, rain (m/s), drain (m/s), freeze. `freeze` pauses the whole sim so the
@@ -51,6 +51,7 @@ export class MiniFlood {
   private raf = 0;
   private readonly reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly io: IntersectionObserver;
+  private readonly ro: ResizeObserver;
 
   constructor(root: HTMLElement) {
     this.canvas = root.querySelector('.lp-lab-canvas') as HTMLCanvasElement;
@@ -67,6 +68,8 @@ export class MiniFlood {
     root.querySelector('[data-lab-act="reset"]')?.addEventListener('click', () => this.reset());
     this.viewBtns.forEach((b) => b.addEventListener('click', () => this.setView(b.dataset.labView === 'top' ? 'top' : 'cross')));
     addEventListener('resize', () => this.resize());
+    this.ro = new ResizeObserver(() => this.resize());
+    this.ro.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.sync());
     this.io = new IntersectionObserver(
       (e) => { this.onScreen = e[0].isIntersecting; this.sync(); },
@@ -80,6 +83,7 @@ export class MiniFlood {
     this.running = false;
     cancelAnimationFrame(this.raf);
     this.io.disconnect();
+    this.ro.disconnect();
   }
 
   refresh(): void { this.rainBtn?.classList.toggle('on', this.curRaining); }

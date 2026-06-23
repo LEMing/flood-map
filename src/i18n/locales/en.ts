@@ -256,16 +256,16 @@ export const en: Record<string, string> = {
   'landing.trust.verified': 'Verified solver',
   'landing.trust.languages': '60 languages',
 
-  // Interactive physics lab (a tiny live shallow-water cross-section on the landing).
+  // Interactive physics lab (a compact live shallow-water model on the landing).
   'landing.lab.eyebrow': 'Physics you can poke',
-  'landing.lab.title': 'Tap “rain” and watch water find the low ground.',
-  'landing.lab.sub': 'The same local-inertial shallow-water math the full model runs. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the low ground, then drains.',
+  'landing.lab.title': 'Start the rain and let water reveal the low ground.',
+  'landing.lab.sub': 'This mini model uses the same local-inertial solver. Water moves over the surface <code>η = z + h</code>: terrain plus depth, so low streets and basins fill first.',
   'landing.lab.depth': 'deepest',
   'landing.lab.ponded': 'ponded',
   'landing.lab.rain': 'Rain',
   'landing.lab.faster': 'Faster',
-  'landing.lab.viewCross': 'Cross-section',
-  'landing.lab.viewTop': 'Top-down · city',
+  'landing.lab.viewCross': 'Street section',
+  'landing.lab.viewTop': 'City map',
 
   'landing.computes.eyebrow': 'What Floodlab actually computes',
   'landing.computes.title': 'Not a flood-risk report. A transparent physics sandbox.',
