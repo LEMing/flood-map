@@ -360,8 +360,10 @@
         box-shadow: 0 14px 38px rgba(0,0,0,.42);
         transition: opacity .18s ease, transform .18s ease;
       }
-      /* The launch button hands off to the dock with a soft entrance (not a hard swap). */
-      #game-dock.dock-enter { animation: dock-in .24s cubic-bezier(.2,.7,.2,1) both; }
+      /* The launch button hands off to the dock with a soft entrance (not a hard swap).
+         No fill-mode: after it plays the dock reverts to its base rule, so the mobile
+         chrome-open / lang-open hide rules still win (a `both` fill would pin it visible). */
+      #game-dock.dock-enter { animation: dock-in .24s cubic-bezier(.2,.7,.2,1); }
       @keyframes dock-in {
         from { opacity: 0; transform: translateX(-50%) translateY(10px); }
         to { opacity: 1; transform: translateX(-50%); }
@@ -1043,7 +1045,8 @@
         -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: none;
       }
       .lp-demo-row::-webkit-scrollbar { display: none; }
-      .lp-demo-row > .lp-demo-btn { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
+      .lp-demo-row > .lp-demo-btn { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; text-decoration: none; }
+      .lp-demo-btn:focus-visible { outline: 2px solid rgba(119,164,255,.86); outline-offset: 2px; }
       .lp-demo-featured {
         border: 1px solid rgba(126,164,255,.5); background: var(--accent); color: #fff;
         box-shadow: 0 9px 22px rgba(47,111,235,.32);
@@ -1209,21 +1212,21 @@
                 <span data-i18n="landing.chip.massbalance" class="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 backdrop-blur">Mass balance readout</span>
               </div>
               <div class="mt-8 lp-demo-row">
-                <button data-i18n="landing.demo.try" data-place="Rio" class="lp-demo-btn lp-demo-featured rounded-lg px-4 py-3 text-sm font-bold shadow-2xl backdrop-blur transition" type="button" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
+                <a data-i18n="landing.demo.try" data-place="Rio" href="/flood/rio/" class="lp-demo-btn lp-demo-featured rounded-lg px-4 py-3 text-sm font-bold shadow-2xl backdrop-blur transition" data-lat="-22.9519" data-lon="-43.2106" data-label="Rio de Janeiro, Brazil">
                   Try Rio
-                </button>
-                <button data-i18n="landing.demo.try" data-place="Boulder" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
+                </a>
+                <a data-i18n="landing.demo.try" data-place="Boulder" href="/flood/boulder/" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" data-lat="40.01499" data-lon="-105.27055" data-label="Boulder, Colorado">
                   Try Boulder
-                </button>
-                <button data-i18n="landing.demo.try" data-place="Amsterdam" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="52.3676" data-lon="4.9041" data-label="Amsterdam, North Holland">
+                </a>
+                <a data-i18n="landing.demo.try" data-place="Amsterdam" href="/flood/amsterdam/" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" data-lat="52.3676" data-lon="4.9041" data-label="Amsterdam, North Holland">
                   Try Amsterdam
-                </button>
-                <button data-i18n="landing.demo.try" data-place="Lynmouth" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
+                </a>
+                <a data-i18n="landing.demo.try" data-place="Lynmouth" href="/flood/lynmouth/" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" data-lat="51.2290" data-lon="-3.8299" data-label="Lynmouth, UK">
                   Try Lynmouth
-                </button>
-                <button data-i18n="landing.demo.try" data-place="Venice" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" type="button" data-lat="45.4371" data-lon="12.3326" data-label="Venice, Italy">
+                </a>
+                <a data-i18n="landing.demo.try" data-place="Venice" href="/flood/venice/" class="lp-demo-btn rounded-lg border border-white/15 bg-white/10 px-4 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur transition hover:bg-white/20" data-lat="45.4371" data-lon="12.3326" data-label="Venice, Italy">
                   Try Venice
-                </button>
+                </a>
               </div>
             </div>
 

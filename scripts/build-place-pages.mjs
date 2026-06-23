@@ -37,7 +37,7 @@ const sub = (html, re, replacement) => {
 };
 
 function pageFor(p) {
-  const url = `${HOST}/flood/${p.slug}`;
+  const url = `${HOST}/flood/${p.slug}/`; // trailing slash matches Firebase's directory-index serving
   const title = `${p.name} flood simulation — watch how water moves on real terrain | Floodlab`;
   const desc = `Run a design storm over ${p.name}’s real 3D terrain in your browser and watch where rain collects, channels, and drains. An educational physics sandbox — not a flood-risk forecast.`;
   const boot = `<script>window.__FLOOD_PLACE__=${JSON.stringify({ lat: p.lat, lon: p.lon, label: p.label, slug: p.slug })}</script>`;
@@ -62,4 +62,18 @@ for (const p of PLACES) {
   fs.writeFileSync(path.join(dir, 'index.html'), pageFor(p));
   n += 1;
 }
-console.log(`build-place-pages: generated ${n} per-place SEO pages (og:image still shared — per-place render is a follow-up)`);
+
+// Register the routes in the sitemap (the SPA links to them too, but the sitemap is the
+// primary discovery path) — driven by the same PLACES array, idempotent across re-runs.
+const smPath = path.join(DIST, 'sitemap.xml');
+if (fs.existsSync(smPath)) {
+  let sm = fs.readFileSync(smPath, 'utf8');
+  if (!sm.includes('/flood/')) {
+    const entries = PLACES.map((p) =>
+      `  <url>\n    <loc>${HOST}/flood/${p.slug}/</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`,
+    ).join('\n');
+    sm = sm.replace('</urlset>', `${entries}\n</urlset>`);
+    fs.writeFileSync(smPath, sm);
+  }
+}
+console.log(`build-place-pages: generated ${n} per-place SEO pages + sitemap entries (og:image still shared — per-place render is a follow-up)`);
