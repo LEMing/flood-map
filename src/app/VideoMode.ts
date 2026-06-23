@@ -219,6 +219,11 @@ export class VideoMode {
     download.href = url;
     download.download = `flood-${slug(this.host.placeName())}.${this.outputExt}`;
 
+    const file = new File([blob], `floodlab-${slug(this.host.placeName())}.${this.outputExt}`, { type: blob.type });
+    const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+    const share = nav.canShare?.({ files: [file] }) ? button('vm-btn vm-btn-ghost', t('video.share')) : undefined;
+    share?.addEventListener('click', () => void this.shareVideo(file));
+
     const newAddress = button('vm-btn vm-btn-ghost', t('video.newAddress'));
     newAddress.addEventListener('click', () => this.goHome());
     const realtime = button('vm-btn vm-btn-ghost', t('video.realtime'));
@@ -232,9 +237,16 @@ export class VideoMode {
       this.host.replay();
     });
 
-    actions.append(download, newAddress, realtime, again);
+    actions.append(download, ...(share ? [share] : []), newAddress, realtime, again);
     panel.append(heading, video, actions);
     this.overlay.appendChild(panel);
+  }
+
+  /** Native file share of the recorded clip (Web Share API L2) — the export's growth loop. */
+  private async shareVideo(file: File): Promise<void> {
+    try {
+      await navigator.share({ files: [file], title: `${this.host.placeName()} — Floodlab` });
+    } catch { /* user cancelled or the share sheet rejected the file */ }
   }
 
   private dispose(): void {

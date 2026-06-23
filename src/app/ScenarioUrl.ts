@@ -65,7 +65,7 @@ export class ScenarioUrl {
   private async share(): Promise<void> {
     this.sync(); // capture the exact current scene before reading the URL
     const url = window.location.href;
-    const title = `${this.placeName()} — Flood Map`;
+    const title = `${this.placeName()} — Floodlab`;
     if (navigator.share) {
       try { await navigator.share({ title, url }); } catch { /* user cancelled */ }
       return;

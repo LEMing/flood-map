@@ -392,6 +392,11 @@
       #game-dock #btn-slower, #game-dock #btn-faster { width: 40px; height: 40px; font-size: 15px; }
       #game-dock #btn-slower.off { opacity: .35; pointer-events: none; }
       #game-dock #btn-faster.off { opacity: .35; pointer-events: none; }
+      /* Visually-hidden, screen-reader-only (the storm-phase glyph is decorative; this carries the words). */
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+      }
 
       @media (max-width: 767px) {
         body.game-started::after {
@@ -930,14 +935,22 @@
       }
       @keyframes lp-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
-      .lp-brand { display: flex; flex-direction: column; gap: 7px; filter: drop-shadow(0 2px 16px rgba(0,0,0,.5)); }
-      .lp-headline {
-        margin: 0; font-size: clamp(27px, 6vw, 36px); line-height: 1.07; font-weight: 820; letter-spacing: 0;
-        text-wrap: balance;
-        background: linear-gradient(177deg, #ffffff 0%, #d4e4f7 100%);
-        -webkit-background-clip: text; background-clip: text; color: transparent;
+      /* The card no longer competes with the hero <h1>: a small brand eyebrow leads straight into search. */
+      .lp-eyebrow {
+        margin: 0 0 2px; font-size: 12px; font-weight: 800; letter-spacing: .16em;
+        text-transform: uppercase; color: var(--accent-text, #8fb6ff);
       }
-      .lp-tagline { margin: 0; font-size: 14.5px; line-height: 1.45; color: rgba(220,231,245,.86); }
+      /* Conversion benefit line + a persistent honesty chip (links to the FAQ) under the CTAs. */
+      .lp-benefits { margin: 0; font-size: 12.5px; font-weight: 600; color: rgba(224,235,247,.92); }
+      .lp-edu-chip {
+        display: inline-flex; align-self: flex-start; align-items: center; gap: 6px;
+        margin: -6px 0 0; padding: 4px 10px; border-radius: 999px;
+        font-size: 11.5px; font-weight: 600; line-height: 1.3; text-decoration: none;
+        color: rgba(226,236,248,.92); background: rgba(255,255,255,.06); border: 1px solid var(--panel-border);
+        transition: background .15s ease, border-color .15s ease;
+      }
+      .lp-edu-chip::before { content: "ⓘ"; opacity: .85; }
+      .lp-edu-chip:hover { background: rgba(255,255,255,.1); border-color: var(--panel-border-strong); }
       /* Inline code/math chips in the landing prose (kept out of the i18n value as bare <code>). */
       .lp-shell code { border-radius: 4px; background: rgba(103,232,249,.1); padding: 0 4px; color: #cffafe; }
 
@@ -1046,7 +1059,6 @@
           gap: 15px; animation: lp-rise-m .42s cubic-bezier(.2,.7,.2,1) both;
         }
         @keyframes lp-rise-m { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-        .lp-headline { font-size: 22px; }
         .lp-input { height: 50px; }
         .lp-btn { min-height: 52px; font-size: 15px; }
       }
@@ -1179,10 +1191,7 @@
             </div>
 
             <section class="lp-card" aria-labelledby="landing-title">
-              <div class="lp-brand">
-                <h2 id="landing-title" class="lp-headline">Run a storm on real terrain</h2>
-                <p class="lp-tagline">Enter a place to build the terrain, prefetch open data, and start a live flood simulation or cinematic video.</p>
-              </div>
+              <p id="landing-title" class="lp-eyebrow">Floodlab</p>
               <div class="lp-search">
                 <input id="landing-input" class="lp-input" type="text" autocomplete="off" spellcheck="false" placeholder="Address, place, or &quot;lat, lon&quot;…" dir="auto" />
                 <div id="landing-ac" class="lp-ac"></div>
@@ -1196,12 +1205,11 @@
               </details>
               <div id="landing-facts" class="lp-facts" aria-live="polite"></div>
               <div id="landing-cta" class="lp-cta">
-                <button id="landing-realtime" class="lp-btn lp-btn-primary" type="button" disabled>Realtime ▶</button>
-                <button id="landing-video" class="lp-btn lp-btn-ghost" type="button" disabled>Make video 🎬</button>
+                <button id="landing-realtime" class="lp-btn lp-btn-primary" type="button" disabled>Run the flood ▶</button>
+                <button id="landing-video" class="lp-btn lp-btn-ghost" type="button" disabled>Make a shareable video 🎬</button>
               </div>
-              <p data-i18n="landing.card.disclaimer" class="text-xs leading-5 text-slate-400">
-                Educational visualization only: indicative flood depths, not an engineering flood-risk assessment.
-              </p>
+              <p data-i18n="landing.card.benefits" class="lp-benefits">Free · no account · runs in your browser</p>
+              <a data-i18n="landing.card.disclaimer" href="#floodlab-faq" class="lp-edu-chip">Educational sandbox — not a flood-risk forecast</a>
             </section>
           </div>
         </section>
@@ -1367,6 +1375,7 @@
       <div class="sub"></div>
     </div>
     <div id="game-dock" hidden>
+      <span id="dock-status" class="sr-only" aria-live="polite" aria-atomic="true"></span>
       <div id="dock-readout"><span id="dock-phase" aria-hidden="true">🌧</span><span id="dock-time">0 s</span><span id="dock-speed">180×</span></div>
       <button id="btn-slower" type="button" aria-label="Slower">⏪</button>
       <button id="btn-pause" type="button" aria-label="Pause">⏸</button>

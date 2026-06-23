@@ -9,7 +9,7 @@ export const en: Record<string, string> = {
   'autocomplete.useCoords': 'Use coordinates {coords}',
 
   // Panel + folders
-  'panel.title': 'Flood Map',
+  'panel.title': 'Floodlab',
   'sim.title': 'Simulation',
   'rain.title': 'Rain',
   'urban.title': 'Urban model',
@@ -24,6 +24,10 @@ export const en: Record<string, string> = {
   'sim.pause': 'Pause ⏸',
   'sim.step': 'Step ⏭',
   'sim.reset': 'Reset ⟳',
+  'sim.slower': 'Slower',
+  'sim.faster': 'Faster',
+  'sim.raining': 'Raining',
+  'sim.draining': 'Draining',
   'sim.dump': 'Dump water 💧 (flash flood)',
   'sim.fill': 'Fill to level 🌊 (one-shot)',
   'sim.dumpDepth': 'dump depth (m)',
@@ -211,8 +215,8 @@ export const en: Record<string, string> = {
   // Landing page
   'landing.headline': 'Run a storm on real terrain',
   'landing.tagline': 'Enter a place to build the terrain, prefetch open data, and start a live flood simulation or cinematic video.',
-  'landing.cta.realtime': 'Realtime ▶',
-  'landing.cta.video': 'Make video 🎬',
+  'landing.cta.realtime': 'Run the flood ▶',
+  'landing.cta.video': 'Make a shareable video 🎬',
   'landing.opt.size': 'Map size',
   'landing.opt.detail': 'Detail',
   'landing.opt.hint': 'Larger area or finer detail takes longer to build.',
@@ -233,7 +237,8 @@ export const en: Record<string, string> = {
   'landing.chip.massbalance': 'Mass balance readout',
   'landing.demo.try': 'Try {place}',
   'landing.card.settings': 'Simulation settings',
-  'landing.card.disclaimer': 'Educational visualization only: indicative flood depths, not an engineering flood-risk assessment.',
+  'landing.card.benefits': 'Free · no account · runs in your browser',
+  'landing.card.disclaimer': 'Educational sandbox — not a flood-risk forecast',
 
   'landing.computes.eyebrow': 'What Floodlab actually computes',
   'landing.computes.title': 'Not a flood-risk report. A transparent physics sandbox.',
@@ -302,6 +307,7 @@ export const en: Record<string, string> = {
   'video.recording': 'Recording video… {pct}%',
   'video.title': 'Your flood video',
   'video.download': 'Download ⬇',
+  'video.share': 'Share 🔗',
   'video.again': 'Start over ↻',
   'video.realtime': 'Open realtime ▶',
   'video.newAddress': 'New address 📍',

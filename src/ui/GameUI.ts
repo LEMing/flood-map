@@ -28,9 +28,12 @@ export class GameUI {
   private readonly phaseEl = document.getElementById('dock-phase') as HTMLElement;
   private readonly timeEl = document.getElementById('dock-time') as HTMLElement;
   private readonly speedEl = document.getElementById('dock-speed') as HTMLElement;
+  private readonly statusEl = document.getElementById('dock-status') as HTMLElement;
   private started = false;
   private running = false;
   private ready = false;
+  private raining = false;
+  private lastAnnounce = '';
   private speedIdx = SPEEDS.indexOf(180); // default time scale (matches DEFAULT_PARAMS.timeScale)
 
   constructor(private readonly cb: GameUICallbacks) {
@@ -48,20 +51,38 @@ export class GameUI {
    *  is still falling, 💧 once it has stopped and the water is draining away). */
   setTime(time: string, raining: boolean): void {
     this.timeEl.textContent = time;
+    this.raining = raining;
     this.phaseEl.textContent = raining ? '🌧' : '💧';
     this.phaseEl.classList.toggle('raining', raining);
+    this.announce();
+  }
+
+  /** Announce phase + speed to assistive tech via the visually-hidden live region — only
+   *  when one of them actually changes, so it doesn't fire on every elapsed-time tick. */
+  private announce(): void {
+    const msg = `${t(this.raining ? 'sim.raining' : 'sim.draining')} · ${SPEEDS[this.speedIdx]}×`;
+    if (msg === this.lastAnnounce) return;
+    this.lastAnnounce = msg;
+    this.statusEl.textContent = msg;
   }
 
   private stepSpeed(delta: number): void {
     this.speedIdx = Math.max(0, Math.min(SPEEDS.length - 1, this.speedIdx + delta));
     this.cb.onSpeedSet(SPEEDS[this.speedIdx]);
     this.renderSpeed();
+    this.announce();
   }
 
   private renderSpeed(): void {
     this.speedEl.textContent = `${SPEEDS[this.speedIdx]}×`;
-    this.slowerBtn.classList.toggle('off', this.speedIdx === 0);
-    this.fasterBtn.classList.toggle('off', this.speedIdx === SPEEDS.length - 1);
+    const atFloor = this.speedIdx === 0;
+    const atCeil = this.speedIdx === SPEEDS.length - 1;
+    this.slowerBtn.classList.toggle('off', atFloor);
+    this.fasterBtn.classList.toggle('off', atCeil);
+    this.slowerBtn.setAttribute('aria-disabled', String(atFloor));
+    this.fasterBtn.setAttribute('aria-disabled', String(atCeil));
+    this.slowerBtn.setAttribute('aria-label', t('sim.slower'));
+    this.fasterBtn.setAttribute('aria-label', t('sim.faster'));
   }
 
   /** Enable the launch button once the world has actually built — pressing Play
@@ -101,6 +122,8 @@ export class GameUI {
     this.startLabel.textContent = t('sim.play');
     this.restartBtn.title = t('sim.reset');
     this.restartBtn.setAttribute('aria-label', t('sim.reset'));
+    this.lastAnnounce = ''; // re-announce phase/speed in the new language
+    this.renderSpeed(); // re-localize slower/faster aria-labels
     this.setRunning(this.running);
   }
 }

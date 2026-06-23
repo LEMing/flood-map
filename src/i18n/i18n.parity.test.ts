@@ -9,7 +9,7 @@ import { en } from './locales/en';
 
 // Values that are legitimately identical to English in many languages
 // (acronyms / symbols). Anything else counts toward translation drift.
-const IDENTICAL_OK = new Set(['stats.fps']);
+const IDENTICAL_OK = new Set(['stats.fps', 'panel.title']);
 
 // Tolerance for genuine cognates (e.g. "water" in Dutch/Afrikaans, "vertical"
 // in Romance languages). Wholesale untranslated blocks are far above this.

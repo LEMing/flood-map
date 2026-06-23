@@ -96,10 +96,6 @@ export class Landing {
     this.bindI18n();
     this.playHeroVideo();
 
-    const headline = this.root.querySelector<HTMLElement>('#landing-title');
-    const tagline = this.root.querySelector<HTMLElement>('.lp-tagline');
-    if (headline) headline.textContent = t('landing.headline');
-    if (tagline) tagline.textContent = t('landing.tagline');
     this.input.placeholder = t('input.placeholder');
     this.btnRealtime.textContent = t('landing.cta.realtime');
     this.btnVideo.textContent = t('landing.cta.video');
