@@ -11,6 +11,7 @@ import { el, button } from '../ui/dom';
 import { renderPreparing, renderFacts, renderFactError } from './landingFacts';
 import { wireDemoButtons } from './demoButtons';
 import { prefersLowData } from './lowData';
+import { MiniFlood } from './MiniFlood';
 
 export interface EnterOptions { cinematic?: boolean; km?: number; grid?: number }
 
@@ -59,7 +60,7 @@ export class Landing {
   private debounce?: number;
   private abort?: AbortController;
   private bgToken = 0; private selectToken = 0;
-  private km: number; private grid: number;
+  private km: number; private grid: number; private lab?: MiniFlood;
 
   constructor(cb: LandingCallbacks) {
     this.cb = cb;
@@ -68,8 +69,8 @@ export class Landing {
     this.grid = url.grid && GRID_OPTIONS.includes(url.grid) ? url.grid : DEFAULT_PARAMS.gridResolution;
     this.root = document.getElementById('landing') as HTMLElement;
 
-    this.render();
-    this.wireCard();
+    this.render(); this.wireCard();
+    const labRoot = document.getElementById('lp-lab'); if (labRoot) this.lab = new MiniFlood(labRoot);
 
     // Close the autocomplete on any outside click (added once; reads live refs).
     document.addEventListener('click', (e) => {
@@ -92,7 +93,7 @@ export class Landing {
 
   /** Rebuild the card in the current language; keeps the chosen place + scale. */
   retranslate(): void {
-    this.render();
+    this.render(); this.lab?.refresh();
     if (this.selected) this.select(this.selected);
   }
 
