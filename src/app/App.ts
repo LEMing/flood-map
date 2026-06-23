@@ -131,7 +131,7 @@ export class App {
     setupChromeToggle();
 
     this.simDriver = new SimDriver(this.params, this.stats, {
-      refreshPanel: () => { this.panel.refresh(); this.gameUI.setTime(this.stats.simTime); },
+      refreshPanel: () => { this.panel.refresh(); this.gameUI.setTime(this.stats.simTime, this.stats.raining); },
       syncTextures: () => this.syncTextures(),
       fps: () => this.fpsEma,
     });

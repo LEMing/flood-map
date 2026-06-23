@@ -242,7 +242,7 @@ export class SimDriver {
     const stormT = this.simTime * this.params.stormSpeed;
     const baseMmHr = stormIntensityMmHr(this.params.stormType, stormT, this.params.intensityMmPerHr);
     const intensityMmHr = this.params.raining ? baseMmHr * this.params.rainMultiplier : 0;
-    this.sim.setRainRateMmPerHr(intensityMmHr);
+    this.sim.setRainRateMmPerHr(intensityMmHr); this.stats.raining = intensityMmHr > 0;
 
     const g = Math.max(0.1, this.params.gravity);
     const cellSize = this.sim.cellSize;

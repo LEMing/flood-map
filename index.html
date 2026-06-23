@@ -383,6 +383,9 @@
         backdrop-filter: blur(var(--pill-blur)); -webkit-backdrop-filter: blur(var(--pill-blur));
         font-variant-numeric: tabular-nums; box-shadow: 0 10px 26px rgba(0,0,0,.4);
       }
+      #dock-phase { font-size: 13px; line-height: 1; align-self: center; opacity: .85; }
+      #dock-phase.raining { animation: dock-rain-pulse 1.6s ease-in-out infinite; }
+      @keyframes dock-rain-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
       #dock-time { font-size: 14px; font-weight: 700; color: #eef4fb; }
       #dock-speed { font-size: 12px; font-weight: 600; color: var(--accent-text, #8fb6ff); }
       /* Smaller, recessed speed buttons flanking the prominent pause button. */
@@ -1364,7 +1367,7 @@
       <div class="sub"></div>
     </div>
     <div id="game-dock" hidden>
-      <div id="dock-readout"><span id="dock-time">0 s</span><span id="dock-speed">180×</span></div>
+      <div id="dock-readout"><span id="dock-phase" aria-hidden="true">🌧</span><span id="dock-time">0 s</span><span id="dock-speed">180×</span></div>
       <button id="btn-slower" type="button" aria-label="Slower">⏪</button>
       <button id="btn-pause" type="button" aria-label="Pause">⏸</button>
       <button id="btn-faster" type="button" aria-label="Faster">⏩</button>

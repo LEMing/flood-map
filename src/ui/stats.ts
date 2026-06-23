@@ -8,6 +8,7 @@ export interface StatsData {
   maxDepth: string;
   fps: string;
   timelineStatus: string;
+  raining: boolean;
 }
 
 export const INITIAL_STATS: StatsData = {
@@ -20,6 +21,7 @@ export const INITIAL_STATS: StatsData = {
   maxDepth: '~0.0 m',
   fps: '0',
   timelineStatus: 'live',
+  raining: false,
 };
 
 export function formatDuration(seconds: number): string {

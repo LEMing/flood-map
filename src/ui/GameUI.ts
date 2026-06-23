@@ -25,6 +25,7 @@ export class GameUI {
   private readonly restartBtn = document.getElementById('btn-restart') as HTMLButtonElement;
   private readonly slowerBtn = document.getElementById('btn-slower') as HTMLButtonElement;
   private readonly fasterBtn = document.getElementById('btn-faster') as HTMLButtonElement;
+  private readonly phaseEl = document.getElementById('dock-phase') as HTMLElement;
   private readonly timeEl = document.getElementById('dock-time') as HTMLElement;
   private readonly speedEl = document.getElementById('dock-speed') as HTMLElement;
   private started = false;
@@ -43,9 +44,12 @@ export class GameUI {
     this.retranslate();
   }
 
-  /** Tick the elapsed-sim-time readout (the app pushes this each stats refresh). */
-  setTime(time: string): void {
+  /** Tick the elapsed-sim-time readout + storm-phase glyph (🌧 while the rain
+   *  is still falling, 💧 once it has stopped and the water is draining away). */
+  setTime(time: string, raining: boolean): void {
     this.timeEl.textContent = time;
+    this.phaseEl.textContent = raining ? '🌧' : '💧';
+    this.phaseEl.classList.toggle('raining', raining);
   }
 
   private stepSpeed(delta: number): void {
