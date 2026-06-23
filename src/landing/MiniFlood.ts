@@ -1,13 +1,28 @@
-import { type LabScene } from './labShared';
-import { CrossScene } from './CrossScene';
-import { CityScene } from './CityScene';
+import { type DrawCtx } from './labShared';
+import { LabWorld } from './LabWorld';
+import { TopView } from './TopView';
+import { SectionView } from './SectionView';
 
-// Controller for the landing's interactive physics lab: owns the canvas, the controls
-// and the rAF loop, and delegates step()/draw() to whichever scene is active — the 1D
-// cross-section (η = z + h principle) or the 2D top-down city (water in the streets).
-// Everything is CPU + Canvas 2D, runs only while on screen, and respects reduced-motion.
-const BASE_RATE = 110; // sim-seconds per real second at 1×
-const SPEED_MULT = [1, 4, 16]; // the Faster button steps logarithmically
+// Controller for the landing's interactive physics lab. Owns ONE shared LabWorld and two
+// pure renderers (top-down map, side cross-section), the controls, and the rAF loop.
+// The fill→drain "breathing" is a wall-clock 4-phase FSM (NOT tied to physics speed), so
+// it is slow and dwells on the flooded state instead of jittering. CPU + Canvas 2D only,
+// runs on screen, reduced-motion aware.
+const BASE_RATE = 28; // sim-seconds per real second at 1× — gentle, watchable
+const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not the breathing period
+const RAIN_MS = 0.0015;
+const DRAIN_WET = 0.0004; // low loss while raining
+const DRAIN_DRY = 0.0016; // tail loss during recession
+
+// state, seconds, rain (m/s), drain (m/s), freeze. `freeze` pauses the whole sim so the
+// flooded streets hold steady — without it the water just redistributes downhill and the
+// flood "fades" even with no source/sink.
+const PHASES = [
+  { dur: 6, rain: RAIN_MS, drain: DRAIN_WET, freeze: false }, // RAIN_FILL — streets + plaza fill
+  { dur: 8, rain: 0, drain: 0, freeze: true }, // DWELL_FLOOD — hold the flood (the key fix)
+  { dur: 5, rain: 0, drain: DRAIN_DRY, freeze: false }, // DRAIN — recede
+  { dur: 2, rain: 0, drain: DRAIN_DRY, freeze: false }, // DWELL_DRY — brief dry beat
+];
 
 export class MiniFlood {
   private readonly canvas: HTMLCanvasElement;
@@ -17,15 +32,20 @@ export class MiniFlood {
   private readonly speedEl: HTMLElement | null;
   private readonly rainBtn: HTMLButtonElement | null;
   private readonly viewBtns: HTMLButtonElement[];
-  private readonly cross = new CrossScene();
-  private readonly city = new CityScene();
-  private active: LabScene;
-  private raining: boolean;
+  private readonly world = new LabWorld();
+  private readonly topView = new TopView(this.world);
+  private readonly section = new SectionView(this.world);
+  private view: 'top' | 'cross' = 'cross';
   private auto: boolean;
-  private speedIdx = 0;
+  private manualRain = false;
   private phase = 0;
+  private phaseT = 0;
+  private anim = 0;
+  private speedIdx = 0;
+  private curRaining = false;
   private running = false;
   private onScreen = false;
+  private lastT = 0;
   private raf = 0;
   private readonly reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly io: IntersectionObserver;
@@ -38,15 +58,12 @@ export class MiniFlood {
     this.pondedEl = root.querySelector('[data-lab="ponded"]');
     this.speedEl = root.querySelector('[data-lab="speed"]');
     this.viewBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-lab-view]'));
-    this.active = this.cross;
     this.auto = !this.reduced;
-    this.raining = !this.reduced;
-    this.setRain(this.raining);
     this.renderSpeed();
     this.rainBtn?.addEventListener('click', () => this.toggleRain());
     root.querySelector('[data-lab-act="faster"]')?.addEventListener('click', () => this.cycleSpeed());
     root.querySelector('[data-lab-act="reset"]')?.addEventListener('click', () => this.reset());
-    this.viewBtns.forEach((b) => b.addEventListener('click', () => this.setView(b.dataset.labView ?? 'cross')));
+    this.viewBtns.forEach((b) => b.addEventListener('click', () => this.setView(b.dataset.labView === 'top' ? 'top' : 'cross')));
     addEventListener('resize', () => this.resize());
     document.addEventListener('visibilitychange', () => this.sync());
     this.io = new IntersectionObserver(
@@ -63,29 +80,17 @@ export class MiniFlood {
     this.io.disconnect();
   }
 
-  refresh(): void {
-    this.rainBtn?.classList.toggle('on', this.raining);
-  }
+  refresh(): void { this.rainBtn?.classList.toggle('on', this.curRaining); }
 
-  private setView(view: string): void {
-    this.active = view === 'top' ? this.city : this.cross;
+  private setView(view: 'top' | 'cross'): void {
+    this.view = view; // do NOT reset the world — the water persists, reinforcing "same place"
     this.viewBtns.forEach((b) => b.classList.toggle('on', b.dataset.labView === view));
-    this.active.reset();
-    this.auto = !this.reduced;
-    this.setRain(!this.reduced);
-    this.draw();
-    this.emitStats();
-  }
-
-  private setRain(on: boolean): void {
-    this.raining = on;
-    this.rainBtn?.classList.toggle('on', on);
+    this.paint();
   }
 
   private toggleRain(): void {
     this.auto = false;
-    this.setRain(!this.raining);
-    this.sync();
+    this.manualRain = !this.manualRain;
   }
 
   private cycleSpeed(): void {
@@ -98,10 +103,12 @@ export class MiniFlood {
   }
 
   private reset(): void {
-    this.active.reset();
+    this.world.reset();
     this.auto = !this.reduced;
-    this.setRain(!this.reduced);
-    this.draw();
+    this.manualRain = false;
+    this.phase = 0;
+    this.phaseT = 0;
+    this.paint();
     this.emitStats();
   }
 
@@ -109,6 +116,7 @@ export class MiniFlood {
     const shouldRun = this.onScreen && !document.hidden;
     if (shouldRun && !this.running) {
       this.running = true;
+      this.lastT = 0;
       this.raf = requestAnimationFrame(this.frame);
     } else if (!shouldRun && this.running) {
       this.running = false;
@@ -116,22 +124,33 @@ export class MiniFlood {
     }
   }
 
-  private readonly frame = (): void => {
-    if (!this.running) return;
-    this.active.step((1 / 60) * BASE_RATE * SPEED_MULT[this.speedIdx], this.raining);
-    if (this.auto) {
-      if (this.raining && this.active.peaked()) this.setRain(false);
-      else if (!this.raining && this.active.drained()) this.setRain(true);
+  /** This frame's rain/drain/freeze from the wall-clock FSM (auto) or the manual toggle. */
+  private tick(dtReal: number): { rain: number; drain: number; freeze: boolean } {
+    if (!this.auto) {
+      return { rain: this.manualRain ? RAIN_MS : 0, drain: this.manualRain ? DRAIN_WET : DRAIN_DRY, freeze: false };
     }
-    this.phase = (this.phase + 0.06) % 1;
-    this.draw();
+    this.phaseT += dtReal;
+    if (this.phaseT >= PHASES[this.phase].dur) { this.phase = (this.phase + 1) % PHASES.length; this.phaseT = 0; }
+    return PHASES[this.phase];
+  }
+
+  private readonly frame = (t: number): void => {
+    if (!this.running) return;
+    const dtReal = this.lastT ? Math.min(0.1, (t - this.lastT) / 1000) : 1 / 60;
+    this.lastT = t;
+    const cfg = this.tick(dtReal);
+    this.curRaining = cfg.rain > 0;
+    this.rainBtn?.classList.toggle('on', this.curRaining);
+    if (!cfg.freeze) this.world.step((1 / 60) * BASE_RATE * SPEED_MULT[this.speedIdx], cfg.rain, cfg.drain);
+    this.anim = (this.anim + 0.06) % 1;
+    this.paint();
     this.emitStats();
     this.raf = requestAnimationFrame(this.frame);
   };
 
   private emitStats(): void {
-    if (this.depthEl) this.depthEl.textContent = this.active.maxDepth.toFixed(1);
-    if (this.pondedEl) this.pondedEl.textContent = String(Math.round(this.active.pondedFrac * 100));
+    if (this.depthEl) this.depthEl.textContent = this.world.maxDepth.toFixed(1);
+    if (this.pondedEl) this.pondedEl.textContent = String(Math.round(this.world.pondedFrac * 100));
   }
 
   private resize(): void {
@@ -141,12 +160,17 @@ export class MiniFlood {
     this.canvas.width = Math.round(w * dpr);
     this.canvas.height = Math.round(hpx * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.draw();
+    this.paint();
   }
 
-  private draw(): void {
-    const w = this.canvas.clientWidth || 600;
-    const h = this.canvas.clientHeight || 240;
-    this.active.draw(this.ctx, { w, h, phase: this.phase, raining: this.raining });
+  private paint(): void {
+    const view: DrawCtx = {
+      w: this.canvas.clientWidth || 600,
+      h: this.canvas.clientHeight || 240,
+      phase: this.anim,
+      raining: this.curRaining,
+    };
+    if (this.view === 'top') this.topView.draw(this.ctx, view);
+    else this.section.draw(this.ctx, view);
   }
 }
