@@ -13,6 +13,8 @@ const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not
 const RAIN_MS = 0.0015;
 const DRAIN_WET = 0.0004; // low loss while raining
 const DRAIN_DRY = 0.0016; // tail loss during recession
+const TARGET_DEPTH = 5; // m — once the basin reaches this, the rain stops and the sim FREEZES, so the
+//                          flood holds steady (deep + visible) and never overflows — at any speed
 
 // state, seconds, rain (m/s), drain (m/s), freeze. `freeze` pauses the whole sim so the
 // flooded streets hold steady — without it the water just redistributes downhill and the
@@ -124,14 +126,21 @@ export class MiniFlood {
     }
   }
 
-  /** This frame's rain/drain/freeze from the wall-clock FSM (auto) or the manual toggle. */
+  /** This frame's rain/drain/freeze from the wall-clock FSM (auto) or the manual toggle.
+   *  Rain is never endless: the river channel drains flood water off-map, so even held
+   *  rain settles at a steady level (see LabWorld CHANNEL_DRAIN) instead of overflowing. */
   private tick(dtReal: number): { rain: number; drain: number; freeze: boolean } {
+    let cfg: { rain: number; drain: number; freeze: boolean };
     if (!this.auto) {
-      return { rain: this.manualRain ? RAIN_MS : 0, drain: this.manualRain ? DRAIN_WET : DRAIN_DRY, freeze: false };
+      cfg = { rain: this.manualRain ? RAIN_MS : 0, drain: this.manualRain ? DRAIN_WET : DRAIN_DRY, freeze: false };
+    } else {
+      this.phaseT += dtReal;
+      if (this.phaseT >= PHASES[this.phase].dur) { this.phase = (this.phase + 1) % PHASES.length; this.phaseT = 0; }
+      cfg = PHASES[this.phase];
     }
-    this.phaseT += dtReal;
-    if (this.phaseT >= PHASES[this.phase].dur) { this.phase = (this.phase + 1) % PHASES.length; this.phaseT = 0; }
-    return PHASES[this.phase];
+    // Once the basin is full, freeze instead of raining on — holds a deep flood, never overflows.
+    if (cfg.rain > 0 && this.world.maxDepth >= TARGET_DEPTH) return { rain: 0, drain: 0, freeze: true };
+    return cfg;
   }
 
   private readonly frame = (t: number): void => {
@@ -140,7 +149,7 @@ export class MiniFlood {
     this.lastT = t;
     const cfg = this.tick(dtReal);
     this.curRaining = cfg.rain > 0;
-    this.rainBtn?.classList.toggle('on', this.curRaining);
+    this.rainBtn?.classList.toggle('on', this.auto ? this.curRaining : this.manualRain);
     if (!cfg.freeze) this.world.step((1 / 60) * BASE_RATE * SPEED_MULT[this.speedIdx], cfg.rain, cfg.drain);
     this.anim = (this.anim + 0.06) % 1;
     this.paint();

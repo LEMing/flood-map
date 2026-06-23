@@ -57,16 +57,16 @@ export class LabWorld {
       for (let i = 0; i < W; i++) {
         const u = i / (W - 1);
         const v = j / (H - 1);
-        const ridges = 20 * Math.exp(-(((u - 0.12) / 0.12) ** 2)) + 17 * Math.exp(-(((u - 0.88) / 0.12) ** 2));
-        const floor = 11 - 3 * u + 2.2 * (v - 0.5);
+        const ridges = 11 * Math.exp(-(((u - 0.12) / 0.12) ** 2)) + 9 * Math.exp(-(((u - 0.88) / 0.12) ** 2));
+        const floor = 5 - 2 * u + 1.5 * (v - 0.5);
         const dr = v - thalweg(u);
-        const river = 5 * Math.exp(-(dr * dr) / (2 * 0.045 * 0.045));
+        const river = 3.5 * Math.exp(-(dr * dr) / (2 * 0.045 * 0.045));
         const di = i - PLAZA_U * (W - 1);
         const dj = j - PLAZA_V * (H - 1);
-        const plaza = 4.5 * Math.exp(-(di * di + dj * dj) / (2 * PLAZA_R * PLAZA_R));
+        const plaza = 4 * Math.exp(-(di * di + dj * dj) / (2 * PLAZA_R * PLAZA_R));
         const zc = ridges + floor - river - plaza;
         this.z[j * W + i] = zc;
-        if (river > 2.6) this.chan[j * W + i] = 1;
+        if (river > 1.8) this.chan[j * W + i] = 1;
         lo = Math.min(lo, zc);
         hi = Math.max(hi, zc);
       }

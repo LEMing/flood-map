@@ -5,7 +5,7 @@ import { LabWorld, W, SLICE_ROW } from './LabWorld';
 // (through the plaza basin). Shows the water surface η = z + h finding the low ground,
 // with buildings as silhouette columns so you see water standing in the streets between
 // them. Reads the shared z/h, so the section and the map agree frame-for-frame.
-const ROOF = 16; // m — stylised constant building height in the profile
+const ROOF = 8; // m — stylised constant building height in the profile
 
 export class SectionView {
   private ox = 0;
