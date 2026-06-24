@@ -1092,19 +1092,6 @@
       .lp-lab-title { margin: 0 0 10px; font-size: clamp(24px, 3vw, 34px); font-weight: 900; line-height: 1.05; color: #eef4fb; text-wrap: balance; }
       .lp-lab-sub { margin: 0 0 18px; max-width: 42ch; font-size: 14px; line-height: 1.6; color: rgba(220,231,245,.84); }
       .lp-lab-sub code { border-radius: 4px; background: rgba(103,232,249,.1); padding: 0 5px; color: #cffafe; white-space: nowrap; }
-      .lp-lab-views {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
-        width: 100%; margin: 0 0 18px; padding: 4px; border-radius: 12px;
-        background: rgba(255,255,255,.055); border: 1px solid var(--panel-border);
-      }
-      .lp-lab-view {
-        min-height: 40px; padding: 0 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 780;
-        color: rgba(214,226,240,.78); background: transparent; border: 0;
-        transition: background .15s ease, color .15s ease; -webkit-tap-highlight-color: transparent;
-      }
-      .lp-lab-view:hover { color: #eef4fb; }
-      .lp-lab-view.on { background: var(--accent); color: #fff; box-shadow: 0 8px 18px rgba(47,111,235,.28); }
-      .lp-lab-view:focus-visible { outline: 2px solid rgba(119,164,255,.86); outline-offset: 2px; }
       .lp-lab-stage {
         position: relative; width: 100%; min-width: 0; align-self: stretch;
         padding: 8px; border-radius: 16px;
@@ -1426,10 +1413,6 @@
                 <p data-i18n="landing.lab.eyebrow" class="lp-lab-eyebrow">Physics you can poke</p>
                 <h2 data-i18n="landing.lab.title" class="lp-lab-title">Tap “rain” and watch water find the low ground.</h2>
                 <p data-i18n-html="landing.lab.sub" class="lp-lab-sub">The same local-inertial shallow-water math the full model runs. The water surface is <code>η = z + h</code> — ground plus depth — so flow follows the surface, pools in the low ground, then drains.</p>
-                <div class="lp-lab-views">
-                  <button type="button" class="lp-lab-view on" data-lab-view="cross"><span data-i18n="landing.lab.viewCross">Street section</span></button>
-                  <button type="button" class="lp-lab-view" data-lab-view="top"><span data-i18n="landing.lab.viewTop">Top-down · city</span></button>
-                </div>
                 <div class="lp-lab-bar">
                   <div class="lp-lab-stats">
                     <span class="lp-lab-stat">

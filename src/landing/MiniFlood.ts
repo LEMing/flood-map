@@ -1,13 +1,11 @@
 import { type DrawCtx } from './labShared';
 import { LabWorld } from './LabWorld';
 import { TopView } from './TopView';
-import { SectionView } from './SectionView';
 
-// Controller for the landing's interactive physics lab. Owns ONE shared LabWorld and two
-// pure renderers (top-down map, side cross-section), the controls, and the rAF loop.
-// The fill→drain "breathing" is a wall-clock 4-phase FSM (NOT tied to physics speed), so
-// it is slow and dwells on the flooded state instead of jittering. CPU + Canvas 2D only,
-// runs on screen, reduced-motion aware.
+// Controller for the landing's interactive physics lab. Owns ONE shared LabWorld and a single
+// top-down map renderer, the controls, and the rAF loop. The fill→drain "breathing" is a
+// wall-clock 4-phase FSM (NOT tied to physics speed), so it is slow and dwells on the flooded
+// state instead of jittering. CPU + Canvas 2D only, runs on screen, reduced-motion aware.
 const BASE_RATE = 28; // sim-seconds per real second at 1× — gentle, watchable
 const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not the breathing period
 const RAIN_MS = 0.0015;
@@ -33,11 +31,8 @@ export class MiniFlood {
   private readonly pondedEl: HTMLElement | null;
   private readonly speedEl: HTMLElement | null;
   private readonly rainBtn: HTMLButtonElement | null;
-  private readonly viewBtns: HTMLButtonElement[];
   private readonly world = new LabWorld();
   private readonly topView = new TopView(this.world);
-  private readonly section = new SectionView(this.world);
-  private view: 'top' | 'cross' = 'cross';
   private auto: boolean;
   private manualRain = false;
   private phase = 0;
@@ -60,13 +55,11 @@ export class MiniFlood {
     this.depthEl = root.querySelector('[data-lab="depth"]');
     this.pondedEl = root.querySelector('[data-lab="ponded"]');
     this.speedEl = root.querySelector('[data-lab="speed"]');
-    this.viewBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-lab-view]'));
     this.auto = !this.reduced;
     this.renderSpeed();
     this.rainBtn?.addEventListener('click', () => this.toggleRain());
     root.querySelector('[data-lab-act="faster"]')?.addEventListener('click', () => this.cycleSpeed());
     root.querySelector('[data-lab-act="reset"]')?.addEventListener('click', () => this.reset());
-    this.viewBtns.forEach((b) => b.addEventListener('click', () => this.setView(b.dataset.labView === 'top' ? 'top' : 'cross')));
     addEventListener('resize', () => this.resize());
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(this.canvas);
@@ -87,12 +80,6 @@ export class MiniFlood {
   }
 
   refresh(): void { this.rainBtn?.classList.toggle('on', this.curRaining); }
-
-  private setView(view: 'top' | 'cross'): void {
-    this.view = view; // do NOT reset the world — the water persists, reinforcing "same place"
-    this.viewBtns.forEach((b) => b.classList.toggle('on', b.dataset.labView === view));
-    this.paint();
-  }
 
   private toggleRain(): void {
     this.auto = false;
@@ -131,8 +118,8 @@ export class MiniFlood {
   }
 
   /** This frame's rain/drain/freeze from the wall-clock FSM (auto) or the manual toggle.
-   *  Rain is never endless: the river channel drains flood water off-map, so even held
-   *  rain settles at a steady level (see LabWorld CHANNEL_DRAIN) instead of overflowing. */
+   *  Rain is never endless: once the basin is ponded enough the sim FREEZES (see TARGET_PONDED),
+   *  so the flood holds at a steady level instead of overflowing the closed domain. */
   private tick(dtReal: number): { rain: number; drain: number; freeze: boolean } {
     let cfg: { rain: number; drain: number; freeze: boolean };
     if (!this.auto) {
@@ -183,7 +170,6 @@ export class MiniFlood {
       phase: this.anim,
       raining: this.curRaining,
     };
-    if (this.view === 'top') this.topView.draw(this.ctx, view);
-    else this.section.draw(this.ctx, view);
+    this.topView.draw(this.ctx, view);
   }
 }

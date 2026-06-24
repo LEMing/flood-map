@@ -1,11 +1,13 @@
 import { type DrawCtx } from './labShared';
-import { LabWorld, W, H, CS, SLICE_ROW } from './LabWorld';
-import { CITY_LABEL } from './labCityData';
+import { LabWorld, W, H, CS } from './LabWorld';
 
-// Top-down map renderer for the shared LabWorld. The static hillshade is computed once
-// (elevation never changes); per frame only the wet cells are re-tinted. Contain-fit with
-// nearest-neighbour keeps the 2 km city crisp and un-stretched in the canvas.
+// Minimal top-down map for the shared LabWorld. The land hillshade is baked once into an
+// offscreen W×H buffer; each frame the wet cells are re-tinted with a bright depth ramp and
+// the whole buffer is blitted with bilinear smoothing — so the flood reads as a clean, soft
+// lake, not a pixel grid. No buildings, no streets: just terrain + water finding the low ground.
 function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
+
+const DEPTH_MAX = 2.5; // m — depth at which the ramp reaches its deepest blue
 
 export class TopView {
   private readonly ocanvas = document.createElement('canvas');
@@ -25,9 +27,10 @@ export class TopView {
     this.buildBase();
   }
 
-  /** Static hypsometric hillshade: low channel/plaza dark teal → bench slate → ridges grey-green. */
+  /** Static, muted hillshade so the bright water is unmistakably the subject: dark slate in the
+   *  basins → pale sage on the ridges, with a soft directional light to read the relief. */
   private buildBase(): void {
-    const { z, zLo, zHi, chan } = this.world;
+    const { z, zLo, zHi } = this.world;
     const range = zHi - zLo + 1e-3;
     for (let j = 0; j < H; j++) {
       for (let i = 0; i < W; i++) {
@@ -37,17 +40,16 @@ export class TopView {
         const right = z[j * W + Math.min(W - 1, i + 1)];
         const up = z[Math.max(0, j - 1) * W + i];
         const down = z[Math.min(H - 1, j + 1) * W + i];
-        const shade = Math.max(-0.22, Math.min(0.24, (left - right) * 0.035 + (up - down) * 0.025));
+        const shade = Math.max(-0.24, Math.min(0.24, (left - right) * 0.035 + (up - down) * 0.026));
         let r: number;
         let g: number;
         let b: number;
-        if (t < 0.48) { const k = t / 0.48; r = lerp(25, 58, k); g = lerp(44, 76, k); b = lerp(54, 82, k); }
-        else { const k = (t - 0.48) / 0.52; r = lerp(58, 120, k); g = lerp(76, 127, k); b = lerp(82, 108, k); }
+        // basin slate → teal-green → warm khaki ridge: warm/green land so cool cyan water pops
+        if (t < 0.5) { const k = t / 0.5; r = lerp(28, 52, k); g = lerp(40, 78, k); b = lerp(48, 70, k); }
+        else { const k = (t - 0.5) / 0.5; r = lerp(52, 128, k); g = lerp(78, 124, k); b = lerp(70, 90, k); }
         const lit = 1 + shade;
-        r *= lit; g *= lit; b *= lit;
-        if (chan[c]) { r *= 0.55; g *= 0.76; b = Math.min(255, b * 1.18); } // keep the river ribbon legible
         const p = c * 4;
-        this.base[p] = r; this.base[p + 1] = g; this.base[p + 2] = b; this.base[p + 3] = 255;
+        this.base[p] = r * lit; this.base[p + 1] = g * lit; this.base[p + 2] = b * lit; this.base[p + 3] = 255;
       }
     }
   }
@@ -56,15 +58,17 @@ export class TopView {
     const { w, h: hpx, phase } = view;
     const d = this.work.data;
     d.set(this.base);
-    const { h, solid } = this.world;
+    const { h } = this.world;
     for (let c = 0; c < W * H; c++) {
-      if (solid[c] || h[c] <= 0.06) continue;
-      const a = Math.min(0.88, 0.24 + h[c] * 0.62);
-      const shimmer = 0.055 * Math.sin((c % W) * 0.42 + Math.floor(c / W) * 0.31 + phase * Math.PI * 2);
+      const depth = h[c];
+      if (depth <= 0.02) continue;
+      const t = Math.min(1, depth / DEPTH_MAX);
+      const a = Math.min(0.96, (0.62 + 0.34 * t) * Math.min(1, (depth - 0.02) / 0.1));
+      const shimmer = 0.05 * Math.sin((c % W) * 0.4 + Math.floor(c / W) * 0.3 + phase * Math.PI * 2);
       const p = c * 4;
-      d[p] = d[p] * (1 - a) + (38 + shimmer * 60) * a;
-      d[p + 1] = d[p + 1] * (1 - a) + (139 + shimmer * 70) * a;
-      d[p + 2] = d[p + 2] * (1 - a) + 232 * a;
+      d[p] = d[p] * (1 - a) + (lerp(150, 22, t) + shimmer * 70) * a;
+      d[p + 1] = d[p + 1] * (1 - a) + (lerp(236, 88, t) + shimmer * 60) * a;
+      d[p + 2] = d[p + 2] * (1 - a) + lerp(255, 210, t) * a;
     }
     this.octx.putImageData(this.work, 0, 0);
 
@@ -76,14 +80,11 @@ export class TopView {
     sky.addColorStop(1, '#0d1a24');
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, hpx);
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true; // bilinear upscale → soft shoreline, no pixel grid
     ctx.drawImage(this.ocanvas, 0, 0, W, H, this.ox, this.oy, W * this.scale, H * this.scale);
-    ctx.imageSmoothingEnabled = true;
 
     this.drawFloodGlow(ctx);
-    this.drawStreetGrid(ctx);
-    this.drawBuildings(ctx);
-    this.drawOverlays(ctx);
+    this.drawScaleBar(ctx);
     if (view.raining) this.drawRain(ctx, view);
   }
 
@@ -96,79 +97,20 @@ export class TopView {
     const j = Math.floor(this.world.deepestIdx / W);
     const x = this.sx(i + 0.5);
     const y = this.sy(j + 0.5);
-    const r = Math.min(120, (20 + this.world.maxDepth * 18) * this.scale);
+    const r = Math.min(140, (24 + this.world.maxDepth * 20) * this.scale);
     const glow = ctx.createRadialGradient(x, y, 0, x, y, r);
-    glow.addColorStop(0, 'rgba(95, 205, 255, .34)');
-    glow.addColorStop(0.45, 'rgba(59, 130, 246, .18)');
+    glow.addColorStop(0, 'rgba(120, 220, 255, .30)');
+    glow.addColorStop(0.5, 'rgba(59, 130, 246, .16)');
     glow.addColorStop(1, 'rgba(59, 130, 246, 0)');
     ctx.fillStyle = glow;
     ctx.fillRect(this.ox, this.oy, W * this.scale, H * this.scale);
   }
 
-  private drawStreetGrid(ctx: CanvasRenderingContext2D): void {
-    const x0 = Math.round(this.sx(W * 0.28)) + 0.5;
-    const x1 = Math.round(this.sx(W * 0.76)) + 0.5;
-    const y0 = Math.round(this.sy(H * 0.16)) + 0.5;
-    const y1 = Math.round(this.sy(H * 0.84)) + 0.5;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(x0, y0, x1 - x0, y1 - y0);
-    ctx.clip();
-    ctx.strokeStyle = 'rgba(213, 226, 241, .08)';
-    ctx.lineWidth = 1;
-    for (let i = Math.floor(W * 0.28); i <= W * 0.76; i += 8) {
-      const x = Math.round(this.sx(i)) + 0.5;
-      ctx.beginPath();
-      ctx.moveTo(x, y0);
-      ctx.lineTo(x, y1);
-      ctx.stroke();
-    }
-    for (let j = Math.floor(H * 0.16); j <= H * 0.84; j += 8) {
-      const y = Math.round(this.sy(j)) + 0.5;
-      ctx.beginPath();
-      ctx.moveTo(x0, y);
-      ctx.lineTo(x1, y);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  private drawBuildings(ctx: CanvasRenderingContext2D): void {
-    for (const bld of this.world.rects) {
-      const x = Math.round(this.ox + bld.x * this.scale);
-      const y = Math.round(this.oy + bld.y * this.scale);
-      const bw = Math.round(bld.w * this.scale);
-      const bh = Math.round(bld.h * this.scale);
-      const shadow = Math.max(1, Math.round(this.scale * 0.45));
-      ctx.fillStyle = 'rgba(0, 0, 0, .28)';
-      ctx.fillRect(x + shadow, y + shadow, bw, bh);
-      ctx.fillStyle = '#828c99';
-      ctx.fillRect(x, y, bw, bh);
-      ctx.fillStyle = 'rgba(255,255,255,.16)';
-      ctx.fillRect(x, y, bw, Math.max(1, bh * 0.18));
-      ctx.strokeStyle = 'rgba(7,12,18,.62)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x + 0.5, y + 0.5, bw - 1, bh - 1);
-    }
-  }
-
-  private drawOverlays(ctx: CanvasRenderingContext2D): void {
+  private drawScaleBar(ctx: CanvasRenderingContext2D): void {
     const { ox, oy, scale } = this;
-    // Dashed cut line — where the cross-section is taken.
-    ctx.strokeStyle = 'rgba(120,200,255,.7)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([6, 5]);
-    const sy = oy + SLICE_ROW * scale;
-    ctx.beginPath();
-    ctx.moveTo(ox, sy);
-    ctx.lineTo(ox + W * scale, sy);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Scale ruler along the bottom.
-    const ry = this.oy + H * scale - 10;
+    const ry = oy + H * scale - 12;
     ctx.strokeStyle = 'rgba(214,226,240,.5)';
-    ctx.fillStyle = 'rgba(214,226,240,.7)';
+    ctx.fillStyle = 'rgba(214,226,240,.72)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(ox, ry);
@@ -182,7 +124,7 @@ export class TopView {
     ctx.stroke();
     ctx.font = '11px ui-monospace, monospace';
     ctx.textAlign = 'right';
-    ctx.fillText(`${CITY_LABEL} · ${(widthM / 1000).toFixed(1)} km`, ox + W * scale, ry - 5);
+    ctx.fillText(`${(widthM / 1000).toFixed(1)} km`, ox + W * scale, ry - 5);
     ctx.textAlign = 'left';
   }
 
