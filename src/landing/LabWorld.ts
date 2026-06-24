@@ -1,28 +1,23 @@
 import { G } from './labShared';
+import { decodeCity, CITY_W, CITY_H, CITY_SIZE_M } from './labCityData';
 
-// The single source of truth for the physics lab: ONE 2D local-inertial shallow-water
-// world over a synthetic urban basin with a gridded neighborhood, a shallow collector
-// street and a low plaza. Both the top-down map and the side cross-section are pure renderers
-// of THIS world (same z, same h), so the two views are literally the same place. The
-// scheme (faces carry discharge q with Manning friction; depth updates by continuity)
-// is the same one the full model runs — here on a tiny CPU grid, no WebGL.
-export const W = 160;
-export const H = 96;
-export const CS = 12.5; // m per cell -> a 2000 m x 1200 m neighborhood
+// The single source of truth for the physics lab: ONE 2D local-inertial shallow-water world
+// over a REAL place — a baked Copernicus GLO-30 DEM + OpenStreetMap buildings for one of the
+// demo cities (see labCityData). Both the top-down map and the side cross-section are pure
+// renderers of THIS world (same z, same h), so the two views are literally the same city. The
+// scheme (faces carry discharge q with Manning friction; depth updates by continuity) is the
+// same one the full model runs — here on a tiny CPU grid baked to static data, no WebGL.
+export const W = CITY_W;
+export const H = CITY_H;
+export const CS = CITY_SIZE_M / CITY_W; // m per cell (square cells; the bake window is W:H proportioned)
 export const WET = 0.12; // m — counts as meaningfully ponded
-export const SLICE_ROW = 50; // the cross-section cut: a building row beside the flooded collector street
+export const SLICE_ROW = 76; // the cross-section cut: a street row that crosses Boulder Creek (the low ground)
 
 const MANNING = 0.03;
-const PERIOD = 8; // block pitch (cells) → 100 m
-const BLOCK = 5; // building footprint → 3-cell (37.5 m) streets
-const PLAZA_R = 9; // plaza basin radius (cells)
-const PLAZA_U = 0.54;
-const PLAZA_V = 0.47;
-const BASEFLOW = 0.035; // m — thin permanent film in the collector street
+const TARGET_RELIEF = 18; // m — the real DEM is normalised to this relief so a few m of flood stays visible
+const BASEFLOW = 0.04; // m — thin permanent film in the real watercourse (Boulder Creek)
 
 export interface Rect { x: number; y: number; w: number; h: number }
-
-const thalweg = (u: number): number => 0.47 + 0.035 * Math.sin(2 * Math.PI * 1.15 * u);
 
 export class LabWorld {
   readonly z = new Float32Array(W * H);
@@ -42,67 +37,56 @@ export class LabWorld {
   private drainMs = 0;
 
   constructor() {
-    this.buildTerrain();
-    this.buildBlocks();
+    this.buildFromCity();
     let open = 0;
-    for (let c = 0; c < W * H; c++) if (!this.solid[c] && !this.chan[c]) open++;
+    for (let c = 0; c < W * H; c++) if (!this.solid[c]) open++;
     this.openCount = Math.max(1, open);
     this.reset();
   }
 
-  private buildTerrain(): void {
+  /** Load the baked real city: normalise the DEM to a lab-friendly relief, take buildings as
+   *  solid obstacles and the mapped watercourse as the drainage channel. */
+  private buildFromCity(): void {
+    const city = decodeCity();
     let lo = Infinity;
     let hi = -Infinity;
-    for (let j = 0; j < H; j++) {
-      for (let i = 0; i < W; i++) {
-        const u = i / (W - 1);
-        const v = j / (H - 1);
-        const regionalSlope = 4.2 - 0.55 * u + 0.3 * (v - 0.5);
-        const edgeCurb =
-          0.7 * Math.exp(-(((u - 0.03) / 0.035) ** 2)) +
-          0.55 * Math.exp(-(((u - 0.97) / 0.035) ** 2));
-        const cityCrown = 0.9 * ((u - 0.53) ** 2) + 0.65 * ((v - 0.5) ** 2);
-        const dr = v - thalweg(u);
-        const collector = 0.85 * Math.exp(-(dr * dr) / (2 * 0.035 * 0.035));
-        const di = i - PLAZA_U * (W - 1);
-        const dj = j - PLAZA_V * (H - 1);
-        const plaza = 1.15 * Math.exp(-(di * di + dj * dj) / (2 * PLAZA_R * PLAZA_R));
-        const streetTexture = 0.08 * Math.sin(2 * Math.PI * u * 3.2) * Math.cos(2 * Math.PI * v * 2.1);
-        const zc = regionalSlope + edgeCurb + cityCrown + streetTexture - collector - plaza;
-        this.z[j * W + i] = zc;
-        if (collector > 0.5) this.chan[j * W + i] = 1;
-        lo = Math.min(lo, zc);
-        hi = Math.max(hi, zc);
-      }
+    for (let c = 0; c < W * H; c++) {
+      const zc = city.zNorm[c] * TARGET_RELIEF;
+      this.z[c] = zc;
+      this.solid[c] = city.building[c];
+      this.chan[c] = city.water[c] && !city.building[c] ? 1 : 0;
+      if (zc < lo) lo = zc;
+      if (zc > hi) hi = zc;
     }
     this.zLo = lo;
     this.zHi = hi;
+    this.buildRects();
   }
 
-  private buildBlocks(): void {
-    for (let by = 0; by < H; by += PERIOD) {
-      for (let bx = 0; bx < W; bx += PERIOD) {
-        if (!this.blockOk(bx, by)) continue;
-        const rw = Math.min(BLOCK, W - bx);
-        const rh = Math.min(BLOCK, H - by);
-        if (rw < 2 || rh < 2) continue;
-        this.rects.push({ x: bx, y: by, w: rw, h: rh });
-        for (let j = by; j < by + rh; j++) for (let i = bx; i < bx + rw; i++) this.solid[j * W + i] = 1;
+  /** Greedy-merge the per-cell building mask into rectangles for the vector building pass. */
+  private buildRects(): void {
+    const used = new Uint8Array(W * H);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (!this.solid[y * W + x] || used[y * W + x]) continue;
+        const r = this.rectAt(x, y, used);
+        for (let yy = y; yy < y + r.h; yy++) for (let xx = x; xx < x + r.w; xx++) used[yy * W + xx] = 1;
+        this.rects.push({ x, y, w: r.w, h: r.h });
       }
     }
   }
 
-  /** Keep blocks on the city bench, off the plaza and out of the river channel. */
-  private blockOk(bx: number, by: number): boolean {
-    const cx = bx + BLOCK / 2;
-    const cy = by + BLOCK / 2;
-    const u = cx / (W - 1);
-    const v = cy / (H - 1);
-    if (u < 0.29 || u > 0.82 || v < 0.2 || v > 0.82) return false;
-    const di = cx - PLAZA_U * (W - 1);
-    const dj = cy - PLAZA_V * (H - 1);
-    if (Math.hypot(di, dj) < PLAZA_R + 3) return false;
-    return Math.abs(v - thalweg(u)) >= 0.045;
+  private rectAt(x: number, y: number, used: Uint8Array): { w: number; h: number } {
+    let w = 1;
+    while (x + w < W && this.solid[y * W + x + w] && !used[y * W + x + w]) w++;
+    let h = 1;
+    while (y + h < H && this.rowFree(x, w, y + h, used)) h++;
+    return { w, h };
+  }
+
+  private rowFree(x: number, w: number, y: number, used: Uint8Array): boolean {
+    for (let k = 0; k < w; k++) { const c = y * W + x + k; if (!this.solid[c] || used[c]) return false; }
+    return true;
   }
 
   reset(): void {
@@ -174,13 +158,13 @@ export class LabWorld {
     }
   }
 
-  /** Readout over OPEN, non-channel cells — the human-meaningful street/plaza flooding. */
+  /** Readout over all non-building cells (incl. the watercourse) — the real flood extent. */
   private measure(): void {
     let maxDepth = 0;
     let deepest = 0;
     let wet = 0;
     for (let c = 0; c < W * H; c++) {
-      if (this.solid[c] || this.chan[c]) continue;
+      if (this.solid[c]) continue;
       if (this.h[c] > maxDepth) { maxDepth = this.h[c]; deepest = c; }
       if (this.h[c] > WET) wet++;
     }

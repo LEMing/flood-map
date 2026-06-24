@@ -1,5 +1,6 @@
 import { type DrawCtx } from './labShared';
 import { LabWorld, W, H, CS, SLICE_ROW } from './LabWorld';
+import { CITY_LABEL } from './labCityData';
 
 // Top-down map renderer for the shared LabWorld. The static hillshade is computed once
 // (elevation never changes); per frame only the wet cells are re-tinted. Contain-fit with
@@ -181,7 +182,7 @@ export class TopView {
     ctx.stroke();
     ctx.font = '11px ui-monospace, monospace';
     ctx.textAlign = 'right';
-    ctx.fillText(`${(widthM / 1000).toFixed(1)} km`, ox + W * scale, ry - 5);
+    ctx.fillText(`${CITY_LABEL} · ${(widthM / 1000).toFixed(1)} km`, ox + W * scale, ry - 5);
     ctx.textAlign = 'left';
   }
 

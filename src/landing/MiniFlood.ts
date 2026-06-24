@@ -13,8 +13,8 @@ const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not
 const RAIN_MS = 0.0015;
 const DRAIN_WET = 0.0004; // low loss while raining
 const DRAIN_DRY = 0.0016; // tail loss during recession
-const TARGET_DEPTH = 1.2; // m — once the basin reaches this, the rain stops and the sim FREEZES, so the
-//                          flood holds steady (deep + visible) and never overflows — at any speed
+const TARGET_PONDED = 0.5; // once half the streets are under water the rain stops and the sim FREEZES, so
+//                            the flood holds steady and never overflows the closed domain — at any speed
 
 // state, seconds, rain (m/s), drain (m/s), freeze. `freeze` pauses the whole sim so the
 // flooded streets hold steady — without it the water just redistributes downhill and the
@@ -142,8 +142,8 @@ export class MiniFlood {
       if (this.phaseT >= PHASES[this.phase].dur) { this.phase = (this.phase + 1) % PHASES.length; this.phaseT = 0; }
       cfg = PHASES[this.phase];
     }
-    // Once the basin is full, freeze instead of raining on — holds a deep flood, never overflows.
-    if (cfg.rain > 0 && this.world.maxDepth >= TARGET_DEPTH) return { rain: 0, drain: 0, freeze: true };
+    // Once the city is flooded enough, freeze instead of raining on — holds the flood, never overflows.
+    if (cfg.rain > 0 && this.world.pondedFrac >= TARGET_PONDED) return { rain: 0, drain: 0, freeze: true };
     return cfg;
   }
 
