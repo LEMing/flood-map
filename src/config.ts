@@ -110,6 +110,7 @@ export interface Params {
   foamAmount: number; // 0..1 shoreline + turbulence foam
   sunGlint: number; // 0..2 specular highlight strength
   shorelineSoftness: number; // metres of soft alpha fade at the water edge
+  shorelineRim: number; // 0..1.5 constant saturated band tracing the waterline (visibility over imagery)
   skirtEnabled: boolean; // perimeter wall so deep edge water doesn't show holes
   floodOverlay: boolean; // bold flood-extent map layer (clear "where is water")
   floodGrid: boolean; // relief grid lines on the flood overlay
@@ -182,8 +183,8 @@ export const DEFAULT_PARAMS: Params = {
   terrainStyle: 'satellite',
   buildings3D: true,
   imageryDarkening: 0.8,
-  waterOpacity: 0.62,
-  depthColorMax: 2.0,
+  waterOpacity: 0.72,
+  depthColorMax: 1.4,
   showMaxFlood: false,
   showVelocity: false,
   wireframe: false,
@@ -191,12 +192,13 @@ export const DEFAULT_PARAMS: Params = {
   waterQuality: 'medium',
   waterReflections: true,
   waterRefraction: true,
-  waterClarity: 0.6,
+  waterClarity: 0.85,
   rippleStrength: 0.5,
   flowSpeed: 0.6,
-  foamAmount: 0.6,
-  sunGlint: 1.0,
-  shorelineSoftness: 0.25,
+  foamAmount: 0.8,
+  sunGlint: 1.4,
+  shorelineSoftness: 0.4,
+  shorelineRim: 1.0,
   skirtEnabled: true,
   floodOverlay: false,
   floodGrid: true,

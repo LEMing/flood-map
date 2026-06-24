@@ -54,6 +54,7 @@ export const WATER_FRAG_HEAD = /* glsl */ `
   uniform float uRefract, uReflect, uRefractAmount, uClarity;
   uniform float uRippleStrength, uFlowScale, uShoreFade;
   uniform float uFoam, uFoamVel, uGlint, uShininess;
+  uniform float uShorelineRim;
   // weather / splashes (shared with SceneManager.weatherUniforms where noted)
   uniform float uRainAmount, uSplashCell;
   uniform float uFootprintSpot;
@@ -152,7 +153,7 @@ export const WATER_FRAG_BODY = /* glsl */ `
     float speed = length(vVel);
     vec2 flowDir = vVel / max(speed, 1e-4);
     vec2 flow = flowDir * min(speed, 4.0);
-    float ripAmp = uRippleStrength * (0.25 + 0.75 * clamp(speed / 1.0, 0.0, 1.0));
+    float ripAmp = uRippleStrength * (0.5 + 0.5 * clamp(speed / 2.0, 0.0, 1.0));
     ripAmp *= (1.0 - 0.7 * vSkirtT) * smoothstep(0.0, 0.06, sd);
     vec3 nTS = rippleNormal(vWorld.xz, flow, uTime);
     vec3 surfN = normalize(geomN + ripAmp * vec3(nTS.x, 0.0, nTS.y));
@@ -169,7 +170,7 @@ export const WATER_FRAG_BODY = /* glsl */ `
     vec2 screenUv = gl_FragCoord.xy / uResolution;
     vec3 bottomColor;
     if (uRefract > 0.5) {
-      vec2 refrOffset = surfN.xz * uRefractAmount * clamp(sd * 0.15, 0.0, 1.0) * (1.0 - 0.85 * vSkirtT);
+      vec2 refrOffset = surfN.xz * uRefractAmount * clamp(sd * 0.15, 0.0, 1.0) * (1.0 - 0.7 * uClarity) * (1.0 - 0.85 * vSkirtT);
       vec2 refrUv = clamp(screenUv + refrOffset, vec2(0.001), vec2(0.999));
       float sceneVZ = viewZ(texture2D(uSceneDepth, refrUv).x);
       float fragVZ = viewZ(gl_FragCoord.z);
@@ -187,9 +188,9 @@ export const WATER_FRAG_BODY = /* glsl */ `
     // so flooded cells stay legible like the overlay, while refraction still shows
     // through and ripples/foam/glint sit on top for realism.
     float dt = clamp(sd / uDepthColorMax, 0.0, 1.0);
-    vec3 fShallow = vec3(0.78, 0.92, 0.99);
-    vec3 fMid = vec3(0.18, 0.68, 0.92);
-    vec3 fDeep = vec3(0.04, 0.26, 0.68);
+    vec3 fShallow = vec3(0.82, 0.94, 1.00);
+    vec3 fMid = vec3(0.10, 0.66, 0.96);
+    vec3 fDeep = vec3(0.02, 0.30, 0.74);
     vec3 floodTint = dt < 0.5 ? mix(fShallow, fMid, dt * 2.0) : mix(fMid, fDeep, (dt - 0.5) * 2.0);
     throughWater = mix(throughWater, floodTint, uClarity * (1.0 - 0.4 * vSkirtT));
 
@@ -219,6 +220,15 @@ export const WATER_FRAG_BODY = /* glsl */ `
       color = mix(color, vec3(0.95, 0.97, 1.0), clamp(foam, 0.0, 1.0));
     }
 
+    // --- dedicated shoreline rim: a constant saturated band at the depth-gradient edge.
+    // Unlike foam this never flickers and is not gated by water quality, so the waterline
+    // stays legible over busy imagery even in low mode. ---
+    if (uShorelineRim > 0.0) {
+      float rimGrad = length(vec2(dFdx(sd), dFdy(sd))) / max(fwidth(length(vWorld.xz)), 1.0);
+      float rim = smoothstep(0.08, 0.4, rimGrad) * smoothstep(0.6, 0.25, rimGrad) * smoothstep(0.0, 0.25, sd);
+      color = mix(color, vec3(0.10, 0.62, 0.96), rim * uShorelineRim * (1.0 - vSkirtT));
+    }
+
     // --- sun specular glint (uSunColor already scaled by sun brightness) ---
     vec3 halfV = normalize(uSunDir + viewDir);
     float spec = pow(max(dot(surfN, halfV), 0.0), uShininess);
@@ -238,7 +248,7 @@ export const WATER_FRAG_BODY = /* glsl */ `
     float wetSoft = smoothstep(0.0, uShoreFade, sd);
     float wetFast = smoothstep(0.0, 0.05, sd);
     float wet = mix(wetSoft, wetFast, uClarity);
-    float baseAlpha = uOpacity * (0.45 + 0.55 * dt);
+    float baseAlpha = uOpacity * (0.65 + 0.35 * dt);
     float alpha = clamp(baseAlpha * wet + fres * 0.2 + foam * 0.5, 0.0, 1.0);
     #ifdef SKIRT
       alpha = clamp(uOpacity * 0.9 + fres * 0.2, 0.0, 1.0);

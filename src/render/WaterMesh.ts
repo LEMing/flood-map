@@ -65,9 +65,10 @@ export class WaterMesh {
       uFlowScale: { value: params.flowSpeed },
       uShoreFade: { value: Math.max(0.05, params.shorelineSoftness) },
       uFoam: { value: params.foamAmount },
-      uFoamVel: { value: 0.6 },
+      uFoamVel: { value: 0.3 },
       uGlint: { value: params.sunGlint },
-      uShininess: { value: 180.0 },
+      uShininess: { value: 900.0 },
+      uShorelineRim: { value: params.shorelineRim },
       // weather / splashes (aliased from SceneManager.weatherUniforms where possible)
       uRainAmount: { value: 0 },
       uSplashCell: { value: 6.0 },
@@ -156,6 +157,7 @@ export class WaterMesh {
     u.uRippleStrength.value = params.rippleStrength;
     u.uFlowScale.value = params.flowSpeed;
     u.uShoreFade.value = Math.max(0.05, params.shorelineSoftness);
+    u.uShorelineRim.value = params.shorelineRim;
     u.uFoam.value = params.waterQuality === 'low' ? 0 : params.foamAmount;
     u.uGlint.value = params.sunGlint;
     u.uRefract.value = params.waterRefraction && params.waterQuality !== 'low' ? 1 : 0;
