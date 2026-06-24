@@ -1,16 +1,20 @@
 import { G } from './labShared';
+import { RIO_W, RIO_H, RIO_CS, decodeRioShape } from './labRioData';
 
 // The single source of truth for the physics lab: ONE 2D local-inertial shallow-water world
-// over a SMOOTH, abstract landscape — a few gentle hills and basins, no buildings. Rendered
-// top-down so you watch rain pool in the low ground into clear lakes, then drain. The scheme
-// (faces carry discharge q with Manning friction; depth updates by continuity) is the same one
-// the full model runs — here on a tiny CPU grid, no WebGL.
-export const W = 144;
-export const H = 92;
-export const CS = 17; // m per cell → a ~2.5 km × 1.6 km basin
+// over REAL Rio de Janeiro topography (a downsampled DEM). Rendered top-down so you watch rain
+// pool in the low ground — the valleys between the morros — into clear lakes, then drain. The
+// scheme (faces carry discharge q with Manning friction; depth updates by continuity) is the
+// same one the full model runs, here on a tiny CPU grid, no WebGL. The relief is gently
+// compressed for a watchable sandbox; the topographic SHAPE (contour lines) stays true to Rio.
+export const W = RIO_W;
+export const H = RIO_H;
+export const CS = RIO_CS; // m per cell
 export const WET = 0.1; // m — counts as meaningfully ponded
 
 const MANNING = 0.03;
+const RELIEF = 46; // m — sandbox vertical range the real Rio shape is remapped onto
+const BASE_Z = 6; // m — keeps elevations positive
 
 export class LabWorld {
   readonly z = new Float32Array(W * H);
@@ -30,27 +34,16 @@ export class LabWorld {
     this.measure();
   }
 
-  /** Smooth elevation: a couple of broad hills and a few rounded basins where water collects. */
-  private terrainZ(u: number, v: number): number {
-    const g = (cx: number, cy: number, s: number): number =>
-      Math.exp(-(((u - cx) ** 2) + ((v - cy) ** 2)) / (2 * s * s));
-    return 11
-      + 6.0 * g(0.24, 0.32, 0.19) + 5.0 * g(0.79, 0.28, 0.17) // hills
-      - 7.5 * g(0.50, 0.60, 0.15) - 5.5 * g(0.20, 0.70, 0.11) // basins
-      - 5.5 * g(0.82, 0.71, 0.12) - 3.8 * g(0.52, 0.24, 0.10)
-      + 0.9 * Math.sin(u * 5.0) * Math.cos(v * 4.0); // gentle texture
-  }
-
+  /** Load the baked Rio shape (normalized [0,1]) and remap it onto the sandbox relief. */
   private buildTerrain(): void {
+    const shape = decodeRioShape();
     let lo = Infinity;
     let hi = -Infinity;
-    for (let j = 0; j < H; j++) {
-      for (let i = 0; i < W; i++) {
-        const zc = this.terrainZ(i / (W - 1), j / (H - 1));
-        this.z[j * W + i] = zc;
-        if (zc < lo) lo = zc;
-        if (zc > hi) hi = zc;
-      }
+    for (let c = 0; c < W * H; c++) {
+      const zc = BASE_Z + shape[c] * RELIEF;
+      this.z[c] = zc;
+      if (zc < lo) lo = zc;
+      if (zc > hi) hi = zc;
     }
     this.zLo = lo;
     this.zHi = hi;

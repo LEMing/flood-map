@@ -11,8 +11,8 @@ const SPEED_MULT = [1, 4, 16]; // the Faster button steps the WATER physics, not
 const RAIN_MS = 0.0015;
 const DRAIN_WET = 0.0004; // low loss while raining
 const DRAIN_DRY = 0.0016; // tail loss during recession
-const TARGET_PONDED = 0.5; // once half the streets are under water the rain stops and the sim FREEZES, so
-//                            the flood holds steady and never overflows the closed domain — at any speed
+const TARGET_PONDED = 0.32; // once the valleys are filled this far the rain stops and the sim FREEZES,
+//                             so the flood holds at the legible "valleys revealed" state and never overflows
 
 // state, seconds, rain (m/s), drain (m/s), freeze. `freeze` pauses the whole sim so the
 // flooded streets hold steady — without it the water just redistributes downhill and the
