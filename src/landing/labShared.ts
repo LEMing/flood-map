@@ -1,5 +1,6 @@
-// Shared bits for the landing's interactive physics lab. The single LabWorld is rendered
-// two ways (top-down map + side cross-section); these are the constants/types both use.
+// Shared bits for the landing's interactive physics labs. A LabWorld (the shallow-water
+// solver) is paired with a renderer: TopView (Rio topography) or UrbanView (a flat city
+// grid). These are the constants/types they share.
 
 export const G = 9.81;
 
@@ -9,4 +10,9 @@ export interface DrawCtx {
   h: number;
   phase: number;
   raining: boolean;
+}
+
+/** A pure renderer for the shared LabWorld. */
+export interface LabRenderer {
+  draw(ctx: CanvasRenderingContext2D, view: DrawCtx): void;
 }

@@ -1,26 +1,35 @@
 import { G } from './labShared';
-import { RIO_W, RIO_H, RIO_CS, decodeRioShape } from './labRioData';
 
-// The single source of truth for the physics lab: ONE 2D local-inertial shallow-water world
-// over REAL Rio de Janeiro topography (a downsampled DEM). Rendered top-down so you watch rain
-// pool in the low ground — the valleys between the morros — into clear lakes, then drain. The
-// scheme (faces carry discharge q with Manning friction; depth updates by continuity) is the
-// same one the full model runs, here on a tiny CPU grid, no WebGL. The relief is gently
-// compressed for a watchable sandbox; the topographic SHAPE (contour lines) stays true to Rio.
-export const W = RIO_W;
-export const H = RIO_H;
-export const CS = RIO_CS; // m per cell
+// The shared shallow-water solver for the landing's physics labs. ONE 2D local-inertial
+// world (faces carry discharge q with Manning friction; depth updates by continuity) — the
+// same scheme the full model runs, here on a tiny CPU grid, no WebGL. The terrain and any
+// buildings come from a WorldSpec, so the same solver drives both the Rio topography lab
+// (relief-driven flooding) and the flat-city lab (where buildings are solid obstacles and
+// streets are the only conveyance — flooding driven by the urban fabric, not elevation).
+export const W = 144;
+export const H = 92;
+export const CS = 17; // m per cell → a ~2.45 km × 1.56 km window
 export const WET = 0.1; // m — counts as meaningfully ponded
 
 const MANNING = 0.03;
-const RELIEF = 46; // m — sandbox vertical range the real Rio shape is remapped onto
-const BASE_Z = 6; // m — keeps elevations positive
+
+export interface Rect { x: number; y: number; w: number; h: number }
+
+/** Terrain + buildings for a lab world. `solid` cells are buildings: no flow, no rain, no pooling. */
+export interface WorldSpec {
+  z: Float32Array; // W*H elevation (m)
+  solid: Uint8Array; // W*H building mask (1 = solid)
+  rects: Rect[]; // building footprints for the renderer
+}
 
 export class LabWorld {
   readonly z = new Float32Array(W * H);
   readonly h = new Float32Array(W * H);
+  readonly solid: Uint8Array;
+  readonly rects: Rect[];
   private readonly qx = new Float32Array((W - 1) * H);
   private readonly qy = new Float32Array(W * (H - 1));
+  private readonly openCount: number;
   zLo = 0;
   zHi = 1;
   maxDepth = 0;
@@ -29,24 +38,22 @@ export class LabWorld {
   private rainMs = 0;
   private drainMs = 0;
 
-  constructor() {
-    this.buildTerrain();
-    this.measure();
-  }
-
-  /** Load the baked Rio shape (normalized [0,1]) and remap it onto the sandbox relief. */
-  private buildTerrain(): void {
-    const shape = decodeRioShape();
+  constructor(spec: WorldSpec) {
+    this.z.set(spec.z);
+    this.solid = spec.solid;
+    this.rects = spec.rects;
     let lo = Infinity;
     let hi = -Infinity;
+    let open = 0;
     for (let c = 0; c < W * H; c++) {
-      const zc = BASE_Z + shape[c] * RELIEF;
-      this.z[c] = zc;
-      if (zc < lo) lo = zc;
-      if (zc > hi) hi = zc;
+      if (this.z[c] < lo) lo = this.z[c];
+      if (this.z[c] > hi) hi = this.z[c];
+      if (!this.solid[c]) open++;
     }
     this.zLo = lo;
     this.zHi = hi;
+    this.openCount = open || 1;
+    this.measure();
   }
 
   reset(): void {
@@ -75,6 +82,7 @@ export class LabWorld {
   }
 
   private face(a: number, b: number, q: number, dt: number): number {
+    if (this.solid[a] || this.solid[b]) return 0; // buildings: no flow across the wall
     const hFlow = Math.max(this.z[a] + this.h[a], this.z[b] + this.h[b]) - Math.max(this.z[a], this.z[b]);
     if (hFlow <= 1e-3) return 0;
     const slope = (this.z[b] + this.h[b] - (this.z[a] + this.h[a])) / CS;
@@ -106,6 +114,7 @@ export class LabWorld {
     for (let j = 0; j < H; j++) {
       for (let i = 0; i < W; i++) {
         const c = j * W + i;
+        if (this.solid[c]) { this.h[c] = 0; continue; }
         const qxIn = i > 0 ? this.qx[j * (W - 1) + i - 1] : 0;
         const qxOut = i < W - 1 ? this.qx[j * (W - 1) + i] : 0;
         const qyIn = j > 0 ? this.qy[(j - 1) * W + i] : 0;
@@ -121,11 +130,12 @@ export class LabWorld {
     let deepest = 0;
     let wet = 0;
     for (let c = 0; c < W * H; c++) {
+      if (this.solid[c]) continue;
       if (this.h[c] > maxDepth) { maxDepth = this.h[c]; deepest = c; }
       if (this.h[c] > WET) wet++;
     }
     this.maxDepth = maxDepth;
     this.deepestIdx = deepest;
-    this.pondedFrac = wet / (W * H);
+    this.pondedFrac = wet / this.openCount;
   }
 }

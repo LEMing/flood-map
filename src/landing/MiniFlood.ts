@@ -1,9 +1,8 @@
-import { type DrawCtx } from './labShared';
-import { LabWorld } from './LabWorld';
-import { TopView } from './TopView';
+import { type DrawCtx, type LabRenderer } from './labShared';
+import { type LabWorld } from './LabWorld';
 
-// Controller for the landing's interactive physics lab. Owns ONE shared LabWorld and a single
-// top-down map renderer, the controls, and the rAF loop. The fill→drain "breathing" is a
+// Controller for a landing physics lab. Drives an injected LabWorld + renderer (Rio topography
+// or the flat-city grid), the controls, and the rAF loop. The fill→drain "breathing" is a
 // wall-clock 4-phase FSM (NOT tied to physics speed), so it is slow and dwells on the flooded
 // state instead of jittering. CPU + Canvas 2D only, runs on screen, reduced-motion aware.
 const BASE_RATE = 28; // sim-seconds per real second at 1× — gentle, watchable
@@ -31,8 +30,6 @@ export class MiniFlood {
   private readonly pondedEl: HTMLElement | null;
   private readonly speedEl: HTMLElement | null;
   private readonly rainBtn: HTMLButtonElement | null;
-  private readonly world = new LabWorld();
-  private readonly topView = new TopView(this.world);
   private auto: boolean;
   private manualRain = false;
   private phase = 0;
@@ -48,7 +45,7 @@ export class MiniFlood {
   private readonly io: IntersectionObserver;
   private readonly ro: ResizeObserver;
 
-  constructor(root: HTMLElement) {
+  constructor(root: HTMLElement, private readonly world: LabWorld, private readonly view: LabRenderer) {
     this.canvas = root.querySelector('.lp-lab-canvas') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.rainBtn = root.querySelector('[data-lab-act="rain"]');
@@ -170,6 +167,6 @@ export class MiniFlood {
       phase: this.anim,
       raining: this.curRaining,
     };
-    this.topView.draw(this.ctx, view);
+    this.view.draw(this.ctx, view);
   }
 }

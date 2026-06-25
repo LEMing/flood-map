@@ -2,22 +2,18 @@ import { type DrawCtx } from './labShared';
 import { LabWorld, W, H, CS } from './LabWorld';
 import { lerp, marchingSquares } from './labDraw';
 
-// Top-down cartographic renderer for the shared LabWorld. Instead of a single blurry fill,
-// it layers like a real topographic flood map: a dark hypsometric base, crisp terrain
-// contour lines (marching squares), a metric geo-grid, and a bright marching-squares
-// waterline that traces the flood extent. The soft base reads as watercolor under the ink.
-const DEPTH_MAX = 1.2; // m — depth mapped to the deepest blue
-const WATERLINE = 0.05; // m — the contour traced as the shoreline
+// Top-down renderer for the flat-city lab. The ground is a near-flat street plain; rain pools
+// only in the OPEN street cells (buildings are solid), so the flood reads as a grid of flooded
+// streets backing up around dry blocks — the urban fabric, not elevation, routing the water.
+const DEPTH_MAX = 0.9; // m — depth mapped to the deepest blue (streets stay shallow)
+const WATERLINE = 0.05; // m — the contour traced as the flooded-street edge
 const GRID_M = 500; // metric graticule spacing
-const CONTOURS = 12; // terrain contour intervals between zLo..zHi
 
-export class TopView {
+export class UrbanView {
   private readonly ocanvas = document.createElement('canvas');
   private readonly octx: CanvasRenderingContext2D;
   private readonly base: Uint8ClampedArray;
   private readonly work: ImageData;
-  private terrainMinor = new Float32Array(0);
-  private terrainIndex = new Float32Array(0);
   private ox = 0;
   private oy = 0;
   private scale = 1;
@@ -29,45 +25,20 @@ export class TopView {
     this.work = this.octx.createImageData(W, H);
     this.base = new Uint8ClampedArray(W * H * 4);
     this.buildBase();
-    this.buildContours();
   }
 
-  /** Dark hypsometric hillshade: navy lowlands → steel highlands, so cyan water and ink lines pop. */
+  /** Street-plain ground, faintly shaded by the micro-relief so the low corridor reads. */
   private buildBase(): void {
     const { z, zLo, zHi } = this.world;
     const range = zHi - zLo + 1e-3;
-    for (let j = 0; j < H; j++) {
-      for (let i = 0; i < W; i++) {
-        const c = j * W + i;
-        const t = (z[c] - zLo) / range;
-        const left = z[j * W + Math.max(0, i - 1)];
-        const right = z[j * W + Math.min(W - 1, i + 1)];
-        const up = z[Math.max(0, j - 1) * W + i];
-        const down = z[Math.min(H - 1, j + 1) * W + i];
-        const shade = Math.max(-0.3, Math.min(0.3, (left - right) * 0.04 + (up - down) * 0.032));
-        let r: number;
-        let g: number;
-        let b: number;
-        if (t < 0.5) { const k = t / 0.5; r = lerp(14, 38, k); g = lerp(22, 52, k); b = lerp(30, 62, k); }
-        else { const k = (t - 0.5) / 0.5; r = lerp(38, 60, k); g = lerp(52, 74, k); b = lerp(62, 80, k); }
-        const lit = 1 + shade;
-        const p = c * 4;
-        this.base[p] = r * lit; this.base[p + 1] = g * lit; this.base[p + 2] = b * lit; this.base[p + 3] = 255;
-      }
+    for (let c = 0; c < W * H; c++) {
+      const t = (z[c] - zLo) / range;
+      const p = c * 4;
+      this.base[p] = lerp(34, 56, t);
+      this.base[p + 1] = lerp(38, 59, t);
+      this.base[p + 2] = lerp(44, 64, t);
+      this.base[p + 3] = 255;
     }
-  }
-
-  private buildContours(): void {
-    const { z, zLo, zHi } = this.world;
-    const minor: number[] = [];
-    const index: number[] = [];
-    for (let i = 1; i < CONTOURS; i++) {
-      const segs = marchingSquares(z, W, H, zLo + ((zHi - zLo) * i) / CONTOURS);
-      const into = i % 3 === 0 ? index : minor;
-      for (let k = 0; k < segs.length; k++) into.push(segs[k]);
-    }
-    this.terrainMinor = new Float32Array(minor);
-    this.terrainIndex = new Float32Array(index);
   }
 
   draw(ctx: CanvasRenderingContext2D, view: DrawCtx): void {
@@ -84,10 +55,10 @@ export class TopView {
     ctx.imageSmoothingEnabled = true;
     ctx.drawImage(this.ocanvas, 0, 0, W, H, this.ox, this.oy, W * this.scale, H * this.scale);
 
-    this.strokeSegments(ctx, this.terrainMinor, 'rgba(200,218,236,.14)', 1);
-    this.strokeSegments(ctx, this.terrainIndex, 'rgba(216,230,246,.30)', 1.1);
     this.drawGrid(ctx);
     this.drawWaterline(ctx);
+    this.drawBuildings(ctx);
+    this.drawFrame(ctx);
     this.drawScaleBar(ctx);
     if (view.raining) this.drawRain(ctx, view);
   }
@@ -98,36 +69,49 @@ export class TopView {
       const depth = h[c];
       if (depth <= 0.02) continue;
       const t = Math.min(1, depth / DEPTH_MAX);
-      const a = Math.min(0.88, (0.4 + 0.46 * t) * Math.min(1, (depth - 0.02) / 0.08));
-      const shimmer = 0.05 * Math.sin((c % W) * 0.4 + Math.floor(c / W) * 0.3 + phase * Math.PI * 2);
+      const a = Math.min(0.9, (0.45 + 0.45 * t) * Math.min(1, (depth - 0.02) / 0.08));
+      const shimmer = 0.05 * Math.sin((c % W) * 0.5 + Math.floor(c / W) * 0.4 + phase * Math.PI * 2);
       const p = c * 4;
-      d[p] = d[p] * (1 - a) + (lerp(70, 26, t) + shimmer * 60) * a;
-      d[p + 1] = d[p + 1] * (1 - a) + (lerp(190, 86, t) + shimmer * 50) * a;
-      d[p + 2] = d[p + 2] * (1 - a) + lerp(225, 205, t) * a;
+      d[p] = d[p] * (1 - a) + (lerp(78, 26, t) + shimmer * 60) * a;
+      d[p + 1] = d[p + 1] * (1 - a) + (lerp(196, 92, t) + shimmer * 50) * a;
+      d[p + 2] = d[p + 2] * (1 - a) + lerp(228, 208, t) * a;
     }
   }
 
-  private sx(i: number): number { return this.ox + i * this.scale; }
-  private sy(j: number): number { return this.oy + j * this.scale; }
-
-  private strokeSegments(ctx: CanvasRenderingContext2D, segs: Float32Array, style: string, width: number): void {
-    if (segs.length === 0) return;
-    ctx.strokeStyle = style;
-    ctx.lineWidth = width;
-    ctx.beginPath();
-    for (let i = 0; i < segs.length; i += 4) {
-      ctx.moveTo(this.sx(segs[i]), this.sy(segs[i + 1]));
-      ctx.lineTo(this.sx(segs[i + 2]), this.sy(segs[i + 3]));
+  private drawBuildings(ctx: CanvasRenderingContext2D): void {
+    const sh = Math.max(1, Math.round(this.scale * 0.5));
+    for (const b of this.world.rects) {
+      const x = Math.round(this.ox + b.x * this.scale);
+      const y = Math.round(this.oy + b.y * this.scale);
+      const bw = Math.round(b.w * this.scale);
+      const bh = Math.round(b.h * this.scale);
+      const tone = 96 + (((b.x * 7 + b.y * 13) % 5) - 2) * 5;
+      ctx.fillStyle = 'rgba(4,8,13,.36)';
+      ctx.fillRect(x + sh, y + sh, bw, bh);
+      ctx.fillStyle = `rgb(${tone},${tone + 6},${tone + 12})`;
+      ctx.fillRect(x, y, bw, bh);
+      ctx.fillStyle = 'rgba(255,255,255,.10)';
+      ctx.fillRect(x, y, bw, Math.max(1, Math.round(bh * 0.16)));
+      ctx.strokeStyle = 'rgba(8,12,18,.6)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, bw - 1, bh - 1);
     }
-    ctx.stroke();
   }
 
   private drawWaterline(ctx: CanvasRenderingContext2D): void {
     const segs = marchingSquares(this.world.h, W, H, WATERLINE);
+    if (segs.length === 0) return;
     ctx.save();
     ctx.shadowColor = 'rgba(120,225,255,.5)';
-    ctx.shadowBlur = 6;
-    this.strokeSegments(ctx, segs, 'rgba(152,232,255,.95)', 1.6);
+    ctx.shadowBlur = 5;
+    ctx.strokeStyle = 'rgba(152,232,255,.9)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (let i = 0; i < segs.length; i += 4) {
+      ctx.moveTo(this.ox + segs[i] * this.scale, this.oy + segs[i + 1] * this.scale);
+      ctx.lineTo(this.ox + segs[i + 2] * this.scale, this.oy + segs[i + 3] * this.scale);
+    }
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -140,7 +124,7 @@ export class TopView {
     ctx.beginPath();
     ctx.rect(ox, oy, span, tall);
     ctx.clip();
-    ctx.strokeStyle = 'rgba(150,182,214,.085)';
+    ctx.strokeStyle = 'rgba(150,182,214,.075)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (let x = ox; x <= ox + span + 0.5; x += step) {
@@ -155,13 +139,17 @@ export class TopView {
     }
     ctx.stroke();
     ctx.restore();
+  }
+
+  private drawFrame(ctx: CanvasRenderingContext2D): void {
+    const { ox, oy, scale } = this;
     ctx.strokeStyle = 'rgba(160,190,220,.28)';
     ctx.lineWidth = 1;
-    ctx.strokeRect(ox + 0.5, oy + 0.5, span - 1, tall - 1);
+    ctx.strokeRect(ox + 0.5, oy + 0.5, W * scale - 1, H * scale - 1);
     ctx.font = '600 10px ui-monospace, monospace';
     ctx.fillStyle = 'rgba(196,214,234,.5)';
     ctx.textAlign = 'left';
-    ctx.fillText('R I O   D E   J A N E I R O', ox + 9, oy + 17);
+    ctx.fillText('K R A S N O D A R', ox + 9, oy + 17);
   }
 
   private drawScaleBar(ctx: CanvasRenderingContext2D): void {
@@ -171,8 +159,8 @@ export class TopView {
     ctx.fillStyle = 'rgba(214,226,240,.72)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(this.sx(0), ry);
-    ctx.lineTo(this.sx(W), ry);
+    ctx.moveTo(this.ox, ry);
+    ctx.lineTo(this.ox + W * this.scale, ry);
     for (let m = 0; m <= widthM; m += GRID_M) {
       const x = this.ox + (m / CS) * this.scale;
       ctx.moveTo(x, ry - 3);
@@ -181,7 +169,7 @@ export class TopView {
     ctx.stroke();
     ctx.font = '11px ui-monospace, monospace';
     ctx.textAlign = 'right';
-    ctx.fillText(`${(widthM / 1000).toFixed(1)} km`, this.sx(W), ry - 5);
+    ctx.fillText(`${(widthM / 1000).toFixed(1)} km`, this.ox + W * this.scale, ry - 5);
     ctx.textAlign = 'left';
   }
 
@@ -191,7 +179,7 @@ export class TopView {
     ctx.beginPath();
     ctx.rect(this.ox, this.oy, W * this.scale, H * this.scale);
     ctx.clip();
-    ctx.strokeStyle = 'rgba(182, 216, 255, .24)';
+    ctx.strokeStyle = 'rgba(182, 216, 255, .22)';
     ctx.lineWidth = 1.1;
     ctx.beginPath();
     for (let k = 0; k < 92; k++) {

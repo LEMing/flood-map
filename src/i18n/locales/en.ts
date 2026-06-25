@@ -266,6 +266,10 @@ export const en: Record<string, string> = {
   'landing.lab.faster': 'Faster',
   'landing.lab.viewCross': 'Street section',
   'landing.lab.viewTop': 'City map',
+  // Second physics lab: a flat city (Krasnodar) where buildings + the street grid route the flood.
+  'landing.lab2.eyebrow': 'It’s not only the heights',
+  'landing.lab2.title': 'On flat ground, the city itself routes the flood.',
+  'landing.lab2.sub': 'Same solver, a flat city like Krasnodar. Buildings are solid, so water can’t cross them — rain backs up along the street grid and pools in the low corridors. The urban fabric, not the elevation, decides where it floods.',
 
   'landing.computes.eyebrow': 'What Floodlab actually computes',
   'landing.computes.title': 'Not a flood-risk report. A transparent physics sandbox.',

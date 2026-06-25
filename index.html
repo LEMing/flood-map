@@ -1437,6 +1437,36 @@
             </div>
           </section>
 
+          <section class="relative mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+            <div id="lp-lab-city" class="lp-lab">
+              <div class="lp-lab-copy">
+                <p data-i18n="landing.lab2.eyebrow" class="lp-lab-eyebrow">It’s not only the heights</p>
+                <h2 data-i18n="landing.lab2.title" class="lp-lab-title">On flat ground, the city itself routes the flood.</h2>
+                <p data-i18n="landing.lab2.sub" class="lp-lab-sub">Same solver, a flat city like Krasnodar. Buildings are solid, so water can’t cross them — rain backs up along the street grid and pools in the low corridors. The urban fabric, not the elevation, decides where it floods.</p>
+                <div class="lp-lab-bar">
+                  <div class="lp-lab-stats">
+                    <span class="lp-lab-stat">
+                      <span data-i18n="landing.lab.depth" class="lp-lab-stat-label">deepest</span>
+                      <span class="lp-lab-stat-value"><b data-lab="depth">0.0</b> m</span>
+                    </span>
+                    <span class="lp-lab-stat">
+                      <span data-i18n="landing.lab.ponded" class="lp-lab-stat-label">ponded</span>
+                      <span class="lp-lab-stat-value"><b data-lab="ponded">0</b>%</span>
+                    </span>
+                  </div>
+                  <div class="lp-lab-controls">
+                    <button type="button" class="lp-lab-btn on" data-lab-act="rain">☔ <span data-i18n="landing.lab.rain">Rain</span></button>
+                    <button type="button" class="lp-lab-btn" data-lab-act="faster">⏩ <span data-i18n="landing.lab.faster">Faster</span> <b data-lab="speed">1×</b></button>
+                    <button type="button" class="lp-lab-btn" data-lab-act="reset" aria-label="Reset">↺</button>
+                  </div>
+                </div>
+              </div>
+              <div class="lp-lab-stage">
+                <canvas class="lp-lab-canvas" aria-hidden="true"></canvas>
+              </div>
+            </div>
+          </section>
+
           <section id="floodlab-physics" class="relative mx-auto grid w-full max-w-7xl items-stretch gap-10 px-4 pb-12 sm:px-6 lg:grid-cols-2 lg:px-8">
             <div class="flex h-full flex-col text-slate-100">
               <p data-i18n="landing.physics.eyebrow" class="mb-3 text-xs font-black uppercase tracking-[.18em] text-cyan-200/80">Physics under the hood</p>
