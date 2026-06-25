@@ -8,25 +8,22 @@ import { G } from './labShared';
 // streets are the only conveyance — flooding driven by the urban fabric, not elevation).
 export const W = 144;
 export const H = 92;
-export const CS = 17; // m per cell → a ~2.45 km × 1.56 km window
 export const WET = 0.1; // m — counts as meaningfully ponded
 
 const MANNING = 0.03;
-
-export interface Rect { x: number; y: number; w: number; h: number }
 
 /** Terrain + buildings for a lab world. `solid` cells are buildings: no flow, no rain, no pooling. */
 export interface WorldSpec {
   z: Float32Array; // W*H elevation (m)
   solid: Uint8Array; // W*H building mask (1 = solid)
-  rects: Rect[]; // building footprints for the renderer
+  cs: number; // m per cell (sets the window scale; Rio 17, city 10)
 }
 
 export class LabWorld {
   readonly z = new Float32Array(W * H);
   readonly h = new Float32Array(W * H);
   readonly solid: Uint8Array;
-  readonly rects: Rect[];
+  readonly cs: number;
   private readonly qx = new Float32Array((W - 1) * H);
   private readonly qy = new Float32Array(W * (H - 1));
   private readonly openCount: number;
@@ -41,7 +38,7 @@ export class LabWorld {
   constructor(spec: WorldSpec) {
     this.z.set(spec.z);
     this.solid = spec.solid;
-    this.rects = spec.rects;
+    this.cs = spec.cs;
     let lo = Infinity;
     let hi = -Infinity;
     let open = 0;
@@ -71,7 +68,7 @@ export class LabWorld {
     while (remaining > 1e-6 && guard < 5000) {
       let hmax = 0.05;
       for (let c = 0; c < W * H; c++) if (this.h[c] > hmax) hmax = this.h[c];
-      const dt = Math.min(remaining, (0.42 * CS) / Math.sqrt(G * hmax));
+      const dt = Math.min(remaining, (0.42 * this.cs) / Math.sqrt(G * hmax));
       this.faceX(dt);
       this.faceY(dt);
       this.continuity(dt);
@@ -85,7 +82,7 @@ export class LabWorld {
     if (this.solid[a] || this.solid[b]) return 0; // buildings: no flow across the wall
     const hFlow = Math.max(this.z[a] + this.h[a], this.z[b] + this.h[b]) - Math.max(this.z[a], this.z[b]);
     if (hFlow <= 1e-3) return 0;
-    const slope = (this.z[b] + this.h[b] - (this.z[a] + this.h[a])) / CS;
+    const slope = (this.z[b] + this.h[b] - (this.z[a] + this.h[a])) / this.cs;
     const fric = 1 + (G * dt * MANNING * MANNING * Math.abs(q)) / Math.pow(hFlow, 7 / 3);
     return (q - G * hFlow * dt * slope) / fric;
   }
@@ -119,7 +116,7 @@ export class LabWorld {
         const qxOut = i < W - 1 ? this.qx[j * (W - 1) + i] : 0;
         const qyIn = j > 0 ? this.qy[(j - 1) * W + i] : 0;
         const qyOut = j < H - 1 ? this.qy[j * W + i] : 0;
-        const next = this.h[c] + (dt / CS) * (qxIn - qxOut + qyIn - qyOut) + this.rainMs * dt;
+        const next = this.h[c] + (dt / this.cs) * (qxIn - qxOut + qyIn - qyOut) + this.rainMs * dt;
         this.h[c] = Math.max(0, next - this.drainMs * dt);
       }
     }

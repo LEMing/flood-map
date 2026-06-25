@@ -11,5 +11,5 @@ export function rioSpec(): WorldSpec {
   const shape = decodeRioShape();
   const z = new Float32Array(W * H);
   for (let c = 0; c < W * H; c++) z[c] = BASE_Z + shape[c] * RELIEF;
-  return { z, solid: new Uint8Array(W * H), rects: [] };
+  return { z, solid: new Uint8Array(W * H), cs: 17 };
 }

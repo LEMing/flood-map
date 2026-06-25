@@ -1,5 +1,5 @@
 import { type DrawCtx } from './labShared';
-import { LabWorld, W, H, CS } from './LabWorld';
+import { LabWorld, W, H } from './LabWorld';
 import { lerp, marchingSquares } from './labDraw';
 
 // Top-down cartographic renderer for the shared LabWorld. Instead of a single blurry fill,
@@ -135,7 +135,7 @@ export class TopView {
     const { ox, oy, scale } = this;
     const span = W * scale;
     const tall = H * scale;
-    const step = (GRID_M / CS) * scale;
+    const step = (GRID_M / this.world.cs) * scale;
     ctx.save();
     ctx.beginPath();
     ctx.rect(ox, oy, span, tall);
@@ -166,7 +166,7 @@ export class TopView {
 
   private drawScaleBar(ctx: CanvasRenderingContext2D): void {
     const ry = this.oy + H * this.scale - 13;
-    const widthM = W * CS;
+    const widthM = W * this.world.cs;
     ctx.strokeStyle = 'rgba(214,226,240,.5)';
     ctx.fillStyle = 'rgba(214,226,240,.72)';
     ctx.lineWidth = 1;
@@ -174,7 +174,7 @@ export class TopView {
     ctx.moveTo(this.sx(0), ry);
     ctx.lineTo(this.sx(W), ry);
     for (let m = 0; m <= widthM; m += GRID_M) {
-      const x = this.ox + (m / CS) * this.scale;
+      const x = this.ox + (m / this.world.cs) * this.scale;
       ctx.moveTo(x, ry - 3);
       ctx.lineTo(x, ry);
     }
